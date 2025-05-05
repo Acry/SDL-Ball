@@ -117,7 +117,7 @@ glTextClass::glTextClass()
     }
     f.close();
   } else {
-    cout << "Error: could not open font-description file.";
+    SDL_Log("Error: could not open font-description file.");
   }
   TTF_Quit();
 }
@@ -147,7 +147,7 @@ void glTextClass::genFontTex(string TTFfontName, int fontSize, int font)
   ttfFont = TTF_OpenFont( useTheme(TTFfontName,setting.gfxTheme).data(), fontSize );
 
   if(!ttfFont) {
-	  cout << "TTF_OpenFont: " << TTF_GetError() << endl;
+	  SDL_Log("TTF_OpenFont: %s", TTF_GetError());
 	  exit(0);
   }
 
@@ -178,7 +178,7 @@ void glTextClass::genFontTex(string TTFfontName, int fontSize, int font)
       dst.y += sY+2;
       if(dst.y > 512 && font != FONT_HIGHSCORE) //FONT_HIGHSCORE is always rendered too big for texture
       {
-        cout << "Too many chars for tex ("<<i<<")"<<endl;
+        SDL_Log("Too many chars for tex (%d)", i);
       }
     }
     

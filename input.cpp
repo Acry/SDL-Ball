@@ -71,10 +71,10 @@ controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, ballManager
     joystick = SDL_JoystickOpen(0);
     if(joystick)
     {
-      cout << "Using joystick: '"<<SDL_JoystickName(0)<<"' as "<<(setting.joyIsDigital ? "digital":(setting.joyIsPaddle)?"paddle":"analog")<<"."<<endl;
+      SDL_Log("Using joystick: '%s' as %s.", SDL_JoystickName(0), (setting.joyIsDigital ? "digital":(setting.joyIsPaddle)?"paddle":"analog"));
       SDL_JoystickEventState( SDL_ENABLE );
     } else {
-      cout << "Failed to open joystick: '"<<SDL_JoystickName(0)<<"'"<<endl;
+      SDL_Log("Failed to open joystick: '%s'", SDL_JoystickName(0));
     }
   }
 
@@ -252,7 +252,7 @@ bool controllerClass::get()
         case WIIUSE_DISCONNECT:
         case WIIUSE_UNEXPECTED_DISCONNECT:
           var.wiiConnect=0;
-          cout << "WiiMote disconnected." << endl;
+          SDL_Log("WiiMote disconnected.");
           wiiuse_cleanup(wiimotes, MAX_WIIMOTES);
         break;
       }
@@ -338,9 +338,9 @@ void controllerClass::calibrate()
       setting.JoyCalMax=calMax;
       setting.JoyCalLowJitter=calLowJitter;
       setting.JoyCalHighJitter=calHighJitter;
-      cout << "Joystick calibration report:" << endl;
-      cout << "calMin: " << calMin << endl << "calMax: " << calMax << endl;
-      cout << "lowJit: " << calLowJitter << endl << "higJit: " << calHighJitter << endl;
+      SDL_Log("Joystick calibration report:");
+      SDL_Log("calMin:%d calMax:%d", calMin, calMax);
+      SDL_Log("lowJit:%d higJit:%d", calLowJitter, calHighJitter);
       var.menuJoyCalStage++;
       writeSettings();
     break;

@@ -36,7 +36,7 @@ class powerupLoaderClass {
     ifstream powerFile(useTheme("/powerups.txt",setting.lvlTheme).data());
     if(!powerFile.is_open())
     {
-      cout << " Could not open 'powerups.txt'"<<endl;
+      SDL_Log(" Could not open 'powerups.txt'");
       var.quit=1;
       return;
     }
@@ -138,7 +138,7 @@ void loadlevel(string file, brick bricks[] ,int level)
   ifstream levelfile(file.data());
   if(!levelfile.is_open())
   {
-    cout << " Could not open " << file << endl;
+    SDL_Log(" Could not open%s", file.c_str());
     var.quit=1;
     return;
   }
@@ -203,7 +203,7 @@ void loadlevel(string file, brick bricks[] ,int level)
                 bricks[brick].tex.prop.glTexColorInfo[3] = 1.0;
                 ch +=6;
               }
-              //cout << "Level: " << levelnum  << " brick: " << brick << " Powerup: " << line[ch] << " Type: " << line[ch+1]<<"\n";
+              //SDL_Log("Level:%s brick:%s Powerup:%s Type:%s\n", levelnum, brick, line[ch], line[ch+1]);
   
               brick++;
               ch +=2;
@@ -214,7 +214,7 @@ void loadlevel(string file, brick bricks[] ,int level)
       }
     }
   }
-   cout << "Read " << var.numlevels << " levels from '"<< file <<"'"  << endl;
+   SDL_Log("Read %d levels from '%s'", var.numlevels, file.c_str());
   levelfile.close();
 }
 
@@ -264,13 +264,13 @@ void initlevels(brick bricks[], textureClass texLvl[])
 
         bricks[i].row=row;
         updated_nbrick[row][brick] = i; // This brick is active
-        //cout<<"Brick:"<< nbrick[row][brick]<<endl;
+        //SDL_Log("Brick:%d", nbrick[row][brick]);
       }  else {
         bricks[i].score=0;
         bricks[i].destroytowin=0;
         bricks[i].active=0;
         updated_nbrick[row][brick]=-1;
-       // cout<<"Brick:"<< nbrick[row][brick]<<endl;
+       // SDL_Log("Brick:%d", nbrick[row][brick]);
       }
         
 
@@ -358,5 +358,5 @@ void initlevels(brick bricks[], textureClass texLvl[])
       i++;
     }
   }
-//    cout << "Powerups given to this level: " << powerupLoader.powerupsGiven << endl;
+//    SDL_Log("Powerups given to this level:%d", powerupLoader.powerupsGiven);
 }

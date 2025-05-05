@@ -51,7 +51,7 @@ bool soundClass::init() {
   int audio_channels = 2;
   int audio_buffers = 1024;
   if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
-      cout << "Error: Could not open audio device."<<endl<<"Sound have been disabled."<<endl;
+      SDL_Log("Error: Could not open audio device.Sound have been disabled.");
       setting.sound=0;
       return(0);
   }
@@ -72,7 +72,7 @@ void soundClass::loadSample(const char *SampleName, int sampleNum)
   sample[sampleNum] = Mix_LoadWAV(useTheme(F,setting.sndTheme).data());
   if(!sample[sampleNum])
   {
-    cout << "SoundManager '"<< F <<"' : " << Mix_GetError() << endl;
+    SDL_Log("SoundManager '%s' :%s", F.c_str(), Mix_GetError());
   }
 }
 #endif

@@ -352,7 +352,7 @@ class effect_class {
       vars.active=1;
       spawn_pos=p;
       int life;
-      //cout << "Spawned effect type " << vars.type << " at " << p.x << "," << p.y << " with " << vars.life << "ms life" << endl;
+      //SDL_Log("Spawned effect type%s at%s,%s with%sms life", vars.type, p.x, p.y, vars.life);
 
       switch(vars.type)
       {
@@ -360,7 +360,7 @@ class effect_class {
           sparks = new sparkle[vars.num];
           if(sparks == NULL)
           {
-            cout << "Could not allocate " << vars.num << " sparks" << endl;
+            SDL_Log("Could not allocate %d sparks", vars.num);
             i=vars.num+10;
           }
         

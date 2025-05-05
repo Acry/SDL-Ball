@@ -106,7 +106,7 @@ bool displayClass::init(bool fullscreen, int displayToUseIn)
 
   if( (sdlWindow == NULL) ||  (glcontext == NULL))
   {
-    cout << "Error:" << SDL_GetError() << endl;
+    SDL_Log("Error:%s", SDL_GetError());
     success=0;
   }
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -117,14 +117,14 @@ bool displayClass::init(bool fullscreen, int displayToUseIn)
 
 bool displayClass::updateForMenu()
 {
-	cout << "displayClass::updateForMenu() called" << endl;
+	SDL_Log("displayClass::updateForMenu() called");
 	return 1;
 }
 
 /**@brief Method to reset our viewport after a window resize */
 void displayClass::resize(int width, int height )
 {
-	cout << "displayClass::resize() called" << endl;
+	SDL_Log("displayClass::resize() called");
 
 	/* Height / width ration */
 	GLfloat ratio;
@@ -161,5 +161,5 @@ void displayClass::resize(int width, int height )
 void displayClass::close()
 {
 	SDL_DestroyWindow(sdlWindow);
-	cout << "displayClass::close() called" << endl;
+	SDL_Log("displayClass::close() called");
 }

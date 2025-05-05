@@ -339,7 +339,7 @@ string useTheme(string path, string theme)
   {
      return(name);
   } else {
-    cout << "File Error: Could not find '" << path << "'" << endl;
+    SDL_Log("File Error: Could not find '%s'", path.c_str());
     return(name);
   }
 }
@@ -571,7 +571,7 @@ class textureManager {
 
       if(temp == NULL)
       {
-        cout << "Texture manager: " << file << " : "<< SDL_GetError() << endl;
+        SDL_Log("Texture manager:%s :%s", file.c_str(), SDL_GetError());
         SDL_FreeSurface( temp );
         return(FALSE);
       }
@@ -581,7 +581,7 @@ class textureManager {
       //Hvis større end tilladt:
       if(temp->w > maxTexSize)
       {
-        cout << "Texture manager: '" << file << "' texturesize too large." << endl;
+        SDL_Log("Texture manager: '%s' texturesize too large.", file.c_str());
         SDL_FreeSurface( temp );
         return(FALSE);
       }
@@ -674,7 +674,7 @@ class textureManager {
           {
           tex.prop.fileName = val;
           } else {
-            cout << "Error: '"<<fileName<<"'invalid setting '"<< set <<"' with value '" << val <<"'"<<endl;
+            SDL_Log("Error: '%s' invalid setting '%s' with value '%s'", fileName.c_str(), set.c_str(), val.c_str());
           }
           
         }
@@ -688,7 +688,7 @@ class textureManager {
       }
       
     } else {
-      cout << "readTexProps: Cannot open '" << fileName << "'"<<endl;
+      SDL_Log("readTexProps: Cannot open '%s'", fileName.c_str());
     }
   }
 };
@@ -2184,7 +2184,7 @@ class powerupClass : public moving_object {
 
       //grav
       yvel -= gravity*globalMilliTicks;
-      //cout << yvel << endl;
+      //SDL_Log("%s", yvel);
       posx +=xvel*globalMilliTicks;
       posy +=yvel*globalMilliTicks;
     }
@@ -2905,10 +2905,10 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
   //vi tager y først da der er mindst brikker
   if(ba.posy < br.posy+br.height+ba.height && ba.posy > br.posy-br.height-ba.height)
   {
-    //cout << " y " << endl;
+    //SDL_Log(" y ");
     if(ba.posx > br.posx-br.width-ba.width && ba.posx < br.posx+br.width+ba.width)
     {
-      //cout << " x " << endl;
+      //SDL_Log(" x ");
       for(i=0; i < 32; i++) // 32 punkter præcis
       {
 
@@ -2937,21 +2937,21 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
         if(ba.lastX-px <= br.posx-br.width && !br.n(0)) //
         {
           dirfound=1;
-       //    cout << "På venstre"<<endl;
+       //    SDL_Log("På venstre");
           dist[0] = sqrt( pow( br.posx-br.width - (ba.lastX+px), 2) + pow( (ba.posy+py) - (ba.lastY+py), 2) );
         }
 
         if(ba.lastX-px >= br.posx+br.width  && !br.n(1))
         {
           dirfound=1;
-          // cout << "På højre"<<endl;
+          // SDL_Log("På højre");
           dist[1] = sqrt( pow( br.posx+br.width - (ba.lastX+px), 2) + pow( (ba.posy+py) - (ba.lastY+py), 2) );
         }
 
         if(ba.lastY-py <= br.posy-br.height && !br.n(3))
         {
           dirfound=1;
-         // cout << "På bunden" << endl;
+         // SDL_Log("På bunden");
           dist[2] = sqrt( pow( (ba.posx+px) - (ba.lastX+px), 2) + pow( br.posy-br.height - (ba.lastY+py), 2) );
 
         }
@@ -2959,7 +2959,7 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
         if(ba.lastY-py >= br.posy+br.height && !br.n(2)) // &&
         {
           dirfound=1;
-          // cout << "På toppen"<< endl;
+          // SDL_Log("På toppen");
           dist[3] = sqrt( pow( (ba.posx+px) - (ba.lastX+px), 2) + pow( br.posy+br.height - (ba.lastY+py), 2) );
         }
 
@@ -3035,7 +3035,7 @@ void coldet(brick & br, ball &ba, pos & p, effectManager & fxMan)
             ba.setspeed(ba.velocity + difficulty.hitbrickinc[player.difficulty]);
           }
         } else {
-          cout << "Collision detection error: Don't know where the ball hit." << endl;
+          SDL_Log("Collision detection error: Don't know where the ball hit.");
         }
         br.hit(fxMan, a,b,1);
       } //collision
@@ -3348,7 +3348,7 @@ void writeSettings()
     conf << "fps="<<setting.fps<<endl;
     conf.close();
   } else {
-    cout << "Could not open ' ' for writing." << endl;
+    SDL_Log("Could not open for writing.");
   }
 }
 
@@ -3392,7 +3392,7 @@ void saveGame(int slot, string name) {
   file.open(privFile.saveGameFile.data(), ios::out | ios::in | ios::binary);
   if(!file.is_open())
   {
-    cout << "Could not open '"<<privFile.saveGameFile<<"' for Read+Write." << endl;
+    SDL_Log("Could not open '%s' for Read+Write.", privFile.saveGameFile.c_str());
   }
     
   //move to the slot, mind the header
@@ -3408,7 +3408,7 @@ void clearSaveGames()
   file.open(privFile.saveGameFile.data(), ios::out | ios::in | ios::binary);
   if(!file.is_open())
   {
-    cout << "Could not open '"<<privFile.saveGameFile<<"' for Read+Write." << endl;
+    SDL_Log("Could not open '%s' for Read+Write.", privFile.saveGameFile.c_str());
   }
   //Write the header
   const int sgHead = SAVEGAMEVERSION; //Savegame file version
@@ -3430,7 +3430,7 @@ void loadGame(int slot)
   struct savedGame game;
   file.open(privFile.saveGameFile.data(), ios::in | ios::binary);
   if(!file.is_open())
-    cout << "Could not open '" << privFile.saveGameFile << "' for Reading." << endl;
+    SDL_Log("Could not open '%s' for Reading.", privFile.saveGameFile.c_str());
 
   //first, move to the slot
   file.seekg( sizeof(int)+(sizeof(savedGame)*slot) );
@@ -3455,11 +3455,11 @@ int listSaveGames(string slotName[])
   file.open(privFile.saveGameFile.data() , ios::in | ios::binary);
   if(!file.is_open())
   {
-    cout << "Creating savegame slots in '"<<privFile.saveGameFile<<"'."<<endl;
+    SDL_Log("Creating savegame slots in '%s'.", privFile.saveGameFile.c_str());
     file.open(privFile.saveGameFile.data(), ios::out | ios::binary);
     if(!file.is_open())
     {
-      cout << "Do not have permissions to write '" << privFile.saveGameFile << "'" <<endl;
+      SDL_Log("Do not have permissions to write '%s'", privFile.saveGameFile.c_str());
       return(0);
     }
     file.close();
@@ -3468,7 +3468,7 @@ int listSaveGames(string slotName[])
     file.open(privFile.saveGameFile.data() , ios::in | ios::binary);
     if(!file.is_open())
     {
-      cout << "Could not write template."<<endl;
+      SDL_Log("Could not write template.");
       return(0);
     }
   }
@@ -3479,8 +3479,8 @@ int listSaveGames(string slotName[])
   file.read((char *)(&sgHead), sizeof(int));
   if(sgHead!=SAVEGAMEVERSION)
   {
-    cout << "Savegame format error, is v" << sgHead << " should be v'"  << SAVEGAMEVERSION << "'." << endl;
-    cout << "Overwriting old savegames..." << endl;
+    SDL_Log("Savegame format error, is v%d should be v'%d'.", sgHead, SAVEGAMEVERSION);
+    SDL_Log("Overwriting old savegames...");
     file.close();
     clearSaveGames();
 
@@ -3579,17 +3579,17 @@ bool checkDir(string & dir)
 
   if( stat(dir.data(), &st) != 0)
   {
-    cout << "Directory '" << dir << "' does not exist, ";
+    SDL_Log("Directory '%s' does not exist, ", dir.c_str());
 #ifdef WIN32
     if(CreateDirectory(dir.data(), NULL) != 0)
 #else
     if(mkdir(dir.data(), S_IRWXU | S_IRWXG) !=0)
 #endif
     {
-      cout << "could not create it." << endl;
+      SDL_Log("could not create it.");
       return(0);
     }
-    cout << "created it." << endl;
+    SDL_Log("created it.");
   }
   return(1);
 }
@@ -3621,7 +3621,7 @@ bool screenShot()
   GLubyte *px = new GLubyte[nS];
   if(px == NULL)
   {
-    cout << "Alloc err, screenshot failed." <<endl;
+    SDL_Log("Alloc err, screenshot failed.");
     return 0;
   }
   fscreen = fopen(cName,"wb");
@@ -3637,7 +3637,7 @@ bool screenShot()
   fwrite(px, sizeof(GLubyte), nS, fscreen);
   fclose(fscreen);
   delete [] px;
-  cout << "Wrote screenshot to '" << cName << "'" <<endl;
+  SDL_Log("Wrote screenshot to '%s'", cName);
   return 1;
 
 
@@ -3707,7 +3707,7 @@ int main (int argc, char *argv[]) {
 
   difficulty = static_difficulty;
 
-  cout << "SDL-Ball v " VERSION << endl;
+  SDL_Log("SDL-Ball v %s", VERSION);
 
   // default to "" (If this have a 0 len after trying to getenv, it defaults to ./)
   privFile.programRoot = ""; 
@@ -3729,7 +3729,7 @@ int main (int argc, char *argv[]) {
 
   if(privFile.programRoot.length()==0)
   {
-    cout << "Could not locate home directory defaulting to ./" << endl;
+    SDL_Log("Could not locate home directory defaulting to ./");
   } else {
 
     if( checkDir(privFile.programRoot))
@@ -3748,7 +3748,7 @@ int main (int argc, char *argv[]) {
         privFile.screenshotDir.append("/screenshots");
         if( !checkDir(privFile.screenshotDir) )
         {
-          cout << "Screenshots are saved in current directory." << endl;
+          SDL_Log("Screenshots are saved in current directory.");
           privFile.screenshotDir = "./";
         }
 
@@ -3868,13 +3868,13 @@ int main (int argc, char *argv[]) {
           maxFrameAge= (1000/setting.fps);        }
         else
         {
-          cout << "I did not understand '"<<set<<"' in settings.cfg" << endl;
+          SDL_Log("I did not understand '%s' in settings.cfg", set.c_str());
         }
       }
     }
     conf.close();
   } else {
-    cout << "No config file found, using default settings." << endl;
+    SDL_Log("No config file found, using default settings.");
   }
    soundMan.init();
    SDL_Event sdlevent;
@@ -3891,17 +3891,16 @@ int main (int argc, char *argv[]) {
   /* Handle those situations where sdl gets a void resolution */
   if(oldResX < 128 || oldResY < 96)
   {
-    cout << "SDL Reported a screen resolution below 128x96."<< endl;
-    cout << "Assuming this is a bug in SDL or driver." << endl;
-    cout << "Falling back on 128x96";
+    SDL_Log("SDL Reported a screen resolution below 128x96.");
+    SDL_Log("Assuming this is a bug in SDL or driver.");
+    SDL_Log("Falling back on 128x96");
     oldResX=128;
     oldResY=96;
     if(!setting.cfgRes[0] || !setting.cfgRes[1])
     {
       setting.fullscreen=0;
-      cout << ", windowed mode.";
+      SDL_Log(", windowed mode.");
     }
-    cout << endl;
   }
   /* The above code is not tested and might not work */
 
@@ -4432,13 +4431,13 @@ int main (int argc, char *argv[]) {
         globalTicksSinceLastDraw=0;
         globalMilliTicksSinceLastDraw=0;
       #ifdef performanceTimer
-          cout << "FrameAge:";
+          SDL_Log("FrameAge:");
       } else {
-        cout << "LoopAge:";
+        SDL_Log("LoopAge:");
       }
       gettimeofday(&timeStop, NULL);
       renderTime = timeStop.tv_usec - timeStart.tv_usec;
-      cout << renderTime << endl;
+      SDL_Log("%s", renderTime);
       #else
       }
     #endif
@@ -4543,13 +4542,13 @@ int main (int argc, char *argv[]) {
           {
         	  setting.fullscreen=0;
         	  SDL_SetWindowFullscreen(display.sdlWindow,0);
-        	  cout << "SDL_WINDOW_FULLSCREEN_DESKTOP" << endl;
+        	  SDL_Log("SDL_WINDOW_FULLSCREEN_DESKTOP");
           }
           else
           {
         	  setting.fullscreen=1;
         	  SDL_SetWindowFullscreen(display.sdlWindow,SDL_WINDOW_FULLSCREEN);
-        	  cout << "SDL_WINDOW_FULLSCREEN" << endl;
+        	  SDL_Log("SDL_WINDOW_FULLSCREEN");
           }
 
 
@@ -4563,8 +4562,8 @@ int main (int argc, char *argv[]) {
         mousey = (sdlevent.motion.y - display.currentH / 2) * display.glunits_per_ypixel * -1;
 
 #ifdef DEBUG_SHOW_MOUSE_COORDINATES
-        cout << "Mouse: " << setw(10) << mousex << "," << setw(10) << mousey;
-        cout << setw(8) << sdlevent.motion.x << "," << setw(8) << sdlevent.motion.y << endl;
+        SDL_Log("Mouse:%s%s,%s%s", setw(10), mousex, setw(10), mousey);
+        SDL_Log("%s%s,%s%s", setw(8), sdlevent.motion.x, setw(8), sdlevent.motion.y);
 #endif
         if(var.menu)
         {
@@ -4637,6 +4636,6 @@ int main (int argc, char *argv[]) {
   display.close();
   SDL_SetRelativeMouseMode(SDL_FALSE);
   SDL_Quit();
-  cout << "Thank you for playing sdl-ball ;)" << endl;
+  SDL_Log("Thank you for playing sdl-ball ;)");
   return EXIT_SUCCESS;
 }

@@ -317,7 +317,7 @@ void titleScreenClass::readDescriptions(powerupDescriptionClass po[])
     }
     f.close();
   } else {
-    cout << "Could not open powerupdescriptions"<<endl;
+    SDL_Log("Could not open powerupdescriptions");
   }
 }
 

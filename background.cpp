@@ -96,7 +96,7 @@ class backgroundClass {
       if(!l)
       {
         setting.showBg=0;
-        cout << "Backgrounds disabled." << endl;
+        SDL_Log("Backgrounds disabled.");
       }
 
       firstTexture=0;

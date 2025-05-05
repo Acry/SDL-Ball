@@ -14,33 +14,26 @@ def replace_cout_with_sdl_log(file_path):
 
         message = ''
         variables = []
-        text_complete = ''
 
         for part in parts:
             part = part.strip()
             if part.startswith('"'):
-                text_complete += part.strip('"')
+                message += part.strip('"')
             elif part.endswith('"'):
-                text_complete += part.strip('"')
-            else:
-                text_complete += '%s'
+                message += part.strip('"')
+            elif part:
                 variables.append(part)
-
-        # Entferne überflüssige %s am Ende
-        if text_complete.endswith('%s'):
-            text_complete = text_complete[:-2]
+                message = message.rstrip() + '%s'
 
         if variables:
-            return f'SDL_Log("{text_complete}", {"".join(variables)});'
+            return f'SDL_Log("{message}", {", ".join(variables)});'
         else:
-            return f'SDL_Log("{text_complete}");'
+            return f'SDL_Log("{message}");'
 
     updated_content = re.sub(pattern, replacer, content, flags=re.MULTILINE)
 
     with open(file_path, 'w') as file:
         file.write(updated_content)
-
-    print(f"`cout` wurde in {file_path} durch `SDL_Log` ersetzt.")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
