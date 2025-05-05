@@ -3876,7 +3876,7 @@ int main (int argc, char *argv[]) {
   } else {
     cout << "No config file found, using default settings." << endl;
   }
-
+   soundMan.init();
    SDL_Event sdlevent;
 
 
@@ -3919,7 +3919,7 @@ int main (int argc, char *argv[]) {
 
   glText = new glTextClass; // instantiate the class now that settings have been read.
 
-  soundMan.init();
+
 
   SDL_SetWindowIcon(display.sdlWindow,IMG_Load( useTheme("icon32.png", setting.gfxTheme).data()));
   SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
