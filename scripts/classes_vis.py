@@ -4,6 +4,7 @@ import re
 import json
 from collections import defaultdict
 
+
 def find_classes(directory='.'):
     classes = defaultdict(list)
     class_pattern = re.compile(r'class\s+(\w+)(?:\s*:\s*(?:public|private|protected)?\s*(\w+))?')
@@ -26,6 +27,7 @@ def find_classes(directory='.'):
                 except UnicodeDecodeError:
                     print(f"Fehler beim Lesen von {file_path}")
     return classes
+
 
 def generate_html(classes):
     # Konvertiere classes in JSON-Format für JavaScript
@@ -58,6 +60,27 @@ def generate_html(classes):
                 padding: 5px 10px;
                 border-radius: 3px;
                 font-size: 12px;
+            }
+              
+            .download-buttons {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                display: flex;
+                gap: 10px;
+            }
+
+            .download-btn {
+                padding: 8px 16px;
+                background: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .download-btn:hover {
+                background: #45a049;
             }
         </style>
     </head>
@@ -202,6 +225,138 @@ def generate_html(classes):
         // Zoom-Hinweis hinzufügen
         document.body.insertAdjacentHTML('beforeend',
             '<div class="zoom-info">Mausrad zum Zoomen, Ziehen zum Verschieben</div>');
+    
+            // Download-Buttons hinzufügen
+            document.body.insertAdjacentHTML('beforeend', `
+                <div class="download-buttons">
+                    <button class="download-btn" onclick="downloadSVG()">Als SVG speichern</button>
+                    <button class="download-btn" onclick="downloadPNG()">Als PNG speichern</button>
+                </div>
+            `);
+            
+        // SVG Download Funktion
+        function downloadSVG() {
+            // Kopie des SVG erstellen
+            const originalSvg = document.querySelector('svg');
+            const svgCopy = originalSvg.cloneNode(true);
+            
+            // Aktuelle Transformationen auf die Elemente anwenden
+            const g = svgCopy.querySelector('g');
+            const transform = g.getAttribute('transform');
+            if (transform) {
+                const lines = g.querySelectorAll('line');
+                const nodes = g.querySelectorAll('.node');
+                
+                // Transformationsmatrix extrahieren
+                const match = transform.match(/matrix\((.*)\)/);
+                if (match) {
+                    const [a, b, c, d, e, f] = match[1].split(',').map(Number);
+                    
+                    // Transformationen auf die Linien anwenden
+                    lines.forEach(line => {
+                        const x1 = parseFloat(line.getAttribute('x1')) * a + e;
+                        const y1 = parseFloat(line.getAttribute('y1')) * d + f;
+                        const x2 = parseFloat(line.getAttribute('x2')) * a + e;
+                        const y2 = parseFloat(line.getAttribute('y2')) * d + f;
+                        
+                        line.setAttribute('x1', x1);
+                        line.setAttribute('y1', y1);
+                        line.setAttribute('x2', x2);
+                        line.setAttribute('y2', y2);
+                    });
+                    
+                    // Transformationen auf die Knoten anwenden
+                    nodes.forEach(node => {
+                        const transform = node.getAttribute('transform');
+                        const match = transform.match(/translate\((.*?),(.*?)\)/);
+                        if (match) {
+                            const x = parseFloat(match[1]) * a + e;
+                            const y = parseFloat(match[2]) * d + f;
+                            node.setAttribute('transform', `translate(${x},${y})`);
+                        }
+                    });
+                }
+                
+                // Transformation zurücksetzen
+                g.removeAttribute('transform');
+            }
+            
+            const svgData = svgCopy.outerHTML;
+            const blob = new Blob([svgData], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'class-diagram.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+            
+        // PNG Download Funktion
+        function downloadPNG() {
+            // Zuerst SVG mit korrekten Transformationen erstellen
+            const originalSvg = document.querySelector('svg');
+            const svgCopy = originalSvg.cloneNode(true);
+            
+            // Gleiche Transformationen wie in downloadSVG anwenden
+            const g = svgCopy.querySelector('g');
+            const transform = g.getAttribute('transform');
+            if (transform) {
+                const lines = g.querySelectorAll('line');
+                const nodes = g.querySelectorAll('.node');
+                
+                const match = transform.match(/matrix\((.*)\)/);
+                if (match) {
+                    const [a, b, c, d, e, f] = match[1].split(',').map(Number);
+                    
+                    lines.forEach(line => {
+                        const x1 = parseFloat(line.getAttribute('x1')) * a + e;
+                        const y1 = parseFloat(line.getAttribute('y1')) * d + f;
+                        const x2 = parseFloat(line.getAttribute('x2')) * a + e;
+                        const y2 = parseFloat(line.getAttribute('y2')) * d + f;
+                        
+                        line.setAttribute('x1', x1);
+                        line.setAttribute('y1', y1);
+                        line.setAttribute('x2', x2);
+                        line.setAttribute('y2', y2);
+                    });
+                    
+                    nodes.forEach(node => {
+                        const transform = node.getAttribute('transform');
+                        const match = transform.match(/translate\((.*?),(.*?)\)/);
+                        if (match) {
+                            const x = parseFloat(match[1]) * a + e;
+                            const y = parseFloat(match[2]) * d + f;
+                            node.setAttribute('transform', `translate(${x},${y})`);
+                        }
+                    });
+                }
+                g.removeAttribute('transform');
+            }
+        
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const svgData = new XMLSerializer().serializeToString(svgCopy);
+            const img = new Image();
+        
+            canvas.width = svgCopy.width.baseVal.value;
+            canvas.height = svgCopy.height.baseVal.value;
+        
+            img.onload = function() {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                const a = document.createElement('a');
+                a.href = canvas.toDataURL('image/png');
+                a.download = 'class-diagram.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            };
+        
+            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+        }
         </script>
     </body>
     </html>
@@ -209,6 +364,7 @@ def generate_html(classes):
 
     with open('class_overview.html', 'w') as f:
         f.write(html)
+
 
 if __name__ == '__main__':
     print("Suche nach C++ Klassen...")
