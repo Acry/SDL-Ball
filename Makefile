@@ -1,39 +1,53 @@
-PREFIX?=/usr/local
+PREFIX?=~/.local
 
-DATADIR?=$(PREFIX)/share/games/sdl-ball/themes/
+DATADIR?=$(PREFIX)share/sdl-ball/themes/
 BINDIR?=$(PREFIX)/bin/
 
 #append -DWITH_WIIUSE to compile with WIIUSE support!
 #append -DNOSOUND to compile WITHOUT sound support
 CXX?=g++
 
-CXXFLAGS+=-Wall `sdl-config --cflags` -DDATADIR="\"$(DATADIR)\""
+COMMON_FLAGS := -Wall -Wextra -mtune=native $(shell sdl2-config --cflags)
+LDFLAGS := -lepoxy -lGLU  $(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+DEBUG_FLAGS := -ggdb -gdwarf-5 -O0 -Wall -DDEBUG -fdebug-types-section -DDATADIR="\"./../themes/\"" $(COMMON_FLAGS)
+RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)
 
-#append -lwiiuse to compile with WIIUSE support
-#remove -lSDL_mixer if compiling with -DNOSOUND
-LIBS+=-lGL -lGLU `sdl2-config --libs` -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+# directories
+BUILD_DIR := build/
+SOURCE_DIR := src/
 
-SOURCES=main.cpp display.cpp
-OBJECTS=$(SOURCES:.cpp=.o)
+SOURCES := $(addprefix $(SOURCE_DIR), display.cpp main.cpp)
+OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 
-EXECUTABLE=sdl-ball
+# Create the build directory if it doesn't exist
+$(shell mkdir -p $(BUILD_DIR))
 
-all: $(SOURCES) $(EXECUTABLE)
-	
-$(EXECUTABLE): $(OBJECTS)
-	$(CXX) $(LDFLAGS) $(OBJECTS) $(LIBS) -o $@
+TARGET=sdl-ball
 
-.cpp.o:
-	$(CXX) -c $(CXXFLAGS) $< -o $@
+.PHONY: all clean debug release install install-bin install-data remove
 
+all: release
+
+release: $(BUILD_DIR)$(TARGET)
+
+debug: $(OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)$(TARGET)
+
+$(BUILD_DIR)%.o: $(SOURCE_DIR)%.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
+$(BUILD_DIR)%.o: $(SOURCE_DIR)%.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
+.PHONY: clean
 clean:
-	rm -f *.o sdl-ball
+	@rm -rf $(BUILD_DIR) 2>/dev/null || true
 
-install: $(EXECUTABLE) install-bin install-data
+install: $(BUILD_DIR)$(TARGET) install-bin install-data
 
 install-bin:
 	mkdir -p $(DESTDIR)$(BINDIR)
-	cp $(EXECUTABLE) $(DESTDIR)$(BINDIR)
+	cp $(BUILD_DIR)$(TARGET) $(DESTDIR)$(BINDIR)
 
 install-data:
 	mkdir -p $(DESTDIR)$(DATADIR)
@@ -41,4 +55,4 @@ install-data:
 
 remove:
 	rm -R ~/.config/sdl-ball
-	
+

@@ -1,10 +1,3 @@
-/*
- * display.hpp
- *
- *  Created on: Jul 9, 2020
- *      Author: Daniel Gullberg daniel_gullberg@hotmail.com
- */
-
 #ifndef DISPLAY_HPP_
 #define DISPLAY_HPP_
 
