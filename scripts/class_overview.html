@@ -144,9 +144,16 @@
                 })
 .on("click", (event, d) => {
     try {
-        // Bei Dateien den vollen Pfad kopieren, bei Klassen den Dateinamen
-        const textToCopy = d.type === "file" ? d.id : d.file;
-        
+        // Text zum Kopieren bestimmen
+        let textToCopy;
+        if (d.type === "file") {
+            // Bei Dateien den Pfad ab "src/"
+            textToCopy = "src/" + d.id.split("/src/")[1];
+        } else {
+            // Bei Klassen den Pfad ab "src/"
+            textToCopy = "src/" + d.file.split("/src/")[1];
+        }
+
         const tempInput = document.createElement("input");
         tempInput.value = textToCopy;
         document.body.appendChild(tempInput);
@@ -173,7 +180,7 @@
             .style("z-index", "9999")
             .style("opacity", "1")
             .style("font-family", "Arial, sans-serif")
-            .text("Pfad kopiert!");
+            .text("Pfad kopiert: " + textToCopy);
 
         setTimeout(() => {
             notification.style("opacity", "0")
