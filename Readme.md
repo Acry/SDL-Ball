@@ -1,6 +1,6 @@
 # Jimmy Christensens SDL-Ball
 
-I pulled the Repository from <https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=sdl-ball>.
+I pulled the Repository via <https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=sdl-ball>.
 With sound enabled, Rendering was broken for me.
 I had to initialize the soundClass before creating the window and opengl-context.
 
