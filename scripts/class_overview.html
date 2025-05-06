@@ -47,6 +47,10 @@
             .download-btn:hover {
                 background: #45a049;
             }
+            .copy-notification {
+                z-index: 1000;
+                font-size: 14px;
+            }
         </style>
     </head>
     <body>
@@ -138,6 +142,45 @@
                         .duration(500)
                         .style("opacity", 0);
                 })
+.on("click", (event, d) => {
+    if (d.type === "file") {
+        try {
+            // Temporäres Input-Element erstellen
+            const tempInput = document.createElement("input");
+            tempInput.value = d.id;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            // Visuelle Bestätigung
+            const notification = d3.select("body")
+                .append("div")
+                .attr("class", "copy-notification")
+                .style("position", "fixed")
+                .style("bottom", "20px")
+                .style("left", "50%")
+                .style("transform", "translateX(-50%)")
+                .style("background", "rgba(0,0,0,0.8)")
+                .style("color", "white")
+                .style("padding", "8px 16px")
+                .style("border-radius", "4px")
+                .style("pointer-events", "none")
+                .style("opacity", "1")
+                .text("Pfad kopiert: " + d.id);
+
+            // Nach 2 Sekunden ausblenden
+            setTimeout(() => {
+                notification.transition()
+                    .duration(500)
+                    .style("opacity", "0")
+                    .remove();
+            }, 2000);
+        } catch (err) {
+            console.error('Fehler beim Kopieren:', err);
+        }
+    }
+})
                 .call(d3.drag()
                     .on("start", dragstarted)
                     .on("drag", dragged)
