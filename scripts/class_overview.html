@@ -187,6 +187,7 @@
             event.subject.fx = null;
             event.subject.fy = null;
         }
+
         // Zoom-Hinweis hinzufügen
         document.body.insertAdjacentHTML('beforeend',
             '<div class="zoom-info">Mausrad zum Zoomen, Ziehen zum Verschieben</div>');
@@ -199,115 +200,64 @@
                 </div>
             `);
             
-        // SVG Download Funktion
-        function downloadSVG() {
-            // Kopie des SVG erstellen
-            const originalSvg = document.querySelector('svg');
-            const svgCopy = originalSvg.cloneNode(true);
-            
-            // Aktuelle Transformationen auf die Elemente anwenden
-            const g = svgCopy.querySelector('g');
-            const transform = g.getAttribute('transform');
-            if (transform) {
-                const lines = g.querySelectorAll('line');
-                const nodes = g.querySelectorAll('.node');
-                
-                // Transformationsmatrix extrahieren
-                const match = transform.match(/matrix\((.*)\)/);
-                if (match) {
-                    const [a, b, c, d, e, f] = match[1].split(',').map(Number);
-                    
-                    // Transformationen auf die Linien anwenden
-                    lines.forEach(line => {
-                        const x1 = parseFloat(line.getAttribute('x1')) * a + e;
-                        const y1 = parseFloat(line.getAttribute('y1')) * d + f;
-                        const x2 = parseFloat(line.getAttribute('x2')) * a + e;
-                        const y2 = parseFloat(line.getAttribute('y2')) * d + f;
-                        
-                        line.setAttribute('x1', x1);
-                        line.setAttribute('y1', y1);
-                        line.setAttribute('x2', x2);
-                        line.setAttribute('y2', y2);
-                    });
-                    
-                    // Transformationen auf die Knoten anwenden
-                    nodes.forEach(node => {
-                        const transform = node.getAttribute('transform');
-                        const match = transform.match(/translate\((.*?),(.*?)\)/);
-                        if (match) {
-                            const x = parseFloat(match[1]) * a + e;
-                            const y = parseFloat(match[2]) * d + f;
-                            node.setAttribute('transform', `translate(${x},${y})`);
-                        }
-                    });
-                }
-                
-                // Transformation zurücksetzen
-                g.removeAttribute('transform');
-            }
-            
-            const svgData = svgCopy.outerHTML;
-            const blob = new Blob([svgData], {type: 'image/svg+xml'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'class-diagram.svg';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-            
-        // PNG Download Funktion
-        function downloadPNG() {
-            // Zuerst SVG mit korrekten Transformationen erstellen
-            const originalSvg = document.querySelector('svg');
-            const svgCopy = originalSvg.cloneNode(true);
-            
-            // Gleiche Transformationen wie in downloadSVG anwenden
-            const g = svgCopy.querySelector('g');
-            const transform = g.getAttribute('transform');
-            if (transform) {
-                const lines = g.querySelectorAll('line');
-                const nodes = g.querySelectorAll('.node');
-                
-                const match = transform.match(/matrix\((.*)\)/);
-                if (match) {
-                    const [a, b, c, d, e, f] = match[1].split(',').map(Number);
-                    
-                    lines.forEach(line => {
-                        const x1 = parseFloat(line.getAttribute('x1')) * a + e;
-                        const y1 = parseFloat(line.getAttribute('y1')) * d + f;
-                        const x2 = parseFloat(line.getAttribute('x2')) * a + e;
-                        const y2 = parseFloat(line.getAttribute('y2')) * d + f;
-                        
-                        line.setAttribute('x1', x1);
-                        line.setAttribute('y1', y1);
-                        line.setAttribute('x2', x2);
-                        line.setAttribute('y2', y2);
-                    });
-                    
-                    nodes.forEach(node => {
-                        const transform = node.getAttribute('transform');
-                        const match = transform.match(/translate\((.*?),(.*?)\)/);
-                        if (match) {
-                            const x = parseFloat(match[1]) * a + e;
-                            const y = parseFloat(match[2]) * d + f;
-                            node.setAttribute('transform', `translate(${x},${y})`);
-                        }
-                    });
-                }
-                g.removeAttribute('transform');
-            }
+function downloadSVG() {
+    const svgElement = document.querySelector('svg');
+    const gElement = svgElement.querySelector('g');
+
+    // SVG-Kopie erstellen
+    const svgCopy = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const gCopy = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+    // Style-Element hinzufügen
+    const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+    style.textContent = `
+        .node { cursor: pointer; }
+        .link { stroke: #999; stroke-opacity: 0.6; }
+        .file { font-weight: bold; fill: #333; }
+        .class { fill: #666; }
+        circle { fill: #1f77b4; }
+        .node circle[r="8"] { fill: #ff7f0e; }
+    `;
+    svgCopy.appendChild(style);
+
+    // SVG-Attribute kopieren
+    svgCopy.setAttribute("width", svgElement.getAttribute("width"));
+    svgCopy.setAttribute("height", svgElement.getAttribute("height"));
+    
+    // ViewBox setzen basierend auf der aktuellen Transformation
+    const transform = gElement.getAttribute("transform");
+    if (transform) {
+        const matrix = new DOMMatrix(transform);
+        const width = svgElement.width.baseVal.value;
+        const height = svgElement.height.baseVal.value;
+        svgCopy.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    }
+
+    // Komplettes G-Element mit allem Inhalt kopieren
+    const gClone = gElement.cloneNode(true);
+    svgCopy.appendChild(gClone);
+
+    // SVG speichern
+    const svgData = new XMLSerializer().serializeToString(svgCopy);
+    const blob = new Blob([svgData], {type: 'image/svg+xml'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'class-diagram.svg';
+    a.click();
+    URL.revokeObjectURL(url);
+}
         
+        function downloadPNG() {
+            const svgElement = document.querySelector('svg');
+            const svgData = new XMLSerializer().serializeToString(svgElement);
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            const svgData = new XMLSerializer().serializeToString(svgCopy);
+            
+            canvas.width = svgElement.width.baseVal.value;
+            canvas.height = svgElement.height.baseVal.value;
+            
             const img = new Image();
-        
-            canvas.width = svgCopy.width.baseVal.value;
-            canvas.height = svgCopy.height.baseVal.value;
-        
             img.onload = function() {
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -315,13 +265,11 @@
                 const a = document.createElement('a');
                 a.href = canvas.toDataURL('image/png');
                 a.download = 'class-diagram.png';
-                document.body.appendChild(a);
                 a.click();
-                document.body.removeChild(a);
             };
-        
+            
             img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
-        }
+            }
         </script>
     </body>
     </html>
