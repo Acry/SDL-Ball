@@ -156,16 +156,5 @@ fetch('data/classes.json')
         event.subject.fx = null;
         event.subject.fy = null;
     }
-
-    // Zoom-Hinweis hinzufügen
-    document.body.insertAdjacentHTML('beforeend',
-        '<div class="zoom-info">Mausrad zum Zoomen, Ziehen zum Verschieben</div>');
-
-    document.body.insertAdjacentHTML('beforeend', `
-        <div class="download-buttons">
-            <button class="download-btn" onclick="downloadSVG()">Als SVG speichern</button>
-            <button class="download-btn" onclick="downloadPNG()">Als PNG speichern</button>
-        </div>
-    `);
 })
 .catch(error => console.error('Fehler beim Laden der JSON-Daten:', error));

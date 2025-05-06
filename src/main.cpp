@@ -19,13 +19,6 @@
 
 #include <dirent.h>
 
-#ifdef WIN32
-  #define _OBJC_NO_COM
-  #include <windows.h>
-  #include <GL/glext.h>
-#endif
-
-//WIN32
 #ifndef DATADIR
   #define DATADIR "themes/"
 #endif
