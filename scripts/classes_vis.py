@@ -182,42 +182,46 @@ def generate_html(classes):
                         .style("opacity", 0);
                 })
 .on("click", (event, d) => {
-    if (d.type === "file") {
-        try {
-            // Temporäres Input-Element erstellen
-            const tempInput = document.createElement("input");
-            tempInput.value = d.id;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
+    try {
+        // Bei Dateien den vollen Pfad kopieren, bei Klassen den Dateinamen
+        const textToCopy = d.type === "file" ? d.id : d.file;
+        
+        const tempInput = document.createElement("input");
+        tempInput.value = textToCopy;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
 
-            // Visuelle Bestätigung
-            const notification = d3.select("body")
-                .append("div")
-                .attr("class", "copy-notification")
-                .style("position", "fixed")
-                .style("bottom", "20px")
-                .style("left", "50%")
-                .style("transform", "translateX(-50%)")
-                .style("background", "rgba(0,0,0,0.8)")
-                .style("color", "white")
-                .style("padding", "8px 16px")
-                .style("border-radius", "4px")
-                .style("pointer-events", "none")
-                .style("opacity", "1")
-                .text("Pfad kopiert: " + d.id);
+        // Bestehende Benachrichtigungen entfernen
+        d3.selectAll(".copy-notification").remove();
 
-            // Nach 2 Sekunden ausblenden
-            setTimeout(() => {
-                notification.transition()
-                    .duration(500)
-                    .style("opacity", "0")
-                    .remove();
-            }, 2000);
-        } catch (err) {
-            console.error('Fehler beim Kopieren:', err);
-        }
+        // Neue Benachrichtigung erstellen
+        const notification = d3.select("body")
+            .append("div")
+            .attr("class", "copy-notification")
+            .style("position", "fixed")
+            .style("bottom", "20px")
+            .style("left", "50%")
+            .style("transform", "translateX(-50%)")
+            .style("background", "rgba(0,0,0,0.8)")
+            .style("color", "white")
+            .style("padding", "8px 16px")
+            .style("border-radius", "4px")
+            .style("pointer-events", "none")
+            .style("z-index", "9999")
+            .style("opacity", "1")
+            .style("font-family", "Arial, sans-serif")
+            .text("Pfad kopiert!");
+
+        setTimeout(() => {
+            notification.style("opacity", "0")
+                .style("transition", "opacity 0.5s ease-in-out");
+            setTimeout(() => notification.remove(), 500);
+        }, 2000);
+
+    } catch (err) {
+        console.error('Fehler beim Kopieren:', err);
     }
 })
                 .call(d3.drag()
