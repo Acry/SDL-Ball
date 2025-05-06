@@ -28,7 +28,7 @@ public:
 
 
         glColor4f(1, 1, 1, 1);
-        glText->write(name, FONT_MENUHIGHSCORE, 1, 2.0, 0.0, 0.0);
+        glText->write(name, FONT_MENUHIGHSCORE, true, 2.0, 0.0, 0.0);
     }
 
     void type(const SDL_Event &e, menuClass &menu) {
