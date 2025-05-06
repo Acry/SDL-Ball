@@ -17,16 +17,8 @@
 #define HARD   2
 
 // Dateipfade und Verzeichnisse
-#define CONFIG_FILE         "config.cfg"
+#define CONFIG_FILE        "config.cfg"
 #define SAVEGAME_FILE      "savegame.sav"
 #define HIGHSCORE_FILE     "highscores.txt"
 #define SCREENSHOT_DIR     "screenshots"
 
-// Verzeichnispfade relativ zum Programm-Root
-#define CONFIG_PATH        "/" GAME_NAME "/" CONFIG_FILE
-#define SAVEGAME_PATH     "/" GAME_NAME "/" SAVEGAME_FILE
-#define HIGHSCORE_PATH    "/" GAME_NAME "/" HIGHSCORE_FILE
-#define SCREENSHOT_PATH   "/" GAME_NAME "/" SCREENSHOT_DIR
-
-// Hilfs-Makros zum Zusammensetzen der vollständigen Pfade
-#define MAKE_PATH(root, path) ((root) + (path))

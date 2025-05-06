@@ -56,3 +56,17 @@ install-data:
 remove:
 	rm -R ~/.config/sdl-ball
 
+# Test targets
+CONFIG_TEST_SOURCES := $(SOURCE_DIR)config_file_test.cpp $(SOURCE_DIR)config_file.cpp
+CONFIG_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CONFIG_TEST_SOURCES:.cpp=.o)))
+
+config-test: $(CONFIG_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(CONFIG_TEST_OBJECTS) -o $(BUILD_DIR)config-test
+
+# Spezielle Regel für die Test-Objekte
+$(BUILD_DIR)config_file_test.o: $(SOURCE_DIR)config_file_test.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
+$(BUILD_DIR)config_file.o: $(SOURCE_DIR)config_file.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+

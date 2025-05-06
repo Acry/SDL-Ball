@@ -4305,13 +4305,13 @@ int main (int argc, char *argv[]) {
 
         if(player.powerup[PO_EASYBRICK])
         {
-          player.powerup[PO_EASYBRICK]=0;
+          player.powerup[PO_EASYBRICK]=false;
           easyBrick(bricks);
         }
 
         if(player.powerup[PO_NEXTLEVEL])
         {
-          player.powerup[PO_NEXTLEVEL]=0;
+          player.powerup[PO_NEXTLEVEL]=false;
           gVar.nextlevel=1;
           var.paused=1;
         }
