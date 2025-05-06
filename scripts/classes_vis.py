@@ -292,40 +292,22 @@ function downloadPNG() {
     `;
     svgCopy.appendChild(style);
 
-    // Aktuelle Transformation extrahieren
-    const transform = gElement.getAttribute("transform");
-    const match = transform ? transform.match(/translate\(([-\d.]+),([-\d.]+)\)\s*scale\(([-\d.]+)\)/) : null;
-    
-    // BBox des Original-Elements
-    const bbox = gElement.getBBox();
+    // Originalgröße und Transform beibehalten
+    svgCopy.setAttribute("width", svgElement.getAttribute("width"));
+    svgCopy.setAttribute("height", svgElement.getAttribute("height"));
 
-    // SVG-Dimensionen setzen
-    const width = svgElement.width.baseVal.value;
-    const height = svgElement.height.baseVal.value;
-    svgCopy.setAttribute("width", width);
-    svgCopy.setAttribute("height", height);
-
-    // ViewBox setzen basierend auf BBox und Transform
-    if (match) {
-        const tx = parseFloat(match[1]);
-        const ty = parseFloat(match[2]);
-        const scale = parseFloat(match[3]);
-        const viewBoxX = (-tx / scale);
-        const viewBoxY = (-ty / scale);
-        const viewBoxWidth = width / scale;
-        const viewBoxHeight = height / scale;
-        svgCopy.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`);
-    }
-
-    // Inhalt ohne Transform kopieren
+    // Inhalt kopieren und Transform beibehalten
     const gCopy = gElement.cloneNode(true);
-    gCopy.removeAttribute("transform");
     svgCopy.appendChild(gCopy);
 
     // PNG erzeugen
     const svgData = new XMLSerializer().serializeToString(svgCopy);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
+
+    // Original-Dimensionen verwenden
+    const width = svgElement.width.baseVal.value;
+    const height = svgElement.height.baseVal.value;
 
     // Höhere Auflösung für bessere Qualität
     const scale_factor = 2;
