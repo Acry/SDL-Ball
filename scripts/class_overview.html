@@ -244,7 +244,6 @@ function downloadPNG() {
 
     // SVG-Kopie erstellen
     const svgCopy = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    const gCopy = gElement.cloneNode(true);
 
     // Style hinzufügen
     const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
@@ -258,20 +257,34 @@ function downloadPNG() {
     `;
     svgCopy.appendChild(style);
 
-    // ViewBox und Größe setzen
+    // Aktuelle Transformation extrahieren
+    const transform = gElement.getAttribute("transform");
+    const match = transform ? transform.match(/translate\(([-\d.]+),([-\d.]+)\)\s*scale\(([-\d.]+)\)/) : null;
+    
+    // BBox des Original-Elements
     const bbox = gElement.getBBox();
-    const transform = gElement.getAttribute("transform") || "matrix(1, 0, 0, 1, 0, 0)";
-    const matrix = new DOMMatrix(transform);
-    const scale = matrix.a || 1;  // Fallback auf 1 wenn keine Skalierung
 
-    // Skalierte Dimensionen
-    const width = Math.max(bbox.width * scale, svgElement.width.baseVal.value);
-    const height = Math.max(bbox.height * scale, svgElement.height.baseVal.value);
-
+    // SVG-Dimensionen setzen
+    const width = svgElement.width.baseVal.value;
+    const height = svgElement.height.baseVal.value;
     svgCopy.setAttribute("width", width);
     svgCopy.setAttribute("height", height);
-    svgCopy.setAttribute("viewBox", `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
 
+    // ViewBox setzen basierend auf BBox und Transform
+    if (match) {
+        const tx = parseFloat(match[1]);
+        const ty = parseFloat(match[2]);
+        const scale = parseFloat(match[3]);
+        const viewBoxX = (-tx / scale);
+        const viewBoxY = (-ty / scale);
+        const viewBoxWidth = width / scale;
+        const viewBoxHeight = height / scale;
+        svgCopy.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`);
+    }
+
+    // Inhalt ohne Transform kopieren
+    const gCopy = gElement.cloneNode(true);
+    gCopy.removeAttribute("transform");
     svgCopy.appendChild(gCopy);
 
     // PNG erzeugen
