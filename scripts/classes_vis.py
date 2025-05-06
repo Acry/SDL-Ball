@@ -241,7 +241,6 @@ function downloadSVG() {
 
     // SVG-Kopie erstellen
     const svgCopy = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    const gCopy = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
     // Style-Element hinzufügen
     const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
@@ -255,24 +254,12 @@ function downloadSVG() {
     `;
     svgCopy.appendChild(style);
 
-    // Transform-String parsen und in Matrix-Format umwandeln
-    const transform = gElement.getAttribute("transform");
-    if (transform) {
-        const match = transform.match(/translate\(([-\d.]+),([-\d.]+)\)\s*scale\(([-\d.]+)\)/);
-        if (match) {
-            const [_, tx, ty, scale] = match.map(Number);
-            const matrixTransform = `matrix(${scale},0,0,${scale},${tx},${ty})`;
-            gCopy.setAttribute("transform", matrixTransform);
-        }
-    }
-
-    // SVG-Attribute kopieren
+    // Originalgröße und Transform beibehalten
     svgCopy.setAttribute("width", svgElement.getAttribute("width"));
     svgCopy.setAttribute("height", svgElement.getAttribute("height"));
-
-    // Komplettes G-Element mit allem Inhalt kopieren
-    const nodes = gElement.cloneNode(true);
-    gCopy.appendChild(nodes);
+    
+    // Inhalt kopieren und Transform beibehalten
+    const gCopy = gElement.cloneNode(true);
     svgCopy.appendChild(gCopy);
 
     // SVG speichern
