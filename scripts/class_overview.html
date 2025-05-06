@@ -58,6 +58,7 @@
             <h2>Gefundene Klassen: 41</h2>
             <div id="graph"></div>
         </div>
+        <script src="classes_viz/js/clipboardUtils.js"></script>
         <script>
             const data = {"/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/highscores.cpp": [{"name": "highScoreClass", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/sound.cpp": [{"name": "soundClass", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/menu.cpp": [{"name": "menuClass", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/loadlevel.cpp": [{"name": "powerupLoaderClass", "base": null}, {"name": "i", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/scoreboard.cpp": [{"name": "glScoreBoard", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/background.cpp": [{"name": "backgroundClass", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/declerations.h": [{"name": "effectManager", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/input.cpp": [{"name": "controllerClass", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/title.cpp": [{"name": "powerupDescriptionClass", "base": "moving_object"}, {"name": "titleScreenClass", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/effects.cpp": [{"name": "transit_effect_class", "base": null}, {"name": "sparkle", "base": null}, {"name": "particleFieldClass", "base": null}, {"name": "effect_class", "base": null}, {"name": "transit", "base": null}, {"name": "effectManager", "base": null}, {"name": "tempEffect", "base": null}, {"name": "glAnnounceMessageClass", "base": null}, {"name": "glAnnounceTextClass", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/display.hpp": [{"name": "displayClass", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/text.cpp": [{"name": "glTextClass", "base": null}], "/home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball-123/src/main.cpp": [{"name": "ball", "base": null}, {"name": "paddle_class", "base": null}, {"name": "textureClass", "base": null}, {"name": "textureManager", "base": null}, {"name": "object", "base": null}, {"name": "paddle_class", "base": "object"}, {"name": "brick", "base": null}, {"name": "brick", "base": "object"}, {"name": "moving_object", "base": "object"}, {"name": "bulletsClass", "base": null}, {"name": "tracer", "base": null}, {"name": "ball", "base": "moving_object"}, {"name": "ballManager", "base": null}, {"name": "powerupClass", "base": "moving_object"}, {"name": "powerupManager", "base": null}, {"name": "hudClass", "base": null}, {"name": "speedometerClass", "base": null}, {"name": "now", "base": null}, {"name": "paddle", "base": null}]};
             
@@ -143,50 +144,21 @@
                         .style("opacity", 0);
                 })
 .on("click", (event, d) => {
+    // ClipboardUtils initialisieren
+    const { copyToClipboard, showNotification } = createClipboardUtils();
+    
     try {
         // Text zum Kopieren bestimmen
         let textToCopy;
         if (d.type === "file") {
-            // Bei Dateien den Pfad ab "src/"
             textToCopy = "src/" + d.id.split("/src/")[1];
         } else {
-            // Bei Klassen den Pfad ab "src/"
             textToCopy = "src/" + d.file.split("/src/")[1];
         }
 
-        const tempInput = document.createElement("input");
-        tempInput.value = textToCopy;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand("copy");
-        document.body.removeChild(tempInput);
-
-        // Bestehende Benachrichtigungen entfernen
-        d3.selectAll(".copy-notification").remove();
-
-        // Neue Benachrichtigung erstellen
-        const notification = d3.select("body")
-            .append("div")
-            .attr("class", "copy-notification")
-            .style("position", "fixed")
-            .style("bottom", "20px")
-            .style("left", "50%")
-            .style("transform", "translateX(-50%)")
-            .style("background", "rgba(0,0,0,0.8)")
-            .style("color", "white")
-            .style("padding", "8px 16px")
-            .style("border-radius", "4px")
-            .style("pointer-events", "none")
-            .style("z-index", "9999")
-            .style("opacity", "1")
-            .style("font-family", "Arial, sans-serif")
-            .text("Pfad kopiert: " + textToCopy);
-
-        setTimeout(() => {
-            notification.style("opacity", "0")
-                .style("transition", "opacity 0.5s ease-in-out");
-            setTimeout(() => notification.remove(), 500);
-        }, 2000);
+        // Clipboard-Funktionen nutzen
+        copyToClipboard(textToCopy);
+        showNotification(textToCopy);
 
     } catch (err) {
         console.error('Fehler beim Kopieren:', err);

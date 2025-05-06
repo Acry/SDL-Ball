@@ -97,6 +97,7 @@ def generate_html(classes):
             <h2>Gefundene Klassen: ''' + str(sum(len(c) for c in classes.values())) + '''</h2>
             <div id="graph"></div>
         </div>
+        <script src="classes_viz/js/clipboardUtils.js"></script>
         <script>
             const data = ''' + json_data + ''';
             
@@ -181,60 +182,31 @@ def generate_html(classes):
                         .duration(500)
                         .style("opacity", 0);
                 })
-.on("click", (event, d) => {
-    try {
-        // Text zum Kopieren bestimmen
-        let textToCopy;
-        if (d.type === "file") {
-            // Bei Dateien den Pfad ab "src/"
-            textToCopy = "src/" + d.id.split("/src/")[1];
-        } else {
-            // Bei Klassen den Pfad ab "src/"
-            textToCopy = "src/" + d.file.split("/src/")[1];
-        }
-
-        const tempInput = document.createElement("input");
-        tempInput.value = textToCopy;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand("copy");
-        document.body.removeChild(tempInput);
-
-        // Bestehende Benachrichtigungen entfernen
-        d3.selectAll(".copy-notification").remove();
-
-        // Neue Benachrichtigung erstellen
-        const notification = d3.select("body")
-            .append("div")
-            .attr("class", "copy-notification")
-            .style("position", "fixed")
-            .style("bottom", "20px")
-            .style("left", "50%")
-            .style("transform", "translateX(-50%)")
-            .style("background", "rgba(0,0,0,0.8)")
-            .style("color", "white")
-            .style("padding", "8px 16px")
-            .style("border-radius", "4px")
-            .style("pointer-events", "none")
-            .style("z-index", "9999")
-            .style("opacity", "1")
-            .style("font-family", "Arial, sans-serif")
-            .text("Pfad kopiert: " + textToCopy);
-
-        setTimeout(() => {
-            notification.style("opacity", "0")
-                .style("transition", "opacity 0.5s ease-in-out");
-            setTimeout(() => notification.remove(), 500);
-        }, 2000);
-
-    } catch (err) {
-        console.error('Fehler beim Kopieren:', err);
-    }
-})
-                .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended));
+            .on("click", (event, d) => {
+                // ClipboardUtils initialisieren
+                const { copyToClipboard, showNotification } = createClipboardUtils();
+                
+                try {
+                    // Text zum Kopieren bestimmen
+                    let textToCopy;
+                    if (d.type === "file") {
+                        textToCopy = "src/" + d.id.split("/src/")[1];
+                    } else {
+                        textToCopy = "src/" + d.file.split("/src/")[1];
+                    }
+            
+                    // Clipboard-Funktionen nutzen
+                    copyToClipboard(textToCopy);
+                    showNotification(textToCopy);
+            
+                } catch (err) {
+                    console.error('Fehler beim Kopieren:', err);
+                }
+            })
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
             
             node.append("circle")
                 .attr("r", d => d.type === "file" ? 8 : 5)
@@ -253,139 +225,139 @@ def generate_html(classes):
             simulation.force("link")
                 .links(links);
 
-        function ticked() {
-            link
-                .attr("x1", d => d.source.x)
-                .attr("y1", d => d.source.y)
-                .attr("x2", d => d.target.x)
-                .attr("y2", d => d.target.y);
-
-            node
-                .attr("transform", d => `translate(${d.x},${d.y})`);
-        }
-
-        function dragstarted(event) {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            event.subject.fx = event.subject.x;
-            event.subject.fy = event.subject.y;
-        }
-
-        function dragged(event) {
-            event.subject.fx = event.x;
-            event.subject.fy = event.y;
-        }
-
-        function dragended(event) {
-            if (!event.active) simulation.alphaTarget(0);
-            event.subject.fx = null;
-            event.subject.fy = null;
-        }
-
-        // Zoom-Hinweis hinzufügen
-        document.body.insertAdjacentHTML('beforeend',
-            '<div class="zoom-info">Mausrad zum Zoomen, Ziehen zum Verschieben</div>');
+            function ticked() {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
     
-            // Download-Buttons hinzufügen
-            document.body.insertAdjacentHTML('beforeend', `
-                <div class="download-buttons">
-                    <button class="download-btn" onclick="downloadSVG()">Als SVG speichern</button>
-                    <button class="download-btn" onclick="downloadPNG()">Als PNG speichern</button>
-                </div>
-            `);
-            
-function downloadSVG() {
-    const svgElement = document.querySelector('svg');
-    const gElement = svgElement.querySelector('g');
-
-    // SVG-Kopie erstellen
-    const svgCopy = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-
-    // Style-Element hinzufügen
-    const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
-    style.textContent = `
-        .node { cursor: pointer; }
-        .link { stroke: #999; stroke-opacity: 0.6; }
-        .file { font-weight: bold; fill: #333; }
-        .class { fill: #666; }
-        circle { fill: #1f77b4; }
-        .node circle[r="8"] { fill: #ff7f0e; }
-    `;
-    svgCopy.appendChild(style);
-
-    // Originalgröße und Transform beibehalten
-    svgCopy.setAttribute("width", svgElement.getAttribute("width"));
-    svgCopy.setAttribute("height", svgElement.getAttribute("height"));
+                node
+                    .attr("transform", d => `translate(${d.x},${d.y})`);
+            }
     
-    // Inhalt kopieren und Transform beibehalten
-    const gCopy = gElement.cloneNode(true);
-    svgCopy.appendChild(gCopy);
-
-    // SVG speichern
-    const svgData = new XMLSerializer().serializeToString(svgCopy);
-    const blob = new Blob([svgData], {type: 'image/svg+xml'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'class-diagram.svg';
-    a.click();
-    URL.revokeObjectURL(url);
-}
+            function dragstarted(event) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                event.subject.fx = event.subject.x;
+                event.subject.fy = event.subject.y;
+            }
+    
+            function dragged(event) {
+                event.subject.fx = event.x;
+                event.subject.fy = event.y;
+            }
+    
+            function dragended(event) {
+                if (!event.active) simulation.alphaTarget(0);
+                event.subject.fx = null;
+                event.subject.fy = null;
+            }
+    
+            // Zoom-Hinweis hinzufügen
+            document.body.insertAdjacentHTML('beforeend',
+                '<div class="zoom-info">Mausrad zum Zoomen, Ziehen zum Verschieben</div>');
         
-function downloadPNG() {
-    const svgElement = document.querySelector('svg');
-    const gElement = svgElement.querySelector('g');
-
-    // SVG-Kopie erstellen
-    const svgCopy = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-
-    // Style hinzufügen
-    const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
-    style.textContent = `
-        .node { cursor: pointer; }
-        .link { stroke: #999; stroke-opacity: 0.6; }
-        .file { font-weight: bold; fill: #333; }
-        .class { fill: #666; }
-        circle { fill: #1f77b4; }
-        .node circle[r="8"] { fill: #ff7f0e; }
-    `;
-    svgCopy.appendChild(style);
-
-    // Originalgröße und Transform beibehalten
-    svgCopy.setAttribute("width", svgElement.getAttribute("width"));
-    svgCopy.setAttribute("height", svgElement.getAttribute("height"));
-
-    // Inhalt kopieren und Transform beibehalten
-    const gCopy = gElement.cloneNode(true);
-    svgCopy.appendChild(gCopy);
-
-    // PNG erzeugen
-    const svgData = new XMLSerializer().serializeToString(svgCopy);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    // Original-Dimensionen verwenden
-    const width = svgElement.width.baseVal.value;
-    const height = svgElement.height.baseVal.value;
-
-    // Höhere Auflösung für bessere Qualität
-    const scale_factor = 2;
-    canvas.width = width * scale_factor;
-    canvas.height = height * scale_factor;
-    ctx.scale(scale_factor, scale_factor);
-
-    const img = new Image();
-    img.onload = function() {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, width, height);
-        ctx.drawImage(img, 0, 0, width, height);
-        const a = document.createElement('a');
-        a.href = canvas.toDataURL('image/png');
-        a.download = 'class-diagram.png';
-        a.click();
-    };
-
-    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
-}
+                // Download-Buttons hinzufügen
+                document.body.insertAdjacentHTML('beforeend', `
+                    <div class="download-buttons">
+                        <button class="download-btn" onclick="downloadSVG()">Als SVG speichern</button>
+                        <button class="download-btn" onclick="downloadPNG()">Als PNG speichern</button>
+                    </div>
+                `);
+            
+            function downloadSVG() {
+                const svgElement = document.querySelector('svg');
+                const gElement = svgElement.querySelector('g');
+            
+                // SVG-Kopie erstellen
+                const svgCopy = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            
+                // Style-Element hinzufügen
+                const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+                style.textContent = `
+                    .node { cursor: pointer; }
+                    .link { stroke: #999; stroke-opacity: 0.6; }
+                    .file { font-weight: bold; fill: #333; }
+                    .class { fill: #666; }
+                    circle { fill: #1f77b4; }
+                    .node circle[r="8"] { fill: #ff7f0e; }
+                `;
+                svgCopy.appendChild(style);
+            
+                // Originalgröße und Transform beibehalten
+                svgCopy.setAttribute("width", svgElement.getAttribute("width"));
+                svgCopy.setAttribute("height", svgElement.getAttribute("height"));
+                
+                // Inhalt kopieren und Transform beibehalten
+                const gCopy = gElement.cloneNode(true);
+                svgCopy.appendChild(gCopy);
+            
+                // SVG speichern
+                const svgData = new XMLSerializer().serializeToString(svgCopy);
+                const blob = new Blob([svgData], {type: 'image/svg+xml'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'class-diagram.svg';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        
+            function downloadPNG() {
+                const svgElement = document.querySelector('svg');
+                const gElement = svgElement.querySelector('g');
+            
+                // SVG-Kopie erstellen
+                const svgCopy = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            
+                // Style hinzufügen
+                const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+                style.textContent = `
+                    .node { cursor: pointer; }
+                    .link { stroke: #999; stroke-opacity: 0.6; }
+                    .file { font-weight: bold; fill: #333; }
+                    .class { fill: #666; }
+                    circle { fill: #1f77b4; }
+                    .node circle[r="8"] { fill: #ff7f0e; }
+                `;
+                svgCopy.appendChild(style);
+            
+                // Originalgröße und Transform beibehalten
+                svgCopy.setAttribute("width", svgElement.getAttribute("width"));
+                svgCopy.setAttribute("height", svgElement.getAttribute("height"));
+            
+                // Inhalt kopieren und Transform beibehalten
+                const gCopy = gElement.cloneNode(true);
+                svgCopy.appendChild(gCopy);
+            
+                // PNG erzeugen
+                const svgData = new XMLSerializer().serializeToString(svgCopy);
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+            
+                // Original-Dimensionen verwenden
+                const width = svgElement.width.baseVal.value;
+                const height = svgElement.height.baseVal.value;
+            
+                // Höhere Auflösung für bessere Qualität
+                const scale_factor = 2;
+                canvas.width = width * scale_factor;
+                canvas.height = height * scale_factor;
+                ctx.scale(scale_factor, scale_factor);
+            
+                const img = new Image();
+                img.onload = function() {
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, width, height);
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const a = document.createElement('a');
+                    a.href = canvas.toDataURL('image/png');
+                    a.download = 'class-diagram.png';
+                    a.click();
+                };
+            
+                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+            }
         </script>
     </body>
     </html>
