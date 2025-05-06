@@ -4,15 +4,32 @@
     <meta charset="UTF-8">
     <title>C++ Klassenübersicht</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <div class="container">
-        <h2>C++ Klassenübersicht</h2>
-        <div id="graph"></div>
-    </div>
-    <script src="js/clipboardUtils.js"></script>
-    <script src="js/downloadUtils.js"></script>
-    <script src="js/visualizer.js"></script>
+<body class="bg-gray-100 min-h-screen">
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">C++ Klassenübersicht</h2>
+    <div id="graph" class="bg-white rounded-lg shadow-lg p-4"></div>
+</div>
+
+<div class="fixed bottom-4 left-4 bg-white/80 backdrop-blur-sm rounded-md px-4 py-2 shadow-md">
+    <p class="text-sm text-gray-600">Mausrad zum Zoomen, Ziehen zum Verschieben</p>
+</div>
+
+<div class="fixed bottom-4 right-4 flex gap-2">
+    <button onclick="downloadSVG()"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md transition-colors">
+        Als SVG speichern
+    </button>
+    <button onclick="downloadPNG()"
+            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md shadow-md transition-colors">
+        Als PNG speichern
+    </button>
+</div>
+
+<script src="js/clipboardUtils.js"></script>
+<script src="js/downloadUtils.js"></script>
+<script src="js/visualizer.js"></script>
 </body>
 </html>
