@@ -220,22 +220,25 @@ function downloadSVG() {
     `;
     svgCopy.appendChild(style);
 
+    // Transform-String parsen und in Matrix-Format umwandeln
+    const transform = gElement.getAttribute("transform");
+    if (transform) {
+        const match = transform.match(/translate\(([-\d.]+),([-\d.]+)\)\s*scale\(([-\d.]+)\)/);
+        if (match) {
+            const [_, tx, ty, scale] = match.map(Number);
+            const matrixTransform = `matrix(${scale},0,0,${scale},${tx},${ty})`;
+            gCopy.setAttribute("transform", matrixTransform);
+        }
+    }
+
     // SVG-Attribute kopieren
     svgCopy.setAttribute("width", svgElement.getAttribute("width"));
     svgCopy.setAttribute("height", svgElement.getAttribute("height"));
-    
-    // ViewBox setzen basierend auf der aktuellen Transformation
-    const transform = gElement.getAttribute("transform");
-    if (transform) {
-        const matrix = new DOMMatrix(transform);
-        const width = svgElement.width.baseVal.value;
-        const height = svgElement.height.baseVal.value;
-        svgCopy.setAttribute("viewBox", `0 0 ${width} ${height}`);
-    }
 
     // Komplettes G-Element mit allem Inhalt kopieren
-    const gClone = gElement.cloneNode(true);
-    svgCopy.appendChild(gClone);
+    const nodes = gElement.cloneNode(true);
+    gCopy.appendChild(nodes);
+    svgCopy.appendChild(gCopy);
 
     // SVG speichern
     const svgData = new XMLSerializer().serializeToString(svgCopy);
