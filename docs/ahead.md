@@ -1,3 +1,0 @@
-bool screenShot()
-ScreenshotManager
-SaveGameManager

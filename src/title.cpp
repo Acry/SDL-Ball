@@ -95,8 +95,8 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
 
   runnerPos.x=0.0;
   runnerPos.y=0.66;
-  runnerVelX = rndflt(2,1)+2;
-  runnerVelY = rndflt(2,1)+2;
+  runnerVelX = random_float(2,1)+2;
+  runnerVelY = random_float(2,1)+2;
   runnerTime=0;
   
   hilight=0;

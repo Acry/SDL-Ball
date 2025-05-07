@@ -35,6 +35,7 @@
 #endif
 
 #include <memory>
+#include <random>
 
 #include "display.hpp"
 #include "config.h"
@@ -115,7 +116,7 @@ void pauseGame();
 
 void resumeGame();
 
-float rndflt(float total, float negative);
+float random_float(float total, float negative);
 
 class ball;
 class paddle_class;
@@ -795,8 +796,8 @@ public:
 
                 if (bricknum > 0) {
                     if (nbrick[row][bricknum - 1] != -1) {
-                        svel.x = rndflt(2, 0) / 3.0;
-                        svel.y = rndflt(2, 0) / 3.0;
+                        svel.x = random_float(2, 0) / 3.0;
+                        svel.y = random_float(2, 0) / 3.0;
                         bricks[nbrick[row][bricknum - 1]].hit(fxMan, spos, svel, 0);
                     }
                 }
@@ -804,55 +805,55 @@ public:
 
                 if (bricknum < 25) {
                     if (nbrick[row][bricknum + 1] != -1) {
-                        svel.x = rndflt(2, 0) / 3.0;
-                        svel.y = rndflt(2, 0) / 3.0;
+                        svel.x = random_float(2, 0) / 3.0;
+                        svel.y = random_float(2, 0) / 3.0;
                         bricks[nbrick[row][bricknum + 1]].hit(fxMan, spos, svel, 0);
                     }
                 }
 
                 if (row > 0) {
                     if (nbrick[row - 1][bricknum] != -1) {
-                        svel.x = rndflt(2, 0) / 3.0;
-                        svel.y = rndflt(2, 0) / 3.0;
+                        svel.x = random_float(2, 0) / 3.0;
+                        svel.y = random_float(2, 0) / 3.0;
                         bricks[nbrick[row - 1][bricknum]].hit(fxMan, spos, svel, 0);
                     }
                 }
 
                 if (row < 22) {
                     if (nbrick[row + 1][bricknum] != -1) {
-                        svel.x = rndflt(2, 0) / 3.0;
-                        svel.y = rndflt(2, 0) / 3.0;
+                        svel.x = random_float(2, 0) / 3.0;
+                        svel.y = random_float(2, 0) / 3.0;
                         bricks[nbrick[row + 1][bricknum]].hit(fxMan, spos, svel, 0);
                     }
                 }
 
                 if (row > 0 && bricknum > 0) {
                     if (nbrick[row - 1][bricknum - 1] != -1) {
-                        svel.x = rndflt(2, 0) / 3.0;
-                        svel.y = rndflt(2, 0) / 3.0;
+                        svel.x = random_float(2, 0) / 3.0;
+                        svel.y = random_float(2, 0) / 3.0;
                         bricks[nbrick[row - 1][bricknum - 1]].hit(fxMan, spos, svel, 0);
                     }
                 }
                 if (row > 0 && bricknum < 25) {
                     if (nbrick[row - 1][bricknum + 1] != -1) {
-                        svel.x = rndflt(2, 0) / 3.0;
-                        svel.y = rndflt(2, 0) / 3.0;
+                        svel.x = random_float(2, 0) / 3.0;
+                        svel.y = random_float(2, 0) / 3.0;
                         bricks[nbrick[row - 1][bricknum + 1]].hit(fxMan, spos, svel, 0);
                     }
                 }
 
                 if (row < 22 && bricknum > 0) {
                     if (nbrick[row + 1][bricknum - 1] != -1) {
-                        svel.x = rndflt(2, 0) / 3.0;
-                        svel.y = rndflt(2, 0) / 3.0;
+                        svel.x = random_float(2, 0) / 3.0;
+                        svel.y = random_float(2, 0) / 3.0;
                         bricks[nbrick[row + 1][bricknum - 1]].hit(fxMan, spos, svel, 0);
                     }
                 }
 
                 if (row < 22 && bricknum < 25) {
                     if (nbrick[row + 1][bricknum + 1] != -1) {
-                        svel.x = rndflt(2, 0) / 3.0;
-                        svel.y = rndflt(2, 0) / 3.0;
+                        svel.x = random_float(2, 0) / 3.0;
+                        svel.y = random_float(2, 0) / 3.0;
                         bricks[nbrick[row + 1][bricknum + 1]].hit(fxMan, spos, svel, 0);
                     }
                 }
@@ -1458,9 +1459,9 @@ public:
             glLineWidth(1.0);
             glEnable(GL_LINE_SMOOTH);
             glBegin(GL_LINES);
-            glColor4f(rndflt(2, 0), rndflt(1, 0), 0.0, 0.0);
+            glColor4f(random_float(2, 0), random_float(1, 0), 0.0, 0.0);
             glVertex3f(0.0, 0.0, 0.0);
-            glColor4f(rndflt(2, 0), 0.0, 0.0, 1.0);
+            glColor4f(random_float(2, 0), 0.0, 0.0, 1.0);
             glVertex3f(bxb, byb, 0.0);
             glEnd();
 
@@ -1689,7 +1690,7 @@ public:
                 c++;
                 op.y = b[i].posy;
                 op.x = b[i].posx;
-                spawn(op, 0, 0.0f, b[i].velocity, rndflt(BALL_MAX_DEGREE + BALL_MIN_DEGREE, 0));
+                spawn(op, 0, 0.0f, b[i].velocity, random_float(BALL_MAX_DEGREE + BALL_MIN_DEGREE, 0));
             }
         }
     }
@@ -2439,8 +2440,10 @@ void initGL() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-float rndflt(float total, float negative) {
-    return (rand() / (float(RAND_MAX) + 1) * total) - negative;
+float random_float(const float total, const float negative) {
+    thread_local std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution dist(-negative, total-negative);
+    return dist(rng);
 }
 
 void resetPlayerPowerups() {
@@ -3134,7 +3137,7 @@ bool screenShot() {
 
     // Alloziere Pixel Buffer
     const size_t pixelCount = setting.res_x * setting.res_y * CHANNELS;
-    auto pixels = std::make_unique<GLubyte[]>(pixelCount);
+    const auto pixels = std::make_unique<GLubyte[]>(pixelCount);
     if (!pixels) {
         SDL_Log("Memory allocation failed");
         return false;
@@ -3193,9 +3196,13 @@ int main(int argc, char *argv[]) {
 
     setting = settingsManager.getSettings();
 
-    Uint32 maxFrameAge = (1000 / setting.fps); //When frame has been displayed this long
+    var.quit=false;
+    var.clearScreen=true;
+    var.titleScreenShow=true;
 
-    GLfloat mousex, mousey;
+    Uint32 maxFrameAge = (1000 / setting.fps);
+
+    GLfloat mouse_x, mouse_y;
 
     static_difficulty.ballspeed[EASY] = 0.7f;
     static_difficulty.ballspeed[NORMAL] = 1.3f;
@@ -3220,10 +3227,7 @@ int main(int argc, char *argv[]) {
 
     difficulty = static_difficulty;
 
-    srand((unsigned) time(0));
-
     soundMan.init();
-
 
     if (!display.init()) {
         var.quit = true;
@@ -3419,7 +3423,7 @@ int main(int argc, char *argv[]) {
                 //Toggle menu
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     if (var.titleScreenShow)
-                        var.titleScreenShow = 0;
+                        var.titleScreenShow = false;
                     switch (var.menu) {
                         case 0:
                             var.menu = 1;
@@ -3434,10 +3438,10 @@ int main(int argc, char *argv[]) {
                     }
                 } else if (event.key.keysym.sym == SDLK_F1) {
                     if (!var.titleScreenShow) {
-                        var.titleScreenShow = 1;
+                        var.titleScreenShow = true;
                         pauseGame();
                     } else {
-                        var.titleScreenShow = 0;
+                        var.titleScreenShow = false;
                         resumeGame();
                     }
                 }
@@ -3457,27 +3461,27 @@ int main(int argc, char *argv[]) {
             }
 
             if (event.type == SDL_MOUSEMOTION) {
-                mousex = (event.motion.x - display.currentW / 2) * display.glunits_per_xpixel;
-                mousey = (event.motion.y - display.currentH / 2) * display.glunits_per_ypixel * -1;
+                mouse_x = (event.motion.x - display.currentW / 2) * display.glunits_per_xpixel;
+                mouse_y = (event.motion.y - display.currentH / 2) * display.glunits_per_ypixel * -1;
 
 #ifdef DEBUG_SHOW_MOUSE_COORDINATES
                 SDL_Log("Mouse:%s%s,%s%s", setw(10), mousex, setw(10), mousey);
                 SDL_Log("%s%s,%s%s", setw(8), event.motion.x, setw(8), event.motion.y);
 #endif
                 if (var.menu) {
-                    if (mousex > -0.5 && mousex < 0.5 && mousey < (-0.78) + (0.07) && mousey > (-0.78) - (0.07))
+                    if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.78) + (0.07) && mouse_y > (-0.78) - (0.07))
                         var.menuItem = 1;
-                    else if (mousex > -0.5 && mousex < 0.5 && mousey < (-0.56) + (0.07) && mousey > (-0.56) - (0.07))
+                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.56) + (0.07) && mouse_y > (-0.56) - (0.07))
                         var.menuItem = 2;
-                    else if (mousex > -0.5 && mousex < 0.5 && mousey < (-0.34) + (0.07) && mousey > (-0.34) - (0.07))
+                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.34) + (0.07) && mouse_y > (-0.34) - (0.07))
                         var.menuItem = 3;
-                    else if (mousex > -0.5 && mousex < 0.5 && mousey < (-0.12) + (0.07) && mousey > (-0.12) - (0.07))
+                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.12) + (0.07) && mouse_y > (-0.12) - (0.07))
                         var.menuItem = 4;
-                    else if (mousex > -0.5 && mousex < 0.5 && mousey < (0.1) + (0.07) && mousey > (0.1) - (0.07))
+                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (0.1) + (0.07) && mouse_y > (0.1) - (0.07))
                         var.menuItem = 5;
-                    else if (mousex > -0.5 && mousex < 0.5 && mousey < (0.32) + (0.07) && mousey > (0.32) - (0.07))
+                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (0.32) + (0.07) && mouse_y > (0.32) - (0.07))
                         var.menuItem = 6;
-                    else if (mousex > -0.5 && mousex < 0.5 && mousey < (0.54) + (0.07) && mousey > (0.54) - (0.07))
+                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (0.54) + (0.07) && mouse_y > (0.54) - (0.07))
                         var.menuItem = 7;
                     else
                         var.menuItem = 0;
@@ -3511,6 +3515,7 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
+
         // timing
         nonpausingGlobalTicks = SDL_GetTicks() - nonpausingLastTick;
         frameAge += nonpausingGlobalTicks;
@@ -3518,7 +3523,6 @@ int main(int argc, char *argv[]) {
         nonpausingGlobalMilliTicks = nonpausingGlobalTicks / 1000.0f;
         nonpausingLastTick = SDL_GetTicks();
 
-        
         if (!var.paused) {
             globalTicks = SDL_GetTicks() - lastTick;
             globalMilliTicks = globalTicks / 1000.0;
@@ -3577,7 +3581,7 @@ int main(int argc, char *argv[]) {
                         soundMan.add(SND_GAMEOVER, 0);
                     } else {
                         if (var.transition_half_done) {
-                            var.titleScreenShow = 1;
+                            var.titleScreenShow = true;
                             fxMan.kill(var.effectnum);
                             var.effectnum = -1;
                             initNewGame();

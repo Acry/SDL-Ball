@@ -76,9 +76,9 @@ public:
         firstTexture = false;
 
         for (int i = 0; i < 4; i++) {
-            r[i] = rndflt(1, 0);
-            g[i] = rndflt(1, 0);
-            b[i] = rndflt(1, 0);
+            r[i] = random_float(1, 0);
+            g[i] = random_float(1, 0);
+            b[i] = random_float(1, 0);
         }
         a = 1;
     }

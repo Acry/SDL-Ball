@@ -254,18 +254,18 @@ particleFieldClass::~particleFieldClass()
 
 void particleFieldClass::spawnSpark(int sparkNum)
 {
-  GLfloat angle=(RAD/vars.num-1)*(rndflt(vars.num,0.0)); //FIXME: Make this elegant: Choose a random angle (in radients)
+  GLfloat angle=(RAD/vars.num-1)*(random_float(vars.num,0.0)); //FIXME: Make this elegant: Choose a random angle (in radients)
   spawnTimeout = rand()%10;
   sparks[sparkNum].life = rand()%vars.life;
   sparks[sparkNum].lifeleft = sparks[sparkNum].life;
-  sparks[sparkNum].v.x = (vars.speed*rndflt(vars.speed*2.0,0.0)) * sin(angle);
-  sparks[sparkNum].v.y = (vars.speed*rndflt(vars.speed*2.0,0.0)) * cos(angle);
-  sparks[sparkNum].size = rndflt(vars.size,0);
+  sparks[sparkNum].v.x = (vars.speed*random_float(vars.speed*2.0,0.0)) * sin(angle);
+  sparks[sparkNum].v.y = (vars.speed*random_float(vars.speed*2.0,0.0)) * cos(angle);
+  sparks[sparkNum].size = random_float(vars.size,0);
   
   sparks[sparkNum].p=p;
   
-  sparks[sparkNum].p.x += rndflt(vars.rect.x, (vars.rect.x/2.0));
-  sparks[sparkNum].p.y += rndflt(vars.rect.y, (vars.rect.y/2.0));
+  sparks[sparkNum].p.x += random_float(vars.rect.x, (vars.rect.x/2.0));
+  sparks[sparkNum].p.y += random_float(vars.rect.y, (vars.rect.y/2.0));
   sparks[sparkNum].active=1;
 }
 
@@ -348,13 +348,13 @@ class effect_class {
         
           for(i=0; i < vars.num; i++)
           {
-            sparks[i].size = rndflt(vars.size,0);
+            sparks[i].size = random_float(vars.size,0);
             life = rand()%vars.life;
-            angle=(RAD/vars.num-1)*(rndflt(vars.num,0.0)); //FIXME: Make this elegant: Choose a random angle (in radients)
+            angle=(RAD/vars.num-1)*(random_float(vars.num,0.0)); //FIXME: Make this elegant: Choose a random angle (in radients)
             sparks[i].life = life;
             sparks[i].lifeleft = life;
-            sparks[i].v.x = (vars.speed*rndflt(vars.speed*2.0,0.0)) * sin(angle);
-            sparks[i].v.y = (vars.speed*rndflt(vars.speed*2.0,0.0)) * cos(angle);
+            sparks[i].v.x = (vars.speed*random_float(vars.speed*2.0,0.0)) * sin(angle);
+            sparks[i].v.y = (vars.speed*random_float(vars.speed*2.0,0.0)) * cos(angle);
         
             sparks[i].vars = vars;
           
