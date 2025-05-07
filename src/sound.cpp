@@ -118,7 +118,7 @@ void soundClass::play()
   //Playlist (lol, imagination for the win..)
   vector<sampleQueuedItem> pl;
   vector<sampleQueuedItem>::iterator plIt;
-  bool same=0;
+  bool same=false;
   int freeChannel = -1; //The channel we will use for this sample
 
   //Loop through queue and find samples thare are the same, average their position and put in a new vector
