@@ -161,12 +161,13 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
         fxMan->draw();
 
         int i;
-        glLoadIdentity();
-        glTranslatef(0.0, 0.0, -3.0);
+        glPushMatrix();
+        glTranslatef(0.0, 0.0, 0.0);
 
         for (i = 0; i < MAXPOTEXTURES; i++) {
             powerUp[i].draw();
         }
+
 
         runnerTime += globalTicksSinceLastDraw;
         if (runnerTime > 10) {
@@ -189,22 +190,23 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
 
             runnerPos.x += runnerVelX * (runnerTime / 1000.0);
             runnerPos.y += runnerVelY * (runnerTime / 1000.0);
-            if (runnerPos.x > 1.64 && runnerVelX > 0) {
-                runnerVelX *= -1;
-            }
-            if (runnerPos.x < -1.64 && runnerVelX < 0) {
-                runnerVelX *= -1;
-            }
 
-            if (runnerPos.y > 1.24 && runnerVelY > 0) {
-                runnerVelY *= -1;
+            // Grenzen mit Faktor 3 anpassen
+            if (runnerPos.x > 1.0f && runnerVelX > 0) {      // Etwas größer als vorher
+                runnerVelX *= -1.0f;
             }
-
-            if (runnerPos.y < -1.24 && runnerVelY < 0) {
-                runnerVelY *= -1;
+            if (runnerPos.x < -1.0f && runnerVelX < 0) {
+                runnerVelX *= -1.0f;
+            }
+            if (runnerPos.y > 1.0f && runnerVelY > 0) {
+                runnerVelY *= -1.0f;
+            }
+            if (runnerPos.y < -1.0f && runnerVelY < 0) {
+                runnerVelY *= -1.0f;
             }
             runnerTime = 0;
         }
+        glPopMatrix();
 
         hilightTime += globalTicksSinceLastDraw;
         if (hilightTime > 50) {
@@ -224,17 +226,17 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
             }
             hilightTime = 0;
         }
-
+        glPushMatrix();
         glTranslatef(0.0, 0.59, 0.0);
         for (i = 0; i < numHighScores; i++) {
             if ((hilightDir && i < hilight + 1) || (!hilightDir && i > hilight - 1)) {
-                float a = 1.0 - 1.0 / static_cast<float>(numHighScores * 2) * delta(hilight, i);
+                const float a = 1.0 - 1.0 / static_cast<float>(numHighScores * 2) * delta(hilight, i);
                 glColor4f(1, 1, 1, a);
                 glText->write(menu->highScores[i], FONT_INTROHIGHSCORE, 1, 1.0, 0.0, 0.0);
             }
             glTranslatef(0.0, -glText->getHeight(FONT_INTROHIGHSCORE), 0.0);
         }
-
+        glPopMatrix();
         if (!rotDir) {
             rot += 0.01 * globalTicksSinceLastDraw;
             if (rot > 40) {
@@ -246,14 +248,13 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
                 rotDir = false;
             }
         }
-        glLoadIdentity();
 
-        glTranslatef(0.0, 0.0, -3.0);
-
+        glPushMatrix();
+        glTranslatef(0.0, -0.05, 0.0);
         glRotatef(20, 1, 0, 0);
         glRotatef(rot, 0, 1, 0);
         glCallList(glTitleList);
-
+        glPopMatrix();
         SDL_GL_SwapWindow(display.sdlWindow);
 
         globalTicksSinceLastDraw = 0;

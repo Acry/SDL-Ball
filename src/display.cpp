@@ -110,7 +110,6 @@ void displayClass::resize(const int width, const int height) {
     gluPerspective(45.0f, ratio, 0.1f, 10.0f);
 
     glMatrixMode(GL_MODELVIEW);
-
     glLoadIdentity();
 }
 
