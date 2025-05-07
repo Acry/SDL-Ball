@@ -5,11 +5,7 @@
 #include <utility>
 
 ConfigFile::ConfigFile(std::string root) :
-    programRoot(std::move(root)),
-    saveGameFile(""),
-    settingsFile(""),
-    highScoreFile(""),
-    screenshotDir("")
+    programRoot(std::move(root))
 {
 }
 

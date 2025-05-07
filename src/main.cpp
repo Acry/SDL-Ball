@@ -107,7 +107,6 @@ SettingsManager settingsManager(configFile);
 #define SND_NORM_BRICK_BREAKD 23
 #define SND_NORM_BRICK_BREAKE 24
 
-
 using namespace std;
 
 void initNewGame();
@@ -2468,7 +2467,7 @@ void initNewGame() {
             player.lives = 5;
             break;
         case NORMAL:
-            player.coins = 0;
+            player.coins = 300;
             player.lives = 3;
             break;
         case HARD:
@@ -2494,7 +2493,7 @@ void resumeGame() {
     var.menu = 0;
 }
 
-void mkDLscene(GLuint *dl, textureClass tex) {
+void mkDLscene(GLuint *dl, const textureClass &tex) {
     //Scenen
     *dl = glGenLists(1);
     glNewList(*dl,GL_COMPILE);
@@ -2666,7 +2665,6 @@ void coldet(brick &br, ball &ba, pos &p, effectManager &fxMan) {
         } //x boxcol
     } //y boxcol
 }
-
 
 void padcoldet(ball &b, paddle_class &p, pos &po) {
     int i, points = 0;

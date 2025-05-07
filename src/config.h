@@ -21,7 +21,7 @@
 #define DEFAULT_DIFFICULTY    EASY
 
 // Dateipfade und Verzeichnisse
-#define CONFIG_FILE        "config.cfg"
+#define CONFIG_FILE        "settings.cfg"
 #define SAVEGAME_FILE      "savegame.sav"
 #define HIGHSCORE_FILE     "highscores.txt"
 #define SCREENSHOT_DIR     "screenshots"
