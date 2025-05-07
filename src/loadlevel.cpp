@@ -203,22 +203,18 @@ void loadlevel(string file, brick bricks[] ,int level)
 
 void initlevels(brick bricks[], textureClass texLvl[])
 {
-  int brick;
   powerupLoaderClass powerupLoader;
 
   //Temp storage for custom colors
   GLfloat tempCol[4], tempParCol[3];
 
   //Set dem op
-  int row,i;
-  i=0;
+  int i = 0;
 
-  for(row=0;row<23;row++)
+  for(int row = 0;row<23;row++)
   {
-
-    for(brick=0;brick < 26; brick++)
+    for(int brick = 0;brick < 26; brick++)
     {
-    
       bricks[i].posx =  -1.54 + (GLfloat)brick*0.1232;
       bricks[i].posy =  0.95+ ((GLfloat)row*0.07)*-1;
       
