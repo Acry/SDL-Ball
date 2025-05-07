@@ -22,20 +22,21 @@ void powerupDescriptionClass::draw() {
               tex->prop.glTexColorInfo[3]);
     glBegin(GL_QUADS);
     glTexCoord2f(tex->pos[0], tex->pos[1]);
-    glVertex3f(-width + posx, height + posy, 0.00); // øverst venst
+    glVertex3f(-width + posx, height + posy, 0.00); // top left
     glTexCoord2f(tex->pos[2], tex->pos[3]);
-    glVertex3f(width + posx, height + posy, 0.00); // øverst højre
+    glVertex3f(width + posx, height + posy, 0.00); // top right
     glTexCoord2f(tex->pos[4], tex->pos[5]);
-    glVertex3f(width + posx, -height + posy, 0.00); // nederst højre
+    glVertex3f(width + posx, -height + posy, 0.00); // bottom right
     glTexCoord2f(tex->pos[6], tex->pos[7]);
-    glVertex3f(-width + posx, -height + posy, 0.00); // nederst venstre
+    glVertex3f(-width + posx, -height + posy, 0.00); // bottom left
     glEnd();
 
     glColor4f(1.0, 1.0, 1.0, 1.0);
-    //Write her
-    glText->write(name, FONT_INTRODESCRIPTION, 0, 1.0, posx + width,
+    float spacing = 0.05f;
+    // Write her
+    glText->write(name, FONT_INTRODESCRIPTION, false, 1.0, posx + width + spacing,
                   posy + (glText->getHeight(FONT_INTRODESCRIPTION) / 2.0));
-    glText->write(description, FONT_INTRODESCRIPTION, 0, 1.0, posx + width,
+    glText->write(description, FONT_INTRODESCRIPTION, false, 1.0, posx + width + spacing,
                   posy - (glText->getHeight(FONT_INTRODESCRIPTION) / 2.0));
 }
 
@@ -92,17 +93,20 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
     glEnd();
     glEndList();
 
+    float iconWidth = 0.055;      // Halbe Breite des Icons
+    float textWidth = 0.8;        // Platz für Text rechts daneben
+    float spacing = 0.1;          // Abstand zwischen Spalten
+    float totalWidth = (iconWidth + textWidth) * 3 + spacing * 2; // Gesamtbreite mit Text
+    float startX = -(totalWidth/2);
 
-    // position power up descriptions
-    for(int ii = 0; ii < 3; ii++) {
-        for(int i=0; i < 7; i++) {
-            powerUp[i+(7*ii)].tex = &texPowerups[i+(7*ii)];
-            powerUp[i+(7*ii)].posx = -0.8 + (0.8*ii);    // von -1.5 auf -0.8 geändert
-            powerUp[i+(7*ii)].posy = -0.25 - (0.135*i);  // ursprüngliche y-Position beibehalten
+    for(int column = 0; column < 3; column++) {
+        for(int row=0; row < 7; row++) {
+            powerUp[row+(7*column)].tex = &texPowerups[row+7*column];
+            powerUp[row+(7*column)].posx = startX + column * (iconWidth + textWidth + spacing);
+            powerUp[row+(7*column)].posy = -0.25 - 0.135 * row;
         }
     }
     readDescriptions(powerUp);
-
 
     runnerPos.x = 0.0;
     runnerPos.y = 0.66;
