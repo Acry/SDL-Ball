@@ -1,3 +1,5 @@
+extern SettingsManager settingsManager;
+
 class controllerClass {
   private:
   paddle_class *paddle;
@@ -28,7 +30,7 @@ class controllerClass {
   void btnPress();
   bool get();
   void calibrate();
-  bool joystickAttached();
+  bool joystickAttached() const;
   #ifdef WITH_WIIUSE
   bool connectMote();
   #endif
@@ -284,10 +286,10 @@ void controllerClass::calibrate()
       if(!joyBtnALock && var.menuJoyCalStage != 5)
       {
         var.menuJoyCalStage++;
-        joyBtnALock=1;
+        joyBtnALock=true;
       }
     } else {
-      joyBtnALock=0;
+      joyBtnALock=false;
     }
   }
 
@@ -322,9 +324,10 @@ void controllerClass::calibrate()
       SDL_Log("calMin:%d calMax:%d", calMin, calMax);
       SDL_Log("lowJit:%d higJit:%d", calLowJitter, calHighJitter);
       var.menuJoyCalStage++;
-      writeSettings();
+      settingsManager.settingsChanged();
     break;
-    #ifdef WITH_WIIUSE
+    default: ;
+#ifdef WITH_WIIUSE
     case -1: //We do this to make it draw a frame before freezing (searching)
       var.menuJoyCalStage--;
     break;
@@ -357,8 +360,7 @@ void controllerClass::calibrate()
   }
 }
 
-bool controllerClass::joystickAttached()
-{
-	return joystick != NULL;
+bool controllerClass::joystickAttached() const {
+	return joystick != nullptr;
 }
 

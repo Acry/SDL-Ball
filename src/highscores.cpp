@@ -51,7 +51,7 @@ public:
             } else {
                 var.showHighScores = 0;
                 ofstream hsList;
-                hsList.open(privFile.highScoreFile.data(), ios::out | ios::app);
+                hsList.open(configFile.getHighScoreFile().data(), ios::out | ios::app);
                 hsList << "[" << player.level + 1 << "]" << player.score << "|" << name << endl;
                 hsList.close();
                 initNewGame();

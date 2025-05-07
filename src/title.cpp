@@ -53,7 +53,7 @@ class titleScreenClass {
     void readDescriptions(powerupDescriptionClass po[]);
   public:
     titleScreenClass(effectManager *m, textureClass tp[], menuClass *me);
-    void draw(int * frameAge, int * maxFrameAge);
+    void draw(Uint32 * frame_age, Uint32 * max_frame_age);
 };
 
 titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClass *me)
@@ -114,7 +114,7 @@ int delta(int a, int b)
   }
 }
 
-void titleScreenClass::draw(int * frameAge, int * maxFrameAge)
+void titleScreenClass::draw(Uint32 * frameAge, Uint32 * maxFrameAge)
 {
   pos p,s;
   if(*frameAge >= *maxFrameAge)
@@ -302,4 +302,3 @@ void titleScreenClass::readDescriptions(powerupDescriptionClass po[])
     SDL_Log("Could not open powerupdescriptions");
   }
 }
-

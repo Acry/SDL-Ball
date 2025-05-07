@@ -4,45 +4,48 @@
 #include <SDL2/SDL.h>
 #include "display.hpp"
 
+#include "settings_manager.h"
+
 using namespace std;
 
-bool displayClass::init(const bool fullscreen, const int displayToUseIn) {
-    int SDL_videomodeSettings = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+extern settings setting;
 
-    //Save the current resolution so it can be restored at exit
-    // Declare display mode structure to be filled in.
-    SDL_DisplayMode currentDisplayMode;
-
-    SDL_Init(SDL_INIT_VIDEO);
-
-    // Get the current display mode of all displays.
-    numOfDisplays = SDL_GetNumVideoDisplays();
-    SDL_Rect displayBounds[numOfDisplays] = {0};
-
-    for (int i = 0; i < numOfDisplays; ++i) {
-        if (const int should_be_zero = SDL_GetCurrentDisplayMode(i, &currentDisplayMode); should_be_zero != 0) {
-            // In case of error...
-            SDL_Log("Could not get display mode for video display #%d: %s", i, SDL_GetError());
-        } else {
-            // On success, print the current display mode.
-            SDL_GetDisplayBounds(i, &displayBounds[i]);
-            auto [x, y, w, h] = displayBounds[i];
-            SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz. %d %d %d %d",
-                    i, currentDisplayMode.w, currentDisplayMode.h, currentDisplayMode.refresh_rate,
-                    x, y, h, w);
-        }
+bool displayClass::init() {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        SDL_Log("Fehler bei SDL Video Init: %s", SDL_GetError());
+        return false;
     }
-
-    if (numOfDisplays > 0 && displayToUseIn < numOfDisplays) {
-        displayToUse = displayToUseIn;
+    // Nutze display aus settings
+    numOfDisplays = SDL_GetNumVideoDisplays();
+    if (numOfDisplays > 0 && setting.displayToUse < numOfDisplays) {
+        displayToUse = setting.displayToUse;
+        // todo apply to settings and flag settings changed?
     } else {
         displayToUse = 0;
     }
+    unsigned int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
-    currentW = displayBounds[displayToUse].w;
-    currentH = displayBounds[displayToUse].h;
+    if (setting.fullscreen) {
+        // Im Vollbildmodus native Auflösung verwenden
+        SDL_DisplayMode currentDisplayMode;
+        SDL_GetCurrentDisplayMode(displayToUse, &currentDisplayMode);
+        currentW = currentDisplayMode.w;
+        currentH = currentDisplayMode.h;
+        flags |= SDL_WINDOW_FULLSCREEN;
+    } else {
+        // Im Fenstermodus konfigurierte Auflösung verwenden
+        currentW = setting.res_x > 0 ? setting.res_x : 1280;  // Fallback-Wert
+        currentH = setting.res_y > 0 ? setting.res_y : 720;   // Fallback-Wert
+    }
 
-    //Initialize SDL
+    // Nutze die Fullscreen-Einstellung aus settings
+    if (setting.fullscreen) {
+        // flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;  // Für echten Vollbildmodus
+        // Alternativ:
+        flags |= SDL_WINDOW_FULLSCREEN;
+    }
+
+    // Initialize SDL
 #ifndef NOSOUND
     if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0)
 #else
@@ -58,17 +61,11 @@ bool displayClass::init(const bool fullscreen, const int displayToUseIn) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 
-    if (fullscreen) {
-        // SDL_videomodeSettings |= SDL_WINDOW_FULLSCREEN_DESKTOP;  // Für echten Vollbildmodus
-        // Alternativ:
-        SDL_videomodeSettings |= SDL_WINDOW_FULLSCREEN;
-    }
-
     sdlWindow = SDL_CreateWindow("SDL-Ball",
                                  SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
                                  SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
-                                 displayBounds[displayToUse].w, displayBounds[displayToUse].h,
-                                 SDL_videomodeSettings);
+                                 currentW, currentH,
+                                 flags);
 
     glcontext = SDL_GL_CreateContext(sdlWindow);
 
@@ -96,7 +93,7 @@ bool displayClass::updateForMenu() {
 
 void displayClass::resize(const int width, const int height) {
     if (height == 0)
-       return;
+        return;
 
     currentW = width;
     currentH = height;
@@ -117,7 +114,7 @@ void displayClass::resize(const int width, const int height) {
     glLoadIdentity();
 }
 
-void displayClass::close() {
+void displayClass::close() const {
     SDL_DestroyWindow(sdlWindow);
     SDL_GL_DeleteContext(glcontext);
     SDL_SetRelativeMouseMode(SDL_FALSE);

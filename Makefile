@@ -16,7 +16,7 @@ RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)
 BUILD_DIR := build/
 SOURCE_DIR := src/
 
-SOURCES := $(addprefix $(SOURCE_DIR), display.cpp main.cpp)
+SOURCES := $(addprefix $(SOURCE_DIR), display.cpp main.cpp config_file.cpp settings_manager.cpp)
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 
 # Create the build directory if it doesn't exist
@@ -57,11 +57,14 @@ remove:
 	rm -R ~/.config/sdl-ball
 
 # Test targets
-CONFIG_TEST_SOURCES := $(SOURCE_DIR)config_file_test.cpp $(SOURCE_DIR)config_file.cpp
+CONFIG_TEST_SOURCES := $(SOURCE_DIR)config_file_test.cpp \
+                      $(SOURCE_DIR)config_file.cpp \
+                      $(SOURCE_DIR)settings_manager.cpp
+
 CONFIG_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CONFIG_TEST_SOURCES:.cpp=.o)))
 
 config-test: $(CONFIG_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(CONFIG_TEST_OBJECTS) -o $(BUILD_DIR)config-test
+	$(CXX) $(DEBUG_FLAGS) $(CONFIG_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)config-test
 
 # Spezielle Regel für die Test-Objekte
 $(BUILD_DIR)config_file_test.o: $(SOURCE_DIR)config_file_test.cpp
@@ -69,4 +72,8 @@ $(BUILD_DIR)config_file_test.o: $(SOURCE_DIR)config_file_test.cpp
 
 $(BUILD_DIR)config_file.o: $(SOURCE_DIR)config_file.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
+$(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)settings_manager.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
 

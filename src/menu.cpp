@@ -1,3 +1,5 @@
+extern SettingsManager settingsManager;
+
 struct score {
   int score;
   string level;
@@ -14,7 +16,7 @@ struct score *sortScores(int *rl)
   struct score *final=NULL, *temp=NULL;
   final = new struct score[1];
 
-  hsList.open(privFile.highScoreFile.data());
+  hsList.open(configFile.getHighScoreFile().data());
 
   if(hsList.is_open())
   {
@@ -383,6 +385,7 @@ public:
             break;
           case 7: //new game
             var.menu=5;
+          default: ;
         }
         var.menuPressed=0;
       }
@@ -505,6 +508,7 @@ public:
           case 2:
             var.menu=12;
           break;
+          default: ;
         }
         var.menuPressed=0;
       }
@@ -600,41 +604,42 @@ public:
               setting.showBg=1;
               else
               setting.showBg=0;
-            writeSettings();
+            settingsManager.settingsChanged();
             break;
           case 3:
-            setting.resx = 1024;
-            setting.resy = 768;
+            setting.res_x = 1024;
+            setting.res_y = 768;
 #ifndef WIN32
             if(display.updateForMenu())
 #endif
-              writeSettings();
+              settingsManager.settingsChanged();
             break;
           case 4:
-            setting.resx = 1600;
-            setting.resy = 1200;
+            setting.res_x = 1600;
+            setting.res_y = 1200;
 #ifndef WIN32
             if(display.updateForMenu())
 #endif
-              writeSettings();
+              settingsManager.settingsChanged();
             break;
           case 5:
             if(setting.eyeCandy)
-              setting.eyeCandy=0;
+              setting.eyeCandy=false;
               else
-              setting.eyeCandy=1;
-            writeSettings();
+              setting.eyeCandy=true;
+            settingsManager.settingsChanged();
             break;
           case 6:
             if(setting.fullscreen)
-              setting.fullscreen=0;
+              setting.fullscreen=false;
               else
-              setting.fullscreen=1;
+              setting.fullscreen=true;
 #ifndef WIN32
             if(display.updateForMenu())
 #endif
-              writeSettings();
+              settingsManager.settingsChanged();
             break;
+          default: ;
         }
         var.menuPressed=0;
       }
@@ -697,22 +702,22 @@ public:
             break;
           case 5:
             if(setting.stereo)
-              setting.stereo=0;
+              setting.stereo=false;
             else
-              setting.stereo=1;
-            writeSettings();
+              setting.stereo=true;
+            settingsManager.settingsChanged();
             break;
           case 6:
             if(setting.sound) {
-              setting.sound=0;
+              setting.sound=false;
             } else {
-              setting.sound=1;
+              setting.sound=true;
               soundMan.loadsounds();
             }
-            writeSettings();
+            settingsManager.settingsChanged();
 
             break;
-
+          default: ;
         }
         var.menuPressed=0;
       }
@@ -793,27 +798,27 @@ public:
           case 1:
             var.menu=1;
             break;
-          case 4: //New game, hard
+          case 4:
             player.difficulty=HARD;
-            writeSettings();
+            settingsManager.settingsChanged();
             resumeGame();
             initNewGame();
             break;
-          case 5: //New Game, Normal
+          case 5:
             player.difficulty=NORMAL;
-            writeSettings();
+            settingsManager.settingsChanged();
             resumeGame();
             initNewGame();
             break;
-          case 6: //New game, easy
+          case 6:
             player.difficulty=EASY;
-            writeSettings();
+            settingsManager.settingsChanged();
             resumeGame();
             initNewGame();
             break;
-
+          default: ;
         }
-        var.menuPressed=0;
+        var.menuPressed=false;
       }
 
       var.menuNumItems=7;
@@ -857,7 +862,7 @@ public:
           case 5: //Yes
             var.quit=1;
             break;
-
+          default: ;
         }
         var.menuPressed=0;
       }
@@ -911,6 +916,7 @@ public:
           case 7: 
             var.menu=1;
             break;
+          default: ;
         }
         var.menuPressed=0;
       }
@@ -1090,16 +1096,17 @@ public:
             break;
           case 6:
             if(setting.joyIsDigital) {
-              setting.joyIsPaddle=1;
-              setting.joyIsDigital=0;
+              setting.joyIsPaddle=true;
+              setting.joyIsDigital=false;
             } else if(setting.joyIsPaddle) {
-              setting.joyIsDigital=0;
-              setting.joyIsPaddle=0;
+              setting.joyIsDigital=false;
+              setting.joyIsPaddle=false;
             } else {
-              setting.joyIsDigital=1;
+              setting.joyIsDigital=true;
             }
-            writeSettings();
+            settingsManager.settingsChanged();
             break;
+          default: ;
         }
         var.menuPressed=0;
       }
@@ -1223,20 +1230,21 @@ public:
           case 1:
             var.menu=2;
             break;
+          default: ;
         }
         
-        for(i=0; i < (int)tI.size() && i<5; i++)
+        for(i=0; i < static_cast<int>(tI.size()) && i<5; i++)
         {
           if(6-i == var.menuItem)
           {
             setting.gfxTheme = tI.at(i).name;
             setting.sndTheme = tI.at(i).name;
             setting.lvlTheme = tI.at(i).name;
-            themeChanged=1;
-            writeSettings();
+            themeChanged=true;
+            settingsManager.settingsChanged();
           }
         }
-        var.menuPressed=0;
+        var.menuPressed=false;
       }
     }
 };

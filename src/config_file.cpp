@@ -42,7 +42,7 @@ bool ConfigFile::init() {
     saveGameFile = programRoot + "/" SAVEGAME_FILE;
     highScoreFile = programRoot + "/" HIGHSCORE_FILE;
 
-    // Screenshot-Verzeichnis explizit anlegen
+    // Screenshot-Verzeichnis explizit anlegen.
     // Erste Priorität: Im Config-Verzeichnis
     screenshotDir = programRoot + "/" SCREENSHOT_DIR;
     if (!checkDir(screenshotDir)) {
