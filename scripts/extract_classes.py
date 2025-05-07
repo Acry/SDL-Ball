@@ -7,24 +7,27 @@ from collections import defaultdict
 
 def find_classes(directory='.'):
     classes = defaultdict(list)
-    class_pattern = re.compile(r'class\s+(\w+)(?:\s*:\s*(?:public|private|protected)?\s*(\w+))?')
+    # Sucht nach Klassen, ignoriert aber Zeilen die mit /* beginnen
+    class_pattern = re.compile(r'^\s*class\s+(\w+)(?:\s*:\s*(?:public|private|protected)?\s*(\w+))?', re.MULTILINE)
+    comment_pattern = re.compile(r'/\*.*?\*/', re.DOTALL)
 
-    # Absoluten Pfad des Verzeichnisses ermitteln
     abs_directory = os.path.abspath(directory)
 
     for root, _, files in os.walk(directory):
         for file in files:
             if file.endswith(('.cpp', '.hpp', '.h')):
                 rel_path = os.path.join(root, file)
-                abs_path = os.path.abspath(rel_path)  # Absoluten Pfad erstellen
+                abs_path = os.path.abspath(rel_path)
                 try:
                     with open(abs_path, 'r', encoding='utf-8') as f:
                         content = f.read()
+                        # Entferne Kommentarblöcke
+                        content = comment_pattern.sub('', content)
                         matches = class_pattern.finditer(content)
                         for match in matches:
                             class_name = match.group(1)
                             base_class = match.group(2)
-                            classes[abs_path].append({  # Absoluten Pfad als Schlüssel verwenden
+                            classes[abs_path].append({
                                 'name': class_name,
                                 'base': base_class
                             })
