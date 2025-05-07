@@ -17,3 +17,12 @@
 ## menu
 
  change difficulty
+
+## idle mode
+
+- let KI play for a while
+
+
+## title
+
+- show keys and powerups interchanged

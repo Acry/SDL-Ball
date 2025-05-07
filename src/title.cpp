@@ -32,7 +32,6 @@ void powerupDescriptionClass::draw()
 }
 
 class titleScreenClass {
-  private:
     effectManager *fxMan;
     int ticksSinceLastSpawn;
     textureManager texMgr;
@@ -43,7 +42,7 @@ class titleScreenClass {
     bool rotDir;
     powerupDescriptionClass powerUp[MAXPOTEXTURES];
     int numHighScores; //Number of highscores to show in the intro
-    struct pos runnerPos;
+    pos runnerPos;
     menuClass *menu; //Here is the highscore text
     int runnerTime;
     float runnerVelX,runnerVelY;
@@ -235,23 +234,19 @@ void titleScreenClass::draw(Uint32 * frameAge, Uint32 * maxFrameAge)
       }
       glTranslatef(0.0,-glText->getHeight(FONT_INTROHIGHSCORE),0.0);
    }
-   
-   //Draw the info string with website and version
-   glColor4f(1,1,0,1);
-   glText->write("Visit http://sdl-ball.sf.net/ for info, help and updates!", FONT_INTROHIGHSCORE, 1, 1.0, 0,0);
-   
+
     if(!rotDir)
     {
       rot += 0.01 * globalTicksSinceLastDraw;
       if(rot > 40)
       {
-        rotDir=1;
+        rotDir=true;
       }
     } else {
       rot -= 0.01 * globalTicksSinceLastDraw;
       if(rot < -40)
       {
-        rotDir=0;
+        rotDir=false;
       }
     }
     glLoadIdentity();
@@ -267,7 +262,6 @@ void titleScreenClass::draw(Uint32 * frameAge, Uint32 * maxFrameAge)
     globalTicksSinceLastDraw=0;
     globalMilliTicksSinceLastDraw=0;
     *frameAge = 0;
-    
   }
 }
 
@@ -275,22 +269,22 @@ void titleScreenClass::draw(Uint32 * frameAge, Uint32 * maxFrameAge)
 void titleScreenClass::readDescriptions(powerupDescriptionClass po[])
 {
   ifstream f;
-  string line;
-  int p=0;
-  bool flip=0;
-  
+
   f.open( useTheme("/powerupdescriptions.txt", setting.gfxTheme).data() );
   if(f.is_open())
   {
+    bool flip=false;
+    int p=0;
+    string line;
     while(!f.eof())
     {
       getline(f, line);
       if(!flip)
       {
-        flip=1;
+        flip=true;
         po[p].name=line;
       } else {
-        flip=0;
+        flip=false;
         po[p].description=line;
       p++;
       }

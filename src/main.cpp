@@ -3342,6 +3342,8 @@ int main(int argc, char *argv[]) {
     menu.joystickAttached = control.joystickAttached();
 
     soundMan.add(SND_START, 0);
+
+    // Todo show in title
     SDL_Log("SDL-Ball v %s", VERSION);
     SDL_Event event;
     while (!var.quit) {
@@ -3349,7 +3351,7 @@ int main(int argc, char *argv[]) {
     gettimeofday(&timeStart, NULL);
 #endif
 
-        // events
+        // Events
         control.get(); //Check for keypresses and joystick events
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -3503,7 +3505,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        // timing
+        // Timing
         nonpausingGlobalTicks = SDL_GetTicks() - nonpausingLastTick;
         frameAge += nonpausingGlobalTicks;
 
@@ -3521,10 +3523,10 @@ int main(int argc, char *argv[]) {
         globalTicksSinceLastDraw += nonpausingGlobalTicks;
         globalMilliTicksSinceLastDraw += nonpausingGlobalMilliTicks;
 
-        // update
+        // Update
         gVar.deadTime += globalTicks;
 
-        //really ugly... but easy
+        // Really ugly... but easy
         if (!var.titleScreenShow) {
             pos p;
 
@@ -3666,14 +3668,14 @@ int main(int argc, char *argv[]) {
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 }
 
-                //Update player score
+                // Update player score
                 scoreboard.update(player.score);
 
-                //background
+                // Background
                 if (setting.showBg)
                     bg.draw();
 
-                //borders
+                // Borders
                 glEnable(GL_SCISSOR_TEST);
                 setPlayfieldScissor();
                 glCallList(sceneDL);
@@ -3695,7 +3697,7 @@ int main(int argc, char *argv[]) {
 
             gVar.bricksleft = 0;
 
-            //Update nbrick here
+            // Update nbrick here
             if (var.bricksHit) {
                 memcpy(nbrick, updated_nbrick, sizeof(updated_nbrick));
                 var.bricksHit = false;
