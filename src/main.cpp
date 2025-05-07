@@ -34,6 +34,8 @@
 #include <SDL2/SDL_mixer.h>
 #endif
 
+#include <memory>
+
 #include "display.hpp"
 #include "config.h"
 #include "config_file.h"
@@ -3101,44 +3103,79 @@ void easyBrick(brick bricks[]) {
 #include "title.cpp"
 
 bool screenShot() {
-    FILE *fscreen;
+    static constexpr size_t MAX_FILENAME = 256;
+    static constexpr size_t TGA_HEADER_SIZE = 12;
+    static constexpr size_t TGA_INFO_SIZE = 6;
+    static constexpr size_t CHANNELS = 3;  // BGR
 
-    char cName[256];
-    int i = 0;
-    bool found = false;
-    while (!found) {
-        sprintf(cName, "%s/sdl-ball_%i.tga", configFile.getScreenshotDir().data(), i);
-        fscreen = fopen(cName, "rb");
-        if (fscreen == nullptr) {
-            found = true;
-        } else {
-            fclose(fscreen);
+    char fileName[MAX_FILENAME];
+    int fileIndex = 0;
+
+    // Finde freien Dateinamen
+    while (fileIndex < 9999) {
+        const int result = snprintf(fileName, MAX_FILENAME, "%s/sdl-ball_%04d.tga",
+            configFile.getScreenshotDir().data(), fileIndex);
+
+        if (result < 0 || static_cast<size_t>(result) >= MAX_FILENAME) {
+            SDL_Log("Filename too long");
+            return false;
         }
-        i++;
+
+        FILE* test = fopen(fileName, "rb");
+        if (!test) break;
+        fclose(test);
+        fileIndex++;
     }
-    const int nS = setting.res_x * setting.res_y * 3;
-    auto *px = new GLubyte[nS];
-    if (px == nullptr) {
-        SDL_Log("Alloc err, screenshot failed.");
+
+    if (fileIndex == 9999) {
+        SDL_Log("No free filename found");
         return false;
     }
-    fscreen = fopen(cName, "wb");
 
+    // Alloziere Pixel Buffer
+    const size_t pixelCount = setting.res_x * setting.res_y * CHANNELS;
+    auto pixels = std::make_unique<GLubyte[]>(pixelCount);
+    if (!pixels) {
+        SDL_Log("Memory allocation failed");
+        return false;
+    }
+
+    // Öffne Ausgabedatei
+    FILE* outFile = fopen(fileName, "wb");
+    if (!outFile) {
+        SDL_Log("Could not create file '%s'", fileName);
+        return false;
+    }
+
+    // Lese Framebuffer
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(0, 0, setting.res_x, setting.res_y, GL_BGR, GL_UNSIGNED_BYTE, px);
+    glReadPixels(0, 0, setting.res_x, setting.res_y, GL_BGR, GL_UNSIGNED_BYTE, pixels.get());
 
-    const unsigned char TGAheader[12] = {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    const unsigned char header[6] = {
-        static_cast<unsigned char>(setting.res_x % 256), static_cast<unsigned char>(setting.res_x / 256),
-        static_cast<unsigned char>(setting.res_y % 256), static_cast<unsigned char>(setting.res_y / 256), 24, 0
+    if (glGetError() != GL_NO_ERROR) {
+        SDL_Log("Failed reading OpenGL framebuffer");
+        fclose(outFile);
+        return false;
+    }
+
+    // Schreibe TGA Header
+    const unsigned char tgaHeader[TGA_HEADER_SIZE] = {0,0,2,0,0,0,0,0,0,0,0,0};
+    const unsigned char tgaInfo[TGA_INFO_SIZE] = {
+        static_cast<unsigned char>(setting.res_x & 0xFF),
+        static_cast<unsigned char>((setting.res_x >> 8) & 0xFF),
+        static_cast<unsigned char>(setting.res_y & 0xFF),
+        static_cast<unsigned char>((setting.res_y >> 8) & 0xFF),
+        24, 0
     };
-    fwrite(TGAheader, sizeof(unsigned char), 12, fscreen);
-    fwrite(header, sizeof(unsigned char), 6, fscreen);
 
-    fwrite(px, sizeof(GLubyte), nS, fscreen);
-    fclose(fscreen);
-    delete [] px;
-    SDL_Log("Wrote screenshot to '%s'", cName);
+    if (fwrite(tgaHeader, 1, TGA_HEADER_SIZE, outFile) != TGA_HEADER_SIZE ||
+        fwrite(tgaInfo, 1, TGA_INFO_SIZE, outFile) != TGA_INFO_SIZE ||
+        fwrite(pixels.get(), 1, pixelCount, outFile) != pixelCount) {
+        SDL_Log("Failed writing TGA file");
+        fclose(outFile);
+        return false;
+    }
+
+    fclose(outFile);
     return true;
 }
 
