@@ -2493,20 +2493,36 @@ void resumeGame() {
     var.menu = 0;
 }
 
-void mkDLscene(GLuint *dl, const textureClass &tex) {
-    //Scenen
+void createPlayfieldBorder(GLuint *dl, const textureClass &tex) {
+    // Viewport-Koordinaten holen für Clipping
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    // Koordinaten für Clipping berechnen
+    int scissorX = (int)(((-1.6f + 3.0f) / 6.0f) * viewport[2]);
+    int scissorWidth = (int)(((3.2f) / 6.0f) * viewport[2]);
+
+    // Clipping aktivieren
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(scissorX, 0, scissorWidth, viewport[3]);
+
     *dl = glGenLists(1);
     glNewList(*dl,GL_COMPILE);
+
     glLoadIdentity();
     glTranslatef(0.0f, 0.0f, -3.0);
+
+    // top
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
     glBegin(GL_POINTS);
     glVertex3f(-1.60, 1.25, 0.0);
     glEnd();
+
     glBegin(GL_QUADS);
-    //venstre kant
+
+    // left
     glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-1.66, 1.25, 0.0);
     glTexCoord2f(1.0f, 0.0f);
@@ -2515,7 +2531,7 @@ void mkDLscene(GLuint *dl, const textureClass &tex) {
     glVertex3f(-1.60, -1.25, 0.0);
     glTexCoord2f(0.0f, -1.0f);
     glVertex3f(-1.66, -1.25, 0.0);
-    //højre kant
+    // right
     glTexCoord2f(0.0f, 0.0f);
     glVertex3f(1.66, 1.25, 0.0);
     glTexCoord2f(1.0f, 0.0f);
@@ -2525,6 +2541,7 @@ void mkDLscene(GLuint *dl, const textureClass &tex) {
     glTexCoord2f(0.0f, -1.0f);
     glVertex3f(1.66, -1.25, 0.0);
     glEnd();
+    glDisable(GL_SCISSOR_TEST);
     glEndList();
 }
 
@@ -3305,7 +3322,7 @@ int main(int argc, char *argv[]) {
 
     GLuint sceneDL;
 
-    mkDLscene(&sceneDL, texBorder);
+    createPlayfieldBorder(&sceneDL, texBorder);
 
     brick bricks[598];
 
@@ -3335,13 +3352,13 @@ int main(int argc, char *argv[]) {
     bulletsClass bullet(texBullet);
     speedometerClass speedo;
     hudClass hud(texBall[0], texPowerup);
-    //This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
+    // This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
     var.effectnum = -1;
 
     Uint32 lastTick = SDL_GetTicks();
     Uint32 nonpausingLastTick = lastTick;
     char txt[256];
-    Uint32 frameAge = 0; //How long have the current frame been shown
+    Uint32 frameAge = 0; // in milliseconds
 
 #ifdef performanceTimer
   struct timeval timeStart,timeStop;
