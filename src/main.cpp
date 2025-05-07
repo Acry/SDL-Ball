@@ -3181,7 +3181,7 @@ int main(int argc, char *argv[]) {
     }
 
     setting = settingsManager.getSettings();
-
+    player.difficulty = setting.startingDifficulty;
     var.quit=false;
     var.clearScreen=true;
     var.titleScreenShow=true;

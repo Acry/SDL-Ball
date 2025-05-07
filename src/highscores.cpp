@@ -10,6 +10,7 @@ public:
     }
 
     void draw() const {
+        // draw texture
         glLoadIdentity();
         glTranslatef(0, 0, -3.0);
         glColor4f(1, 1, 1, 1);
@@ -26,9 +27,12 @@ public:
         glVertex3f(-1.0f, -0.5f, 0.0f);
         glEnd();
 
-
+        // FIXME
+        glLoadIdentity();
+        //glTranslatef(0, 0, -2.9);  // Leicht vor der Textur
         glColor4f(1, 1, 1, 1);
-        glText->write(name, FONT_MENUHIGHSCORE, true, 2.0, 0.0, 0.0);
+
+        glText->write(name, FONT_MENUHIGHSCORE, true, 2.0, 0.0, 0.2);
     }
 
     void type(const SDL_Event &e, menuClass &menu) {

@@ -23,10 +23,9 @@ struct glFontInfo_struct {
 
 
 class glTextClass {
-private:
     void genFontTex(string TTFfontName, int fontSize, int font);
 
-    struct glFontInfo_struct fontInfo[FONT_NUM];
+    glFontInfo_struct fontInfo[FONT_NUM];
 
 public:
     GLfloat getHeight(int font);
@@ -92,7 +91,7 @@ glTextClass::glTextClass() {
 }
 
 void glTextClass::genFontTex(string TTFfontName, int fontSize, int font) {
-    TTF_Font *ttfFont = NULL;
+    TTF_Font *ttfFont = nullptr;
     SDL_Surface *c, *t;
     Uint32 rmask, gmask, bmask, amask;
     char tempChar[2] = {0, 0};
@@ -214,4 +213,5 @@ void glTextClass::write(string text, int font, bool center, GLfloat scale, GLflo
         glEnd();
         posX += sX;
     }
+    // glDisable(GL_TEXTURE_2D);
 }
