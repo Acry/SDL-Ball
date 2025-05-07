@@ -216,22 +216,21 @@ class sparkle {
 };
 
 class particleFieldClass {
-  private:
     int spawnTimeout; //This is used to spawn sparkles at a random time
     sparkle *sparks;
     void spawnSpark(int sparkNum);
   public:
-    struct pos p;
-    struct effect_vars vars;
-    void init(struct effect_vars varsP, struct pos p);
+    pos p;
+    effect_vars vars;
+    void init(effect_vars varsP, pos p);
     void draw();
-    void move(struct pos p);
+    void move(pos p);
     void coldet(brick & b);
     void pcoldet(paddle_class & b);
     ~particleFieldClass();
 };
 
-void particleFieldClass::init(struct effect_vars varsP, struct pos spawnPos)
+void particleFieldClass::init(effect_vars varsP, pos spawnPos)
 {
   vars=varsP;
   spawnTimeout=0;
@@ -320,7 +319,7 @@ class effect_class {
   public:
     transit_effect_class transit;
     particleFieldClass *pf;
-    struct effect_vars vars;
+    effect_vars vars;
     
     effect_class()
     {
@@ -472,8 +471,7 @@ class effect_class {
 };
 
 class effectManager {
-  private:
-  struct effect_vars vars; //denne kopieres over i den næste effekt der bliver spawned
+  effect_vars vars; //denne kopieres over i den næste effekt der bliver spawned
   int effectId; //ever rising number of a spawned effect.
   
   public:
