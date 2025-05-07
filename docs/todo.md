@@ -12,3 +12,8 @@
 ## update
 
 - use sdl2 highperformance timer
+
+
+## menu
+
+ change difficulty

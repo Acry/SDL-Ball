@@ -712,7 +712,7 @@ public:
               setting.sound=false;
             } else {
               setting.sound=true;
-              soundMan.loadsounds();
+              soundMan.loadSounds();
             }
             settingsManager.settingsChanged();
 

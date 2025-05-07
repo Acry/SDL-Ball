@@ -104,7 +104,6 @@ struct pos {
     GLfloat y;
 };
 
-
 struct difficultyStruct {
     GLfloat ballspeed[3];
     GLfloat maxballspeed[3];
@@ -114,7 +113,7 @@ struct difficultyStruct {
     GLfloat speedup[3];
 };
 
-struct difficultyStruct static_difficulty, difficulty;
+difficultyStruct static_difficulty, difficulty;
 
 struct scrollInfoScruct {
     bool drop; //0 right, 1 left, 2 up, 3 down
@@ -147,7 +146,7 @@ struct vars {
 
     int effectnum;
 
-    struct scrollInfoScruct scrollInfo;
+    scrollInfoScruct scrollInfo;
 };
 
 //Ting der har med spillogik at gøre

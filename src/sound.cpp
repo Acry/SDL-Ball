@@ -9,20 +9,18 @@ class soundClass {
   Mix_Chunk *sample[USED_SOUND_SAMPLES];
   vector<sampleQueuedItem> q;
   void loadSample(const char *SampleName, int sampleNum);
-  int currentChannels;
-  int m; //Secret undocumented variable
+  int currentChannels = 0;
+  int breakSoundIndex = 0;
 
   public:
   bool init();
   void play();
   void add(int i, GLfloat x);
-  void loadsounds();
+  void loadSounds();
   ~soundClass();
 };
 
 bool soundClass::init() {
-
-  m=0;
   constexpr Uint16 audio_format = AUDIO_S16; /* 16-bit stereo */
   constexpr int audio_channels = 2;
   constexpr int audio_buffers = 1024;
@@ -43,7 +41,7 @@ bool soundClass::init() {
   }
 
   if(setting.sound)
-    loadsounds();
+    loadSounds();
   return true;
 }
 
@@ -78,7 +76,7 @@ void soundClass::add(int i, GLfloat x)
   q.push_back( qt );
 }
 
-void soundClass::loadsounds()
+void soundClass::loadSounds()
 {
   loadSample("start.ogg", SND_START);
   loadSample("ball-hit-border.ogg", SND_BALL_HIT_BORDER);
@@ -169,7 +167,7 @@ void soundClass::play()
 
     if(plIt->s == SND_NORM_BRICK_BREAK)
     {
-      switch(m)
+      switch(breakSoundIndex)
       {
         //Case 0 = SND_NORM_BREAK(a)
         case 1:
@@ -187,9 +185,9 @@ void soundClass::play()
         default: ;
       }
 
-      m++;
-      if(m==5)
-        m=0;
+      breakSoundIndex++;
+      if(breakSoundIndex==5)
+        breakSoundIndex=0;
 
     }
 
