@@ -4,7 +4,7 @@ public:
 
     textureClass *tex;
 
-    void draw();
+    void draw() const;
 
     string name;
     string description;
@@ -15,7 +15,7 @@ powerupDescriptionClass::powerupDescriptionClass() {
     height = 0.055;
 }
 
-void powerupDescriptionClass::draw() {
+void powerupDescriptionClass::draw() const {
     tex->play();
     glBindTexture(GL_TEXTURE_2D, tex->prop.texture);
     glColor4f(tex->prop.glTexColorInfo[0], tex->prop.glTexColorInfo[1], tex->prop.glTexColorInfo[2],
@@ -32,8 +32,9 @@ void powerupDescriptionClass::draw() {
     glEnd();
 
     glColor4f(1.0, 1.0, 1.0, 1.0);
-    float spacing = 0.05f;
-    // Write her
+
+    constexpr float spacing = 0.05f;
+    // Write the name and description
     glText->write(name, FONT_INTRODESCRIPTION, false, 1.0, posx + width + spacing,
                   posy + (glText->getHeight(FONT_INTRODESCRIPTION) / 2.0));
     glText->write(description, FONT_INTRODESCRIPTION, false, 1.0, posx + width + spacing,
@@ -59,7 +60,7 @@ class titleScreenClass {
     bool hilightDir;
     int hilightTime;
 
-    void readDescriptions(powerupDescriptionClass po[]);
+    static void readDescriptions(powerupDescriptionClass po[]);
 
 public:
     titleScreenClass(effectManager *m, textureClass tp[], menuClass *me);
@@ -101,9 +102,9 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
 
     for(int column = 0; column < 3; column++) {
         for(int row=0; row < 7; row++) {
-            powerUp[row+(7*column)].tex = &texPowerups[row+7*column];
-            powerUp[row+(7*column)].posx = startX + column * (iconWidth + textWidth + spacing);
-            powerUp[row+(7*column)].posy = -0.25 - 0.135 * row;
+            powerUp[row+7*column].tex = &texPowerups[row+7*column];
+            powerUp[row+7*column].posx = startX + column * (iconWidth + textWidth + spacing);
+            powerUp[row+7*column].posy = -0.25 - 0.135 * row;
         }
     }
     readDescriptions(powerUp);
@@ -115,20 +116,19 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
     runnerTime = 0;
 
     hilight = 0;
-    hilightDir = 1;
+    hilightDir = true;
     hilightTime = 0;
 }
 
-int delta(int a, int b) {
+int delta(const int a, const int b) {
     if (a >= b) {
-        return (a - b);
-    } else {
-        return (b - a);
+        return a - b;
     }
+    return b - a;
+
 }
 
 void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
-    pos p, s;
     if (*frameAge >= *maxFrameAge) {
         soundMan.play();
 
@@ -139,6 +139,8 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
 
         ticksSinceLastSpawn += globalTicksSinceLastDraw;
         if (ticksSinceLastSpawn > 125) {
+            pos s;
+            pos p;
             s.x = 3.25;
             s.y = 0.525;
             p.x = 0;
@@ -211,12 +213,12 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
                 if (hilight == numHighScores * 3) //-1)
                 {
                     hilight = numHighScores - 1;
-                    hilightDir = 0;
+                    hilightDir = false;
                 }
             } else {
                 hilight--;
                 if (hilight == -numHighScores * 2) {
-                    hilightDir = 1;
+                    hilightDir = true;
                     hilight = 0;
                 }
             }
@@ -224,10 +226,9 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
         }
 
         glTranslatef(0.0, 0.59, 0.0);
-        float a;
         for (i = 0; i < numHighScores; i++) {
             if ((hilightDir && i < hilight + 1) || (!hilightDir && i > hilight - 1)) {
-                a = 1.0 - ((1.0 / (float) (numHighScores * 2)) * (delta(hilight, i)));
+                float a = 1.0 - 1.0 / static_cast<float>(numHighScores * 2) * delta(hilight, i);
                 glColor4f(1, 1, 1, a);
                 glText->write(menu->highScores[i], FONT_INTROHIGHSCORE, 1, 1.0, 0.0, 0.0);
             }
