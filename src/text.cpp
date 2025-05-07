@@ -18,24 +18,24 @@ struct glCharInfo_struct {
 struct glFontInfo_struct {
     GLuint tex;
     GLfloat height;
-    struct glCharInfo_struct ch[255];
+    glCharInfo_struct ch[255];
 };
 
 
 class glTextClass {
-    void genFontTex(string TTFfontName, int fontSize, int font);
+    void genFontTex(const string &TTFfontName, int fontSize, int font);
 
     glFontInfo_struct fontInfo[FONT_NUM];
 
 public:
     GLfloat getHeight(int font);
 
-    void write(string text, int font, bool center, GLfloat scale, GLfloat x, GLfloat y);
+    void write(const string &text, int font, bool center, GLfloat scale, GLfloat x, GLfloat y);
 
     glTextClass();
 };
 
-GLfloat glTextClass::getHeight(int font) {
+GLfloat glTextClass::getHeight(const int font) {
     return (fontInfo[font].height * 2.0);
 }
 
@@ -90,14 +90,13 @@ glTextClass::glTextClass() {
     TTF_Quit();
 }
 
-void glTextClass::genFontTex(string TTFfontName, int fontSize, int font) {
+void glTextClass::genFontTex(const string &TTFfontName, const int fontSize, const int font) {
     TTF_Font *ttfFont = nullptr;
     SDL_Surface *c, *t;
     Uint32 rmask, gmask, bmask, amask;
     char tempChar[2] = {0, 0};
     int sX = 0, sY = 0; //Size of the rendered character
     SDL_Rect src = {0, 0, 0, 0}, dst = {0, 0, 0, 0};
-    SDL_Color white = {255, 255, 255, 255};
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     rmask = 0xff000000;
@@ -125,7 +124,8 @@ void glTextClass::genFontTex(string TTFfontName, int fontSize, int font) {
 
     fontInfo[font].height = 0.0;
     for (int i = 32; i < 128; i++) {
-        tempChar[0] = (char) i;
+        constexpr SDL_Color white = {255, 255, 255, 255};
+        tempChar[0] = static_cast<char>(i);
 
         //Render to surface
         c = TTF_RenderText_Blended(ttfFont, tempChar, white);
@@ -137,7 +137,6 @@ void glTextClass::genFontTex(string TTFfontName, int fontSize, int font) {
         src.w = sX;
         src.h = sY;
 
-
         if (dst.x + sX > 512) {
             dst.x = 1;
             dst.y += sY + 2;
@@ -147,10 +146,10 @@ void glTextClass::genFontTex(string TTFfontName, int fontSize, int font) {
             }
         }
 
-        fontInfo[font].ch[i].Xa = (1.0 / (512.0 / (float) dst.x));
-        fontInfo[font].ch[i].Xb = (1.0 / (512.0 / ((float) dst.x + sX)));
-        fontInfo[font].ch[i].Ya = (1.0 / (512.0 / (float) dst.y));
-        fontInfo[font].ch[i].Yb = (1.0 / (512.0 / ((float) dst.y + sY)));
+        fontInfo[font].ch[i].Xa = (1.0 / (512.0 / static_cast<float>(dst.x)));
+        fontInfo[font].ch[i].Xb = (1.0 / (512.0 / (static_cast<float>(dst.x) + sX)));
+        fontInfo[font].ch[i].Ya = (1.0 / (512.0 / static_cast<float>(dst.y)));
+        fontInfo[font].ch[i].Yb = (1.0 / (512.0 / (static_cast<float>(dst.y) + sY)));
         fontInfo[font].ch[i].width = sX / 800.0;
 
         if (sY / 800.0 > fontInfo[font].height) {
@@ -176,11 +175,11 @@ void glTextClass::genFontTex(string TTFfontName, int fontSize, int font) {
     SDL_FreeSurface(t); //Free text-surface
 }
 
-void glTextClass::write(string text, int font, bool center, GLfloat scale, GLfloat x, GLfloat y) {
+void glTextClass::write(const string &text, const int font, const bool center, const GLfloat scale, const GLfloat x, const GLfloat y) {
     int c;
     GLfloat sX, posX = 0;
 
-    //We need to find out half of the string width in order to center
+    // We need to find out half of the string width in order to center
     if (center) {
         for (unsigned int i = 0; i < text.length(); i++) {
             c = static_cast<unsigned int>(text[i]);

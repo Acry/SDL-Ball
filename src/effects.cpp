@@ -695,7 +695,6 @@ class glAnnounceMessageClass {
 
 #define MAXMSG 10
 class glAnnounceTextClass {
-  private:
     int len; //hvor mange mangler vi at vise
     list<glAnnounceMessageClass> msg;
     list<glAnnounceMessageClass>::iterator it;

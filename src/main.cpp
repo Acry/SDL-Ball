@@ -1184,16 +1184,11 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
 }
 
 glAnnounceTextClass announce;
-//Slet mig måske
-float abs2(float x) {
-    if (x < 0) { return -x; }
-    return x;
-}
 
 int LinesCross(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, GLfloat *linx,
                GLfloat *liny) {
     float d = (x1 - x0) * (y3 - y2) - (y1 - y0) * (x3 - x2);
-    if (abs2(d) < 0.001f) { return -1; }
+    if (fabs(d) < 0.001f) { return -1; }
     float AB = ((y0 - y2) * (x3 - x2) - (x0 - x2) * (y3 - y2)) / d;
     if (AB > 0.0 && AB < 1.0) {
         float CD = ((y0 - y2) * (x1 - x0) - (x0 - x2) * (y1 - y0)) / d;
@@ -1206,7 +1201,7 @@ int LinesCross(float x0, float y0, float x1, float y1, float x2, float y2, float
     return 0;
 }
 
-//Leaves an trail of the ball
+// Leaves a trail behind the ball
 class tracer {
 private:
     GLfloat x[100], y[100], r[100], g[100], b[100], a[100], s[100], cr, cg, cb;
@@ -1221,13 +1216,12 @@ public:
     int len;
 
     void draw() {
-        int i;
-        for (i = 0; i < len; i++) {
+        for (int i = 0; i < len; i++) {
             if (active[i]) {
-                a[i] -= 4.0 * globalMilliTicksSinceLastDraw;
-                s[i] += 4.0 * globalMilliTicksSinceLastDraw;
-                if (a[i] < 0.0)
-                    active[i] = 0;
+                a[i] -= 4.0f * globalMilliTicksSinceLastDraw;
+                s[i] += 4.0f * globalMilliTicksSinceLastDraw;
+                if (a[i] < 0.0f)
+                    active[i] = false;
 
                 tex->play();
                 glBindTexture(GL_TEXTURE_2D, tex->prop.texture);
@@ -1248,7 +1242,7 @@ public:
         }
     }
 
-    void colorRotate(bool explosive, GLfloat c[]) {
+    void colorRotate(const bool explosive, GLfloat c[]) {
         color++;
         if (color > 5)
             color = 0;
@@ -1273,9 +1267,8 @@ public:
         cb = 0;
         height = 0.01;
         width = 0.01;
-        int i;
-        for (i = 0; i < 100; i++) {
-            active[i] = 0;
+        for (int i = 0; i < 100; i++) {
+            active[i] = false;
         }
     }
 
@@ -3526,13 +3519,14 @@ int main(int argc, char *argv[]) {
             pos p;
 
             if (gVar.deadTime > 20000) {
+                //give the balls explosive ability, in order to blow up cement block and get on with the game
                 gVar.deadTime = 0;
                 bMan.powerup(PO_EXPLOSIVE);
-                //give the balls explosive ability, in order to blow up cement block and get on with the game
+
             }
 
             if (bMan.activeBalls == 0 && !gVar.newLevel)
-            //check kun om vi er døde hvis vi faktisk er kommet igang med at spille
+            // only check if we are dead if we have actually started playing
             {
                 player.lives--;
                 if (player.lives > 0) {
@@ -3820,11 +3814,8 @@ int main(int argc, char *argv[]) {
                 }
 
                 announce.draw();
-
                 SDL_GL_SwapWindow(display.sdlWindow);
-
                 frameAge = 0;
-
                 globalTicksSinceLastDraw = 0;
                 globalMilliTicksSinceLastDraw = 0;
 #ifdef performanceTimer
@@ -3846,11 +3837,7 @@ int main(int argc, char *argv[]) {
             //Show the title screen
             titleScreen.draw(&frameAge, &maxFrameAge);
         }
-#ifdef WIN32
-	Sleep( 1 );
-#else
         usleep(1000);
-#endif
     }
 
     // todo GUI ask, instead of want to quit, if changes
