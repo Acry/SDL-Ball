@@ -1203,40 +1203,62 @@ int LinesCross(float x0, float y0, float x1, float y1, float x2, float y2, float
 
 // Leaves a trail behind the ball
 class tracer {
-private:
-    GLfloat x[100], y[100], r[100], g[100], b[100], a[100], s[100], cr, cg, cb;
+    GLfloat x[100], y[100];         // Position
+    GLfloat r[100], g[100], b[100]; // Farbe
+    GLfloat a[100];                 // Alpha wird stärker reduziert je weiter vom Ball
+    GLfloat s[100];                 // Größe wird kleiner je weiter vom Ball
+    GLfloat cr, cg, cb;             // Aktuelle Farben
     bool active[100];
     int color;
-    GLfloat lastX, lastY; //Last position where we spawned one
+    GLfloat lastX, lastY;           // Letzte Position
 
 public:
     GLfloat height, width;
-    //     GLuint texture;
     textureClass *tex;
     int len;
 
+    // Constructor bleibt gleich
+    tracer() {
+        len = 100;
+        lastX = lastY = 0;
+        cr = 1; cg = cb = 0;
+        height = width = 0.01;
+        for(int i = 0; i < 100; i++) active[i] = false;
+    }
+
     void draw() {
-        for (int i = 0; i < len; i++) {
-            if (active[i]) {
-                a[i] -= 4.0f * globalMilliTicksSinceLastDraw;
-                s[i] += 4.0f * globalMilliTicksSinceLastDraw;
-                if (a[i] < 0.0f)
+        for(int i = 0; i < len; i++) {
+            if(active[i]) {
+                // Stärkere Alpha-Reduktion für ältere Partikel
+                a[i] -= (4.0f + i*0.1f) * globalMilliTicksSinceLastDraw;
+
+                // Partikel werden dünner mit der Zeit
+                s[i] -= 2.0f * globalMilliTicksSinceLastDraw;
+                if(s[i] < 0.2f) s[i] = 0.2f;
+
+                if(a[i] < 0.0f) {
                     active[i] = false;
+                    continue;
+                }
 
                 tex->play();
                 glBindTexture(GL_TEXTURE_2D, tex->prop.texture);
                 glLoadIdentity();
                 glTranslatef(x[i], y[i], -3.0);
-                glColor4f(r[i], g[i], b[i], a[i]);
+
+                // Alpha zusätzlich basierend auf Index reduzieren
+                float indexBasedAlpha = a[i] * (1.0f - (float)i/len);
+                glColor4f(r[i], g[i], b[i], indexBasedAlpha);
+
                 glBegin(GL_QUADS);
                 glTexCoord2f(tex->pos[0], tex->pos[1]);
-                glVertex3f(-width * s[i], height * s[i], 0.00); // øverst venst
+                glVertex3f(-width * s[i], height * s[i], 0.00);
                 glTexCoord2f(tex->pos[2], tex->pos[3]);
-                glVertex3f(width * s[i], height * s[i], 0.00); // øverst højre
+                glVertex3f(width * s[i], height * s[i], 0.00);
                 glTexCoord2f(tex->pos[4], tex->pos[5]);
-                glVertex3f(width * s[i], -height * s[i], 0.00); // nederst højre
+                glVertex3f(width * s[i], -height * s[i], 0.00);
                 glTexCoord2f(tex->pos[6], tex->pos[7]);
-                glVertex3f(-width * s[i], -height * s[i], 0.00); // nederst venstre
+                glVertex3f(-width * s[i], -height * s[i], 0.00);
                 glEnd();
             }
         }
@@ -1257,23 +1279,8 @@ public:
             cb = 0.0;
         }
     }
-
-    tracer() {
-        len = 100;
-        lastX = 0;
-        lastY = 0;
-        cr = 1;
-        cg = 0;
-        cb = 0;
-        height = 0.01;
-        width = 0.01;
-        for (int i = 0; i < 100; i++) {
-            active[i] = false;
-        }
-    }
-
     void update(GLfloat nx, GLfloat ny) {
-        //If long enough away
+        // If long enough away
         GLfloat dist = sqrt(pow(nx - lastX, 2) + pow(ny - lastY, 2));
         if (dist > 0.01) {
             lastX = nx;
