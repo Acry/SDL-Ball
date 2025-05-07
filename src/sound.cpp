@@ -5,17 +5,12 @@ struct sampleQueuedItem {
 };
 
 class soundClass {
-  private:
-  #ifndef NOSOUND
-  //The actual sound samples
-  Mix_Chunk *sample[SNDSAMPLES];
-  //List of queued samples
-  vector<struct sampleQueuedItem> q;
+
+  Mix_Chunk *sample[USED_SOUND_SAMPLES];
+  vector<sampleQueuedItem> q;
   void loadSample(const char *SampleName, int sampleNum);
-
+  int currentChannels;
   int m; //Secret undocumented variable
-
-  #endif
 
   public:
   bool init();
@@ -26,26 +21,32 @@ class soundClass {
 };
 
 bool soundClass::init() {
-  #ifndef NOSOUND
+
   m=0;
-  int audio_rate = 44100;
-  Uint16 audio_format = AUDIO_S16; /* 16-bit stereo */
-  int audio_channels = 2;
-  int audio_buffers = 1024;
+  constexpr Uint16 audio_format = AUDIO_S16; /* 16-bit stereo */
+  constexpr int audio_channels = 2;
+  constexpr int audio_buffers = 1024;
+  constexpr int audio_rate = 44100;
   if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
       SDL_Log("Error: Could not open audio device.Sound have been disabled.");
-      setting.sound=0;
-      return(0);
+      setting.sound=false;
+      return false;
   }
-  Mix_AllocateChannels(MIX_CHANNELS);
+  if (currentChannels = Mix_AllocateChannels(-1); currentChannels < GAME_AUDIO_CHANNELS) {
+    // wenn weniger Kanäle verfügbar sind als gewünscht,
+    // behalte die verfügbare Anzahl bei
+    Mix_AllocateChannels(currentChannels);
+  } else {
+    // wenn genügend Kanäle verfügbar sind,
+    // alloziere die gewünschte Anzahl
+    Mix_AllocateChannels(GAME_AUDIO_CHANNELS);
+  }
 
   if(setting.sound)
     loadsounds();
-  #endif
-  return(1);
+  return true;
 }
 
-#ifndef NOSOUND
 void soundClass::loadSample(const char *SampleName, int sampleNum)
 {
   string F="snd/";
@@ -57,13 +58,11 @@ void soundClass::loadSample(const char *SampleName, int sampleNum)
     SDL_Log("SoundManager '%s' :%s", F.c_str(), Mix_GetError());
   }
 }
-#endif
-
 
 /* This function puts a sample in queue for playing */
 void soundClass::add(int i, GLfloat x)
 {
-  #ifndef NOSOUND
+
   if(setting.sound==0)
     return;
 
@@ -73,18 +72,14 @@ void soundClass::add(int i, GLfloat x)
     p=(255.0/3.2)*(x+1.6);
   }
 
-  struct sampleQueuedItem qt;
+  sampleQueuedItem qt;
   qt.s=i;
   qt.p=p;
   q.push_back( qt );
-
-  #endif
 }
 
 void soundClass::loadsounds()
 {
-
-  #ifndef NOSOUND
   loadSample("start.ogg", SND_START);
   loadSample("ball-hit-border.ogg", SND_BALL_HIT_BORDER);
   loadSample("ball-hit-paddle.ogg", SND_BALL_HIT_PADDLE);
@@ -113,33 +108,31 @@ void soundClass::loadsounds()
   loadSample("menuclick.ogg", SND_MENUCLICK);
   loadSample("glue-ball-hit-paddle.ogg", SND_GLUE_BALL_HIT_PADDLE);
   loadSample("buy-powerup.ogg", SND_BUY_POWERUP);
-  #endif
 }
 
 /* This function is called only when drawing a frame, and plays the queue of samples,
    It will average the x/stereo position of a sample if it is queued more than once */
 void soundClass::play()
 {
-  #ifndef NOSOUND
   if(setting.sound==0)
     return;
 
   //Playlist (lol, imagination for the win..)
-  vector<struct sampleQueuedItem> pl;
-  vector<struct sampleQueuedItem>::iterator plIt;
+  vector<sampleQueuedItem> pl;
+  vector<sampleQueuedItem>::iterator plIt;
   bool same=0;
   int freeChannel = -1; //The channel we will use for this sample
 
   //Loop through queue and find samples thare are the same, average their position and put in a new vector
-  for(vector<struct sampleQueuedItem>::iterator it = q.begin(); it != q.end(); ++it)
+  for(vector<sampleQueuedItem>::iterator it = q.begin(); it != q.end(); ++it)
   {
     //Loop thrugh the playlist to see find out if this allready exist
-    same=0;
+    same=false;
     for(plIt=pl.begin(); plIt != pl.end(); ++plIt)
     {
       if(plIt->s == it->s)
       {
-        same=1;
+        same=true;
         plIt->num++;
         plIt->p += it->p;
       }
@@ -160,7 +153,7 @@ void soundClass::play()
   for(plIt = pl.begin(); plIt != pl.end(); ++plIt)
   {
     //Find a free channel:
-    for(int i=0; i < MIX_CHANNELS; i++)
+    for(int i=0; i < currentChannels; i++)
     {
       if(!Mix_Playing(i))
       {
@@ -191,6 +184,7 @@ void soundClass::play()
         case 4:
           plIt->s = SND_NORM_BRICK_BREAKE;
           break;
+        default: ;
       }
 
       m++;
@@ -204,16 +198,13 @@ void soundClass::play()
       printf("Sample %i: %s\n",plIt->s, Mix_GetError());
     }
   }
-  #endif
 }
 
 soundClass::~soundClass()
 {
-  #ifndef NOSOUND
-  for(int i=0; i < SNDSAMPLES; i++)
+  for(int i=0; i < USED_SOUND_SAMPLES; i++)
   {
     Mix_FreeChunk(sample[i]);
   }
   Mix_CloseAudio();
-  #endif
 }

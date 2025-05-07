@@ -1,22 +1,24 @@
 #include <epoxy/gl.h>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
-#include <unistd.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
+
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
-#include <list>
-#include <vector>
-#include <sys/stat.h>
-
-
+#include <ctime>
 #include <dirent.h>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <list>
+#include <memory>
+#include <random>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <vector>
 
 #ifndef DATADIR
 #define DATADIR "themes/"
@@ -29,22 +31,17 @@
   #include <wiiuse.h>
   #define MAX_WIIMOTES	1
 #endif
-#ifndef NOSOUND
-#define MIX_CHANNELS 16
-#include <SDL2/SDL_mixer.h>
-#endif
-
-#include <memory>
-#include <random>
 
 #include "display.hpp"
 #include "config.h"
 #include "config_file.h"
-#include "declerations.h"
 #include "settings_manager.h"
+
 settings setting;
 ConfigFile configFile;
 SettingsManager settingsManager(configFile);
+class effectManager;
+
 #define PI 3.14159265
 #define RAD 6.28318531
 #define BALL_MAX_DEGREE 2.61799388 //150+15 = 165 degrees
@@ -79,33 +76,6 @@ SettingsManager settingsManager(configFile);
 
 //"Max powerups"
 #define MAXPOTEXTURES 21
-
-//Sound effects
-#define SND_START 0
-#define SND_BALL_HIT_BORDER 1
-#define SND_BALL_HIT_PADDLE 2
-#define SND_NORM_BRICK_BREAK 3
-#define SND_EXPL_BRICK_BREAK 4
-#define SND_GLASS_BRICK_HIT 5
-#define SND_GLASS_BRICK_BREAK 6
-#define SND_CEMENT_BRICK_HIT 7
-#define SND_PO_HIT_BORDER 8
-#define SND_GOOD_PO_HIT_PADDLE 9
-#define SND_EVIL_PO_HIT_PADDLE 10
-#define SND_SHOT 11
-#define SND_DIE 12
-#define SND_NEXTLEVEL 13
-#define SND_GAMEOVER 14
-#define SND_MENUCLICK 15
-#define SND_DOOM_BRICK_BREAK 16
-#define SND_GLUE_BALL_HIT_PADDLE 17
-#define SND_INVISIBLE_BRICK_APPEAR 18
-#define SND_HIGHSCORE 19
-#define SND_BUY_POWERUP 20
-#define SND_NORM_BRICK_BREAKB 21
-#define SND_NORM_BRICK_BREAKC 22
-#define SND_NORM_BRICK_BREAKD 23
-#define SND_NORM_BRICK_BREAKE 24
 
 using namespace std;
 
@@ -2494,18 +2464,6 @@ void resumeGame() {
 }
 
 void createPlayfieldBorder(GLuint *dl, const textureClass &tex) {
-    // Viewport-Koordinaten holen für Clipping
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-
-    // Koordinaten für Clipping berechnen
-    int scissorX = (int)(((-1.6f + 3.0f) / 6.0f) * viewport[2]);
-    int scissorWidth = (int)(((3.2f) / 6.0f) * viewport[2]);
-
-    // Clipping aktivieren
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(scissorX, 0, scissorWidth, viewport[3]);
-
     *dl = glGenLists(1);
     glNewList(*dl,GL_COMPILE);
 
@@ -2541,8 +2499,18 @@ void createPlayfieldBorder(GLuint *dl, const textureClass &tex) {
     glTexCoord2f(0.0f, -1.0f);
     glVertex3f(1.66, -1.25, 0.0);
     glEnd();
-    glDisable(GL_SCISSOR_TEST);
     glEndList();
+}
+
+void setPlayfieldScissor() {
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    const int scissorX = static_cast<int>((-1.6f + 3.0f) / 6.0f * viewport[2]);
+    const int scissorWidth = static_cast<int>(3.2f / 6.0f * viewport[2]);
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(scissorX, 0, scissorWidth, viewport[3]);
 }
 
 void coldet(brick &br, ball &ba, pos &p, effectManager &fxMan) {
@@ -3081,18 +3049,21 @@ void detonateExplosives(brick bricks[], effectManager &fxMan) {
     }
 }
 
-void dropBoard(brick bricks[]) {
+void updateBrickPositions(brick bricks[]) {
     for (int i = 0; i < 598; i++) {
-        if (bricks[i].active) {
-            bricks[i].posy -= bricks[i].height * 2;
-            if (bricks[i].posy < -1.00 - bricks[i].height) {
-                //Destroy brick, and subtract score
-                bricks[i].active = 0;
-                updated_nbrick[bricks[i].row][bricks[i].bricknum] = -1;
-                var.bricksHit = 1;
-                player.score -= bricks[i].score;
-                gVar.deadTime = 0;
-            }
+        if (!bricks[i].active) continue;
+
+        // Original Fallgeschwindigkeit beibehalten
+        bricks[i].posy -= bricks[i].height * 2;
+
+        // Original untere Grenze beibehalten
+        if (bricks[i].posy < -1.00 - bricks[i].height) {
+            bricks[i].active = false;
+            updated_nbrick[bricks[i].row][bricks[i].bricknum] = -1;
+            player.score -= bricks[i].score;
+
+            var.bricksHit = true;
+            gVar.deadTime = 0;
         }
     }
 }
@@ -3321,7 +3292,6 @@ int main(int argc, char *argv[]) {
     texMgr.load(useTheme("gfx/particle.png", setting.gfxTheme), texParticle);
 
     GLuint sceneDL;
-
     createPlayfieldBorder(&sceneDL, texBorder);
 
     brick bricks[598];
@@ -3699,20 +3669,21 @@ int main(int argc, char *argv[]) {
                 //background
                 if (setting.showBg)
                     bg.draw();
-                //borders
-                glCallList(sceneDL);
 
+                //borders
+                setPlayfieldScissor();
+                glCallList(sceneDL);
+                glDisable(GL_SCISSOR_TEST);
 
                 if (var.scrollInfo.drop) {
                     if ((SDL_GetTicks() - var.scrollInfo.lastTick) > var.scrollInfo.dropspeed) {
                         var.scrollInfo.lastTick = SDL_GetTicks();
-                        dropBoard(bricks);
+                        updateBrickPositions(bricks);
                     }
                 }
 
-
                 if (gVar.bricksleft == 1) {
-                    player.powerup[PO_AIMHELP] = 1;
+                    player.powerup[PO_AIMHELP] = true;
                 }
             }
 
@@ -3748,10 +3719,10 @@ int main(int argc, char *argv[]) {
                 } //aktiv brik
             } // for loop
 
-            //Collission between paddle and balls
+            // Collision between paddle and balls
             if (bMan.pcoldet(paddle, fxMan)) {
                 if (player.powerup[PO_DROP]) {
-                    dropBoard(bricks);
+                    updateBrickPositions(bricks);
                 }
             }
 

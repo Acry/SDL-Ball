@@ -255,10 +255,7 @@ void initlevels(brick bricks[], textureClass texLvl[])
         updated_nbrick[row][brick]=-1;
        // SDL_Log("Brick:%d", nbrick[row][brick]);
       }
-        
 
-      
-      
       if(bricks[i].type == '1')
       {
         bricks[i].tex=texLvl[6];
