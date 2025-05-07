@@ -1305,7 +1305,6 @@ public:
 };
 
 class ball : public moving_object {
-private:
     GLfloat rad;
     bool growing, shrinking;
     GLfloat destwidth, growspeed;
@@ -2505,11 +2504,15 @@ void setPlayfieldScissor() {
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
 
-    const int scissorX = static_cast<int>((-1.6f + 3.0f) / 6.0f * viewport[2]);
-    const int scissorWidth = static_cast<int>(3.2f / 6.0f * viewport[2]);
+    // Umrechnung von OpenGL-Koordinaten (-1.66 bis 1.66) in Viewport-Koordinaten
+    const float leftBorder = (-1.66f + 1.0f) * viewport[2] / 2.0f;
+    const float rightBorder = (1.66f + 1.0f) * viewport[2] / 2.0f;
+    const float bottomBorder = (-1.25f + 1.0f) * viewport[3] / 2.0f;
+    const float topBorder = (1.25f + 1.0f) * viewport[3] / 2.0f;
 
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(scissorX, 0, scissorWidth, viewport[3]);
+    glScissor(leftBorder, bottomBorder,
+              rightBorder - leftBorder,
+              topBorder - bottomBorder);
 }
 
 void coldet(brick &br, ball &ba, pos &p, effectManager &fxMan) {
@@ -3671,6 +3674,7 @@ int main(int argc, char *argv[]) {
                     bg.draw();
 
                 //borders
+                glEnable(GL_SCISSOR_TEST);
                 setPlayfieldScissor();
                 glCallList(sceneDL);
                 glDisable(GL_SCISSOR_TEST);
