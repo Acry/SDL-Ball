@@ -80,13 +80,13 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
   glEndList();
 
 
-  for(int ii = 0; ii < 3; ii++)
-  {
-    for(int i=0; i < 7; i++)
-    {
+  // position power up descriptions
+  for(int ii = 0; ii < 3; ii++) {
+    for(int i=0; i < 7; i++) {
       powerUp[i+(7*ii)].tex = &texPowerups[i+(7*ii)];
       powerUp[i+(7*ii)].posx = -1.5 + (0.8*ii);
-      powerUp[i+(7*ii)].posy = -0.35 - (0.135*i);
+      // Y-Position nach oben verschieben (von -0.35 auf -0.25)
+      powerUp[i+(7*ii)].posy = -0.25 - (0.135*i);
     }
   }
   readDescriptions(powerUp);
