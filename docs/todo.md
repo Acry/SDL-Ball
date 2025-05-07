@@ -1,12 +1,14 @@
-# Settings
+# todo
+
+## Settings
 
 - titleScreenShow
 
 ## classes
 
-ScreenshotManager
-SaveGameManager
+- ScreenshotManager
+- SaveGameManager
 
 ## update
 
-use sdl2 highperformance timer
+- use sdl2 highperformance timer

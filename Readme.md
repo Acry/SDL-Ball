@@ -15,5 +15,5 @@ ___
 I am going to modernize the code in my spare time for educational purposes.
 No cross-platform support is intended. Current commits will use the OpenGL 3.1 compatibility profile already.
 
-The config is now in SDL-Ball, not sdl-ball anymore.
+The config is now in `SDL-Ball`, not `sdl-ball` anymore.
 You can copy the files from the old folder to the new one.
