@@ -16,6 +16,7 @@ powerupDescriptionClass::powerupDescriptionClass() {
 }
 
 void powerupDescriptionClass::draw() const {
+    // draw powerup icon, name and description
     tex->play();
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -89,27 +90,30 @@ public:
 };
 
 titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClass *me) {
+
     menu = me;
     numHighScores = 7;
     texPowerups = tp;
     fxMan = m;
     ticksSinceLastSpawn = 100;
+    // SDL-BALL
     texMgr.load(useTheme("/gfx/title/title.png", setting.gfxTheme), texTitle);
+
     glTitleList = glGenLists(1);
     glNewList(glTitleList, GL_COMPILE);
     glBindTexture(GL_TEXTURE_2D, texTitle.prop.texture);
     glBegin(GL_QUADS);
     for (int i = 0; i < 32; i++) {
         glColor4f(1, 1, 1, 0.1);
-        glTexCoord2f(0.0, 0.0);
-        glVertex3f(-1.2, 1.15, 0.005 * i);
-        glTexCoord2f(1.0, 0.0);
-        glVertex3f(1.2, 1.15, 0.005 * i);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(-1.0f, 1.0f, 0.005 * i);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(1.0f, 1.15, 0.005 * i);
         glColor4f(0, 0, 1, 0.00); // ???
-        glTexCoord2f(1.0, 1.0);
-        glVertex3f(1.2, 0.75, 0.005 * i);
-        glTexCoord2f(0.0, 1.0);
-        glVertex3f(-1.2, 0.75, 0.005 * i);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(1.0f, 0.75, 0.005 * i);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(-1.0f, 0.75f, 0.005 * i);
     }
     glEnd();
     glEndList();
@@ -164,7 +168,6 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
         if (var.clearScreen) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
-
 
         glEnable(GL_TEXTURE_2D);
 
