@@ -138,17 +138,18 @@ public:
         glEndList();
 
         // bläulich
+        float half_width = 0.425f;
         glNewList(dl + 1, GL_COMPILE);
         glBindTexture(GL_TEXTURE_2D, tex[1].prop.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
-        glVertex3f(-0.25, 0.07, 0.0);
+        glVertex3f(-half_width, 0.07, 0.0);
         glTexCoord2f(0.87f, 0.3f);
-        glVertex3f(0.25, 0.07, 0.0);
+        glVertex3f(half_width, 0.07, 0.0);
         glTexCoord2f(0.87f, 0.7f);
-        glVertex3f(0.25, -0.07, 0.0);
+        glVertex3f(half_width, -0.07, 0.0);
         glTexCoord2f(0.132f, 0.7f);
-        glVertex3f(-0.25, -0.07, 0.0);
+        glVertex3f(-half_width, -0.07, 0.0);
         glEnd();
         glEndList();
 
@@ -157,13 +158,13 @@ public:
         glBindTexture(GL_TEXTURE_2D, tex[2].prop.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
-        glVertex3f(-0.5, 0.07, 0.0);
+        glVertex3f(-half_width, 0.07, 0.0);
         glTexCoord2f(0.87f, 0.3f);
-        glVertex3f(0.5, 0.07, 0.0);
+        glVertex3f(half_width, 0.07, 0.0);
         glTexCoord2f(0.87f, 0.7f);
-        glVertex3f(0.5, -0.07, 0.0);
+        glVertex3f(half_width, -0.07, 0.0);
         glTexCoord2f(0.132f, 0.7f);
-        glVertex3f(-0.5, -0.07, 0.0);
+        glVertex3f(-half_width, -0.07, 0.0);
         glEnd();
         glEndList();
 
@@ -172,13 +173,13 @@ public:
         glBindTexture(GL_TEXTURE_2D, tex[3].prop.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
-        glVertex3f(-0.5, 0.07, 0.0);
+        glVertex3f(-half_width, 0.07, 0.0);
         glTexCoord2f(0.87f, 0.3f);
-        glVertex3f(0.5, 0.07, 0.0);
+        glVertex3f(half_width, 0.07, 0.0);
         glTexCoord2f(0.87f, 0.7f);
-        glVertex3f(0.5, -0.07, 0.0);
+        glVertex3f(half_width, -0.07, 0.0);
         glTexCoord2f(0.132f, 0.7f);
-        glVertex3f(-0.5, -0.07, 0.0);
+        glVertex3f(-half_width, -0.07, 0.0);
         glEnd();
         glEndList();
     }
@@ -265,6 +266,8 @@ public:
             else
                 glCallList(dl + 1);
             glPopMatrix();
+
+            glColor4f(GL_BLACK);
             glText->write("Quit SDL-Ball", FONT_MENU, true, 1.0, 0.0, -0.65f);
 
             constexpr float offset = 0.18f;
@@ -291,6 +294,7 @@ public:
             else
                 glCallList(dl + 1);
             glPopMatrix();
+
             glColor4f(GL_BLACK);
             glText->write("Highscores", FONT_MENU, true, 1.0, 0.0, -0.65f+offset*2);
 
@@ -304,24 +308,22 @@ public:
                     glCallList(dl + 2);
                 else
                     glCallList(dl + 1);
-                glPopMatrix();
+
 
                 glColor4f(GL_BLACK);
                 glText->write("Save Game", FONT_MENU, true, 1.0, 0.0, -0.65f+offset*3);
                 glColor4f(GL_WHITE);
             } else {
-
-                glColor4f(GL_WHITE);
                 if (var.menuItem == 4) {
                     glCallList(dl + 2);
                     glColor4f(0.5, 0.5, 0.5, 1);
-                    glText->write("Not in Level 1", FONT_MENU, true, 1.0, 0.0, -0.005);
+                    glText->write("Not in Level 1", FONT_MENU, true, 1.0, 0.0, -0.65f+offset*3);
                 } else {
                     glCallList(dl + 1);
                     glColor4f(0.5, 0.5, 0.5, 1);
-                    glText->write("Save Game", FONT_MENU, true, 1.0, 0.0, -0.005);
+                    glText->write("Save Game", FONT_MENU, true, 1.0, 0.0, -0.65f+offset*3);
                 }
-                glColor4f(GL_WHITE);
+                glPopMatrix();
             }
 
             // Load
@@ -335,7 +337,7 @@ public:
             glPopMatrix();
 
             glColor4f(GL_BLACK);
-            glText->write("Load Game", FONT_MENU, 1, 1.0, 0.0, -0.65f+offset*4);
+            glText->write("Load Game", FONT_MENU, true, 1.0, 0.0, -0.65f+offset*4);
 
             // Continue
             glColor4f(GL_WHITE);
@@ -348,7 +350,7 @@ public:
             glPopMatrix();
 
             glColor4f(GL_BLACK);
-            glText->write("Continue", FONT_MENU, 1, 1.0, 0.0, -0.65f+offset*5);
+            glText->write("Continue", FONT_MENU, true, 1.0, 0.0, -0.65f+offset*5);
 
             // New game
             glColor4f(GL_WHITE);
