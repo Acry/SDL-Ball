@@ -115,7 +115,7 @@ public:
         tI = getThemes(); //Read themes and put them in the vector tI
         listSaveGames(saveGameName);
 
-        //Baggrund
+        // Menu-Hintergrund
         glNewList(dl, GL_COMPILE);
         glBindTexture(GL_TEXTURE_2D, tex[0].prop.texture);
         glBegin(GL_QUADS);
@@ -244,33 +244,37 @@ public:
     void doMenu() {
         glColor4f(GL_WHITE);
         glLoadIdentity();
-        glTranslatef(0.0, 0.0, -3.0f);
-        glCallList(dl); //baggrunden
-
-        glTranslatef(0.0, -1.0, 0.0f);
+        // background
+        glCallList(dl);
 
         if (var.menu == 1) {
             //Exit
-            glTranslatef(0.0, 0.22, 0.0f);
+            glPushMatrix();
+                glTranslatef(0.0, -0.8f, 0.0f);
+                glColor4f(GL_FULL_BLUE);
             if (var.menuItem == 1)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
+            glPopMatrix();
 
-            glColor4f(GL_BLACK);
-            glText->write("Quit SDL-Ball", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(GL_WHITE);
+            glColor4f(GL_FULL_BLUE);
+            glText->write("Quit SDL-Ball", FONT_MENU, true, 1.0, 0.0, -0.8f);
+
 
             //Settings
+            glPushMatrix();
             glTranslatef(0.0, 0.22, 0.0f);
+            glColor4f(GL_WHITE);
             if (var.menuItem == 2)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
+            glPopMatrix();
 
             glColor4f(GL_BLACK);
-            glText->write("Settings", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(GL_WHITE);
+            glText->write("Settings", FONT_MENU, true, 1.0, 0.0, -0.005);
+
 
             //highscores
             glTranslatef(0.0, 0.22, 0.0f);
@@ -279,9 +283,7 @@ public:
             else
                 glCallList(dl + 1);
 
-            glColor4f(GL_BLACK);
-            glText->write("Highscores", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(GL_WHITE);
+            glText->write("Highscores", FONT_MENU, true, 1.0, 0.0, -0.005);
 
             //Save
             glTranslatef(0.0, 0.22, 0.0f);
