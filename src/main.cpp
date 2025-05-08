@@ -565,7 +565,6 @@ public:
 };
 
 class paddle_class : public game_object {
-private:
     GLfloat growspeed;
     GLfloat destwidth;
     GLfloat aspect; //så meget stiger højden i forhold til bredden
@@ -604,7 +603,7 @@ public:
             }
 
             if (growing) {
-                GLfloat ix = growspeed * globalTicksSinceLastDraw;
+                const GLfloat ix = growspeed * globalTicksSinceLastDraw;
 
                 width += ix;
 
@@ -671,7 +670,7 @@ public:
     }
 };
 
-//nasty fix to a problem
+// nasty fix to a problem
 int nbrick[23][26];
 int updated_nbrick[23][26];
 
@@ -698,7 +697,7 @@ public:
     bool justBecomeExplosive; //If this brick just become a explosive one.
 
 
-    bool n(int dir) {
+    bool n(const int dir) const {
         switch (dir) {
             case 0: //Er der en brik til venstre for dig?
                 if (bricknum > 0) {
@@ -742,14 +741,14 @@ public:
             zoom -= zoomspeed * globalMilliTicksSinceLastDraw;
 
             if (fade < 0.0)
-                active = 0;
+                active = false;
         }
 
         if (isexploding && !var.paused) {
             fade -= 7.0 * globalMilliTicksSinceLastDraw;
             opacity = fade;
             if (fade < 0.0) {
-                active = 0;
+                active = false;
 
                 pos spos, svel;
                 spos.x = posx;
@@ -916,7 +915,7 @@ void makeExplosive(brick &b) {
         b.type = 'B';
         b.tex = *texExplosiveBrick;
         //NOTE: for some reason, the color of the object was changed, why??
-        b.justBecomeExplosive = 1;
+        b.justBecomeExplosive = true;
     }
 }
 
@@ -938,29 +937,26 @@ public:
 void spawnpowerup(char powerup, pos a, pos b);
 
 class bulletsClass {
-private:
     moving_object bullets[16];
 
 public:
     int active;
 
-    bulletsClass(textureClass &texBullet) {
-        int i;
-        for (i = 0; i < 16; i++) {
-            bullets[i].active = 0;
+    bulletsClass(const textureClass &texBullet) {
+        for (int i = 0; i < 16; i++) {
+            bullets[i].active = false;
             bullets[i].tex = texBullet;
             bullets[i].width = 0.02;
             bullets[i].height = 0.02;
         }
     }
 
-    void shoot(pos p) {
-        int i;
+    void shoot(const pos p) {
         //Find ledig bullet
-        for (i = 0; i < 16; i++) {
+        for (int i = 0; i < 16; i++) {
             if (!bullets[i].active) {
                 soundMan.add(SND_SHOT, p.x);
-                bullets[i].active = 1;
+                bullets[i].active = true;
                 bullets[i].posx = p.x;
                 bullets[i].posy = p.y;
                 bullets[i].xvel = 0;
@@ -971,8 +967,7 @@ public:
     }
 
     void move() {
-        int i;
-        for (i = 0; i < 16; i++) {
+        for (int i = 0; i < 16; i++) {
             if (bullets[i].active) {
                 //Flyt
                 bullets[i].posy += bullets[i].yvel * globalMilliTicks;
@@ -981,9 +976,8 @@ public:
     }
 
     void draw() {
-        int i;
         glColor4f(GL_WHITE);
-        for (i = 0; i < 16; i++) {
+        for (int i = 0; i < 16; i++) {
             if (bullets[i].active) {
                 //draw
 
@@ -1008,26 +1002,23 @@ public:
     }
 
     void clear() {
-        int i;
-        for (i = 0; i < 16; i++) {
-            bullets[i].active = 0;
+        for (int i = 0; i < 16; i++) {
+            bullets[i].active = false;
         }
     }
 
     void coldet(brick &b, effectManager &fxMan) {
-        int i;
-        bool hit;
-        pos v, p;
+        pos v;
         v.x = 0;
         v.y = bullets[0].xvel;
 
-        for (i = 0; i < 16; i++) {
+        for (int i = 0; i < 16; i++) {
             if (bullets[i].active) {
-                hit = 0;
-
                 //y
                 if (bullets[i].posy + bullets[i].height / 10.0 > b.posy - b.height && bullets[i].posy + bullets[i].
                     height / 10.0 < b.posy + b.height) {
+                    bool hit = false;
+                    pos p;
                     p.x = b.posx;
                     p.y = b.posy;
                     //Venstre side:
@@ -1038,7 +1029,7 @@ public:
                     if (hit) {
                         b.hit(fxMan, p, v, 1);
 
-                        bullets[i].active = 0;
+                        bullets[i].active = false;
 
                         p.x = bullets[i].posx;
                         p.y = bullets[i].posy;
@@ -1063,7 +1054,7 @@ public:
                         }
                     }
                 } else if (bullets[i].posy > 1.6) {
-                    bullets[i].active = 0;
+                    bullets[i].active = false;
                 }
             }
         }
@@ -1275,17 +1266,16 @@ public:
         }
     }
 
-    void update(GLfloat nx, GLfloat ny) {
+    void update(const GLfloat nx, const GLfloat ny) {
         // If long enough away
-        GLfloat dist = sqrt(pow(nx - lastX, 2) + pow(ny - lastY, 2));
+        const GLfloat dist = sqrt(pow(nx - lastX, 2) + pow(ny - lastY, 2));
         if (dist > 0.01) {
             lastX = nx;
             lastY = ny;
             //find a non-active trail-part
-            int i;
-            for (i = 0; i < len; i++) {
+            for (int i = 0; i < len; i++) {
                 if (!active[i]) {
-                    active[i] = 1;
+                    active[i] = true;
                     a[i] = 1.0; //tweak me
                     x[i] = nx;
                     y[i] = ny;
@@ -1320,14 +1310,14 @@ public:
     GLfloat lastX, lastY;
 
     ball() {
-        growing = 0;
+        growing = false;
         growspeed = 0.1;
         width = 0.0;
         height = 0.0;
-        glued = 0;
+        glued = false;
         posx = 0.0f;
         posy = 0.0f;
-        aimdir = 0;
+        aimdir = false;
     }
 
     void hit(GLfloat c[]) {
@@ -1347,7 +1337,7 @@ public:
             soundMan.add(SND_BALL_HIT_BORDER, posx);
             yvel *= -1;
         } else if (posy - width < -1.24) {
-            active = 0;
+            active = false;
         }
 
         posx += xvel * globalMilliTicks;
@@ -1362,7 +1352,7 @@ public:
             tail.update(posx, posy);
     }
 
-    void draw(paddle_class &paddle) {
+    void draw(const paddle_class &paddle) {
         GLfloat newsize;
 
         if (setting.eyeCandy)
@@ -1377,7 +1367,7 @@ public:
                 width = destwidth;
                 height = destwidth;
 
-                growing = 0;
+                growing = false;
             }
 
             tail.width = width;
@@ -1390,7 +1380,7 @@ public:
                 width = destwidth;
                 height = destwidth;
 
-                shrinking = 0;
+                shrinking = false;
             }
 
             tail.width = width;
@@ -1403,18 +1393,19 @@ public:
                     rad -= 1.2 * globalMilliTicksSinceLastDraw;
 
                     if (rad < BALL_MIN_DEGREE)
-                        aimdir = 1;
+                        aimdir = true;
                 } else {
                     rad += 1.2 * globalMilliTicksSinceLastDraw;
                     if (rad > BALL_MAX_DEGREE + BALL_MIN_DEGREE)
-                        aimdir = 0;
+                        aimdir = false;
                 }
                 setangle(rad);
             } else {
                 getRad();
             }
 
-            GLfloat bxb = cos(rad) * 0.5, byb = sin(rad) * 0.5;
+            const GLfloat bxb = cos(rad) * 0.5;
+            const GLfloat byb = sin(rad) * 0.5;
 
             glLoadIdentity();
             glTranslatef(posx, posy, 0.0);
@@ -1452,13 +1443,13 @@ public:
             b[2] = posy;
             b[3] = posy + (sin(rad) * 3.0);
 
-            GLfloat cx, cy, R;
+            GLfloat cx, cy;
             if (LinesCross(p[0], p[2], p[1], p[3], b[0], b[2], b[1], b[3], &cx, &cy)) {
-                R = bounceOffAngle(paddle.width, paddle.posx, cx);
+                const GLfloat R = bounceOffAngle(paddle.width, paddle.posx, cx);
                 o[0] = cx + (cos(R) * 2.0);
                 o[1] = cy + (sin(R) * 2.0);
                 glLoadIdentity();
-                glTranslatef(0.0, 0.0, -3.0);
+                glTranslatef(0.0, 0.0, 0.0);
                 glDisable(GL_TEXTURE_2D);
                 glLineWidth(2.0);
                 glEnable(GL_LINE_SMOOTH);
@@ -1476,7 +1467,7 @@ public:
         }
 
         glLoadIdentity();
-        glTranslatef(posx, posy, -3.0);
+        glTranslatef(posx, posy, 0.0);
         glEnable(GL_TEXTURE_2D);
 
         glColor4f(GL_WHITE);
@@ -1517,7 +1508,7 @@ public:
 
 #ifdef DEBUG_DRAW_BALL_QUAD
       glLoadIdentity();
-      glTranslatef(posx, posy, -3.0);
+      glTranslatef(posx, posy, 0.0);
       glDisable( GL_TEXTURE_2D );
       glColor4f(GL_WHITE);
       glBegin( GL_LINES );
@@ -2110,7 +2101,7 @@ public:
         glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2],
                   tex.prop.glTexColorInfo[3]);
         glLoadIdentity();
-        glTranslatef(posx, posy, -3.0f);
+        glTranslatef(posx, posy, 0.0f);
         glBegin(GL_QUADS);
         glTexCoord2f(tex.pos[0], tex.pos[1]);
         glVertex3f(-width, height, 0.00); // øverst venst
@@ -2460,7 +2451,7 @@ void createPlayfieldBorder(GLuint *dl, const textureClass &tex) {
     glNewList(*dl,GL_COMPILE);
 
     glLoadIdentity();
-    glTranslatef(0.0f, 0.0f, -3.0);
+    glTranslatef(0.0f, 0.0f, 0.0);
 
     // top
     glColor4f(GL_WHITE);
@@ -2884,7 +2875,7 @@ public:
         glDisable(GL_TEXTURE_2D);
 
         glLoadIdentity();
-        glTranslatef(1.61, -1.24, -3.0);
+        glTranslatef(1.0f, -1.0, 0.0);
         glBegin(GL_QUADS);
         glColor4f(0, 1, 0, 1);
         glVertex3f(0, y, 0);

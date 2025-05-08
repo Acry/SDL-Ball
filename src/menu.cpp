@@ -411,7 +411,7 @@ public:
 
             // Settings
             glLoadIdentity();
-            glTranslatef(0.0, 0.54, -3.0f);
+            glTranslatef(0.0, 0.54, 0.0f);
 
             glCallList(dl + 3);
 
@@ -491,7 +491,7 @@ public:
 
             // Video options
             glLoadIdentity();
-            glTranslatef(0.0, 0.54, -3.0f);
+            glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);
 
             glColor4f(GL_WHITE);
@@ -613,7 +613,7 @@ public:
         } else if (var.menu == 4) {
             //Audio
             glLoadIdentity();
-            glTranslatef(0.0, 0.54, -3.0f);
+            glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);
             glColor4f(GL_WHITE);
             glText->write("Audio", FONT_MENU, true, 1.0, 0.0, -0.005);
@@ -688,7 +688,7 @@ public:
         } else if (var.menu == 5) {
             // New game?
             glLoadIdentity();
-            glTranslatef(0.0, 0.54, -3.0f);
+            glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);
 
             glColor4f(GL_BLACK);
@@ -785,7 +785,7 @@ public:
             // Exit
             glLoadIdentity();
             glPushMatrix();
-            glTranslatef(0.0f, 0.4f, -0.0f);
+            glTranslatef(0.0f, 0.4f, 0.0f);
             glColor4f(GL_WHITE);
             glCallList(dl + 2);
             glPopMatrix();
@@ -836,7 +836,7 @@ public:
         {
             // Highscores
             glLoadIdentity();
-            glTranslatef(0.0, 0.54, -3.0f);
+            glTranslatef(0.0, 0.54, 0.0f);
             if (var.menuItem == 7)
                 glCallList(dl + 2);
             else
@@ -861,7 +861,7 @@ public:
             glEnd();
 
             glLoadIdentity();
-            glTranslatef(0.0, 0.435, -3.0f);
+            glTranslatef(0.0, 0.435, 0.0f);
 
             //Find out how many lines we have room for in the box.
             int nl = (1.26 / glText->getHeight(FONT_MENUHIGHSCORE));
@@ -888,7 +888,7 @@ public:
         } else if (var.menu == 8) {
             // Load game
             glLoadIdentity();
-            glTranslatef(0.0, 0.54, -3.0f);
+            glTranslatef(0.0, 0.54, 0.0f);
             if (var.menuItem == 8)
                 glCallList(dl + 2);
             else
@@ -923,7 +923,7 @@ public:
 
             if (var.enterSaveGameName) {
                 glLoadIdentity();
-                glTranslatef(0.0, 0.54, -3.0f);
+                glTranslatef(0.0, 0.54, 0.0f);
                 glTranslatef(0.0, 0.12, 0.0f);
 
                 glColor4f(GL_BLACK);
@@ -932,7 +932,7 @@ public:
             }
 
             glLoadIdentity();
-            glTranslatef(0.0, 0.54, -3.0f);
+            glTranslatef(0.0, 0.54, 0.0f);
 
             if (var.menuItem == 8)
                 glCallList(dl + 2);
@@ -965,7 +965,7 @@ public:
         } else if (var.menu == 10) {
             // Joystick options
             glLoadIdentity();
-            glTranslatef(0.0, 0.54, -3.0f);
+            glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);
             glColor4f(GL_WHITE);
             glText->write("Calibrate Joystick", FONT_MENU, true, 1.0, 0.0, -0.005);
