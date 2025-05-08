@@ -12,7 +12,7 @@ public:
     int currentH;
     int numOfDisplays;
     GLfloat glunits_per_xpixel, glunits_per_ypixel;
-    int viewportX, viewportY, viewportSize;
+    int viewportX, viewportY, viewportH, viewportW;
     bool init();
     GLfloat playfield_ratio;
     GLfloat window_ratio;

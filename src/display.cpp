@@ -95,24 +95,33 @@ void displayClass::resize(const int width, const int height) {
 
     window_ratio = static_cast<GLfloat>(currentW) / static_cast<GLfloat>(currentH);
 
-    // Quadrat mit maximaler Höhe, zentriert
-    viewportSize = std::min(width, height);
-    viewportX = (width - viewportSize) / 2;
-    viewportY = (height - viewportSize) / 2;
-    playfield_ratio = static_cast<GLfloat>(viewportSize) / static_cast<GLfloat>(viewportSize);
+    // Ziel-Seitenverhältnis 4:3
+    const float target_ratio = 4.0f / 3.0f;
+    int vpW, vpH;
 
-    glViewport(viewportX, viewportY, viewportSize, viewportSize);
+    if (window_ratio >= target_ratio) {
+        // Fenster ist breiter als 4:3 -> Höhe begrenzt
+        vpH = height;
+        vpW = static_cast<int>(height * target_ratio);
+    } else {
+        // Fenster ist schmaler als 4:3 -> Breite begrenzt
+        vpW = width;
+        vpH = static_cast<int>(width / target_ratio);
+    }
 
-    // glunits_per_xpixel = viewportSize * playfield_ratio / currentW; // breite
-    // glunits_per_ypixel = viewportSize / currentH; // höhe
-
-    glunits_per_xpixel = 2.485281374 * window_ratio / currentW;
-    glunits_per_ypixel = 2.485281374 / currentH;
+    viewportX = (width - vpW) / 2;
+    viewportY = (height - vpH) / 2;
+    viewportH = vpH;
+    viewportW = vpW;
+    playfield_ratio = 4.0f / 3.0f;
+    glunits_per_xpixel = 2.0f / static_cast<GLfloat>(viewportW);
+    glunits_per_ypixel = 2.0f / static_cast<GLfloat>(viewportH);
+    glViewport(viewportX, viewportY, viewportW, viewportH);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(viewportX, viewportY, viewportW, viewportH);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-
-    //gluPerspective(45.0f, ratio, 0.1f, 100.0f);
 
     glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
 

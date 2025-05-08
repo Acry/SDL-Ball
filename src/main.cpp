@@ -627,9 +627,9 @@ public:
             glVertex3f(width, -height, 0.0f);
             glTexCoord2f(tex.pos[6], tex.pos[7]);
             glVertex3f(-width, -height, 0.0f);
-            //glPopMatrix();
+            // glPopMatrix();
 
-            //Hvis glue?
+            // Hvis glue?
             if (player.powerup[PO_GLUE]) {
                 glBindTexture(GL_TEXTURE_2D, layerTex[0].prop.texture);
                 glColor4f(layerTex[0].prop.glTexColorInfo[0], layerTex[0].prop.glTexColorInfo[1],
@@ -2455,36 +2455,35 @@ void createPlayfieldBorder(GLuint *dl, const textureClass &tex) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
     glBegin(GL_POINTS);
-    glVertex3f(-1.60, 1.25, 0.0);
+    glVertex3f(-1.0f, 1.0f, 0.0);
     glEnd();
 
     glBegin(GL_QUADS);
 
+    const float width = 0.06f;
     // left
+    // linke Säule
     glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(-1.66, 1.25, 0.0);
+    glVertex3f(-1.0f, 1.0f, 0.0f);
     glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(-1.60, 1.25, 0.0);
+    glVertex3f(-1.0f + width, 1.0f, 0.0f);
     glTexCoord2f(1.0f, -1.0f);
-    glVertex3f(-1.60, -1.25, 0.0);
+    glVertex3f(-1.0f + width, -1.0f, 0.0f);
     glTexCoord2f(0.0f, -1.0f);
-    glVertex3f(-1.66, -1.25, 0.0);
+    glVertex3f(-1.0f, -1.0f, 0.0f);
 
     // right
+    // rechte Säule
     glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(1.66, 1.25, 0.0);
+    glVertex3f(1.0f - width, 1.0f, 0.0f);
     glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(1.60, 1.25, 0.0);
+    glVertex3f(1.0f, 1.0f, 0.0f);
     glTexCoord2f(1.0f, -1.0f);
-    glVertex3f(1.60, -1.25, 0.0);
+    glVertex3f(1.0f, -1.0f, 0.0f);
     glTexCoord2f(0.0f, -1.0f);
-    glVertex3f(1.66, -1.25, 0.0);
+    glVertex3f(1.0f - width, -1.0f, 0.0f);
     glEnd();
     glEndList();
-}
-
-void setPlayfieldScissor() {
-    glScissor(display.viewportX, display.viewportY, display.viewportSize, display.viewportSize);
 }
 
 void coldet(brick &br, ball &ba, pos &p, effectManager &fxMan) {
@@ -3625,10 +3624,7 @@ int main(int argc, char *argv[]) {
                     bg.draw();
 
                 // Borders
-                glEnable(GL_SCISSOR_TEST);
-                setPlayfieldScissor();
                 glCallList(sceneDL);
-                glDisable(GL_SCISSOR_TEST);
 
                 if (var.scrollInfo.drop) {
                     if ((SDL_GetTicks() - var.scrollInfo.lastTick) > var.scrollInfo.dropspeed) {
