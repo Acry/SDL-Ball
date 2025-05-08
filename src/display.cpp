@@ -114,7 +114,7 @@ void displayClass::resize(const int width, const int height) {
     glLoadIdentity();
 }
 
-void displayClass::close() const {
+displayClass::~displayClass() {
     SDL_DestroyWindow(sdlWindow);
     SDL_GL_DeleteContext(glcontext);
     SDL_SetRelativeMouseMode(SDL_FALSE);

@@ -28,6 +28,7 @@
 #include "config_file.h"
 #include "settings_manager.h"
 #include "colors.h"
+#include "text.h"
 
 settings setting;
 ConfigFile configFile;
@@ -311,7 +312,7 @@ vector<themeInfo> getThemes() {
     return v;
 }
 
-#include "text.cpp"
+
 glTextClass *glText;
 // Pointer to the object, since we can't init (load fonts) because the settings have not been read yet.
 
@@ -2780,7 +2781,7 @@ public:
                 timeStruct = *(localtime(&nixTime));
                 sprintf(clockString, "%02i:%02i", timeStruct.tm_hour, timeStruct.tm_min);
             }
-            glText->write(clockString, FONT_INTRODESCRIPTION, false, 0.55f, -0.72f,
+            glText->write(clockString, FONT_INTRODESCRIPTION, false, 1.0f, -1.0f,
                           -0.975f);
         }
 
@@ -3817,7 +3818,6 @@ int main(int argc, char *argv[]) {
             SDL_Log("Fehler beim Speichern der Einstellungen");
         }
     }
-
-    display.close();
+    delete glText;
     return EXIT_SUCCESS;
 }

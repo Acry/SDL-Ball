@@ -1,5 +1,4 @@
-#ifndef DISPLAY_HPP_
-#define DISPLAY_HPP_
+#pragma once
 
 #include <SDL2/SDL.h>
 
@@ -19,8 +18,6 @@ public:
     static bool updateForMenu();
 
     void resize(int, int);
-
-    void close() const;
+    ~displayClass();
 };
 
-#endif /* DISPLAY_HPP_ */

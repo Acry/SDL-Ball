@@ -3,8 +3,6 @@ PREFIX?=~/.local
 DATADIR?=$(PREFIX)share/sdl-ball/themes/
 BINDIR?=$(PREFIX)/bin/
 
-#append -DWITH_WIIUSE to compile with WIIUSE support!
-#append -DNOSOUND to compile WITHOUT sound support
 CXX?=g++
 
 COMMON_FLAGS := -Wall -Wextra -mtune=native $(shell sdl2-config --cflags)
@@ -16,7 +14,7 @@ RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)
 BUILD_DIR := build/
 SOURCE_DIR := src/
 
-SOURCES := $(addprefix $(SOURCE_DIR), display.cpp main.cpp config_file.cpp settings_manager.cpp)
+SOURCES := $(addprefix $(SOURCE_DIR), display.cpp main.cpp config_file.cpp settings_manager.cpp text.cpp)
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 
 # Create the build directory if it doesn't exist
@@ -26,7 +24,7 @@ TARGET=sdl-ball
 
 .PHONY: all clean debug release install install-bin install-data remove
 
-all: release
+all: release  debug
 
 release: $(BUILD_DIR)$(TARGET)
 
@@ -75,5 +73,3 @@ $(BUILD_DIR)config_file.o: $(SOURCE_DIR)config_file.cpp
 
 $(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)settings_manager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
-
-

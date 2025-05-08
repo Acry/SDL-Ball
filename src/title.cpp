@@ -45,7 +45,7 @@ void powerupDescriptionClass::draw() const {
 
     constexpr float spacing = 0.05f;
     // Write the name and description
-    constexpr float scale = 0.5f; // Scale for the text
+    constexpr float scale = 1.0f; // Scale for the text
     constexpr float leading = -0.018f; // Leading for the text
     const float textX = posx + spacing;
     glText->write(name,

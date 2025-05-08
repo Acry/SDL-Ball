@@ -131,7 +131,7 @@ public:
         glEndList();
 
 
-        //Hvide
+        // Weiß
         glNewList(dl + 1, GL_COMPILE);
         glBindTexture(GL_TEXTURE_2D, tex[1].prop.texture);
         glBegin(GL_QUADS);
@@ -146,7 +146,7 @@ public:
         glEnd();
         glEndList();
 
-        //Røde
+        // Rot
         glNewList(dl + 2, GL_COMPILE);
         glBindTexture(GL_TEXTURE_2D, tex[2].prop.texture);
         glBegin(GL_QUADS);
@@ -161,7 +161,7 @@ public:
         glEnd();
         glEndList();
 
-        //Grøn
+        // Grün
         glNewList(dl + 3, GL_COMPILE);
         glBindTexture(GL_TEXTURE_2D, tex[3].prop.texture);
         glBegin(GL_QUADS);

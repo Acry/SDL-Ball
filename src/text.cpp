@@ -1,84 +1,70 @@
 #include <epoxy/gl.h>
-#include <GL/glu.h>
 #include <SDL2/SDL_ttf.h>
+#include <GL/glu.h>
+#include "text.h"
 
-#define FONT_MENU 0
-#define FONT_ANNOUNCE_GOOD 1
-#define FONT_ANNOUNCE_BAD 2
-#define FONT_HIGHSCORE 3
-#define FONT_MENUHIGHSCORE 4
-#define FONT_INTROHIGHSCORE 5
-#define FONT_INTRODESCRIPTION 6
-#define FONT_NUM 7
+#include <fstream>
 
-struct glCharInfo_struct {
-    GLfloat Xa, Ya, Xb, Yb, width;
-};
+#include "settings_manager.h"
 
-struct glFontInfo_struct {
-    GLuint tex;
-    GLfloat height;
-    glCharInfo_struct ch[255];
-};
+extern settings setting;
 
-class glTextClass {
-    void genFontTex(const string &TTFfontName, int fontSize, int font);
-
-    glFontInfo_struct fontInfo[FONT_NUM];
-
-public:
-    GLfloat getHeight(int font);
-
-    void write(const string &text, int font, bool center, GLfloat scale, GLfloat x, GLfloat y);
-
-    glTextClass();
-};
-
-GLfloat glTextClass::getHeight(const int font) {
-    return (fontInfo[font].height * 2.0);
+GLfloat glTextClass::getHeight(const int font) const {
+    return fontInfo[font].height;
 }
 
-glTextClass::glTextClass() {
+glTextClass::glTextClass(): fontInfo{} {
     TTF_Init();
-    //Parse font-description file
-    ifstream f;
-    string line, set, val, tempName;
+
+    // Parse font-description file
+    std::ifstream f;
+    std::string val;
 
     f.open(useTheme("/font/fonts.txt", setting.gfxTheme).data());
     if (f.is_open()) {
-        while (!f.eof()) {
-            getline(f, line);
-            if (line.find('=') != string::npos) {
+        std::string tempName;
+        std::string set;
+        std::string line;
+        while (std::getline(f, line)) {
+            if (line.find('=') != std::string::npos) {
                 set = line.substr(0, line.find('='));
                 val = line.substr(line.find('=') + 1);
                 if (set == "menufile") {
                     tempName = val;
-                } else if (set == "menusize") {
-                    genFontTex(tempName, atoi(val.data()), FONT_MENU);
-                } else if (set == "announcegoodfile") {
+                } else if (
+                    set == "menusize" ||
+                    set == "announcegoodsize" ||
+                    set == "announcebadsize" ||
+                    set == "highscoresize" ||
+                    set == "menuhighscoresize" ||
+                    set == "introhighscoresize" ||
+                    set == "introdescriptionsize"
+                ) {
+                    char *endptr = nullptr;
+                    long size = strtol(val.c_str(), &endptr, 10);
+                    if (*endptr != '\0') {
+                        SDL_Log("Ungültige Zahl in fonts.txt: %s", val.c_str());
+                        continue;
+                    }
+                    int font = -1;
+                    if (set == "menusize") font = FONT_MENU;
+                    else if (set == "announcegoodsize") font = FONT_ANNOUNCE_GOOD;
+                    else if (set == "announcebadsize") font = FONT_ANNOUNCE_BAD;
+                    else if (set == "highscoresize") font = FONT_HIGHSCORE;
+                    else if (set == "menuhighscoresize") font = FONT_MENUHIGHSCORE;
+                    else if (set == "introhighscoresize") font = FONT_INTROHIGHSCORE;
+                    else if (set == "introdescriptionsize") font = FONT_INTRODESCRIPTION;
+                    if (font != -1)
+                        genFontTex(tempName, static_cast<int>(size), font);
+                } else if (
+                    set == "announcegoodfile" ||
+                    set == "announcebadfile" ||
+                    set == "highscorefile" ||
+                    set == "menuhighscorefile" ||
+                    set == "introhighscorefile" ||
+                    set == "introdescriptionfile"
+                ) {
                     tempName = val;
-                } else if (set == "announcegoodsize") {
-                    genFontTex(tempName, atoi(val.data()), FONT_ANNOUNCE_GOOD);
-                } else if (set == "announcebadfile") {
-                    tempName = val;
-                } else if (set == "announcebadsize") {
-                    genFontTex(tempName, atoi(val.data()), FONT_ANNOUNCE_BAD);
-                } else if (set == "highscorefile") {
-                    tempName = val;
-                } else if (set == "highscoresize") {
-                    genFontTex(tempName, atoi(val.data()), FONT_HIGHSCORE);
-                } else if (set == "menuhighscorefile") {
-                    tempName = val;
-                } else if (set == "menuhighscoresize") {
-                    genFontTex(tempName, atoi(val.data()), FONT_MENUHIGHSCORE);
-                } else if (set == "introhighscorefile") {
-                    tempName = val;
-                } else if (set == "introhighscoresize") {
-                    genFontTex(tempName, atoi(val.data()), FONT_INTROHIGHSCORE);
-                } else if (set == "introdescriptionfile") {
-                    tempName = val;
-                } else if (set == "introdescriptionsize") {
-                    genFontTex(tempName, atoi(val.data()), FONT_INTRODESCRIPTION);
                 }
             }
         }
@@ -86,10 +72,9 @@ glTextClass::glTextClass() {
     } else {
         SDL_Log("Error: could not open font-description file.");
     }
-    TTF_Quit();
 }
 
-void glTextClass::genFontTex(const string &TTFfontName, const int fontSize, const int font) {
+void glTextClass::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
     TTF_Font *ttfFont = nullptr;
     SDL_Surface *c, *t;
     Uint32 rmask, gmask, bmask, amask;
@@ -113,7 +98,7 @@ void glTextClass::genFontTex(const string &TTFfontName, const int fontSize, cons
 
     if (!ttfFont) {
         SDL_Log("TTF_OpenFont: %s", TTF_GetError());
-        exit(0);
+        // todo: return
     }
 
     t = SDL_CreateRGBSurface(0, 512, 512, 32, rmask, gmask, bmask, amask);
@@ -145,14 +130,14 @@ void glTextClass::genFontTex(const string &TTFfontName, const int fontSize, cons
             }
         }
 
-        fontInfo[font].ch[i].Xa = (1.0 / (512.0 / static_cast<float>(dst.x)));
-        fontInfo[font].ch[i].Xb = (1.0 / (512.0 / (static_cast<float>(dst.x) + sX)));
-        fontInfo[font].ch[i].Ya = (1.0 / (512.0 / static_cast<float>(dst.y)));
-        fontInfo[font].ch[i].Yb = (1.0 / (512.0 / (static_cast<float>(dst.y) + sY)));
-        fontInfo[font].ch[i].width = sX / 800.0;
+        fontInfo[font].ch[i].Xa = (1.0f / (512.0f / static_cast<float>(dst.x)));
+        fontInfo[font].ch[i].Xb = (1.0f / (512.0f / (static_cast<float>(dst.x) + sX)));
+        fontInfo[font].ch[i].Ya = (1.0f / (512.0f / static_cast<float>(dst.y)));
+        fontInfo[font].ch[i].Yb = (1.0f / (512.0f / (static_cast<float>(dst.y) + sY)));
+        fontInfo[font].ch[i].width = sX / 800.0f;
 
         if (sY / 800.0 > fontInfo[font].height) {
-            fontInfo[font].height = sY / 800.0;
+            fontInfo[font].height = sY / 800.0f;
         }
 
         //blit
@@ -174,15 +159,16 @@ void glTextClass::genFontTex(const string &TTFfontName, const int fontSize, cons
     SDL_FreeSurface(t); //Free text-surface
 }
 
-void glTextClass::write(const string &text, const int font, const bool center, const GLfloat scale, const GLfloat x,
-                        const GLfloat y) {
-    int c;
+void glTextClass::write(const std::string &text, const int font, const bool center, const GLfloat scale,
+                        const GLfloat x,
+                        const GLfloat y) const {
+    unsigned char c;
     GLfloat sX, posX = 0;
 
-    // We need to find out half of the string width in order to center
+    // find out half of the string width to center
     if (center) {
         for (unsigned int i = 0; i < text.length(); i++) {
-            c = static_cast<unsigned int>(text[i]);
+            c = static_cast<unsigned char>(text[i]);
             sX = fontInfo[font].ch[c].width * scale;
             posX += sX;
         }
@@ -205,8 +191,9 @@ void glTextClass::write(const string &text, const int font, const bool center, c
     glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
 
     GLfloat drawPosX = 0;
-    for (unsigned int i = 0; i < text.length(); i++) {
-        c = static_cast<unsigned int>(text[i]);
+    for (unsigned char i = 0; i < text.length(); i++) {
+        c = static_cast<unsigned char>(text[i]);
+        if (c < 32 || c >= 128) c = '?';
         sX = fontInfo[font].ch[c].width;
         const GLfloat sY = fontInfo[font].height;
         drawPosX += sX;
@@ -228,4 +215,8 @@ void glTextClass::write(const string &text, const int font, const bool center, c
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     // glDisable(GL_TEXTURE_2D);
+}
+
+glTextClass::~glTextClass() {
+    TTF_Quit();
 }
