@@ -29,3 +29,7 @@
 ## clock
 
 - way smaller font
+
+## Theme-Manager
+
+## Save-Game-Manager

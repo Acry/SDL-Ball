@@ -172,7 +172,9 @@ void loadGame(int slot);
 
 void saveGame(int slot, string name);
 
+// current player
 player_struct player;
+// start of round player - for save game
 player_struct SOLPlayer;
 vars var;
 
@@ -548,7 +550,7 @@ soundClass soundMan; //Public object so all objects can use it
 #include "scoreboard.cpp"
 
 
-class object {
+class game_object {
 public:
     //     GLfloat color[3];
     GLfloat opacity; //This is still used, because it can then be reset, and it's used for fading out bricks (i think)
@@ -562,7 +564,7 @@ public:
     textureClass tex;
 };
 
-class paddle_class : public object {
+class paddle_class : public game_object {
 private:
     GLfloat growspeed;
     GLfloat destwidth;
@@ -678,7 +680,7 @@ class brick;
 void makeExplosive(brick &b);
 
 textureClass *texExplosiveBrick; //NOTE:Ugly
-class brick : public object {
+class brick : public game_object {
 public:
     int score; //Hvor meget gir den
     bool destroytowin; // Skal den smadres for at man kan vinde?
@@ -920,7 +922,7 @@ void makeExplosive(brick &b) {
 
 #include "loadlevel.cpp"
 
-class moving_object : public object {
+class moving_object : public game_object {
 public:
     GLfloat xvel, yvel, velocity;
 
