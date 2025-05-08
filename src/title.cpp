@@ -53,7 +53,7 @@ void powerupDescriptionClass::draw() const {
                   FONT_INTRODESCRIPTION,
                   false,
                   scale, textX,
-                  posy-leading);
+                  posy - leading);
     glText->write(description,
                   FONT_INTRODESCRIPTION,
                   false,

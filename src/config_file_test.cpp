@@ -5,16 +5,16 @@
 
 #include "config.h"
 
-void testConfigPaths(const ConfigFile& config) {
+void testConfigPaths(const ConfigFile &config) {
     std::cout << "Test Konfigurationspfade:\n"
-              << "Root: " << config.getProgramRoot() << "\n"
-              << "Config: " << config.getSettingsFile() << "\n"
-              << "Savegame: " << config.getSaveGameFile() << "\n"
-              << "Highscore: " << config.getHighScoreFile() << "\n"
-              << "Screenshots: " << config.getScreenshotDir() << "\n";
+            << "Root: " << config.getProgramRoot() << "\n"
+            << "Config: " << config.getSettingsFile() << "\n"
+            << "Savegame: " << config.getSaveGameFile() << "\n"
+            << "Highscore: " << config.getHighScoreFile() << "\n"
+            << "Screenshots: " << config.getScreenshotDir() << "\n";
 }
 
-void testSettingsManager(ConfigFile& config) {
+void testSettingsManager(ConfigFile &config) {
     std::cout << "\nTest SettingsManager:\n";
 
     // Debug-Ausgabe
@@ -24,15 +24,15 @@ void testSettingsManager(ConfigFile& config) {
 
 
     SettingsManager sm(config);
-    assert(sm.init());     // Settings Manager initialisieren
+    assert(sm.init()); // Settings Manager initialisieren
 
     // Test Defaultwerte
-    const auto& settings = sm.getSettings();
+    const auto &settings = sm.getSettings();
     assert(settings.fps == DEFAULT_FPS);
     assert(settings.fullscreen == DEFAULT_FULLSCREEN);
 
     // Test Speichern
-    auto& mutableSettings = sm.getSettings();
+    auto &mutableSettings = sm.getSettings();
     mutableSettings.fps = 60;
     assert(sm.save());
 
@@ -40,8 +40,8 @@ void testSettingsManager(ConfigFile& config) {
 }
 
 int main() {
-    ConfigFile config("./test");  // Explizites Testverzeichnis
-    assert(config.init());        // Sicherstellen dass init erfolgreich war
+    ConfigFile config("./test"); // Explizites Testverzeichnis
+    assert(config.init()); // Sicherstellen dass init erfolgreich war
 
     testConfigPaths(config);
     testSettingsManager(config);

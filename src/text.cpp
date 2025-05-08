@@ -21,7 +21,6 @@ struct glFontInfo_struct {
     glCharInfo_struct ch[255];
 };
 
-
 class glTextClass {
     void genFontTex(const string &TTFfontName, int fontSize, int font);
 

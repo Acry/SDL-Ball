@@ -34,8 +34,8 @@ bool displayClass::init() {
         flags |= SDL_WINDOW_FULLSCREEN;
     } else {
         // Im Fenstermodus konfigurierte Auflösung verwenden
-        currentW = setting.res_x > 0 ? setting.res_x : 1280;  // Fallback-Wert
-        currentH = setting.res_y > 0 ? setting.res_y : 720;   // Fallback-Wert
+        currentW = setting.res_x > 0 ? setting.res_x : 1280; // Fallback-Wert
+        currentH = setting.res_y > 0 ? setting.res_y : 720; // Fallback-Wert
     }
 
     // Nutze die Fullscreen-Einstellung aus settings

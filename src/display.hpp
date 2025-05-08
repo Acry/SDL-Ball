@@ -7,7 +7,6 @@ class displayClass {
     SDL_GLContext glcontext = nullptr;
     int displayToUse = 0;
 
-
 public:
     SDL_Window *sdlWindow = nullptr;
     int currentW;

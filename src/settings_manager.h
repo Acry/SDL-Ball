@@ -51,8 +51,10 @@ public:
     bool init();
 
     bool save();
+
     bool hasChanged() const { return hasChanges; }
     void settingsChanged() { hasChanges = true; }
+
     const settings &getSettings() const;
 
     settings &getSettings();

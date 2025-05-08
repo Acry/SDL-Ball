@@ -4,9 +4,7 @@
 #include <cstdlib>
 #include <utility>
 
-ConfigFile::ConfigFile(std::string root) :
-    programRoot(std::move(root))
-{
+ConfigFile::ConfigFile(std::string root) : programRoot(std::move(root)) {
 }
 
 bool ConfigFile::init() {
@@ -53,11 +51,11 @@ bool ConfigFile::init() {
     return true;
 }
 
-bool ConfigFile::checkDir(const std::string& dir) {
+bool ConfigFile::checkDir(const std::string &dir) {
     struct stat st{};
 
     // Prüft ob Verzeichnis existiert (stat == 0 bedeutet existiert)
-    if(stat(dir.c_str(), &st) != 0) {
+    if (stat(dir.c_str(), &st) != 0) {
         // Existiert nicht -> erstelle es
         // Rechte: rwx für User und Gruppe (0770)
         return mkdir(dir.c_str(), S_IRWXU | S_IRWXG) == 0;

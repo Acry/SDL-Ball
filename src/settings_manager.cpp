@@ -178,7 +178,7 @@ bool SettingsManager::writeToFile() const {
 
 bool SettingsManager::save() {
     if (!hasChanges) return true;
-    if (writeToFile()){
+    if (writeToFile()) {
         hasChanges = false;
         return true;
     }

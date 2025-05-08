@@ -2,7 +2,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
 
 #include <cmath>
 #include <cstdio>
@@ -13,7 +12,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <list>
+
 #include <memory>
 #include <random>
 #include <sys/stat.h>
@@ -219,7 +218,6 @@ struct texProp {
    If still no luck it will use the file from DATADIR/path
    It will return the full qualified filename */
 string useTheme(const string &path, const string &theme) {
-
     struct stat st{};
     string name;
 
@@ -1203,14 +1201,14 @@ int LinesCross(float x0, float y0, float x1, float y1, float x2, float y2, float
 
 // Leaves a trail behind the ball
 class tracer {
-    GLfloat x[100], y[100];         // Position
+    GLfloat x[100], y[100]; // Position
     GLfloat r[100], g[100], b[100]; // Farbe
-    GLfloat a[100];                 // Alpha wird stärker reduziert je weiter vom Ball
-    GLfloat s[100];                 // Größe wird kleiner je weiter vom Ball
-    GLfloat cr, cg, cb;             // Aktuelle Farben
+    GLfloat a[100]; // Alpha wird stärker reduziert je weiter vom Ball
+    GLfloat s[100]; // Größe wird kleiner je weiter vom Ball
+    GLfloat cr, cg, cb; // Aktuelle Farben
     bool active[100];
     int color;
-    GLfloat lastX, lastY;           // Letzte Position
+    GLfloat lastX, lastY; // Letzte Position
 
 public:
     GLfloat height, width;
@@ -1221,22 +1219,23 @@ public:
     tracer() {
         len = 100;
         lastX = lastY = 0;
-        cr = 1; cg = cb = 0;
+        cr = 1;
+        cg = cb = 0;
         height = width = 0.01;
-        for(int i = 0; i < 100; i++) active[i] = false;
+        for (int i = 0; i < 100; i++) active[i] = false;
     }
 
     void draw() {
-        for(int i = 0; i < len; i++) {
-            if(active[i]) {
+        for (int i = 0; i < len; i++) {
+            if (active[i]) {
                 // Stärkere Alpha-Reduktion für ältere Partikel
-                a[i] -= (4.0f + i*0.1f) * globalMilliTicksSinceLastDraw;
+                a[i] -= (4.0f + i * 0.1f) * globalMilliTicksSinceLastDraw;
 
                 // Partikel werden dünner mit der Zeit
                 s[i] -= 2.0f * globalMilliTicksSinceLastDraw;
-                if(s[i] < 0.2f) s[i] = 0.2f;
+                if (s[i] < 0.2f) s[i] = 0.2f;
 
-                if(a[i] < 0.0f) {
+                if (a[i] < 0.0f) {
                     active[i] = false;
                     continue;
                 }
@@ -1247,7 +1246,7 @@ public:
                 glTranslatef(x[i], y[i], -3.0);
 
                 // Alpha zusätzlich basierend auf Index reduzieren
-                float indexBasedAlpha = a[i] * (1.0f - (float)i/len);
+                float indexBasedAlpha = a[i] * (1.0f - (float) i / len);
                 glColor4f(r[i], g[i], b[i], indexBasedAlpha);
 
                 glBegin(GL_QUADS);
@@ -1279,6 +1278,7 @@ public:
             cb = 0.0;
         }
     }
+
     void update(GLfloat nx, GLfloat ny) {
         // If long enough away
         GLfloat dist = sqrt(pow(nx - lastX, 2) + pow(ny - lastY, 2));
@@ -2409,7 +2409,7 @@ void initGL() {
 
 float random_float(const float total, const float negative) {
     thread_local std::mt19937 rng(std::random_device{}());
-    std::uniform_real_distribution dist(-negative, total-negative);
+    std::uniform_real_distribution dist(-negative, total - negative);
     return dist(rng);
 }
 
@@ -3094,7 +3094,7 @@ bool screenShot() {
     static constexpr size_t MAX_FILENAME = 256;
     static constexpr size_t TGA_HEADER_SIZE = 12;
     static constexpr size_t TGA_INFO_SIZE = 6;
-    static constexpr size_t CHANNELS = 3;  // BGR
+    static constexpr size_t CHANNELS = 3; // BGR
 
     char fileName[MAX_FILENAME];
     int fileIndex = 0;
@@ -3102,14 +3102,14 @@ bool screenShot() {
     // Finde freien Dateinamen
     while (fileIndex < 9999) {
         const int result = snprintf(fileName, MAX_FILENAME, "%s/sdl-ball_%04d.tga",
-            configFile.getScreenshotDir().data(), fileIndex);
+                                    configFile.getScreenshotDir().data(), fileIndex);
 
         if (result < 0 || static_cast<size_t>(result) >= MAX_FILENAME) {
             SDL_Log("Filename too long");
             return false;
         }
 
-        FILE* test = fopen(fileName, "rb");
+        FILE *test = fopen(fileName, "rb");
         if (!test) break;
         fclose(test);
         fileIndex++;
@@ -3129,7 +3129,7 @@ bool screenShot() {
     }
 
     // Öffne Ausgabedatei
-    FILE* outFile = fopen(fileName, "wb");
+    FILE *outFile = fopen(fileName, "wb");
     if (!outFile) {
         SDL_Log("Could not create file '%s'", fileName);
         return false;
@@ -3146,7 +3146,7 @@ bool screenShot() {
     }
 
     // Schreibe TGA Header
-    const unsigned char tgaHeader[TGA_HEADER_SIZE] = {0,0,2,0,0,0,0,0,0,0,0,0};
+    const unsigned char tgaHeader[TGA_HEADER_SIZE] = {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     const unsigned char tgaInfo[TGA_INFO_SIZE] = {
         static_cast<unsigned char>(setting.res_x & 0xFF),
         static_cast<unsigned char>((setting.res_x >> 8) & 0xFF),
@@ -3181,9 +3181,9 @@ int main(int argc, char *argv[]) {
 
     setting = settingsManager.getSettings();
     player.difficulty = setting.startingDifficulty;
-    var.quit=false;
-    var.clearScreen=true;
-    var.titleScreenShow=true;
+    var.quit = false;
+    var.clearScreen = true;
+    var.titleScreenShow = true;
 
     Uint32 maxFrameAge = (1000 / setting.fps);
 
@@ -3457,11 +3457,14 @@ int main(int argc, char *argv[]) {
                 if (var.menu) {
                     if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.78) + (0.07) && mouse_y > (-0.78) - (0.07))
                         var.menuItem = 1;
-                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.56) + (0.07) && mouse_y > (-0.56) - (0.07))
+                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.56) + (0.07) && mouse_y > (-0.56) - (
+                                 0.07))
                         var.menuItem = 2;
-                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.34) + (0.07) && mouse_y > (-0.34) - (0.07))
+                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.34) + (0.07) && mouse_y > (-0.34) - (
+                                 0.07))
                         var.menuItem = 3;
-                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.12) + (0.07) && mouse_y > (-0.12) - (0.07))
+                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.12) + (0.07) && mouse_y > (-0.12) - (
+                                 0.07))
                         var.menuItem = 4;
                     else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (0.1) + (0.07) && mouse_y > (0.1) - (0.07))
                         var.menuItem = 5;
@@ -3532,7 +3535,6 @@ int main(int argc, char *argv[]) {
                 //give the balls explosive ability, in order to blow up cement block and get on with the game
                 gVar.deadTime = 0;
                 bMan.powerup(PO_EXPLOSIVE);
-
             }
 
             if (bMan.activeBalls == 0 && !gVar.newLevel)
