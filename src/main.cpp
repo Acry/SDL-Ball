@@ -322,7 +322,7 @@ vector<themeInfo> getThemes() {
 
 #include "text.cpp"
 glTextClass *glText;
-//Pointer to the object, since we can't init (load fonts) because the settings have not been read yet.
+// Pointer to the object, since we can't init (load fonts) because the settings have not been read yet.
 
 class textureClass {
 private:
@@ -620,8 +620,8 @@ public:
                     growing = false;
                 }
             }
-
             glLoadIdentity();
+            //glPushMatrix();
             glTranslatef(posx, posy, -3.0);
 
             tex.play();
@@ -637,7 +637,7 @@ public:
             glVertex3f(width, -height, 0.0f);
             glTexCoord2f(tex.pos[6], tex.pos[7]);
             glVertex3f(-width, -height, 0.0f);
-            glEnd();
+            //glPopMatrix();
 
             //Hvis glue?
             if (player.powerup[PO_GLUE]) {
@@ -2716,10 +2716,9 @@ struct shopItemStruct {
 };
 
 class hudClass {
-private:
     textureClass texBall;
 
-    //For the hud text
+    // For the hud text
     int ticksSinceLastClockCheck;
     time_t nixTime; //Seconds since epoch
     tm timeStruct; //Time struct
@@ -2798,12 +2797,10 @@ public:
                 ticksSinceLastClockCheck = 0;
                 time(&nixTime);
                 timeStruct = *(localtime(&nixTime));
-                sprintf(clockString, "Clock: %02i:%02i", timeStruct.tm_hour, timeStruct.tm_min);
-                //Array is exactly 13 chars wide
+                sprintf(clockString, "%02i:%02i", timeStruct.tm_hour, timeStruct.tm_min);
             }
-            glColor4f(1.0, 1.0, 1.0, 1.0);
-            glText->write(clockString, FONT_INTRODESCRIPTION, 0, 1.0, -1.58,
-                          -1.25 + glText->getHeight(FONT_INTRODESCRIPTION));
+            glText->write(clockString, FONT_INTRODESCRIPTION, false, 0.55f, -0.72f,
+                          -0.975f);
         }
 
         //Draw the "shop"
@@ -3526,6 +3523,7 @@ int main(int argc, char *argv[]) {
         // Update
         gVar.deadTime += globalTicks;
 
+        glLoadIdentity();
         // Really ugly... but easy
         if (!var.titleScreenShow) {
             pos p;

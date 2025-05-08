@@ -22,7 +22,10 @@
 
 - let KI play for a while
 
-
 ## title
 
 - show keys and powerups interchanged
+
+## clock
+
+- way smaller font

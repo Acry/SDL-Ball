@@ -24,7 +24,7 @@ public:
 
         if (tempScore != score) {
             if (lastScoreTick + 50 < SDL_GetTicks()) {
-                tempScore += static_cast<float>(dif) / 7.0 + 1;;
+                tempScore += static_cast<float>(dif) / 7.0f + 1.0f;;
                 if (tempScore > score)
                     tempScore = score;
                 lastScoreTick = SDL_GetTicks();
@@ -32,11 +32,6 @@ public:
                 sprintf(tempText, "%i", tempScore);
             }
         }
-
-        glLoadIdentity();
-        glTranslatef(-1.55, 1.24 - (glText->getHeight(FONT_HIGHSCORE) / 2.0), -3.0);
-
-        glColor4f(1.0, 1.0, 1.0, 1.0);
-        glText->write(tempText, FONT_HIGHSCORE, 0, 1.0, 0.0, 0.0);
+        glText->write(tempText, FONT_HIGHSCORE, false, 0.5, -0.7f, 0.875f);
     }
 };

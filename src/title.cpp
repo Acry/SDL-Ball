@@ -11,12 +11,20 @@ public:
 };
 
 powerupDescriptionClass::powerupDescriptionClass() {
-    width = 0.055;
-    height = 0.055;
+    width = 0.035;
+    height = 0.035;
 }
 
 void powerupDescriptionClass::draw() const {
     tex->play();
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
     glBindTexture(GL_TEXTURE_2D, tex->prop.texture);
     glColor4f(tex->prop.glTexColorInfo[0], tex->prop.glTexColorInfo[1], tex->prop.glTexColorInfo[2],
               tex->prop.glTexColorInfo[3]);
@@ -30,15 +38,28 @@ void powerupDescriptionClass::draw() const {
     glTexCoord2f(tex->pos[6], tex->pos[7]);
     glVertex3f(-width + posx, -height + posy, 0.00); // bottom left
     glEnd();
-
-    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    //glColor4f(1.0, 1.0, 1.0, 1.0);
 
     constexpr float spacing = 0.05f;
     // Write the name and description
-    glText->write(name, FONT_INTRODESCRIPTION, false, 1.0, posx + width + spacing,
-                  posy + (glText->getHeight(FONT_INTRODESCRIPTION) / 2.0));
-    glText->write(description, FONT_INTRODESCRIPTION, false, 1.0, posx + width + spacing,
-                  posy - (glText->getHeight(FONT_INTRODESCRIPTION) / 2.0));
+    constexpr float scale = 0.5f; // Scale for the text
+    constexpr float leading = -0.018f; // Leading for the text
+    const float textX = posx + spacing;
+    glText->write(name,
+                  FONT_INTRODESCRIPTION,
+                  false,
+                  scale, textX,
+                  posy-leading);
+    glText->write(description,
+                  FONT_INTRODESCRIPTION,
+                  false,
+                  scale,
+                  textX,
+                  posy - height - leading);
 }
 
 class titleScreenClass {
@@ -94,21 +115,38 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
     glEnd();
     glEndList();
 
-    float iconWidth = 0.055;      // Halbe Breite des Icons
-    float textWidth = 0.8;        // Platz für Text rechts daneben
-    float spacing = 0.1;          // Abstand zwischen Spalten
-    float totalWidth = (iconWidth + textWidth) * 3 + spacing * 2; // Gesamtbreite mit Text
-    float startX = -(totalWidth/2);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
 
-    for(int column = 0; column < 3; column++) {
-        for(int row=0; row < 7; row++) {
-            powerUp[row+7*column].tex = &texPowerups[row+7*column];
-            powerUp[row+7*column].posx = startX + column * (iconWidth + textWidth + spacing);
-            powerUp[row+7*column].posy = -0.25 - 0.135 * row;
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    // set position for powerup icons
+    constexpr float iconHeight = 0.035;
+    constexpr float iconWidth = 0.035;
+    constexpr float spacing = 0.45f; // Abstand zwischen Spalten
+    constexpr float leading = 0.09; // Abstand zwischen Zeilen
+    constexpr float totalWidth = (iconWidth + spacing * 3); // Gesamtbreite mit Text
+    constexpr float startX = -totalWidth / 2.0f;
+    constexpr float startY = -0.2f;
+
+    for (int row = 0; row < 7; row++) {
+        for (int column = 0; column < 3; column++) {
+            int idx = column + 3 * row;
+            powerUp[idx].tex = &texPowerups[idx];
+            powerUp[idx].posx = startX + column * (iconWidth + spacing);
+            powerUp[idx].posy = startY - (leading + iconHeight) * row;
         }
     }
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
     readDescriptions(powerUp);
 
+    // Set the initial position and velocity of the runner
     runnerPos.x = 0.0;
     runnerPos.y = 0.66;
     runnerVelX = random_float(2, 1) + 2;
@@ -120,14 +158,6 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
     hilightTime = 0;
 }
 
-int delta(const int a, const int b) {
-    if (a >= b) {
-        return a - b;
-    }
-    return b - a;
-
-}
-
 void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
     if (*frameAge >= *maxFrameAge) {
         soundMan.play();
@@ -135,8 +165,11 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
         if (var.clearScreen) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
+
+
         glEnable(GL_TEXTURE_2D);
 
+        // icons and text
         ticksSinceLastSpawn += globalTicksSinceLastDraw;
         if (ticksSinceLastSpawn > 125) {
             pos s;
@@ -159,16 +192,13 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
             fxMan->spawn(p);
         }
         fxMan->draw();
-
         int i;
-        glPushMatrix();
-        glTranslatef(0.0, 0.0, 0.0);
 
         for (i = 0; i < MAXPOTEXTURES; i++) {
             powerUp[i].draw();
         }
 
-
+        // runner
         runnerTime += globalTicksSinceLastDraw;
         if (runnerTime > 10) {
             fxMan->set(FX_VAR_TYPE, FX_SPARKS);
@@ -191,8 +221,7 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
             runnerPos.x += runnerVelX * (runnerTime / 1000.0);
             runnerPos.y += runnerVelY * (runnerTime / 1000.0);
 
-            // Grenzen mit Faktor 3 anpassen
-            if (runnerPos.x > 1.0f && runnerVelX > 0) {      // Etwas größer als vorher
+            if (runnerPos.x > 1.0f && runnerVelX > 0) {
                 runnerVelX *= -1.0f;
             }
             if (runnerPos.x < -1.0f && runnerVelX < 0) {
@@ -206,8 +235,8 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
             }
             runnerTime = 0;
         }
-        glPopMatrix();
 
+        // hilight highscores
         hilightTime += globalTicksSinceLastDraw;
         if (hilightTime > 50) {
             if (hilightDir) {
@@ -226,17 +255,16 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
             }
             hilightTime = 0;
         }
-        glPushMatrix();
-        glTranslatef(0.0, 0.59, 0.0);
+
         for (i = 0; i < numHighScores; i++) {
             if ((hilightDir && i < hilight + 1) || (!hilightDir && i > hilight - 1)) {
-                const float a = 1.0 - 1.0 / static_cast<float>(numHighScores * 2) * delta(hilight, i);
-                glColor4f(1, 1, 1, a);
-                glText->write(menu->highScores[i], FONT_INTROHIGHSCORE, 1, 1.0, 0.0, 0.0);
+                const float a = 1.0 - 1.0 / static_cast<float>(numHighScores * 2) * std::abs(hilight - i);
+                glColor4f(0.9f, 0.9f, 0.9f, a);
+                // SDL_Log("alpha: %f", a);
+                glText->write(menu->highScores[i], FONT_INTROHIGHSCORE, true, 0.5, 0.0, 0.063 * i);
             }
-            glTranslatef(0.0, -glText->getHeight(FONT_INTROHIGHSCORE), 0.0);
         }
-        glPopMatrix();
+
         if (!rotDir) {
             rot += 0.01 * globalTicksSinceLastDraw;
             if (rot > 40) {
@@ -255,6 +283,7 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
         glRotatef(rot, 0, 1, 0);
         glCallList(glTitleList);
         glPopMatrix();
+
         SDL_GL_SwapWindow(display.sdlWindow);
 
         globalTicksSinceLastDraw = 0;

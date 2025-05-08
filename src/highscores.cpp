@@ -75,7 +75,6 @@ public:
                 high++;
             }
         }
-
         if (n > 0)
             delete[] slist;
 

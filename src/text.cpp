@@ -175,7 +175,8 @@ void glTextClass::genFontTex(const string &TTFfontName, const int fontSize, cons
     SDL_FreeSurface(t); //Free text-surface
 }
 
-void glTextClass::write(const string &text, const int font, const bool center, const GLfloat scale, const GLfloat x, const GLfloat y) {
+void glTextClass::write(const string &text, const int font, const bool center, const GLfloat scale, const GLfloat x,
+                        const GLfloat y) {
     int c;
     GLfloat sX, posX = 0;
 
@@ -189,28 +190,43 @@ void glTextClass::write(const string &text, const int font, const bool center, c
         posX *= -1;
     }
     posX += x;
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glTranslatef(posX, y, 0.0f);
+    glScalef(scale, scale, 1.0f);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
 
-    //Draw the quads
+    GLfloat drawPosX = 0;
     for (unsigned int i = 0; i < text.length(); i++) {
         c = static_cast<unsigned int>(text[i]);
-        sX = fontInfo[font].ch[c].width * scale;
-        const GLfloat sY = fontInfo[font].height * scale;
-        posX += sX;
+        sX = fontInfo[font].ch[c].width;
+        const GLfloat sY = fontInfo[font].height;
+        drawPosX += sX;
 
         glBegin(GL_QUADS);
         glTexCoord2f(fontInfo[font].ch[c].Xa, fontInfo[font].ch[c].Ya);
-        glVertex3f(-sX + posX, sY + y, 0);
+        glVertex3f(-sX + drawPosX, sY, 0);
         glTexCoord2f(fontInfo[font].ch[c].Xb, fontInfo[font].ch[c].Ya);
-        glVertex3f(sX + posX, sY + y, 0);
+        glVertex3f(sX + drawPosX, sY, 0);
         glTexCoord2f(fontInfo[font].ch[c].Xb, fontInfo[font].ch[c].Yb);
-        glVertex3f(sX + posX, -sY + y, 0);
+        glVertex3f(sX + drawPosX, -sY, 0);
         glTexCoord2f(fontInfo[font].ch[c].Xa, fontInfo[font].ch[c].Yb);
-        glVertex3f(-sX + posX, -sY + y, 0);
+        glVertex3f(-sX + drawPosX, -sY, 0);
         glEnd();
-        posX += sX;
+        drawPosX += sX;
     }
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
     // glDisable(GL_TEXTURE_2D);
 }

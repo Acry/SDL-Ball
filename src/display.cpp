@@ -107,7 +107,9 @@ void displayClass::resize(const int width, const int height) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    gluPerspective(45.0f, ratio, 0.1f, 10.0f);
+    gluPerspective(45.0f, ratio, 0.1f, 100.0f);
+
+    //glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();

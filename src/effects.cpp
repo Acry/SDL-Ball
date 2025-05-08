@@ -640,10 +640,10 @@ class glAnnounceMessageClass {
     
     glAnnounceMessageClass()
     {
-      active=1;
+      active=true;
       age=0;
       fade=0;
-      fadedir=0;
+      fadedir=false;
       zoom=0;
     }
 
@@ -682,11 +682,11 @@ class glAnnounceMessageClass {
         age += globalTicksSinceLastDraw;
         if(age > life*0.50)
         {
-          fadedir=1;
+          fadedir=true;
         }
 
       if(age > life)
-        active=0;
+        active=false;
     }
     
 };
