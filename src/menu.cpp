@@ -6,11 +6,9 @@ struct score {
     string name;
 };
 
-struct score *sortScores(int *rl) {
+score *sortScores(int *rl) {
     ifstream hsList;
-    string line;
     int i = 0, t;
-    int delim[2];
 
     struct score *final = NULL, *temp = NULL;
     final = new struct score[1];
@@ -18,6 +16,8 @@ struct score *sortScores(int *rl) {
     hsList.open(configFile.getHighScoreFile().data());
 
     if (hsList.is_open()) {
+        int delim[2];
+        string line;
         while (!hsList.eof()) {
             getline(hsList, line);
 
@@ -61,41 +61,40 @@ struct score *sortScores(int *rl) {
     else
         *rl = i;
 
-    int k;
-    bool done = 0;
-    bool swaps = 0;
+    bool done = false;
+    bool swaps = false;
 
-    temp = new struct score[1];
+    temp = new score[1];
     while (!done) {
-        for (k = 0; k < i; k++) {
+        for (int k = 0; k < i; k++) {
             for (t = 0; t < i; t++) {
                 if (final[k].score > final[t].score) {
-                    swaps = 1;
+                    swaps = true;
                     temp[0] = final[t];
                     final[t] = final[k];
                     final[k] = temp[0];
                 } else {
-                    swaps = 0;
+                    swaps = false;
                 }
             }
         }
         if (swaps == 0) {
-            done = 1;
+            done = true;
         }
     }
     delete[] temp;
-    return (final);
+    return final;
 }
 
 class menuClass {
-private:
+
     string saveGameName[6]; //The name of saveGames
     int saveGameSlot; //Where player choose to save/load to/from
     textureClass tex[5];
     GLuint dl;
 
     bool themeChanged; //If the theme has changed change the banner.
-    vector<struct themeInfo> tI; //Vector of theme info
+    vector<themeInfo> tI; //Vector of theme info
 
 public:
     char highScores[20][255];
@@ -242,7 +241,6 @@ public:
             var.enterSaveGameName = 0;
         }
     }
-
 
     void doMenu() {
         int i = 0;
