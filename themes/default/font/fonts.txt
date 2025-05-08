@@ -12,7 +12,7 @@ announcebadfile=font/Bandal.ttf
 announcebadsize=60
 
 highscorefile=font/Bandal.ttf
-highscoresize=120
+highscoresize=100
 
 menuhighscorefile=font/subgamefont.ttf
 menuhighscoresize=25
