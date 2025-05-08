@@ -10,10 +10,14 @@ Check out the following commit for the fixed code, while the rest stays the same
 
 `git checkout 2de3f8c`
 
-___
+## significant changes
 
 I am going to modernize the code in my spare time for educational purposes.
-No cross-platform support is intended. Current commits will use the OpenGL 3.1 compatibility profile already.
+
+- OpenGL 3.1 compatibility profile
+- no Windows support
+- no WiiMote support
+- sound always enabled
 
 The config is now in `SDL-Ball`, not `sdl-ball` anymore.
 You can copy the files from the old folder to the new one.
