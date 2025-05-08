@@ -13,7 +13,7 @@ public:
         // draw texture
         glLoadIdentity();
         glTranslatef(0, 0, 0.0);
-        glColor4f(1, 1, 1, 1);
+        glColor4f(GL_WHITE);
 
         glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
         glBegin(GL_QUADS);
@@ -30,7 +30,7 @@ public:
         // FIXME
         glLoadIdentity();
         //glTranslatef(0, 0, -2.9);  // Leicht vor der Textur
-        glColor4f(1, 1, 1, 1);
+        glColor4f(GL_WHITE);
 
         glText->write(name, FONT_MENUHIGHSCORE, true, 2.0, 0.0, 0.2);
     }

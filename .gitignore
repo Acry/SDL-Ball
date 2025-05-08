@@ -1,2 +1,6 @@
 .idea/
+.venv/
 build/
+# Internal docs
+# Git treats symlinks as files containing the path to their target
+docs/cg-docs-link

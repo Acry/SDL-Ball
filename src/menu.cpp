@@ -242,7 +242,7 @@ public:
     }
 
     void doMenu() {
-        glColor4f(1.0, 1.0, 1.0, 1.0);
+        glColor4f(GL_WHITE);
         glLoadIdentity();
         glTranslatef(0.0, 0.0, -3.0f);
         glCallList(dl); //baggrunden
@@ -257,9 +257,9 @@ public:
             else
                 glCallList(dl + 1);
 
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Quit SDL-Ball", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //Settings
             glTranslatef(0.0, 0.22, 0.0f);
@@ -268,9 +268,9 @@ public:
             else
                 glCallList(dl + 1);
 
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Settings", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //highscores
             glTranslatef(0.0, 0.22, 0.0f);
@@ -279,9 +279,9 @@ public:
             else
                 glCallList(dl + 1);
 
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Highscores", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //Save
             glTranslatef(0.0, 0.22, 0.0f);
@@ -292,11 +292,11 @@ public:
                 else
                     glCallList(dl + 1);
 
-                glColor4f(0, 0, 0, 1);
+                glColor4f(GL_BLACK);
                 glText->write("Save Game", FONT_MENU, 1, 1.0, 0.0, -0.005);
-                glColor4f(1, 1, 1, 1);
+                glColor4f(GL_WHITE);
             } else {
-                glColor4f(1, 1, 1, 1);
+                glColor4f(GL_WHITE);
                 if (var.menuItem == 4) {
                     glCallList(dl + 2);
                     glColor4f(0.5, 0.5, 0.5, 1);
@@ -306,7 +306,7 @@ public:
                     glColor4f(0.5, 0.5, 0.5, 1);
                     glText->write("Save Game", FONT_MENU, 1, 1.0, 0.0, -0.005);
                 }
-                glColor4f(1, 1, 1, 1);
+                glColor4f(GL_WHITE);
             }
 
             //Load
@@ -316,9 +316,9 @@ public:
             else
                 glCallList(dl + 1);
 
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Load Game", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             glTranslatef(0.0, 0.22, 0.0f);
             if (var.menuItem == 6)
@@ -326,9 +326,9 @@ public:
             else
                 glCallList(dl + 1);
 
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Continue", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //new game
             glTranslatef(0.0, 0.22, 0.0f);
@@ -337,9 +337,9 @@ public:
             else
                 glCallList(dl + 3);
 
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("New Game", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
 
             if (var.menuPressed) {
@@ -380,9 +380,9 @@ public:
             else
                 glCallList(dl + 1);
 
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Back", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //settings
             glLoadIdentity();
@@ -390,7 +390,7 @@ public:
 
             glCallList(dl + 3);
 
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
             glText->write("Settings", FONT_MENU, 1, 1.0, 0.0, -0.005);
 
 
@@ -400,22 +400,20 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Video", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
 
             //sound
             glTranslatef(0.0, -0.22, 0.0f);
-#ifndef NOSOUND
             if (var.menuItem == 5)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Sound", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
-#endif
+            glColor4f(GL_WHITE);
 
             //Calibrate
             glTranslatef(0.0, -0.22, 0.0f);
@@ -424,9 +422,9 @@ public:
                     glCallList(dl + 2);
                 else
                     glCallList(dl + 1);
-                glColor4f(0, 0, 0, 1);
+                glColor4f(GL_BLACK);
                 glText->write("Calibrate Joystick", FONT_MENU, 1, 1.0, 0.0, -0.005);
-                glColor4f(1, 1, 1, 1);
+                glColor4f(GL_WHITE);
             }
 
             glTranslatef(0.0, -0.22, 0.0f);
@@ -435,9 +433,9 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Themes", FONT_MENU, true, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
 
             if (var.menuPressed) {
@@ -471,7 +469,7 @@ public:
             glTranslatef(0.0, 0.54, -3.0f);
             glCallList(dl + 3);
 
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
             glText->write("Video Options", FONT_MENU, 1, 1.0, 0.0, -0.005);
 
             //Toggle full
@@ -480,12 +478,12 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             if (setting.fullscreen)
                 glText->write("Fullscreen:On", FONT_MENU, 1, 1.0, 0.0, -0.005);
             else
                 glText->write("Fullscreen:Off", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //Eyecandy
             glTranslatef(0.0, -0.22, 0.0f);
@@ -493,12 +491,12 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             if (setting.eyeCandy)
                 glText->write("Eyecandy:On", FONT_MENU, 1, 1.0, 0.0, -0.005);
             else
                 glText->write("Eyecandy:Off", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //1600
             glTranslatef(0.0, -0.22, 0.0f);
@@ -506,9 +504,9 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("1600x1200", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //1024
             glTranslatef(0.0, -0.22, 0.0f);
@@ -516,9 +514,9 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("1024x768", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //background
             glTranslatef(0.0, -0.22, 0.0f);
@@ -526,12 +524,12 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             if (setting.showBg)
                 glText->write("Background:On", FONT_MENU, 1, 1.0, 0.0, -0.005);
             else
                 glText->write("Background:Off", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //Back
             glTranslatef(0.0, -0.22, 0.0f);
@@ -539,9 +537,9 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Back", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
                 switch (var.menuItem) {
@@ -558,17 +556,13 @@ public:
                     case 3:
                         setting.res_x = 1024;
                         setting.res_y = 768;
-#ifndef WIN32
                         if (display.updateForMenu())
-#endif
                             settingsManager.settingsChanged();
                         break;
                     case 4:
                         setting.res_x = 1600;
                         setting.res_y = 1200;
-#ifndef WIN32
                         if (display.updateForMenu())
-#endif
                             settingsManager.settingsChanged();
                         break;
                     case 5:
@@ -583,14 +577,12 @@ public:
                             setting.fullscreen = false;
                         else
                             setting.fullscreen = true;
-#ifndef WIN32
                         if (display.updateForMenu())
-#endif
                             settingsManager.settingsChanged();
                         break;
                     default: ;
                 }
-                var.menuPressed = 0;
+                var.menuPressed = false;
             }
             var.menuNumItems = 6;
         } else if (var.menu == 4) {
@@ -598,9 +590,8 @@ public:
             glLoadIdentity();
             glTranslatef(0.0, 0.54, -3.0f);
             glCallList(dl + 3);
-            glColor4f(1, 1, 1, 1);
-            glText->write("Audio", FONT_MENU, 1, 1.0, 0.0, -0.005);
-
+            glColor4f(GL_WHITE);
+            glText->write("Audio", FONT_MENU, true, 1.0, 0.0, -0.005);
 
             //Sound on/off
             glTranslatef(0.0, -0.22, 0.0f);
@@ -608,12 +599,12 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             if (setting.sound)
-                glText->write("Sound:On", FONT_MENU, 1, 1.0, 0.0, -0.005);
+                glText->write("Sound:On", FONT_MENU, true, 1.0, 0.0, -0.005);
             else
-                glText->write("Sound:Off", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+                glText->write("Sound:Off", FONT_MENU, true, 1.0, 0.0, -0.005);
+            glColor4f(GL_WHITE);
 
             //Stereo
             glTranslatef(0.0, -0.22, 0.0f);
@@ -621,14 +612,14 @@ public:
                 glCallList(dl + 2);
             } else {
                 glCallList(dl + 1);
-                glColor4f(0, 0, 0, 1);
+                glColor4f(GL_BLACK);
             }
             if (setting.stereo) {
                 glText->write("Stereo:On", FONT_MENU, 1, 1.0, 0.0, -0.005);
             } else {
                 glText->write("Stereo:Off", FONT_MENU, 1, 1.0, 0.0, -0.005);
             }
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //Back
             glTranslatef(0.0, -0.88, 0.0f);
@@ -637,9 +628,9 @@ public:
             } else {
                 glCallList(dl + 1);
             }
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Back", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
                 switch (var.menuItem) {
@@ -675,9 +666,9 @@ public:
             glTranslatef(0.0, 0.54, -3.0f);
             glCallList(dl + 3);
 
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("New Game", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
             //       glBindTexture(GL_TEXTURE_2D, tex[28].prop.texture);
             //       glCallList(dl+3);
 
@@ -688,9 +679,9 @@ public:
             else
                 glCallList(dl + 1);
 
-            glColor4f(0, 1, 0, 1);
+            glColor4f(GL_FULL_GREEN);
             glText->write("Easy", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
             //       glBindTexture(GL_TEXTURE_2D, tex[29].prop.texture);
             //       glCallList(dl+3);
 
@@ -701,9 +692,9 @@ public:
             else
                 glCallList(dl + 1);
 
-            glColor4f(0, 0, 1, 1);
+            glColor4f(GL_FULL_BLUE);
             glText->write("Normal", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //       glBindTexture(GL_TEXTURE_2D, tex[30].prop.texture);
             //       glCallList(dl+3);
@@ -715,9 +706,9 @@ public:
             else
                 glCallList(dl + 1);
 
-            glColor4f(1, 0, 0, 1);
+            glColor4f(GL_FULL_RED);
             glText->write("Hard", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
             //       glBindTexture(GL_TEXTURE_2D, tex[31].prop.texture);
             //       glCallList(dl+3);
 
@@ -728,9 +719,9 @@ public:
             else
                 glCallList(dl + 1);
 
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Back", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //       glBindTexture(GL_TEXTURE_2D, tex[32].prop.texture);
             //       glCallList(dl+3);
@@ -769,9 +760,9 @@ public:
             glLoadIdentity();
             glTranslatef(0.0, 0.54, -3.0f);
             glCallList(dl + 2);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Exit Game?", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             //Yes
             glTranslatef(0.0, -0.44, 0.0f);
@@ -779,9 +770,9 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(1, 0, 0, 1);
-            glText->write("Yes.", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_FULL_RED);
+            glText->write("Yes.", FONT_MENU, true, 1.0, 0.0, -0.005);
+            glColor4f(GL_WHITE);
 
             //Noes!
             glTranslatef(0.0, -0.22, 0.0f);
@@ -789,9 +780,9 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 1, 0, 1);
+            glColor4f(GL_FULL_GREEN);
             glText->write("No way!", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
                 switch (var.menuItem) {
@@ -816,7 +807,7 @@ public:
             else
                 glCallList(dl + 3);
 
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
             glText->write("Highscores", FONT_MENU, 1, 1.0, 0.0, -0.005);
 
             glTranslatef(0.0, -0.75, 0.0f);
@@ -867,7 +858,7 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 3);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
             glText->write("Load Game", FONT_MENU, true, 1.0, 0.0, -0.005);
 
             for (int i = 0; i < 6; i++) {
@@ -876,9 +867,9 @@ public:
                     glCallList(dl + 2);
                 else
                     glCallList(dl + 1);
-                glColor4f(0, 0, 0, 1);
+                glColor4f(GL_BLACK);
                 glText->write(saveGameName[i], FONT_MENU, true, 1.0, 0.0, -0.005);
-                glColor4f(1, 1, 1, 1);
+                glColor4f(GL_WHITE);
             }
 
             if (var.menuPressed) {
@@ -900,7 +891,7 @@ public:
                 glTranslatef(0.0, 0.54, -3.0f);
                 glTranslatef(0.0, 0.12, 0.0f);
 
-                glColor4f(0, 0, 0, 1);
+                glColor4f(GL_BLACK);
                 glText->write("Enter name and press Enter to save. ESC to cancel", FONT_MENU, true, 1.0, 0.0, -0.005);
                 glColor4f(1, 0, 0, 1);
             }
@@ -912,7 +903,7 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 3);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
             glText->write("Save Game", FONT_MENU, 1, 1.0, 0.0, -0.005);
 
 
@@ -922,9 +913,9 @@ public:
                     glCallList(dl + 2);
                 else
                     glCallList(dl + 1);
-                glColor4f(0, 0, 0, 1);
+                glColor4f(GL_BLACK);
                 glText->write(saveGameName[i], FONT_MENU, 1, 1.0, 0.0, -0.005);
-                glColor4f(1, 1, 1, 1);
+                glColor4f(GL_WHITE);
             }
 
             if (var.menuPressed) {
@@ -942,7 +933,7 @@ public:
             glLoadIdentity();
             glTranslatef(0.0, 0.54, -3.0f);
             glCallList(dl + 3);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
             glText->write("Calibrate Joystick", FONT_MENU, 1, 1.0, 0.0, -0.005);
 
 
@@ -951,7 +942,7 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             if (setting.joyIsDigital) {
                 glText->write("Digital Joystick", FONT_MENU, 1, 1.0, 0.0, -0.005);
             } else if (setting.joyIsPaddle) {
@@ -959,7 +950,7 @@ public:
             } else {
                 glText->write("Analog Joystick", FONT_MENU, 1, 1.0, 0.0, -0.005);
             }
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
 
             glTranslatef(0.0, -0.22, 0.0f);
@@ -969,7 +960,7 @@ public:
                 else
                     glCallList(dl + 1);
 
-                glColor4f(0, 0, 0, 1);
+                glColor4f(GL_BLACK);
                 if (var.menuJoyCalStage == 0)
                     glText->write("Start Calibration", FONT_MENU, 1, 1.0, 0.0, -0.005);
                 else if (var.menuJoyCalStage == 1)
@@ -982,7 +973,7 @@ public:
                     glText->write("Saving...", FONT_MENU, 1, 1.0, 0.0, -0.005);
                 else if (var.menuJoyCalStage == 5)
                     glText->write("Finished.", FONT_MENU, 1, 1.0, 0.0, -0.005);
-                glColor4f(1, 1, 1, 1);
+                glColor4f(GL_WHITE);
             }
 
             glTranslatef(0.0, -0.22, 0.0f);
@@ -994,9 +985,9 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Back", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
                 switch (var.menuItem) {
@@ -1038,13 +1029,13 @@ public:
             glCallList(dl + 3);
 
             if (!themeChanged) {
-                glColor4f(0, 0, 0, 1);
+                glColor4f(GL_BLACK);
                 glText->write("Themes", FONT_MENU, 1, 1.0, 0.0, -0.005);
             } else {
                 glColor4f(1, 0, 0, 1);
                 glText->write("Restart to apply", FONT_MENU, 1, 1.0, 0.0, -0.005);
             }
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
 
             int i = 0;
             for (vector<themeInfo>::iterator it = tI.begin(); it < tI.end(); ++it) {
@@ -1057,9 +1048,9 @@ public:
                     glCallList(dl + 3);
                 else
                     glCallList(dl + 1);
-                glColor4f(0, 0, 0, 1);
+                glColor4f(GL_BLACK);
                 glText->write(it->name, FONT_MENU, 1, 1.0, 0.0, -0.005);
-                glColor4f(1, 1, 1, 1);
+                glColor4f(GL_WHITE);
                 i++;
             }
 
@@ -1071,9 +1062,9 @@ public:
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glColor4f(0, 0, 0, 1);
+            glColor4f(GL_BLACK);
             glText->write("Back", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(1, 1, 1, 1);
+            glColor4f(GL_WHITE);
         }
 
         if (var.menuPressed) {

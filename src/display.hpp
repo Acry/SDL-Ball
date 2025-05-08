@@ -13,7 +13,7 @@ public:
     int currentH;
     int numOfDisplays;
     GLfloat glunits_per_xpixel, glunits_per_ypixel;
-
+    int viewportX, viewportY, viewportSize;
     bool init();
 
     static bool updateForMenu();

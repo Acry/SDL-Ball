@@ -45,12 +45,7 @@ bool displayClass::init() {
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    // Initialize SDL
-#ifndef NOSOUND
     if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0)
-#else
-  if(SDL_Init(SDL_INIT_TIMER|SDL_INIT_JOYSTICK) <0 )
-#endif
     {
         printf("\nError: Unable to initialize SDL:%s\n", SDL_GetError());
         return false;
@@ -102,14 +97,18 @@ void displayClass::resize(const int width, const int height) {
     glunits_per_xpixel = 2.485281374 * ratio / currentW;
     glunits_per_ypixel = 2.485281374 / currentH;
 
-    glViewport(0, 0, width, height);
+    // Quadrat mit maximaler Höhe, zentriert
+    viewportSize = std::min(width, height);
+    viewportX = (width - viewportSize) / 2;
+    viewportY = (height - viewportSize) / 2;
+    glViewport(viewportX, viewportY, viewportSize, viewportSize);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    gluPerspective(45.0f, ratio, 0.1f, 100.0f);
+    //gluPerspective(45.0f, ratio, 0.1f, 100.0f);
 
-    //glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+    glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();

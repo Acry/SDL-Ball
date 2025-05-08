@@ -27,6 +27,7 @@
 #include "config.h"
 #include "config_file.h"
 #include "settings_manager.h"
+#include "colors.h"
 
 settings setting;
 ConfigFile configFile;
@@ -978,7 +979,7 @@ public:
 
     void draw() {
         int i;
-        glColor4f(1, 1, 1, 1);
+        glColor4f(GL_WHITE);
         for (i = 0; i < 16; i++) {
             if (bullets[i].active) {
                 //draw
@@ -1418,14 +1419,14 @@ public:
             glLineWidth(1.0);
             glEnable(GL_LINE_SMOOTH);
             glBegin(GL_LINES);
-            glColor4f(random_float(2, 0), random_float(1, 0), 0.0, 0.0);
+            glColor4f(random_float(2, 0), random_float(1, 0), 0.0, 0.0); // ???
             glVertex3f(0.0, 0.0, 0.0);
             glColor4f(random_float(2, 0), 0.0, 0.0, 1.0);
             glVertex3f(bxb, byb, 0.0);
             glEnd();
 
             glPointSize(5.0f);
-            glColor4f(1.0, 0.0, 0.0, 1.0);
+            glColor4f(GL_FULL_RED);
             glEnable(GL_POINT_SMOOTH);
             glBegin(GL_POINTS);
             glVertex3f(bxb, byb, 0.0);
@@ -1460,12 +1461,12 @@ public:
                 glEnable(GL_LINE_SMOOTH);
                 glBegin(GL_LINE_STRIP);
                 //Line from ball to paddle
-                glColor4f(1.0, 0.0, 0.0, 0.0);
+                glColor4f(1.0, 0.0, 0.0, 0.0); // ???
                 glVertex3f(b[0], b[2], 0.0);
                 glColor4f(1.0, 1.0, 0.0, 1.0);
                 glVertex3f(cx, cy, 0.0);
                 //Bounce off line.
-                glColor4f(1.0, 0.0, 0.0, 0.0);
+                glColor4f(1.0, 0.0, 0.0, 0.0); // ???
                 glVertex3f(o[0], o[1], 0.0);
                 glEnd();
             }
@@ -1475,15 +1476,14 @@ public:
         glTranslatef(posx, posy, -3.0);
         glEnable(GL_TEXTURE_2D);
 
-        glColor4f(1.0, 1.0, 1.0, 1.0);
+        glColor4f(GL_WHITE);
 
         if (explosive) {
             fireTex.play();
             glBindTexture(GL_TEXTURE_2D, fireTex.prop.texture);
             glColor4f(fireTex.prop.glTexColorInfo[0], fireTex.prop.glTexColorInfo[1], fireTex.prop.glTexColorInfo[2],
                       fireTex.prop.glTexColorInfo[3]);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
             glBegin(GL_QUADS);
             glTexCoord2f(fireTex.pos[0], fireTex.pos[1]);
             glVertex3f(-width, height, 0.0);
@@ -1499,8 +1499,7 @@ public:
             glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
             glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2],
                       tex.prop.glTexColorInfo[3]);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
             glBegin(GL_QUADS);
             glTexCoord2f(tex.pos[0], tex.pos[1]);
             glVertex3f(-width, height, 0.0);
@@ -1517,7 +1516,7 @@ public:
       glLoadIdentity();
       glTranslatef(posx, posy, -3.0);
       glDisable( GL_TEXTURE_2D );
-      glColor4f(1.0,1.0,1.0,1.0);
+      glColor4f(GL_WHITE);
       glBegin( GL_LINES );
         glVertex3f( -width, height, 0);
         glVertex3f( width, height, 0);
@@ -2461,7 +2460,7 @@ void createPlayfieldBorder(GLuint *dl, const textureClass &tex) {
     glTranslatef(0.0f, 0.0f, -3.0);
 
     // top
-    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glColor4f(GL_WHITE);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
     glBegin(GL_POINTS);
@@ -2479,6 +2478,7 @@ void createPlayfieldBorder(GLuint *dl, const textureClass &tex) {
     glVertex3f(-1.60, -1.25, 0.0);
     glTexCoord2f(0.0f, -1.0f);
     glVertex3f(-1.66, -1.25, 0.0);
+
     // right
     glTexCoord2f(0.0f, 0.0f);
     glVertex3f(1.66, 1.25, 0.0);
@@ -2493,18 +2493,7 @@ void createPlayfieldBorder(GLuint *dl, const textureClass &tex) {
 }
 
 void setPlayfieldScissor() {
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-
-    // Umrechnung von OpenGL-Koordinaten (-1.66 bis 1.66) in Viewport-Koordinaten
-    const float leftBorder = (-1.66f + 1.0f) * viewport[2] / 2.0f;
-    const float rightBorder = (1.66f + 1.0f) * viewport[2] / 2.0f;
-    const float bottomBorder = (-1.25f + 1.0f) * viewport[3] / 2.0f;
-    const float topBorder = (1.25f + 1.0f) * viewport[3] / 2.0f;
-
-    glScissor(leftBorder, bottomBorder,
-              rightBorder - leftBorder,
-              topBorder - bottomBorder);
+    glScissor(display.viewportX, display.viewportY, display.viewportSize, display.viewportSize);
 }
 
 void coldet(brick &br, ball &ba, pos &p, effectManager &fxMan) {
@@ -2846,7 +2835,7 @@ public:
         for (i = 0; i < canAfford; i++) {
             if (i == shopItemSelected) {
                 if (shopItemBlocked[i]) {
-                    glColor4f(1.0, 0.0, 0.0, 1.0);
+                    glColor4f(GL_FULL_RED);
                 } else {
                     glColor4f(1.0, 1.0, 1.0, 1.0);
                 }
@@ -2897,7 +2886,7 @@ public:
         glColor4f(0, 1, 0, 1);
         glVertex3f(0, y, 0);
         glVertex3f(0.03, y, 0);
-        glColor4f(1, 1, 1, 1);
+        glColor4f(GL_WHITE);
         glVertex3f(0.03, 0, 0);
         glVertex3f(0, 0, 0);
         glEnd();
@@ -3308,12 +3297,13 @@ int main(int argc, char *argv[]) {
     initNewGame();
     paddle.posy = -1.15;
 
+    // This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
     highScoreClass hKeeper;
     backgroundClass bg;
     bulletsClass bullet(texBullet);
     speedometerClass speedo;
     hudClass hud(texBall[0], texPowerup);
-    // This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
+
     var.effectnum = -1;
 
     Uint32 lastTick = SDL_GetTicks();
@@ -3339,7 +3329,6 @@ int main(int argc, char *argv[]) {
 #ifdef performanceTimer
     gettimeofday(&timeStart, NULL);
 #endif
-
         // Events
         control.get(); //Check for keypresses and joystick events
         while (SDL_PollEvent(&event)) {
@@ -3351,8 +3340,8 @@ int main(int argc, char *argv[]) {
                 case SDL_WINDOWEVENT:
                     if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
                         display.resize(
-                            event.window.data1, // Neue Breite
-                            event.window.data2 // Neue Höhe
+                            event.window.data1,
+                            event.window.data2
                         );
                     }
                     break;
@@ -3413,7 +3402,6 @@ int main(int argc, char *argv[]) {
                         resumeGame();
                     }
                 }
-#ifndef WIN32
                 else if (event.key.keysym.sym == SDLK_F11) {
                     if (setting.fullscreen) {
                         setting.fullscreen = 0;
@@ -3425,13 +3413,11 @@ int main(int argc, char *argv[]) {
                         SDL_Log("SDL_WINDOW_FULLSCREEN");
                     }
                 }
-#endif
             }
 
             if (event.type == SDL_MOUSEMOTION) {
                 mouse_x = (event.motion.x - display.currentW / 2) * display.glunits_per_xpixel;
                 mouse_y = (event.motion.y - display.currentH / 2) * display.glunits_per_ypixel * -1;
-
 #ifdef DEBUG_SHOW_MOUSE_COORDINATES
                 SDL_Log("Mouse:%s%s,%s%s", setw(10), mousex, setw(10), mousey);
                 SDL_Log("%s%s,%s%s", setw(8), event.motion.x, setw(8), event.motion.y);
@@ -3457,7 +3443,7 @@ int main(int argc, char *argv[]) {
                     else
                         var.menuItem = 0;
                 } else {
-                    control.movePaddle(paddle.posx + (event.motion.xrel * display.glunits_per_xpixel));
+                    control.movePaddle(paddle.posx + event.motion.xrel * display.glunits_per_xpixel);
                 }
             } else if (event.type == SDL_MOUSEBUTTONDOWN) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
@@ -3466,7 +3452,6 @@ int main(int argc, char *argv[]) {
                         if (var.menuItem > 0)
                             soundMan.add(SND_MENUCLICK, 0);
                     }
-
                     control.btnPress();
                 } else if (event.button.button == SDL_BUTTON_RIGHT) {
                     gVar.shopBuyItem = true;
@@ -3474,15 +3459,6 @@ int main(int argc, char *argv[]) {
                     gVar.shopPrevItem = true;
                 } else if (event.button.button == 5) {
                     gVar.shopNextItem = true;
-                }
-            }
-            if (event.type == SDL_QUIT) {
-                var.quit = true;
-            } else if (event.type == SDL_WINDOWEVENT) {
-                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    setting.res_x = event.window.data1;
-                    setting.res_y = event.window.data2;
-                    display.resize(setting.res_x, setting.res_y);
                 }
             }
         }

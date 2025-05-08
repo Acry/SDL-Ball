@@ -42,7 +42,6 @@ void powerupDescriptionClass::draw() const {
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
-    //glColor4f(1.0, 1.0, 1.0, 1.0);
 
     constexpr float spacing = 0.05f;
     // Write the name and description
@@ -106,7 +105,7 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
         glVertex3f(-1.2, 1.15, 0.005 * i);
         glTexCoord2f(1.0, 0.0);
         glVertex3f(1.2, 1.15, 0.005 * i);
-        glColor4f(0, 0, 1, 0.00);
+        glColor4f(0, 0, 1, 0.00); // ???
         glTexCoord2f(1.0, 1.0);
         glVertex3f(1.2, 0.75, 0.005 * i);
         glTexCoord2f(0.0, 1.0);
