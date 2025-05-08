@@ -553,13 +553,13 @@ soundClass soundMan; //Public object so all objects can use it
 class game_object {
 public:
     //     GLfloat color[3];
-    GLfloat opacity; //This is still used, because it can then be reset, and it's used for fading out bricks (i think)
+    GLfloat opacity; // This is still used, because it can then be reset, and it's used for fading out bricks (i think)
     GLfloat posx, posy;
     GLfloat width, height;
-    GLuint dl; //opengl display list
+    GLuint dl; // opengl display list
     bool active;
     bool collide;
-    bool reflect; //NOTE: use this for bricks that are not going to reflect the ball? (trap brick? :D)
+    bool reflect; // NOTE: use this for bricks that are not going to reflect the ball? (trap brick? :D)
 
     textureClass tex;
 };
@@ -567,7 +567,7 @@ public:
 class paddle_class : public game_object {
     GLfloat growspeed;
     GLfloat destwidth;
-    GLfloat aspect; //så meget stiger højden i forhold til bredden
+    GLfloat aspect; // så meget stiger højden i forhold til bredden
     bool growing;
 
 public:
@@ -1390,12 +1390,12 @@ public:
         if (glued && player.powerup[PO_LASER]) {
             if (player.powerup[PO_AIM]) {
                 if (aimdir == 0) {
-                    rad -= 1.2 * globalMilliTicksSinceLastDraw;
+                    rad -= 1.2f * globalMilliTicksSinceLastDraw;
 
                     if (rad < BALL_MIN_DEGREE)
                         aimdir = true;
                 } else {
-                    rad += 1.2 * globalMilliTicksSinceLastDraw;
+                    rad += 1.2f * globalMilliTicksSinceLastDraw;
                     if (rad > BALL_MAX_DEGREE + BALL_MIN_DEGREE)
                         aimdir = false;
                 }
@@ -1404,11 +1404,11 @@ public:
                 getRad();
             }
 
-            const GLfloat bxb = cos(rad) * 0.5;
-            const GLfloat byb = sin(rad) * 0.5;
+            const GLfloat bxb = cos(rad) * 0.5f;
+            const GLfloat byb = sin(rad) * 0.5f;
 
             glLoadIdentity();
-            glTranslatef(posx, posy, 0.0);
+            glTranslatef(posx, posy, 0.0f);
             glDisable(GL_TEXTURE_2D);
             glLineWidth(1.0);
             glEnable(GL_LINE_SMOOTH);

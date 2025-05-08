@@ -14,7 +14,8 @@ public:
     GLfloat glunits_per_xpixel, glunits_per_ypixel;
     int viewportX, viewportY, viewportSize;
     bool init();
-
+    GLfloat playfield_ratio;
+    GLfloat window_ratio;
     static bool updateForMenu();
 
     void resize(int, int);

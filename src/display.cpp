@@ -93,15 +93,21 @@ void displayClass::resize(const int width, const int height) {
     currentW = width;
     currentH = height;
 
-    const GLfloat ratio = static_cast<GLfloat>(width) / static_cast<GLfloat>(height);
-    glunits_per_xpixel = 2.485281374 * ratio / currentW;
-    glunits_per_ypixel = 2.485281374 / currentH;
+    window_ratio = static_cast<GLfloat>(currentW) / static_cast<GLfloat>(currentH);
 
     // Quadrat mit maximaler Höhe, zentriert
     viewportSize = std::min(width, height);
     viewportX = (width - viewportSize) / 2;
     viewportY = (height - viewportSize) / 2;
+    playfield_ratio = static_cast<GLfloat>(viewportSize) / static_cast<GLfloat>(viewportSize);
+
     glViewport(viewportX, viewportY, viewportSize, viewportSize);
+
+    // glunits_per_xpixel = viewportSize * playfield_ratio / currentW; // breite
+    // glunits_per_ypixel = viewportSize / currentH; // höhe
+
+    glunits_per_xpixel = 2.485281374 * window_ratio / currentW;
+    glunits_per_ypixel = 2.485281374 / currentH;
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
