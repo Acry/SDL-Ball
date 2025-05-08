@@ -285,7 +285,7 @@ public:
             glColor4f(GL_BLACK);
             glText->write("Settings", FONT_MENU, true, 1.0, 0.0, -0.65f+offset);
 
-            //highscores
+            // Highscores
             glColor4f(GL_WHITE);
             glPushMatrix();
             glTranslatef(0.0, -0.65f+offset*2, 0.0f);
@@ -781,30 +781,34 @@ public:
 
             var.menuNumItems = 7;
         } else if (var.menu == 6) {
+
             // Exit
             glLoadIdentity();
             glPushMatrix();
-            glTranslatef(0.0, 0.54, -0.0f);
+            glTranslatef(0.0f, 0.4f, -0.0f);
+            glColor4f(GL_WHITE);
             glCallList(dl + 2);
             glPopMatrix();
             glColor4f(GL_BLACK);
-            glText->write("Exit Game?", FONT_MENU, true, 1.0, 0.0, 0.54);
+            glText->write("Exit Game?", FONT_MENU, true, 1.0, 0.0, 0.4f);
 
             // Yes
             glPushMatrix();
-            glTranslatef(0.0, -0.44, 0.0f);
+            glTranslatef(0.0, 0.02f, 0.0f);
+            glColor4f(GL_WHITE);
             if (var.menuItem == 5)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
             glPopMatrix();
             glColor4f(GL_FULL_RED);
-            glText->write("Yes.", FONT_MENU, true, 1.0, 0.0, -0.44);
+            glText->write("Yes.", FONT_MENU, true, 1.0, 0.0, 0.02f);
             glColor4f(GL_WHITE);
 
             // Noes!
             glPushMatrix();
-            glTranslatef(0.0, -0.22, 0.0f);
+            glTranslatef(0.0, -0.15, 0.0f);
+            glColor4f(GL_WHITE);
             if (var.menuItem == 4)
                 glCallList(dl + 2);
             else
@@ -812,7 +816,7 @@ public:
             glPopMatrix();
 
             glColor4f(GL_FULL_GREEN);
-            glText->write("No way!", FONT_MENU, true, 1.0, 0.0, -0.22);
+            glText->write("No way!", FONT_MENU, true, 1.0, 0.0, -0.15);
             glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
