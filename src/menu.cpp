@@ -1,7 +1,7 @@
 extern SettingsManager settingsManager;
 
 struct score {
-    int score;
+    int points;
     string level;
     string name;
 };
@@ -10,8 +10,8 @@ score *sortScores(int *rl) {
     ifstream hsList;
     int i = 0, t;
 
-    struct score *final = NULL, *temp = NULL;
-    final = new struct score[1];
+    score *final = nullptr, *temp = nullptr;
+    final = new score[1];
 
     hsList.open(configFile.getHighScoreFile().data());
 
@@ -28,22 +28,22 @@ score *sortScores(int *rl) {
 
                     final[i].level = line.substr(0, delim[0] + 1);
                     final[i].level += "  ";
-                    final[i].score = atoi(line.substr(delim[0] + 1, delim[1]).data());
+                    final[i].points = atoi(line.substr(delim[0] + 1, delim[1]).data());
                     final[i].name = line.substr(delim[1] + 1);
                 } else {
                     final[i].level.clear();
-                    final[i].score = atoi(line.substr(0, line.find('|')).data());
+                    final[i].points = atoi(line.substr(0, line.find('|')).data());
                     final[i].name = line.substr(line.find('|') + 1);
                 }
 
-                temp = new struct score[i + 1];
+                temp = new score[i + 1];
 
                 for (t = 0; t < i + 1; t++) {
                     temp[t] = final[t];
                 }
 
                 delete[] final;
-                final = new struct score[i + 2];
+                final = new score[i + 2];
 
                 for (t = 0; t < i + 1; t++) {
                     final[t] = temp[t];
@@ -68,7 +68,7 @@ score *sortScores(int *rl) {
     while (!done) {
         for (int k = 0; k < i; k++) {
             for (t = 0; t < i; t++) {
-                if (final[k].score > final[t].score) {
+                if (final[k].points > final[t].points) {
                     swaps = true;
                     temp[0] = final[t];
                     final[t] = final[k];
@@ -178,10 +178,9 @@ public:
     }
 
     void refreshHighScoreList() {
-        struct score *final;
         int lines;
 
-        final = sortScores(&lines);
+        score *final = sortScores(&lines);
 
         //Fill out remaining highscore slots (if any)
         for (int t = lines; t < 20; t++) {
@@ -218,7 +217,7 @@ public:
 
         //Highscores list
         for (int t = 0; t < lines; t++) {
-            sprintf(highScores[t], "%s%i - %s", final[t].level.data(), final[t].score, final[t].name.data());
+            sprintf(highScores[t], "%s%i - %s", final[t].level.data(), final[t].points, final[t].name.data());
         }
 
         if (lines > 0)
@@ -243,7 +242,6 @@ public:
     }
 
     void doMenu() {
-        int i = 0;
         glColor4f(1.0, 1.0, 1.0, 1.0);
         glLoadIdentity();
         glTranslatef(0.0, 0.0, -3.0f);
@@ -311,7 +309,6 @@ public:
                 glColor4f(1, 1, 1, 1);
             }
 
-
             //Load
             glTranslatef(0.0, 0.22, 0.0f);
             if (var.menuItem == 5)
@@ -323,7 +320,6 @@ public:
             glText->write("Load Game", FONT_MENU, 1, 1.0, 0.0, -0.005);
             glColor4f(1, 1, 1, 1);
 
-            //Continue
             glTranslatef(0.0, 0.22, 0.0f);
             if (var.menuItem == 6)
                 glCallList(dl + 2);
@@ -434,26 +430,13 @@ public:
             }
 
             glTranslatef(0.0, -0.22, 0.0f);
-#ifdef WITH_WIIUSE
-      if(!var.wiiConnect)
-      {
-        if(var.menuItem==3)
-          glCallList(dl+2);
-        else
-          glCallList(dl+1);
-        glColor4f(0,0,0,1);
-        glText->write("Connect WiiMote", FONT_MENU, 1, 1.0, 0.0, -0.005);
-        glColor4f(1,1,1,1);
-      }
-#endif
-
             glTranslatef(0.0, -0.22, 0.0f);
             if (var.menuItem == 2)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
             glColor4f(0, 0, 0, 1);
-            glText->write("Themes", FONT_MENU, 1, 1.0, 0.0, -0.005);
+            glText->write("Themes", FONT_MENU, true, 1.0, 0.0, -0.005);
             glColor4f(1, 1, 1, 1);
 
 
@@ -474,16 +457,6 @@ public:
                             var.menu = 10;
                         }
                         break;
-
-#ifdef WITH_WIIUSE
-          case 3:
-          if(!var.wiiConnect)
-          {
-            var.menuJoyCalStage=-1;
-            var.menu=11;
-          }
-          break;
-#endif
                     case 2:
                         var.menu = 12;
                         break;
@@ -884,7 +857,7 @@ public:
                         break;
                     default: ;
                 }
-                var.menuPressed = 0;
+                var.menuPressed = false;
             }
         } else if (var.menu == 8) {
             //Load game
@@ -895,7 +868,7 @@ public:
             else
                 glCallList(dl + 3);
             glColor4f(1, 1, 1, 1);
-            glText->write("Load Game", FONT_MENU, 1, 1.0, 0.0, -0.005);
+            glText->write("Load Game", FONT_MENU, true, 1.0, 0.0, -0.005);
 
             for (int i = 0; i < 6; i++) {
                 glTranslatef(0.0, -0.22, 0.0f);
@@ -904,7 +877,7 @@ public:
                 else
                     glCallList(dl + 1);
                 glColor4f(0, 0, 0, 1);
-                glText->write(saveGameName[i], FONT_MENU, 1, 1.0, 0.0, -0.005);
+                glText->write(saveGameName[i], FONT_MENU, true, 1.0, 0.0, -0.005);
                 glColor4f(1, 1, 1, 1);
             }
 
@@ -928,7 +901,7 @@ public:
                 glTranslatef(0.0, 0.12, 0.0f);
 
                 glColor4f(0, 0, 0, 1);
-                glText->write("Enter name and press Enter to save. ESC to cancel", FONT_MENU, 1, 1.0, 0.0, -0.005);
+                glText->write("Enter name and press Enter to save. ESC to cancel", FONT_MENU, true, 1.0, 0.0, -0.005);
                 glColor4f(1, 0, 0, 1);
             }
 
@@ -958,11 +931,11 @@ public:
                 if (var.menuItem == 7) {
                     var.menu = 1;
                 } else if (var.menuItem != 0) {
-                    var.enterSaveGameName = 1;
+                    var.enterSaveGameName = true;
                     saveGameSlot = (var.menuItem * -1 + 6);
                     saveGameName[saveGameSlot] = "";
                 }
-                var.menuPressed = 0;
+                var.menuPressed = false;
             }
         } else if (var.menu == 10) {
             //Joystick options
@@ -1058,72 +1031,10 @@ public:
             }
             var.menuNumItems = 6;
         }
-#ifdef WITH_WIIUSE
-    else if(var.menu == 11) //Wiimote
-    {
-
-      glLoadIdentity();
-      glTranslatef(0.0, 0.54,-3.0f);
-      glCallList(dl+3);
-      glColor4f(1,1,1,1);
-      glText->write("Connect WiiMote", FONT_MENU, 1, 1.0, 0.0, -0.005);
-
-      glTranslatef(0.0,-0.22,0.0f);
-      if(var.menuItem==6 && !var.wiiConnect)
-        glCallList(dl+2);
-      else
-        glCallList(dl+1);
-
-      glColor4f(0,0,0,1);
-      if(var.menuJoyCalStage==-2)
-        glText->write("1+2 on WiiMote", FONT_MENU, 1, 1.0, 0.0, -0.005);
-      else if(var.menuJoyCalStage==-3)
-        glText->write("WiiMote Connected!", FONT_MENU, 1, 1.0, 0.0, -0.005);
-      else if(var.menuJoyCalStage==-4)
-        glText->write("Failed! Try again.", FONT_MENU, 1, 1.0, 0.0, -0.005);
-      glColor4f(1,1,1,1);
-
-
-      glCallList(dl+3);
-
-
-      glTranslatef(0.0,-1.0,0.0);
-
-      if(var.menuItem==1)
-        glCallList(dl+2);
-      else
-        glCallList(dl+1);
-
-      glColor4f(0,0,0,1);
-      glText->write("Back", FONT_MENU, 1, 1.0, 0.0, -0.005);
-      glColor4f(1,1,1,1);
-
-      if(var.menuPressed)
-      {
-        switch(var.menuItem)
-        {
-
-          case 6:
-          if(!var.wiiConnect)
-          {
-            var.menu=11;
-            var.menuJoyCalStage=-1;
-          }
-          break;
-
-          case 1:
-            var.menu=2;
-            break;
-        }
-        var.menuPressed=0;
-      }
-      var.menuNumItems=6;
-    }
-#endif
         else if (var.menu == 12) //Theme selector (Main screen)
         {
             glLoadIdentity();
-            glTranslatef(0.0, 0.54, -3.0f);
+            glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);
 
             if (!themeChanged) {
@@ -1136,7 +1047,7 @@ public:
             glColor4f(1, 1, 1, 1);
 
             int i = 0;
-            for (vector<struct themeInfo>::iterator it = tI.begin(); it < tI.end(); ++it) {
+            for (vector<themeInfo>::iterator it = tI.begin(); it < tI.end(); ++it) {
                 if (i == 5)
                     break;
                 glTranslatef(0.0, -0.22, 0.0f);
@@ -1166,6 +1077,7 @@ public:
         }
 
         if (var.menuPressed) {
+            int i = 0;
             switch (var.menuItem) {
                 case 1:
                     var.menu = 2;

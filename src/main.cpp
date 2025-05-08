@@ -23,14 +23,6 @@
 #define DATADIR "themes/"
 #endif
 
-//To disable sound support:
-//#define NOSOUND
-
-#ifdef WITH_WIIUSE
-  #include <wiiuse.h>
-  #define MAX_WIIMOTES	1
-#endif
-
 #include "display.hpp"
 #include "config.h"
 #include "config_file.h"
@@ -620,7 +612,7 @@ public:
             }
             glLoadIdentity();
             //glPushMatrix();
-            glTranslatef(posx, posy, -3.0);
+            glTranslatef(posx, posy, 0.0);
 
             tex.play();
             glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
@@ -994,7 +986,7 @@ public:
                 bullets[i].tex.play();
 
                 glLoadIdentity();
-                glTranslatef(bullets[i].posx, bullets[i].posy, -3.0);
+                glTranslatef(bullets[i].posx, bullets[i].posy, 0.0);
 
                 glBindTexture(GL_TEXTURE_2D, bullets[i].tex.prop.texture);
                 glBegin(GL_QUADS);
@@ -1243,7 +1235,7 @@ public:
                 tex->play();
                 glBindTexture(GL_TEXTURE_2D, tex->prop.texture);
                 glLoadIdentity();
-                glTranslatef(x[i], y[i], -3.0);
+                glTranslatef(x[i], y[i], 0.0);
 
                 // Alpha zusätzlich basierend auf Index reduzieren
                 float indexBasedAlpha = a[i] * (1.0f - (float) i / len);
@@ -1421,7 +1413,7 @@ public:
             GLfloat bxb = cos(rad) * 0.5, byb = sin(rad) * 0.5;
 
             glLoadIdentity();
-            glTranslatef(posx, posy, -3.0);
+            glTranslatef(posx, posy, 0.0);
             glDisable(GL_TEXTURE_2D);
             glLineWidth(1.0);
             glEnable(GL_LINE_SMOOTH);
@@ -2772,7 +2764,7 @@ public:
         int i;
         //Draw lives left.
         glLoadIdentity();
-        glTranslatef(0, 0, -3.0);
+        glTranslatef(0, 0, 0.0);
         glColor4f(texBall.prop.glTexColorInfo[0], texBall.prop.glTexColorInfo[1], texBall.prop.glTexColorInfo[2],
                   texBall.prop.glTexColorInfo[3]);
 
@@ -3394,16 +3386,6 @@ int main(int argc, char *argv[]) {
                             SDL_Log("Error saving settings");
                         }
                     }
-
-#ifdef WITH_WIIUSE
-                    if( event.key.keysym.sym == SDLK_w )
-                    {
-                        var.titleScreenShow=0;
-                        pauseGame();
-                        var.menu=11;
-                        var.menuJoyCalStage=-1;
-                    }
-#endif
                 }
 
                 //Toggle menu

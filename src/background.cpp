@@ -85,7 +85,7 @@ public:
 
     void draw() const {
         glLoadIdentity();
-        glTranslatef(0, 0, -3.0);
+        glTranslatef(0, 0, 0);
 
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);

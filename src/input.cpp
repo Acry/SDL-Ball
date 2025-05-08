@@ -17,12 +17,6 @@ private:
     GLfloat joystickRightX;
     int calMin, calMax, calLowJitter, calHighJitter;
 
-#ifdef WITH_WIIUSE
-  wiimote** wiimotes;
-  float motePitch;
-  GLfloat moteAccel;
-#endif
-
 public:
     controllerClass(paddle_class *pc, bulletsClass *bu, ballManager *bm);
 
@@ -37,9 +31,6 @@ public:
     void calibrate();
 
     bool joystickAttached() const;
-#ifdef WITH_WIIUSE
-  bool connectMote();
-#endif
 };
 
 controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, ballManager *bm) {
@@ -62,22 +53,10 @@ controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, ballManager
             SDL_Log("Failed to open joystick: '%s'", SDL_JoystickName(0));
         }
     }
-
-#ifdef WITH_WIIUSE
-  var.wiiConnect=0;
-  moteAccel = setting.controlMaxSpeed / 90.0;
-#endif
 }
 
 controllerClass::~controllerClass() {
     SDL_JoystickClose(0);
-
-#ifdef WITH_WIIUSE
-  if(var.wiiConnect)
-  {
-    wiiuse_cleanup(wiimotes, MAX_WIIMOTES);
-  }
-#endif
 }
 
 void controllerClass::movePaddle(GLfloat px) {
@@ -178,51 +157,6 @@ bool controllerClass::get() {
             movePaddle(paddle->posx += (x * globalMilliTicks));
         }
     }
-
-#ifdef WITH_WIIUSE
-  if(var.wiiConnect)
-  {
-    if (wiiuse_poll(wiimotes, MAX_WIIMOTES)) {
-      switch(wiimotes[0]->event)
-      {
-        case WIIUSE_EVENT:
-          if(IS_PRESSED(wiimotes[0], WIIMOTE_BUTTON_TWO))
-          {
-            keyDown[2]=1;
-          } else if(IS_PRESSED(wiimotes[0], WIIMOTE_BUTTON_ONE) && itemSelectTime > ITEMSELECTTIME)
-          {
-            gVar.shopBuyItem = 1;
-            itemSelectTime=0;
-          }else if(IS_PRESSED(wiimotes[0], WIIMOTE_BUTTON_UP) && itemSelectTime > ITEMSELECTTIME)
-          {
-            itemSelectTime=0;
-            gVar.shopPrevItem = 1;
-          }else if(IS_PRESSED(wiimotes[0], WIIMOTE_BUTTON_DOWN) && itemSelectTime > ITEMSELECTTIME)
-          {
-            itemSelectTime=0;
-            gVar.shopNextItem = 1;
-          } else if(WIIUSE_USING_ACC(wiimotes[0]))
-          {
-            motePitch = wiimotes[0]->orient.pitch;
-            motePitch *=-1;
-	  }
-
-        break;
-        case WIIUSE_DISCONNECT:
-        case WIIUSE_UNEXPECTED_DISCONNECT:
-          var.wiiConnect=0;
-          SDL_Log("WiiMote disconnected.");
-          wiiuse_cleanup(wiimotes, MAX_WIIMOTES);
-        break;
-      }
-    }
-    if(motePitch < -0.2 || motePitch > 0.2)
-    {
-      movePaddle( paddle->posx += ( moteAccel*motePitch)*globalMilliTicks );
-    }
-  }
-#endif
-
     //React to keystates here, this way, if joyisdig it will press keys
     if (keyDown[0]) {
         accel += globalMilliTicks * setting.controlAccel;
@@ -294,36 +228,6 @@ void controllerClass::calibrate() {
             settingsManager.settingsChanged();
             break;
         default: ;
-#ifdef WITH_WIIUSE
-    case -1: //We do this to make it draw a frame before freezing (searching)
-      var.menuJoyCalStage--;
-    break;
-    case -2:
-      wiimotes =  wiiuse_init(MAX_WIIMOTES);
-      if(wiiuse_find(wiimotes, MAX_WIIMOTES, 4))
-      {
-        var.wiiConnect=1;
-      } else {
-        var.wiiConnect=0;
-      }
-      if(var.wiiConnect)
-      {
-        var.wiiConnect=0;
-        if(wiiuse_connect(wiimotes, MAX_WIIMOTES))
-        {
-          var.wiiConnect=1;
-          wiiuse_set_leds(wiimotes[0], WIIMOTE_LED_1);
-          wiiuse_rumble(wiimotes[0], 1);
-          usleep(500000);
-          wiiuse_rumble(wiimotes[0], 0);
-          wiiuse_motion_sensing(wiimotes[0], 1);
-        }
-        var.menuJoyCalStage=-3;
-      } else {
-        var.menuJoyCalStage=-4;
-      }
-    break;
-#endif
     }
 }
 

@@ -12,7 +12,7 @@ public:
     void draw() const {
         // draw texture
         glLoadIdentity();
-        glTranslatef(0, 0, -3.0);
+        glTranslatef(0, 0, 0.0);
         glColor4f(1, 1, 1, 1);
 
         glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
@@ -71,7 +71,7 @@ public:
         int high = 0;
         const score *slist = sortScores(&n);
         for (int i = 0; i < n; i++) {
-            if (player.score < slist[i].score) {
+            if (player.score < slist[i].points) {
                 high++;
             }
         }

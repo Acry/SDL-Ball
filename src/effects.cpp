@@ -44,7 +44,7 @@ public:
 
         glLoadIdentity();
         glDisable(GL_TEXTURE_2D);
-        glTranslatef(0.0, 0.0, -3.0);
+        glTranslatef(0.0, 0.0, 0.0);
         glColor4f(vars.col[0], vars.col[1], vars.col[2], opacity);
         glBegin(GL_QUADS);
         glVertex3f(-1.66, 1.25, 0.0);
@@ -242,7 +242,7 @@ void particleFieldClass::draw() {
     spawnTimeout -= globalTicksSinceLastDraw;
 
     glLoadIdentity();
-    glTranslatef(0.0, 0.0, -3.0);
+    glTranslatef(0.0, 0.0, 0.0);
     int t = 0;
 
     for (int i = 0; i < vars.num; i++) {
@@ -339,7 +339,7 @@ public:
         switch (vars.type) {
             case FX_SPARKS:
                 glLoadIdentity();
-                glTranslatef(0.0, 0.0, -3.0);
+                glTranslatef(0.0, 0.0, 0.0);
                 for (i = 0; i < vars.num; i++) {
                     if (sparks[i].active) {
                         sparks[i].draw();
@@ -564,7 +564,7 @@ public:
         }
 
         glLoadIdentity();
-        glTranslatef(0.0, 0.0, -3.0);
+        glTranslatef(0.0, 0.0, 0.0);
 
         glColor4f(1.0, 0.0, 0.0, fade);
         s = zoom * 0.85;
