@@ -185,7 +185,7 @@ void glTextClass::write(const std::string &text, const int font, const bool cent
     glLoadIdentity();
 
     glTranslatef(posX, y, 0.0f);
-    glScalef(scale, scale, 1.0f);
+    glScalef(scale, scale, 0.0f);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);

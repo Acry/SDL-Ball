@@ -29,7 +29,7 @@ public:
 
         // FIXME
         glLoadIdentity();
-        //glTranslatef(0, 0, -2.9);  // Leicht vor der Textur
+        glTranslatef(0, 0, 0);  // Leicht vor der Textur
         glColor4f(GL_WHITE);
 
         glText->write(name, FONT_MENUHIGHSCORE, true, 2.0, 0.0, 0.2);
