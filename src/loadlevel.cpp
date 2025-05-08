@@ -15,10 +15,10 @@ public:
         //Which powerups are evil?
         evilPowerups = "2H37"; //P
 
-        ifstream powerFile(useTheme("/powerups.txt", setting.lvlTheme).data());
+        ifstream powerFile(themeManager.getThemeFilePath("/powerups.txt", setting.lvlTheme).data());
         if (!powerFile.is_open()) {
             SDL_Log(" Could not open 'powerups.txt'");
-            var.quit = 1;
+            var.quit = true;
             return;
         }
 
@@ -92,7 +92,6 @@ public:
             return ('0');
         }
         return p;
-
     }
 
     char randomEvilPowerup() const {

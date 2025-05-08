@@ -1,3 +1,4 @@
+
 class powerupDescriptionClass : public moving_object {
 public:
     powerupDescriptionClass();
@@ -97,7 +98,7 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
     fxMan = m;
     ticksSinceLastSpawn = 100;
     // SDL-BALL
-    texMgr.load(useTheme("/gfx/title/title.png", setting.gfxTheme), texTitle);
+    texMgr.load(themeManager.getThemeFilePath("/gfx/title/title.png", setting.gfxTheme), texTitle);
 
     glTitleList = glGenLists(1);
     glNewList(glTitleList, GL_COMPILE);
@@ -298,7 +299,7 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
 void titleScreenClass::readDescriptions(powerupDescriptionClass po[]) {
     ifstream f;
 
-    f.open(useTheme("/powerupdescriptions.txt", setting.gfxTheme).data());
+    f.open(themeManager.getThemeFilePath("/powerupdescriptions.txt", setting.gfxTheme).data());
     if (f.is_open()) {
         bool flip = false;
         int p = 0;

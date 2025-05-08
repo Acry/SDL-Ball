@@ -6,8 +6,10 @@
 #include <fstream>
 
 #include "settings_manager.h"
+#include "ThemeManager.h"
 
 extern settings setting;
+extern ThemeManager themeManager;
 
 GLfloat glTextClass::getHeight(const int font) const {
     return fontInfo[font].height;
@@ -20,7 +22,7 @@ glTextClass::glTextClass(): fontInfo{} {
     std::ifstream f;
     std::string val;
 
-    f.open(useTheme("/font/fonts.txt", setting.gfxTheme).data());
+    f.open(themeManager.getThemeFilePath("/font/fonts.txt", setting.gfxTheme).data());
     if (f.is_open()) {
         std::string tempName;
         std::string set;
@@ -94,7 +96,7 @@ void glTextClass::genFontTex(const std::string &TTFfontName, const int fontSize,
     amask = 0xff000000;
 #endif
 
-    ttfFont = TTF_OpenFont(useTheme(TTFfontName, setting.gfxTheme).data(), fontSize);
+    ttfFont = TTF_OpenFont(themeManager.getThemeFilePath(TTFfontName, setting.gfxTheme).data(), fontSize);
 
     if (!ttfFont) {
         SDL_Log("TTF_OpenFont: %s", TTF_GetError());

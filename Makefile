@@ -7,14 +7,14 @@ CXX?=g++
 
 COMMON_FLAGS := -Wall -Wextra -mtune=native $(shell sdl2-config --cflags)
 LDFLAGS := -lepoxy -lGLU  $(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf -lSDL2_mixer
-DEBUG_FLAGS := -ggdb -gdwarf-5 -O0 -Wall -DDEBUG -fdebug-types-section -DDATADIR="\"./../themes/\"" $(COMMON_FLAGS)
+DEBUG_FLAGS := -ggdb -gdwarf-5 -O0 -Wall -DDEBUG -fdebug-types-section -DDATADIR="\"./../\"" $(COMMON_FLAGS)
 RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)
 
 # directories
 BUILD_DIR := build/
 SOURCE_DIR := src/
 
-SOURCES := $(addprefix $(SOURCE_DIR), display.cpp main.cpp config_file.cpp settings_manager.cpp text.cpp SaveFileManager.cpp)
+SOURCES := $(addprefix $(SOURCE_DIR), display.cpp main.cpp config_file.cpp settings_manager.cpp text.cpp SaveFileManager.cpp sound.cpp ThemeManager.cpp)
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 
 # Create the build directory if it doesn't exist

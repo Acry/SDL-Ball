@@ -6,7 +6,7 @@ class highScoreClass {
 public:
     highScoreClass() {
         name = "";
-        texMgr.load(useTheme("/gfx/highscore/entername.png", setting.gfxTheme), tex);
+        texMgr.load(themeManager.getThemeFilePath("/gfx/highscore/entername.png", setting.gfxTheme), tex);
     }
 
     void draw() const {

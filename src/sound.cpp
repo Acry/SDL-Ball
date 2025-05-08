@@ -1,30 +1,17 @@
 #include <vector>
 #include <SDL2/SDL_mixer.h>
+#include "sound.h"
 
-struct sampleQueuedItem {
-    int s, p, num;
-};
+#include <SDL_log.h>
+#include <string>
 
-class soundClass {
-    Mix_Chunk *sample[USED_SOUND_SAMPLES];
-    vector<sampleQueuedItem> q;
 
-    void loadSample(const char *SampleName, int sampleNum);
 
-    int currentChannels = 0;
-    int breakSoundIndex = 0;
+#include "settings_manager.h"
+#include "ThemeManager.h"
 
-public:
-    bool init();
-
-    void play();
-
-    void add(int i, GLfloat x);
-
-    void loadSounds();
-
-    ~soundClass();
-};
+extern settings setting;
+extern ThemeManager themeManager;
 
 bool soundClass::init() {
     constexpr Uint16 audio_format = AUDIO_S16; /* 16-bit stereo */
@@ -52,10 +39,10 @@ bool soundClass::init() {
 }
 
 void soundClass::loadSample(const char *SampleName, int sampleNum) {
-    string F = "snd/";
+    std::string F = "snd/";
     F += SampleName;
 
-    sample[sampleNum] = Mix_LoadWAV(useTheme(F, setting.sndTheme).data());
+    sample[sampleNum] = Mix_LoadWAV(themeManager.getThemeFilePath(F, setting.sndTheme).data());
     if (!sample[sampleNum]) {
         SDL_Log("SoundManager '%s' :%s", F.c_str(), Mix_GetError());
     }
@@ -115,13 +102,13 @@ void soundClass::play() {
         return;
 
     //Playlist (lol, imagination for the win..)
-    vector<sampleQueuedItem> pl;
-    vector<sampleQueuedItem>::iterator plIt;
+    std::vector<sampleQueuedItem> pl;
+    std::vector<sampleQueuedItem>::iterator plIt;
     bool same = false;
     int freeChannel = -1; //The channel we will use for this sample
 
     //Loop through queue and find samples thare are the same, average their position and put in a new vector
-    for (vector<sampleQueuedItem>::iterator it = q.begin(); it != q.end(); ++it) {
+    for (std::vector<sampleQueuedItem>::iterator it = q.begin(); it != q.end(); ++it) {
         //Loop thrugh the playlist to see find out if this allready exist
         same = false;
         for (plIt = pl.begin(); plIt != pl.end(); ++plIt) {

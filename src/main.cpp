@@ -1,6 +1,5 @@
 #include <epoxy/gl.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
 #include <cmath>
@@ -19,73 +18,41 @@
 #include <unistd.h>
 #include <vector>
 
-#ifndef DATADIR
-#define DATADIR "themes/"
-#endif
-
-#include "display.hpp"
+#include "SaveFileManager.h"
+#include "colors.h"
 #include "config.h"
 #include "config_file.h"
+#include "display.hpp"
 #include "settings_manager.h"
-#include "colors.h"
+#include "sound.h"
 #include "text.h"
-#include "SaveFileManager.h"
+#include "ThemeManager.h"
+
+using namespace std;
 
 settings setting;
 ConfigFile configFile;
 SettingsManager settingsManager(configFile);
 SaveFileManager saveManager(configFile);
+ThemeManager themeManager(configFile);
+
 class effectManager;
+class ball;
+class paddle_class;
 
-#define PI 3.14159265
-#define RAD 6.28318531
-#define BALL_MAX_DEGREE 2.61799388 //150+15 = 165 degrees
-#define BALL_MIN_DEGREE 0.261799388 //15 degrees
+gameVars gVar;
+// current player
+player_struct player;
+// start of round player - for save game
+player_struct SOLPlayer;
+vars var;
+displayClass display;
 
+soundClass soundMan; //Public object so all objects can use it
 //#define debugBall 1
 //     #define DEBUG_DRAW_BALL_QUAD
 //     #define DEBUG_NO_RELATIVE_MOUSE
 //     #define DEBUG_SHOW_MOUSE_COORDINATES
-
-#define PO_COIN 0
-#define PO_BIGBALL    1
-#define PO_NORMALBALL 2
-#define PO_SMALLBALL  3
-#define PO_EXPLOSIVE  4
-#define PO_GLUE 5
-#define PO_MULTIBALL 6
-#define PO_GROWPADDLE 7
-#define PO_SHRINKPADDLE 8
-#define PO_AIM 9
-#define PO_GUN 10
-#define PO_THRU 11
-#define PO_LASER 12
-#define PO_LIFE 13
-#define PO_DIE 14
-#define PO_DROP 15
-#define PO_DETONATE 16
-#define PO_EXPLOSIVE_GROW 17
-#define PO_EASYBRICK 18
-#define PO_NEXTLEVEL 19
-#define PO_AIMHELP 20
-
-//"Max powerups"
-#define MAXPOTEXTURES 21
-
-using namespace std;
-
-void initNewGame();
-
-void pauseGame();
-
-void resumeGame();
-
-float random_float(float total, float negative);
-
-class ball;
-class paddle_class;
-
-float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx);
 
 int globalTicks;
 float globalMilliTicks;
@@ -110,56 +77,6 @@ struct difficultyStruct {
 
 difficultyStruct static_difficulty, difficulty;
 
-struct scrollInfoScruct {
-    bool drop; //0 right, 1 left, 2 up, 3 down
-    unsigned int dropspeed;
-    unsigned int lastTick; // what was the time last they moved
-};
-
-struct vars {
-    bool titleScreenShow;
-    int frame;
-    bool paused;
-    int menu;
-    int menuItem;
-    bool menuPressed;
-    int menuNumItems;
-    int menuJoyCalStage;
-    bool quit;
-    bool wiiConnect;
-
-    int numlevels;
-    bool transition_half_done;
-    bool clearScreen;
-    bool idiotlock; //transition
-    bool bricksHit; //tells the mainloop if it should copy the updated array of brick status.
-
-    GLfloat averageBallSpeed;
-    int showHighScores;
-    bool enterSaveGameName;
-    bool startedPlaying;
-
-    int effectnum;
-
-    scrollInfoScruct scrollInfo;
-};
-
-gameVars gVar;
-
-
-// current player
-player_struct player;
-// start of round player - for save game
-player_struct SOLPlayer;
-vars var;
-
-displayClass display;
-
-typedef GLfloat texPos[8];
-#ifndef uint // WIN32
-typedef unsigned int uint;
-#endif
-
 struct texProp {
     GLuint texture; // Den GLtexture der er loaded
     GLfloat xoffset; // Hvor stort er springet mellem hver subframe
@@ -180,115 +97,16 @@ struct texProp {
     string fileName; // Quite the fugly.. This will be set by readTexProps();
 };
 
+void initNewGame();
+void pauseGame();
+void resumeGame();
+float random_float(float total, float negative);
+float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx);
 
-/* This function attempts to open path
-   It will first look for the file in ~/.config/sdl-ball/themes/theme/path
-   Then in DATADIR/themes/setting.theme/path
-   This way, each user can even override a part of a theme that exist both
-   in their own homedir and in the global themes dir.
-   If still no luck it will use the file from DATADIR/path
-   It will return the full qualified filename */
-string useTheme(const string &path, const string &theme) {
-    struct stat st{};
-    string name;
-
-    if (theme != "default") {
-        //Try in ~/.config/sdl-ball/themes/themename
-        name = configFile.getProgramRoot() + "/themes/" + theme + "/" + path;
-        if (stat(name.data(), &st) == 0) {
-            return name;
-        }
-        //Try in DATADIR/themename/
-        name = DATADIR + theme + "/" + path;
-        if (stat(name.data(), &st) == 0) {
-            return name;
-        }
-    }
-    //Fall back on a default file.
-    name = DATADIR"default/" + path;
-    if (stat(name.data(), &st) == 0) {
-        return name;
-    }
-    SDL_Log("File Error: Could not find '%s'", path.c_str());
-    return name;
-}
-
-struct themeInfo {
-    string name;
-    bool snd, gfx, lvl, valid; //Valid means that there seems to be data of some kind (ie. not just an empty folder)
-};
-
-/* This function looks in ~/.config/sdl-ball/themes/
-   and in DATADIR/themes
-   for directories, it looks inside the dir
-   to decide if a theme contains:
-   gfx folder - this theme contains graphics
-   snd folder - this theme contains sound
-   level.txt  - this theme contains levels.
-   It will return info even if the theme is not valid
-   It returns a vector of structs with info */
-vector<themeInfo> getThemes() {
-    dirent *pent;
-    struct stat st{};
-    themeInfo ti;
-    string themeDir;
-    vector<themeInfo> v;
-
-    for (int i = 0; i < 2; i++) {
-        if (i == 0) {
-            themeDir = configFile.getProgramRoot() + "/themes";
-        } else if (i == 1) {
-            themeDir = DATADIR;
-        }
-        DIR *pdir = opendir(themeDir.data());
-        if (pdir) {
-            themeDir.append("/");
-            while ((pent = readdir(pdir))) {
-                string temp = pent->d_name;
-                //We're not going to read hidden files
-                if (temp[0] != '.') {
-                    temp = themeDir + pent->d_name;
-                    //Check if file is a dir.
-                    if (stat(temp.data(), &st) == 0) {
-                        ti.name = pent->d_name;
-                        ti.valid = false;
-                        //Check if theme have graphics
-                        temp = themeDir + pent->d_name + "/gfx";
-                        if (stat(temp.data(), &st) == 0) {
-                            ti.gfx = true;
-                            ti.valid = true;
-                        } else {
-                            ti.gfx = false;
-                        }
-
-                        //Check if theme have sound
-                        temp = themeDir + pent->d_name + "/snd";
-                        if (stat(temp.data(), &st) == 0) {
-                            ti.snd = true;
-                            ti.valid = true;
-                        } else {
-                            ti.snd = false;
-                        }
-
-                        //Check if theme have levels
-                        temp = themeDir + pent->d_name + "/levels.txt";
-                        if (stat(temp.data(), &st) == 0) {
-                            ti.lvl = true;
-                            ti.valid = true;
-                        } else {
-                            ti.lvl = false;
-                        }
-
-                        v.push_back(ti);
-                    }
-                }
-            }
-        }
-    }
-
-    return v;
-}
-
+typedef GLfloat texPos[8];
+#ifndef uint // WIN32
+typedef unsigned int uint;
+#endif
 
 glTextClass *glText;
 // Pointer to the object, since we can't init (load fonts) because the settings have not been read yet.
@@ -507,17 +325,13 @@ public:
             //Load the texture if we have a filename.
             if (tex.prop.fileName.length() > 1) {
                 string name = "gfx/" + tex.prop.fileName;
-                load(useTheme(name, setting.gfxTheme), tex);
+                load(themeManager.getThemeFilePath(name, setting.gfxTheme), tex);
             }
         } else {
             SDL_Log("readTexProps: Cannot open '%s'", fileName.c_str());
         }
     }
 };
-
-
-#include "sound.cpp"
-soundClass soundMan; //Public object so all objects can use it
 
 #include "menu.cpp"
 #include "scoreboard.cpp"
@@ -534,6 +348,15 @@ public:
     bool reflect; // NOTE: use this for bricks that are not going to reflect the ball? (trap brick? :D)
 
     textureClass tex;
+};
+class moving_object : public game_object {
+public:
+    GLfloat xvel, yvel, velocity;
+
+    moving_object() {
+        xvel = 0.0;
+        yvel = 0.0;
+    }
 };
 
 class paddle_class : public game_object {
@@ -645,7 +468,6 @@ public:
 // nasty fix to a problem
 int nbrick[23][26];
 int updated_nbrick[23][26];
-
 class brick;
 
 void makeExplosive(brick &b);
@@ -892,17 +714,6 @@ void makeExplosive(brick &b) {
 }
 
 #include "loadlevel.cpp"
-
-class moving_object : public game_object {
-public:
-    GLfloat xvel, yvel, velocity;
-
-    moving_object() {
-        xvel = 0.0;
-        yvel = 0.0;
-    }
-};
-
 #include "effects.cpp"
 #include "background.cpp"
 
@@ -1783,7 +1594,7 @@ public:
                         break;
                     case PO_SMALLBALL: //small balls
                         b[i].setSize(0.015);
-                    //speed bolden op
+                        //speed bolden op
                         b[i].setspeed(
                             b[i].velocity + ((b[i].velocity / 100.f) * difficulty.speedup[player.difficulty]));
                         break;
@@ -1995,7 +1806,7 @@ public:
                     player.coins += 1;
                     player.explodePaddle = 1;
                     player.powerup[PO_DIE] = 1;
-                //NOTE: no sound here, SND_DIE is played when paddle dissapers
+                    //NOTE: no sound here, SND_DIE is played when paddle dissapers
                     break;
                 case PO_DROP:
                     player.coins += 1;
@@ -2020,7 +1831,7 @@ public:
                 case PO_NEXTLEVEL:
                     player.coins += 100;
                     player.powerup[PO_NEXTLEVEL] = 1;
-                //NOTE: no sound here, SND_NEXTLEVEL is played when changing level
+                    //NOTE: no sound here, SND_NEXTLEVEL is played when changing level
                     break;
                 case PO_AIMHELP:
                     player.coins += 50;
@@ -2828,7 +2639,7 @@ public:
     }
 
     void clearShop() {
-        for (bool & i : shopItemBlocked) {
+        for (bool &i: shopItemBlocked) {
             i = false;
         }
     }
@@ -2839,8 +2650,9 @@ public:
     static void draw() {
         //GLfloat y = -1.24 + difficulty.maxballspeed[player.difficulty]/2.44*var.averageBallSpeed;
 
-        const GLfloat y = 0.48 / (difficulty.maxballspeed[player.difficulty] - difficulty.ballspeed[player.difficulty]) * (
-                        var.averageBallSpeed - difficulty.ballspeed[player.difficulty]);
+        const GLfloat y = 0.48 / (difficulty.maxballspeed[player.difficulty] - difficulty.ballspeed[player.difficulty])
+                          * (
+                              var.averageBallSpeed - difficulty.ballspeed[player.difficulty]);
 
         glDisable(GL_TEXTURE_2D);
 
@@ -2913,6 +2725,7 @@ void easyBrick(brick bricks[]) {
 
 #include "input.cpp"
 #include "title.cpp"
+
 bool screenShot() {
     static constexpr size_t MAX_FILENAME = 256;
     static constexpr size_t TGA_HEADER_SIZE = 12;
@@ -3041,7 +2854,7 @@ int main(int argc, char *argv[]) {
         var.quit = true;
     }
     initGL();
-    SDL_SetWindowIcon(display.sdlWindow, IMG_Load(useTheme("icon32.png", setting.gfxTheme).data()));
+    SDL_SetWindowIcon(display.sdlWindow, IMG_Load(themeManager.getThemeFilePath("icon32.png", setting.gfxTheme).data()));
     SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
 
 #ifndef DEBUG_NO_RELATIVE_MOUSE
@@ -3063,62 +2876,62 @@ int main(int argc, char *argv[]) {
     textureClass texBullet;
     textureClass texParticle;
 
-    texMgr.readTexProps(useTheme("gfx/paddle/base.txt", setting.gfxTheme), texPaddleBase);
-    texMgr.readTexProps(useTheme("gfx/paddle/glue.txt", setting.gfxTheme), texPaddleLayers[0]);
-    texMgr.readTexProps(useTheme("gfx/paddle/gun.txt", setting.gfxTheme), texPaddleLayers[1]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/paddle/base.txt", setting.gfxTheme), texPaddleBase);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/paddle/glue.txt", setting.gfxTheme), texPaddleLayers[0]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/paddle/gun.txt", setting.gfxTheme), texPaddleLayers[1]);
 
-    texMgr.readTexProps(useTheme("gfx/ball/normal.txt", setting.gfxTheme), texBall[0]);
-    texMgr.readTexProps(useTheme("gfx/ball/fireball.txt", setting.gfxTheme), texBall[1]);
-    texMgr.readTexProps(useTheme("gfx/ball/tail.txt", setting.gfxTheme), texBall[2]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/ball/normal.txt", setting.gfxTheme), texBall[0]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/ball/fireball.txt", setting.gfxTheme), texBall[1]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/ball/tail.txt", setting.gfxTheme), texBall[2]);
 
-    texMgr.readTexProps(useTheme("gfx/brick/explosive.txt", setting.gfxTheme), texLvl[0]);
-    texMgr.readTexProps(useTheme("gfx/brick/base.txt", setting.gfxTheme), texLvl[1]);
-    texMgr.readTexProps(useTheme("gfx/brick/cement.txt", setting.gfxTheme), texLvl[2]);
-    texMgr.readTexProps(useTheme("gfx/brick/doom.txt", setting.gfxTheme), texLvl[3]);
-    texMgr.readTexProps(useTheme("gfx/brick/glass.txt", setting.gfxTheme), texLvl[4]);
-    texMgr.readTexProps(useTheme("gfx/brick/invisible.txt", setting.gfxTheme), texLvl[5]);
-    texMgr.readTexProps(useTheme("gfx/brick/blue.txt", setting.gfxTheme), texLvl[6]);
-    texMgr.readTexProps(useTheme("gfx/brick/yellow.txt", setting.gfxTheme), texLvl[7]);
-    texMgr.readTexProps(useTheme("gfx/brick/green.txt", setting.gfxTheme), texLvl[8]);
-    texMgr.readTexProps(useTheme("gfx/brick/grey.txt", setting.gfxTheme), texLvl[9]);
-    texMgr.readTexProps(useTheme("gfx/brick/purple.txt", setting.gfxTheme), texLvl[10]);
-    texMgr.readTexProps(useTheme("gfx/brick/white.txt", setting.gfxTheme), texLvl[11]);
-    texMgr.readTexProps(useTheme("gfx/brick/red.txt", setting.gfxTheme), texLvl[12]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/explosive.txt", setting.gfxTheme), texLvl[0]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/base.txt", setting.gfxTheme), texLvl[1]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/cement.txt", setting.gfxTheme), texLvl[2]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/doom.txt", setting.gfxTheme), texLvl[3]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/glass.txt", setting.gfxTheme), texLvl[4]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/invisible.txt", setting.gfxTheme), texLvl[5]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/blue.txt", setting.gfxTheme), texLvl[6]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/yellow.txt", setting.gfxTheme), texLvl[7]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/green.txt", setting.gfxTheme), texLvl[8]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/grey.txt", setting.gfxTheme), texLvl[9]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/purple.txt", setting.gfxTheme), texLvl[10]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/white.txt", setting.gfxTheme), texLvl[11]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/red.txt", setting.gfxTheme), texLvl[12]);
 
-    texMgr.load(useTheme("gfx/border.png", setting.gfxTheme), texBorder);
+    texMgr.load(themeManager.getThemeFilePath("gfx/border.png", setting.gfxTheme), texBorder);
 
-    texMgr.readTexProps(useTheme("gfx/powerup/coin.txt", setting.gfxTheme), texPowerup[PO_COIN]);
-    texMgr.readTexProps(useTheme("gfx/powerup/glue.txt", setting.gfxTheme), texPowerup[PO_GLUE]);
-    texMgr.readTexProps(useTheme("gfx/powerup/multiball.txt", setting.gfxTheme), texPowerup[PO_MULTIBALL]);
-    texMgr.readTexProps(useTheme("gfx/powerup/bigball.txt", setting.gfxTheme), texPowerup[PO_BIGBALL]);
-    texMgr.readTexProps(useTheme("gfx/powerup/normalball.txt", setting.gfxTheme), texPowerup[PO_NORMALBALL]);
-    texMgr.readTexProps(useTheme("gfx/powerup/smallball.txt", setting.gfxTheme), texPowerup[PO_SMALLBALL]);
-    texMgr.readTexProps(useTheme("gfx/powerup/aim.txt", setting.gfxTheme), texPowerup[PO_AIM]);
-    texMgr.readTexProps(useTheme("gfx/powerup/explosive.txt", setting.gfxTheme), texPowerup[PO_EXPLOSIVE]);
-    texMgr.readTexProps(useTheme("gfx/powerup/gun.txt", setting.gfxTheme), texPowerup[PO_GUN]);
-    texMgr.readTexProps(useTheme("gfx/powerup/go-thru.txt", setting.gfxTheme), texPowerup[PO_THRU]);
-    texMgr.readTexProps(useTheme("gfx/powerup/laser.txt", setting.gfxTheme), texPowerup[PO_LASER]);
-    texMgr.readTexProps(useTheme("gfx/powerup/life.txt", setting.gfxTheme), texPowerup[PO_LIFE]);
-    texMgr.readTexProps(useTheme("gfx/powerup/die.txt", setting.gfxTheme), texPowerup[PO_DIE]);
-    texMgr.readTexProps(useTheme("gfx/powerup/drop.txt", setting.gfxTheme), texPowerup[PO_DROP]);
-    texMgr.readTexProps(useTheme("gfx/powerup/detonate.txt", setting.gfxTheme), texPowerup[PO_DETONATE]);
-    texMgr.readTexProps(useTheme("gfx/powerup/explosive-grow.txt", setting.gfxTheme), texPowerup[PO_EXPLOSIVE_GROW]);
-    texMgr.readTexProps(useTheme("gfx/powerup/easybrick.txt", setting.gfxTheme), texPowerup[PO_EASYBRICK]);
-    texMgr.readTexProps(useTheme("gfx/powerup/nextlevel.txt", setting.gfxTheme), texPowerup[PO_NEXTLEVEL]);
-    texMgr.readTexProps(useTheme("gfx/powerup/aimhelp.txt", setting.gfxTheme), texPowerup[PO_AIMHELP]);
-    texMgr.readTexProps(useTheme("gfx/powerup/growbat.txt", setting.gfxTheme), texPowerup[PO_GROWPADDLE]);
-    texMgr.readTexProps(useTheme("gfx/powerup/shrinkbat.txt", setting.gfxTheme), texPowerup[PO_SHRINKPADDLE]);
-    texMgr.readTexProps(useTheme("gfx/powerup/bullet.txt", setting.gfxTheme), texBullet);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/coin.txt", setting.gfxTheme), texPowerup[PO_COIN]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/glue.txt", setting.gfxTheme), texPowerup[PO_GLUE]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/multiball.txt", setting.gfxTheme), texPowerup[PO_MULTIBALL]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/bigball.txt", setting.gfxTheme), texPowerup[PO_BIGBALL]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/normalball.txt", setting.gfxTheme), texPowerup[PO_NORMALBALL]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/smallball.txt", setting.gfxTheme), texPowerup[PO_SMALLBALL]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/aim.txt", setting.gfxTheme), texPowerup[PO_AIM]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/explosive.txt", setting.gfxTheme), texPowerup[PO_EXPLOSIVE]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/gun.txt", setting.gfxTheme), texPowerup[PO_GUN]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/go-thru.txt", setting.gfxTheme), texPowerup[PO_THRU]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/laser.txt", setting.gfxTheme), texPowerup[PO_LASER]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/life.txt", setting.gfxTheme), texPowerup[PO_LIFE]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/die.txt", setting.gfxTheme), texPowerup[PO_DIE]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/drop.txt", setting.gfxTheme), texPowerup[PO_DROP]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/detonate.txt", setting.gfxTheme), texPowerup[PO_DETONATE]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/explosive-grow.txt", setting.gfxTheme), texPowerup[PO_EXPLOSIVE_GROW]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/easybrick.txt", setting.gfxTheme), texPowerup[PO_EASYBRICK]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/nextlevel.txt", setting.gfxTheme), texPowerup[PO_NEXTLEVEL]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/aimhelp.txt", setting.gfxTheme), texPowerup[PO_AIMHELP]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/growbat.txt", setting.gfxTheme), texPowerup[PO_GROWPADDLE]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/shrinkbat.txt", setting.gfxTheme), texPowerup[PO_SHRINKPADDLE]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/bullet.txt", setting.gfxTheme), texBullet);
     pMan.init(texPowerup);
 
-    texMgr.load(useTheme("gfx/particle.png", setting.gfxTheme), texParticle);
+    texMgr.load(themeManager.getThemeFilePath("gfx/particle.png", setting.gfxTheme), texParticle);
 
     GLuint sceneDL;
     createPlayfieldBorder(&sceneDL, texBorder);
 
     brick bricks[598];
 
-    string levelfile = useTheme("levels.txt", setting.lvlTheme);
+    string levelfile = themeManager.getThemeFilePath("levels.txt", setting.lvlTheme);
 
     int i = 0; //bruges i for loop xD
     glScoreBoard scoreboard;
@@ -3243,8 +3056,7 @@ int main(int argc, char *argv[]) {
                         var.titleScreenShow = false;
                         resumeGame();
                     }
-                }
-                else if (event.key.keysym.sym == SDLK_F11) {
+                } else if (event.key.keysym.sym == SDLK_F11) {
                     if (setting.fullscreen) {
                         setting.fullscreen = 0;
                         SDL_SetWindowFullscreen(display.sdlWindow, 0);

@@ -22,7 +22,8 @@ public:
      * @param root Optional custom root path. If empty, the path will be auto-detected
      */
     explicit ConfigFile(std::string root = "");
-
+    [[nodiscard]] std::string getUserThemeDir() const;
+    [[nodiscard]] static std::string getGlobalThemeDir();
     /**
      * @brief Initializes paths and creates required directories
      * @return true if initialization successful, false otherwise
@@ -42,4 +43,5 @@ public:
     [[nodiscard]] const std::string &getSettingsFile() const { return settingsFile; }
     [[nodiscard]] const std::string &getHighScoreFile() const { return highScoreFile; }
     [[nodiscard]] const std::string &getScreenshotDir() const { return screenshotDir; }
+
 };

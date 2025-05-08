@@ -1,7 +1,6 @@
 extern SettingsManager settingsManager;
 
 class controllerClass {
-private:
     paddle_class *paddle;
     bulletsClass *bullet;
     ballManager *bMan;
@@ -77,7 +76,7 @@ void controllerClass::btnPress() {
         return;
     }
 
-    struct pos p;
+    pos p;
     if (shotTime > 150) {
         shotTime = 0;
         if (!var.menu && !var.paused) {
@@ -174,10 +173,9 @@ bool controllerClass::get() {
 
     if (keyDown[2]) {
         btnPress();
-        return (1);
-    } else {
-        return (0);
+        return true;
     }
+    return false;
 }
 
 void controllerClass::calibrate() {

@@ -13,8 +13,6 @@
 #define FONT_INTRODESCRIPTION 6
 #define FONT_NUM 7
 
-extern std::string useTheme(const std::string &path, const std::string &theme);
-
 struct glCharInfo_struct {
     GLfloat Xa, Ya, Xb, Yb, width;
 };

@@ -63,3 +63,11 @@ bool ConfigFile::checkDir(const std::string &dir) {
     // Existiert bereits
     return true;
 }
+
+std::string ConfigFile::getUserThemeDir() const {
+    return programRoot + "/themes";
+}
+
+std::string ConfigFile::getGlobalThemeDir() {
+    return DATADIR "/themes";
+}
