@@ -462,7 +462,6 @@ public:
             glText->write("Themes", FONT_MENU, true, 1.0, 0.0, -0.005);
             glColor4f(GL_WHITE);
 
-
             if (var.menuPressed) {
                 switch (var.menuItem) {
                     case 1:
@@ -489,6 +488,7 @@ public:
             }
             var.menuNumItems = 6;
         } else if (var.menu == 3) {
+
             // Video options
             glLoadIdentity();
             glTranslatef(0.0, 0.54, -3.0f);
@@ -573,9 +573,9 @@ public:
                         break;
                     case 2:
                         if (!setting.showBg)
-                            setting.showBg = 1;
+                            setting.showBg = true;
                         else
-                            setting.showBg = 0;
+                            setting.showBg = false;
                         settingsManager.settingsChanged();
                         break;
                     case 3:
@@ -618,7 +618,7 @@ public:
             glColor4f(GL_WHITE);
             glText->write("Audio", FONT_MENU, true, 1.0, 0.0, -0.005);
 
-            //Sound on/off
+            // Sound on/off
             glTranslatef(0.0, -0.22, 0.0f);
             if (var.menuItem == 6)
                 glCallList(dl + 2);
@@ -631,7 +631,7 @@ public:
                 glText->write("Sound:Off", FONT_MENU, true, 1.0, 0.0, -0.005);
             glColor4f(GL_WHITE);
 
-            //Stereo
+            // Stereo
             glTranslatef(0.0, -0.22, 0.0f);
             if (var.menuItem == 5) {
                 glCallList(dl + 2);
@@ -646,7 +646,7 @@ public:
             }
             glColor4f(GL_WHITE);
 
-            //Back
+            // Back
             glTranslatef(0.0, -0.88, 0.0f);
             if (var.menuItem == 1) {
                 glCallList(dl + 2);
@@ -686,7 +686,7 @@ public:
 
             var.menuNumItems = 7;
         } else if (var.menu == 5) {
-            //New game?
+            // New game?
             glLoadIdentity();
             glTranslatef(0.0, 0.54, -3.0f);
             glCallList(dl + 3);
@@ -697,7 +697,7 @@ public:
             //       glBindTexture(GL_TEXTURE_2D, tex[28].prop.texture);
             //       glCallList(dl+3);
 
-            //Easy
+            // Easy
             glTranslatef(0.0, -0.22, 0.0f);
             if (var.menuItem == 6)
                 glCallList(dl + 2);
@@ -710,7 +710,7 @@ public:
             //       glBindTexture(GL_TEXTURE_2D, tex[29].prop.texture);
             //       glCallList(dl+3);
 
-            //Normal
+            // Normal
             glTranslatef(0.0, -0.22, 0.0f);
             if (var.menuItem == 5)
                 glCallList(dl + 2);
@@ -724,7 +724,7 @@ public:
             //       glBindTexture(GL_TEXTURE_2D, tex[30].prop.texture);
             //       glCallList(dl+3);
 
-            //Hard
+            // Hard
             glTranslatef(0.0, -0.22, 0.0f);
             if (var.menuItem == 4)
                 glCallList(dl + 2);
@@ -737,7 +737,7 @@ public:
             //       glBindTexture(GL_TEXTURE_2D, tex[31].prop.texture);
             //       glCallList(dl+3);
 
-            //Back
+            // Back
             glTranslatef(0.0, -0.66, 0.0f);
             if (var.menuItem == 1)
                 glCallList(dl + 2);
@@ -781,32 +781,38 @@ public:
 
             var.menuNumItems = 7;
         } else if (var.menu == 6) {
-            //Exit
+            // Exit
             glLoadIdentity();
-            glTranslatef(0.0, 0.54, -3.0f);
+            glPushMatrix();
+            glTranslatef(0.0, 0.54, -0.0f);
             glCallList(dl + 2);
+            glPopMatrix();
             glColor4f(GL_BLACK);
-            glText->write("Exit Game?", FONT_MENU, 1, 1.0, 0.0, -0.005);
-            glColor4f(GL_WHITE);
+            glText->write("Exit Game?", FONT_MENU, true, 1.0, 0.0, 0.54);
 
-            //Yes
+            // Yes
+            glPushMatrix();
             glTranslatef(0.0, -0.44, 0.0f);
             if (var.menuItem == 5)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
+            glPopMatrix();
             glColor4f(GL_FULL_RED);
-            glText->write("Yes.", FONT_MENU, true, 1.0, 0.0, -0.005);
+            glText->write("Yes.", FONT_MENU, true, 1.0, 0.0, -0.44);
             glColor4f(GL_WHITE);
 
-            //Noes!
+            // Noes!
+            glPushMatrix();
             glTranslatef(0.0, -0.22, 0.0f);
             if (var.menuItem == 4)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
+            glPopMatrix();
+
             glColor4f(GL_FULL_GREEN);
-            glText->write("No way!", FONT_MENU, 1, 1.0, 0.0, -0.005);
+            glText->write("No way!", FONT_MENU, true, 1.0, 0.0, -0.22);
             glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
