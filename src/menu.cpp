@@ -1,4 +1,6 @@
 extern SettingsManager settingsManager;
+extern SaveFileManager saveManager;
+extern player_struct SOLPlayer;
 
 struct score {
     int points;
@@ -87,7 +89,6 @@ score *sortScores(int *rl) {
 }
 
 class menuClass {
-
     string saveGameName[6]; //The name of saveGames
     int saveGameSlot; //Where player choose to save/load to/from
     textureClass tex[5];
@@ -113,7 +114,7 @@ public:
         texMgr.load(useTheme("/gfx/menu/highscorebg.png", setting.gfxTheme), tex[4]);
 
         tI = getThemes(); //Read themes and put them in the vector tI
-        listSaveGames(saveGameName);
+        saveManager.listSaveGames(saveGameName);
 
         // Menu-Hintergrund
         glNewList(dl, GL_COMPILE);
@@ -242,9 +243,9 @@ public:
         } else {
             if (e.key.keysym.sym == SDLK_RETURN) {
                 //player saved
-                saveGame(saveGameSlot, saveGameName[saveGameSlot]);
+                saveManager.saveGame(saveGameSlot, saveGameName[saveGameSlot], SOLPlayer);
             }
-            var.enterSaveGameName = 0;
+            var.enterSaveGameName = false;
         }
     }
 
@@ -911,7 +912,7 @@ public:
                 if (var.menuItem == 7) {
                     var.menu = 1;
                 } else if (var.menuItem != 0) {
-                    loadGame(var.menuItem * -1 + 6);
+                    saveManager.loadGame(var.menuItem * -1 + 6, SOLPlayer);
                     var.menu = 0;
                     resumeGame();
                 }

@@ -29,10 +29,12 @@
 #include "settings_manager.h"
 #include "colors.h"
 #include "text.h"
+#include "SaveFileManager.h"
 
 settings setting;
 ConfigFile configFile;
 SettingsManager settingsManager(configFile);
+SaveFileManager saveManager(configFile);
 class effectManager;
 
 #define PI 3.14159265
@@ -142,35 +144,8 @@ struct vars {
     scrollInfoScruct scrollInfo;
 };
 
-//Ting der har med spillogik at gøre
-struct gameVars {
-    bool shopNextItem, shopPrevItem, shopBuyItem; //When set to 1 shop goes next or prev
-    int deadTime; //I hvor mange millisekunder har bolden intet rørt
-    bool nextlevel;
-    bool gameOver;
-    bool newLife;
-    bool newLevel; //Start en ny level
-    int bricksleft; //hvor mange brikker er der tilbage
-};
-
 gameVars gVar;
 
-struct player_struct {
-    int coins;
-    int multiply;
-    bool powerup[MAXPOTEXTURES];
-    bool explodePaddle; //This lock makes the paddle explode, and it won't come back until new life.
-    int level;
-    int lives;
-    int difficulty;
-    int score;
-};
-
-int listSaveGames(string slotName[]);
-
-void loadGame(int slot);
-
-void saveGame(int slot, string name);
 
 // current player
 player_struct player;
@@ -564,7 +539,7 @@ public:
 class paddle_class : public game_object {
     GLfloat growspeed;
     GLfloat destwidth;
-    GLfloat aspect; // så meget stiger højden i forhold til bredden
+    GLfloat aspect; // Verhältnis, um wie viel die Höhe zur Breite wächst.
     bool growing;
 
 public:
@@ -657,9 +632,9 @@ public:
                 glVertex3f(-width, height * 4, 0.0f);
                 glTexCoord2f(layerTex[1].pos[2], layerTex[1].pos[3]);
                 glVertex3f(width, height * 4, 0.0f);
-                glTexCoord2f(layerTex[1].pos[4], layerTex[1].pos[5] - 0.01);
+                glTexCoord2f(layerTex[1].pos[4], layerTex[1].pos[5] - 0.01f);
                 glVertex3f(width, height, 0.0f);
-                glTexCoord2f(layerTex[1].pos[6], layerTex[1].pos[7] - 0.01);
+                glTexCoord2f(layerTex[1].pos[6], layerTex[1].pos[7] - 0.01f);
                 glVertex3f(-width, height, 0.0f);
                 glEnd();
             }
@@ -694,7 +669,7 @@ public:
     bool justBecomeExplosive; //If this brick just become a explosive one.
 
 
-    bool n(const int dir) const {
+    [[nodiscard]] bool n(const int dir) const {
         switch (dir) {
             case 0: //Er der en brik til venstre for dig?
                 if (bricknum > 0) {
@@ -2770,7 +2745,7 @@ public:
                 timeStruct = *(localtime(&nixTime));
                 sprintf(clockString, "%02i:%02i", timeStruct.tm_hour, timeStruct.tm_min);
             }
-            glText->write(clockString, FONT_INTRODESCRIPTION, false, 1.0f, -1.0f,
+            glText->write(clockString, FONT_INTRODESCRIPTION, false, 1.0f, -0.95f,
                           -0.975f);
         }
 
@@ -2808,20 +2783,20 @@ public:
         } else if (gVar.shopBuyItem) {
             gVar.shopBuyItem = 0;
             if (item[shopItemSelected].price <= player.coins && !shopItemBlocked[shopItemSelected]) {
-                struct pos a, b;
+                pos a, b;
                 a.x = shopListStartX + (0.11 * shopItemSelected);
                 a.y = 1.15;
                 b.x = 0.0;
                 b.y = 0.0;
                 pMan.spawn(a, b, item[shopItemSelected].type);
                 player.coins -= item[shopItemSelected].price;
-                shopItemBlocked[shopItemSelected] = 1;
-                gVar.shopNextItem = 1;
+                shopItemBlocked[shopItemSelected] = true;
+                gVar.shopNextItem = true;
                 soundMan.add(SND_BUY_POWERUP, 0.0);
             }
         }
 
-        glTranslatef(shopListStartX, 1.15, 0.0f);
+        glTranslatef(shopListStartX, 1.0f, 0.0f);
         for (i = 0; i < canAfford; i++) {
             if (i == shopItemSelected) {
                 if (shopItemBlocked[i]) {
@@ -2853,20 +2828,19 @@ public:
     }
 
     void clearShop() {
-        for (int i = 0; i < NUMITEMSFORSALE; i++) {
-            shopItemBlocked[i] = 0;
+        for (bool & i : shopItemBlocked) {
+            i = false;
         }
     }
 };
 
 class speedometerClass {
 public:
-    void draw() {
+    static void draw() {
         //GLfloat y = -1.24 + difficulty.maxballspeed[player.difficulty]/2.44*var.averageBallSpeed;
 
-        GLfloat y = 2.48 / (difficulty.maxballspeed[player.difficulty] - difficulty.ballspeed[player.difficulty]) * (
+        const GLfloat y = 0.48 / (difficulty.maxballspeed[player.difficulty] - difficulty.ballspeed[player.difficulty]) * (
                         var.averageBallSpeed - difficulty.ballspeed[player.difficulty]);
-
 
         glDisable(GL_TEXTURE_2D);
 
@@ -2880,131 +2854,10 @@ public:
         glVertex3f(0.03, 0, 0);
         glVertex3f(0, 0, 0);
         glEnd();
+
         glEnable(GL_TEXTURE_2D);
     }
 };
-
-struct savedGame {
-    char name[32];
-    struct player_struct player;
-};
-
-//Savegame files now consist of a int long header with a version number.
-void saveGame(int slot, string name) {
-    fstream file;
-    savedGame game;
-    strcpy(game.name, name.data());
-    game.player = SOLPlayer; //StartOfLevelPlayer, player as it was in the start of the level
-    file.open(configFile.getSaveGameFile().data(), ios::out | ios::in | ios::binary);
-    if (!file.is_open()) {
-        SDL_Log("Could not open '%s' for Read+Write.", configFile.getSaveGameFile().c_str());
-    }
-
-    //move to the slot, mind the header
-    file.seekp((sizeof(int)) + ((sizeof(savedGame) * slot)));
-
-    file.write((char *) (&game), sizeof(savedGame));
-    file.close();
-}
-
-void clearSaveGames() {
-    fstream file;
-    file.open(configFile.getSaveGameFile().data(), ios::out | ios::in | ios::binary);
-    if (!file.is_open()) {
-        SDL_Log("Could not open '%s' for Read+Write.", configFile.getSaveGameFile().c_str());
-    }
-    //Write the header
-    const int sgHead = SAVEGAME_VERSION; //Savegame file version
-    file.write((char *) (&sgHead), sizeof(int));
-    file.close();
-
-
-    saveGame(0, "Empty Slot");
-    saveGame(1, "Empty Slot");
-    saveGame(2, "Empty Slot");
-    saveGame(3, "Empty Slot");
-    saveGame(4, "Empty Slot");
-    saveGame(5, "Empty Slot");
-}
-
-void loadGame(int slot) {
-    fstream file;
-    savedGame game;
-    file.open(configFile.getSaveGameFile().data(), ios::in | ios::binary);
-    if (!file.is_open())
-        SDL_Log("Could not open '%s' for Reading.", configFile.getSaveGameFile().c_str());
-
-    //first, move to the slot
-    file.seekg(sizeof(int) + (sizeof(savedGame) * slot));
-    file.read((char *) (&game), sizeof(savedGame));
-    file.close();
-
-    if (game.player.level != 0)
-    //Only change level if level is not 0 (level one cannot be saved, and is used for the empty slots)
-    {
-        game.player.level--;
-        //subtract one, because when the savegame is loaded, nextlevel is used to apply changes. nextlevel will add one to the level.
-        player = game.player;
-        gVar.nextlevel = 1;
-        var.paused = 1;
-    }
-}
-
-int listSaveGames(string slotName[]) {
-    fstream file;
-    savedGame slot[6];
-    int i = 0;
-
-    file.open(configFile.getSaveGameFile().data(), ios::in | ios::binary);
-    if (!file.is_open()) {
-        SDL_Log("Creating savegame slots in '%s'.", configFile.getSaveGameFile().c_str());
-        file.open(configFile.getSaveGameFile().data(), ios::out | ios::binary);
-        if (!file.is_open()) {
-            SDL_Log("Do not have permissions to write '%s'", configFile.getSaveGameFile().c_str());
-            return (0);
-        }
-        file.close();
-
-        clearSaveGames();
-        file.open(configFile.getSaveGameFile().data(), ios::in | ios::binary);
-        if (!file.is_open()) {
-            SDL_Log("Could not write template.");
-            return (0);
-        }
-    }
-
-    //First we check if this is the right version
-    int sgHead = 0x00; //Invalid version
-
-    file.read((char *) (&sgHead), sizeof(int));
-    if (sgHead != SAVEGAME_VERSION) {
-        SDL_Log("Savegame format error, is v%d should be v'%d'.", sgHead, SAVEGAME_VERSION);
-        SDL_Log("Overwriting old savegames...");
-        file.close();
-        clearSaveGames();
-
-        file.open(configFile.getSaveGameFile().data(), ios::in | ios::binary);
-        file.seekp(sizeof(int));
-    }
-
-    while (1) {
-        if (i == 6) {
-            break;
-        }
-
-        file.read((char *) (&slot[i]), sizeof(savedGame));
-        if (file.eof()) {
-            break;
-        }
-
-        slotName[i] = slot[i].name;
-        i++;
-    }
-    file.close();
-
-
-    return (i);
-}
 
 void detonateExplosives(brick bricks[], effectManager &fxMan) {
     struct pos p, v;
@@ -3060,7 +2913,6 @@ void easyBrick(brick bricks[]) {
 
 #include "input.cpp"
 #include "title.cpp"
-
 bool screenShot() {
     static constexpr size_t MAX_FILENAME = 256;
     static constexpr size_t TGA_HEADER_SIZE = 12;
@@ -3156,7 +3008,7 @@ int main(int argc, char *argv[]) {
     var.clearScreen = true;
     var.titleScreenShow = true;
 
-    Uint32 maxFrameAge = (1000 / setting.fps);
+    Uint32 maxFrameAge = 1000 / setting.fps;
 
     GLfloat mouse_x, mouse_y;
 
@@ -3600,14 +3452,14 @@ int main(int argc, char *argv[]) {
             }
 
             if (gVar.newLife) {
-                gVar.newLife = 0;
+                gVar.newLife = false;
                 paddle.init();
                 p.x = paddle.posx;
 
-                p.y = paddle.posy + paddle.height + 0.025;
+                p.y = paddle.posy + paddle.height + 0.025f;
 
                 bMan.clear();
-                bMan.spawn(p, 1, paddle.width, difficulty.ballspeed[player.difficulty], 1.57100000f);
+                bMan.spawn(p, true, paddle.width, difficulty.ballspeed[player.difficulty], 1.57100000f);
                 //Not exactly 90 degree, so the ball will always fall a bit to the side
             }
 
@@ -3627,7 +3479,7 @@ int main(int argc, char *argv[]) {
                 glCallList(sceneDL);
 
                 if (var.scrollInfo.drop) {
-                    if ((SDL_GetTicks() - var.scrollInfo.lastTick) > var.scrollInfo.dropspeed) {
+                    if (SDL_GetTicks() - var.scrollInfo.lastTick > var.scrollInfo.dropspeed) {
                         var.scrollInfo.lastTick = SDL_GetTicks();
                         updateBrickPositions(bricks);
                     }
@@ -3685,7 +3537,7 @@ int main(int argc, char *argv[]) {
             pMan.move();
             if (pMan.coldet(paddle, fxMan, bMan)) {
                 if (player.powerup[PO_DETONATE]) {
-                    player.powerup[PO_DETONATE] = 0;
+                    player.powerup[PO_DETONATE] = false;
                     detonateExplosives(bricks, fxMan);
                 }
 
@@ -3696,12 +3548,12 @@ int main(int argc, char *argv[]) {
 
                 if (player.powerup[PO_NEXTLEVEL]) {
                     player.powerup[PO_NEXTLEVEL] = false;
-                    gVar.nextlevel = 1;
-                    var.paused = 1;
+                    gVar.nextlevel = true;
+                    var.paused = true;
                 }
 
                 if (player.powerup[PO_EXPLOSIVE_GROW]) {
-                    player.powerup[PO_EXPLOSIVE_GROW] = 0;
+                    player.powerup[PO_EXPLOSIVE_GROW] = false;
                     explosiveGrow(bricks);
                 }
             }
@@ -3710,7 +3562,7 @@ int main(int argc, char *argv[]) {
                 soundMan.play();
 
                 if (player.explodePaddle) {
-                    player.explodePaddle = 0;
+                    player.explodePaddle = false;
                     soundMan.add(SND_DIE, 0);
                     if (setting.eyeCandy) {
                         fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
@@ -3788,8 +3640,8 @@ int main(int argc, char *argv[]) {
             }
 #endif
             if (!gVar.bricksleft) {
-                gVar.nextlevel = 1;
-                var.paused = 1;
+                gVar.nextlevel = true;
+                var.paused = true;
             }
         } else {
             //Show the title screen

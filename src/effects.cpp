@@ -47,10 +47,10 @@ public:
         glTranslatef(0.0, 0.0, 0.0);
         glColor4f(vars.col[0], vars.col[1], vars.col[2], opacity);
         glBegin(GL_QUADS);
-        glVertex3f(-1.66, 1.25, 0.0);
-        glVertex3f(1.66, 1.25, 0.0);
-        glVertex3f(1.66, -1.25, 0.0);
-        glVertex3f(-1.66, -1.25, 0.0);
+        glVertex3f(-1.0f, 1.0f, 0.0);
+        glVertex3f(1.0f, 1.0f, 0.0);
+        glVertex3f(1.0f, -1.0f, 0.0);
+        glVertex3f(-1.0f, -1.0f, 0.0);
         glEnd();
         glEnable(GL_TEXTURE_2D);
     }

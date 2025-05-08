@@ -14,7 +14,7 @@ RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)
 BUILD_DIR := build/
 SOURCE_DIR := src/
 
-SOURCES := $(addprefix $(SOURCE_DIR), display.cpp main.cpp config_file.cpp settings_manager.cpp text.cpp)
+SOURCES := $(addprefix $(SOURCE_DIR), display.cpp main.cpp config_file.cpp settings_manager.cpp text.cpp SaveFileManager.cpp)
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 
 # Create the build directory if it doesn't exist

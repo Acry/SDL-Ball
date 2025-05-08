@@ -65,9 +65,8 @@ public:
     }
 
     char randomPowerup(char p) {
-        int i;
-        //First, decide if we are going to put a powerup in the brick. (based on p)
-        i = rand() % 100;
+        // First, decide if we are going to put a powerup in the brick. (based on p)
+        const int i = rand() % 100;
         if (p == 'Q') //100% chance of evil
         {
             return (randomEvilPowerup());
@@ -91,13 +90,13 @@ public:
         //Return no powerup or return the specified.
         if (p == 'K' || p == 'N' || p == 'M' || p == 'L' || p == 'J') {
             return ('0');
-        } else {
-            return (p);
         }
+        return p;
+
     }
 
-    char randomEvilPowerup() {
-        int i = rand() % evilPowerups.length();
+    char randomEvilPowerup() const {
+        const int i = rand() % evilPowerups.length();
         return (evilPowerups[i]);
     }
 };
@@ -106,14 +105,13 @@ void loadlevel(string file, brick bricks[], int level) {
     ifstream levelfile(file.data());
     if (!levelfile.is_open()) {
         SDL_Log(" Could not open%s", file.c_str());
-        var.quit = 1;
+        var.quit = true;
         return;
     }
     string line;
     int levelread = 0, brick = 0, ch = 0;
     var.numlevels = 0;
-    var.scrollInfo.drop = 0;
-
+    var.scrollInfo.drop = false;
 
     while (!levelfile.eof()) {
         getline(levelfile, line);
@@ -136,7 +134,7 @@ void loadlevel(string file, brick bricks[], int level) {
                     if (line[0] == '>') {
                         if (line.substr(0, 6) == "> down") {
                             var.scrollInfo.dropspeed = atol(line.substr(7, line.length()).data());
-                            var.scrollInfo.drop = 1;
+                            var.scrollInfo.drop = true;
                         }
                     } else {
                         while (line[ch] != 0) {
@@ -187,15 +185,16 @@ void initlevels(brick bricks[], textureClass texLvl[]) {
 
     for (int row = 0; row < 23; row++) {
         for (int brick = 0; brick < 26; brick++) {
-            bricks[i].posx = -1.54 + (GLfloat) brick * 0.1232;
-            bricks[i].posy = 0.95 + ((GLfloat) row * 0.07) * -1;
+            // säulen links und rechts
+            bricks[i].posx = -1.0f + (brick + 0.5f) * 0.1232;
+            bricks[i].posy = 1.0f - (row + 0.5f) * 0.07;
 
             if (bricks[i].type != '0') {
-                bricks[i].active = 1;
-                bricks[i].collide = 1;
-                bricks[i].isdyingnormally = 0;
-                bricks[i].isexploding = 0;
-                bricks[i].reflect = 1;
+                bricks[i].active = true;
+                bricks[i].collide = true;
+                bricks[i].isdyingnormally = false;
+                bricks[i].isexploding = false;
+                bricks[i].reflect = true;
 
                 bricks[i].fade = 1.0;
                 bricks[i].fadespeed = 2.0;
@@ -205,7 +204,7 @@ void initlevels(brick bricks[], textureClass texLvl[]) {
                 bricks[i].height = 0.035;
 
                 bricks[i].score = 11;
-                bricks[i].destroytowin = 1;
+                bricks[i].destroytowin = true;
                 bricks[i].hitsLeft = 1;
 
                 bricks[i].powerup = powerupLoader.randomPowerup(bricks[i].powerup);
@@ -217,8 +216,8 @@ void initlevels(brick bricks[], textureClass texLvl[]) {
                 //SDL_Log("Brick:%d", nbrick[row][brick]);
             } else {
                 bricks[i].score = 0;
-                bricks[i].destroytowin = 0;
-                bricks[i].active = 0;
+                bricks[i].destroytowin = false;
+                bricks[i].active = false;
                 updated_nbrick[row][brick] = -1;
                 // SDL_Log("Brick:%d", nbrick[row][brick]);
             }
@@ -234,7 +233,7 @@ void initlevels(brick bricks[], textureClass texLvl[]) {
                 bricks[i].tex = texLvl[2];
                 bricks[i].opacity = texLvl[2].prop.glTexColorInfo[3];
                 bricks[i].score = 30;
-                bricks[i].destroytowin = 0;
+                bricks[i].destroytowin = false;
             } else if (bricks[i].type == '4') {
                 bricks[i].tex = texLvl[4]; //glass texture
                 bricks[i].hitsLeft = 2; //takes two hits to kill

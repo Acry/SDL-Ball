@@ -93,16 +93,16 @@ public:
         glBegin(GL_QUADS);
         glColor4f(r[0], g[0], b[0], a);
         glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(-1.66, 1.25, 0.0f);
+        glVertex3f(-1.0f, 1.0f, 0.0f);
         glColor4f(r[1], g[1], b[1], a);
         glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(1.66, 1.25, 0.0f);
+        glVertex3f(1.0f, 1.0f, 0.0f);
         glColor4f(r[2], g[2], b[2], a);
         glTexCoord2f(1.0f, 1.0f);
-        glVertex3f(1.66, -1.25, 0.0f);
+        glVertex3f(1.0f, -1.0f, 0.0f);
         glColor4f(r[3], g[3], b[3], a);
         glTexCoord2f(0.0f, 1.0f);
-        glVertex3f(-1.66, -1.25, 0.0f);
+        glVertex3f(-1.0f, -1.0f, 0.0f);
         glEnd();
     }
 };
