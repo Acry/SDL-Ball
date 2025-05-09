@@ -1,4 +1,5 @@
 #include "texture.h"
+#include "game_state.h"
 
 class powerupLoaderClass {
 public:
@@ -164,10 +165,19 @@ void initlevels(brick bricks[], texture texLvl[]) {
     int i = 0;
 
     for (int row = 0; row < 23; row++) {
-        for (int brick = 0; brick < 26; brick++) {
+        for (int column = 0; column < 26; column++) {
             // säulen links und rechts
-            bricks[i].posx = -1.0f + (brick + 0.5f) * BRICK_WIDTH;
-            bricks[i].posy = 1.0f - (row + 0.5f) * BRICK_HEIGHT;
+            // Verfügbarer Bereich: 2.0 (-1 bis +1)
+            // float total_width = 26 * BRICK_WIDTH;  // Gesamtbreite aller Steine
+            // float total_height = 23 * BRICK_HEIGHT; // Gesamthöhe aller Steine
+
+            // Abstand zwischen den Steinen
+            //float x_spacing = (2.0f - total_width) / 27.0f;  // 27 Zwischenräume (inkl. Ränder)
+            //float y_spacing = (2.0f - total_height) / 24.0f; // 24 Zwischenräume (inkl. Ränder)
+
+            // Von -1 bis +1 in NDC, direkt Stein an Stein
+            bricks[i].posx = -1.0f + column * BRICK_WIDTH;
+            bricks[i].posy = 1.0f - row * BRICK_HEIGHT;
 
             if (bricks[i].type != '0') {
                 bricks[i].active = true;
@@ -189,16 +199,16 @@ void initlevels(brick bricks[], texture texLvl[]) {
 
                 bricks[i].powerup = powerupLoader.randomPowerup(bricks[i].powerup);
 
-                bricks[i].bricknum = brick;
+                bricks[i].bricknum = column;
 
                 bricks[i].row = row;
-                updated_nbrick[row][brick] = i; // This brick is active
+                updated_nbrick[row][column] = i; // This brick is active
                 //SDL_Log("Brick:%d", nbrick[row][brick]);
             } else {
                 bricks[i].score = 0;
                 bricks[i].destroytowin = false;
                 bricks[i].active = false;
-                updated_nbrick[row][brick] = -1;
+                updated_nbrick[row][column] = -1;
                 // SDL_Log("Brick:%d", nbrick[row][brick]);
             }
 

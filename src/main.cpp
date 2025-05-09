@@ -367,15 +367,33 @@ public:
         glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2], opacity);
 
         glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
+        glLoadIdentity();
         glBegin(GL_QUADS);
+        // Berechne die Ecken des Quads
+        // glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+        //         +1
+        //         ^
+        //         |
+        // -1 <----+----> +1
+        //         |
+        //        -1
+        float left = posx * zoom;
+        float right = posx + BRICK_WIDTH * zoom;
+        float top = posy * zoom;
+        float bottom = posy + BRICK_HEIGHT * zoom;
+
+        // Zeichne das Quad mit den Texturkoordinaten
         glTexCoord2f(tex.pos[0], tex.pos[1]);
-        glVertex3f(posx + (-BRICK_WIDTH/2 * zoom), posy + (BRICK_HEIGHT * zoom), 0.00);
+        glVertex3f(left, top, 0.0f);      // Oben links
+
         glTexCoord2f(tex.pos[2], tex.pos[3]);
-        glVertex3f(posx + (BRICK_WIDTH/2 * zoom), posy + (BRICK_HEIGHT * zoom), 0.00);
+        glVertex3f(right, top, 0.0f);     // Oben rechts
+
         glTexCoord2f(tex.pos[4], tex.pos[5]);
-        glVertex3f(posx + (BRICK_WIDTH/2 * zoom), posy + (-BRICK_HEIGHT * zoom), 0.00);
+        glVertex3f(right, bottom, 0.0f);  // Unten rechts
+
         glTexCoord2f(tex.pos[6], tex.pos[7]);
-        glVertex3f(posx + (-BRICK_WIDTH/2 * zoom), posy + (-BRICK_HEIGHT * zoom), 0.00);
+        glVertex3f(left, bottom, 0.0f);   // Unten links
         glEnd();
     }
 
@@ -3109,8 +3127,20 @@ int main(int argc, char *argv[]) {
                         if (setting.particleCollide && setting.eyeCandy && frameAge >= maxFrameAge)
                             fxMan.coldet(bricks[i]);
                     }
-                    if (frameAge >= maxFrameAge)
+                    if (frameAge >= maxFrameAge) {
+                        glPushMatrix();
+                        glLoadIdentity();
+                        glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+                        glMatrixMode(GL_MODELVIEW);
+                        glPushMatrix();
+                        glLoadIdentity();
+                        glLoadIdentity();
                         bricks[i].draw(bricks, fxMan);
+                        glPopMatrix();
+                        glMatrixMode(GL_PROJECTION);
+                        glPopMatrix();
+                        glMatrixMode(GL_MODELVIEW);
+                    }
                 } //aktiv brik
             } // for loop
 
@@ -3197,7 +3227,6 @@ int main(int argc, char *argv[]) {
                 glColor3d(255, 255, 255);
                 bullet.draw();
                 paddle.draw();
-
                 pMan.draw();
                 bMan.draw(paddle);
                 scoreboard.draw();

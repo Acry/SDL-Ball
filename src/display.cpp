@@ -117,10 +117,10 @@ void displayClass::resize(const int width, const int height) {
     glunits_per_ypixel = 2.0f / static_cast<GLfloat>(viewportH);
 
     // TODO, FIXME
-    glViewport(0, 0, currentW, currentH);
-    //glViewport(viewportX, viewportY, viewportW, viewportH);
-    //glEnable(GL_SCISSOR_TEST);
-    //glScissor(viewportX, viewportY, viewportW, viewportH);
+    // glViewport(0, 0, currentW, currentH);
+    glViewport(viewportX, viewportY, viewportW, viewportH);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(viewportX, viewportY, viewportW, viewportH);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
