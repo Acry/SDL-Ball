@@ -67,7 +67,6 @@ float globalMilliTicksSinceLastDraw;
 
 difficultyStruct fixed_difficulty, runtime_difficulty;
 
-
 void initNewGame();
 
 void pauseGame();
@@ -957,16 +956,16 @@ public:
 
     void move() {
         //vi laver lige den her coldet her...
-        if (posx + width > 1.6 && xvel > 0.0) {
+        if (posx + width > 1.0f && xvel > 0.0) {
             soundMan.add(SND_BALL_HIT_BORDER, posx);
             xvel *= -1;
-        } else if (posx - width < -1.6 && xvel < 0.0) {
+        } else if (posx - width < -1.0f && xvel < 0.0) {
             soundMan.add(SND_BALL_HIT_BORDER, posx);
             xvel *= -1;
-        } else if (posy + width > 1.25 && yvel > 0.0) {
+        } else if (posy + width > 1.0f && yvel > 0.0) {
             soundMan.add(SND_BALL_HIT_BORDER, posx);
             yvel *= -1;
-        } else if (posy - width < -1.24) {
+        } else if (posy - width < -1.0f) {
             active = false;
         }
 
