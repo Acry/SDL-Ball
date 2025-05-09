@@ -39,6 +39,7 @@ ThemeManager themeManager(configFile);
 class effectManager;
 class ball;
 class paddle_class;
+class brick;
 
 gameVars gVar;
 // current player
@@ -47,8 +48,11 @@ player_struct player;
 player_struct SOLPlayer;
 vars var;
 displayClass display;
+glTextClass *glText;
+// Pointer to the object, since we can't init (load fonts) because the settings have not been read yet.
 
 soundClass soundMan; //Public object so all objects can use it
+
 //#define debugBall 1
 //     #define DEBUG_DRAW_BALL_QUAD
 //     #define DEBUG_NO_RELATIVE_MOUSE
@@ -61,21 +65,7 @@ float nonpausingGlobalMilliTicks;
 int globalTicksSinceLastDraw;
 float globalMilliTicksSinceLastDraw;
 
-struct pos {
-    GLfloat x;
-    GLfloat y;
-};
-
-struct difficultyStruct {
-    GLfloat ballspeed[3];
-    GLfloat maxballspeed[3];
-    GLfloat hitbrickinc[3];
-    GLfloat hitpaddleinc[3];
-    GLfloat slowdown[3];
-    GLfloat speedup[3];
-};
-
-difficultyStruct static_difficulty, difficulty;
+difficultyStruct fixed_difficulty, runtime_difficulty;
 
 struct texProp {
     GLuint texture; // Den GLtexture der er loaded
@@ -98,18 +88,23 @@ struct texProp {
 };
 
 void initNewGame();
+
 void pauseGame();
+
 void resumeGame();
+
+void set_fixed_difficulty();
+
 float random_float(float total, float negative);
+
 float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx);
+
+void makeExplosive(brick &b);
 
 typedef GLfloat texPos[8];
 #ifndef uint // WIN32
 typedef unsigned int uint;
 #endif
-
-glTextClass *glText;
-// Pointer to the object, since we can't init (load fonts) because the settings have not been read yet.
 
 class textureClass {
 private:
@@ -349,6 +344,7 @@ public:
 
     textureClass tex;
 };
+
 class moving_object : public game_object {
 public:
     GLfloat xvel, yvel, velocity;
@@ -378,7 +374,7 @@ public:
 
     void init() {
         posy = -0.9;
-        width = 0.1;
+        width = 0.08;
         height = 0.02;
         dead = false;
     }
@@ -468,9 +464,6 @@ public:
 // nasty fix to a problem
 int nbrick[23][26];
 int updated_nbrick[23][26];
-class brick;
-
-void makeExplosive(brick &b);
 
 textureClass *texExplosiveBrick; //NOTE:Ugly
 class brick : public game_object {
@@ -702,15 +695,6 @@ public:
         }
     }
 };
-
-void makeExplosive(brick &b) {
-    if (b.type != 'B') {
-        b.type = 'B';
-        b.tex = *texExplosiveBrick;
-        //NOTE: for some reason, the color of the object was changed, why??
-        b.justBecomeExplosive = true;
-    }
-}
 
 #include "loadlevel.cpp"
 #include "effects.cpp"
@@ -952,6 +936,7 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
 
 glAnnounceTextClass announce;
 
+// 2D Line Segment Intersection
 int LinesCross(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, GLfloat *linx,
                GLfloat *liny) {
     float d = (x1 - x0) * (y3 - y2) - (y1 - y0) * (x3 - x2);
@@ -1331,8 +1316,8 @@ public:
     }
 
     void setspeed(GLfloat v) {
-        if (v > difficulty.maxballspeed[player.difficulty]) {
-            velocity = difficulty.maxballspeed[player.difficulty];
+        if (v > runtime_difficulty.maxballspeed[player.difficulty]) {
+            velocity = runtime_difficulty.maxballspeed[player.difficulty];
         } else {
             velocity = v;
         }
@@ -1367,7 +1352,7 @@ public:
 
 void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan);
 
-void padcoldet(ball &b, paddle_class &p, pos &po);
+void collision_paddle_ball(ball &b, const paddle_class &p, pos &po);
 
 #define MAXBALLS 16
 
@@ -1534,7 +1519,7 @@ public:
         }
     }
 
-    int pcoldet(paddle_class &paddle, effectManager &fxMan) {
+    int pcoldet(const paddle_class &paddle, effectManager &fxMan) {
         int hits = 0;
         pos p;
         for (int i = 0; i < MAXBALLS; i++) {
@@ -1543,7 +1528,7 @@ public:
                     b[i].posx = paddle.posx + paddle.width - b[i].gluedX;
 
                 p.x = 100;
-                padcoldet(b[i], paddle, p);
+                collision_paddle_ball(b[i], paddle, p);
                 if (p.x < 50) {
                     hits++;
                     getSpeed();
@@ -1589,17 +1574,17 @@ public:
                 switch (powerup) {
                     case PO_BIGBALL: //big balls
                         b[i].setSize(0.04);
-                        b[i].setspeed(difficulty.ballspeed[player.difficulty]);
+                        b[i].setspeed(runtime_difficulty.ballspeed[player.difficulty]);
                         break;
                     case PO_SMALLBALL: //small balls
                         b[i].setSize(0.015);
                         //speed bolden op
                         b[i].setspeed(
-                            b[i].velocity + ((b[i].velocity / 100.f) * difficulty.speedup[player.difficulty]));
+                            b[i].velocity + ((b[i].velocity / 100.f) * runtime_difficulty.speedup[player.difficulty]));
                         break;
                     case PO_NORMALBALL: // normal balls
                         b[i].setSize(0.025);
-                        b[i].setspeed(difficulty.ballspeed[player.difficulty]);
+                        b[i].setspeed(runtime_difficulty.ballspeed[player.difficulty]);
                         break;
                     case PO_EXPLOSIVE: //exploderer brikker
                         b[i].explosive = true;
@@ -1614,10 +1599,7 @@ public:
     }
 };
 
-float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx) {
-    return ((BALL_MAX_DEGREE / (width * 2.0)) * (posx + width - hitx) + BALL_MIN_DEGREE);
-}
-
+// Powerups
 class powerupClass : public moving_object {
 public:
     int score;
@@ -2148,6 +2130,13 @@ void spawnpowerup(char powerup, pos a, pos b) {
     }
 }
 
+void resetPlayerPowerups() {
+    for (bool &i: player.powerup) {
+        i = false;
+    }
+}
+
+// GL
 void initGL() {
     //     printf("GL_RENDERER   = %s\n", (char *) glGetString(GL_RENDERER));
     // printf("GL_VERSION    = %s\n", (char *) glGetString(GL_VERSION));
@@ -2172,60 +2161,6 @@ void initGL() {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-}
-
-float random_float(const float total, const float negative) {
-    thread_local std::mt19937 rng(std::random_device{}());
-    std::uniform_real_distribution dist(-negative, total - negative);
-    return dist(rng);
-}
-
-void resetPlayerPowerups() {
-    for (bool &i: player.powerup) {
-        i = false;
-    }
-}
-
-void initNewGame() {
-    player.level = 0;
-    player.score = 0;
-    gVar.deadTime = 0;
-
-    gVar.newLevel = true;
-    gVar.newLife = true;
-
-    player.multiply = 1;
-
-    switch (player.difficulty) {
-        case EASY:
-            player.coins = 600;
-            player.lives = 5;
-            break;
-        case NORMAL:
-            player.coins = 300;
-            player.lives = 3;
-            break;
-        case HARD:
-            player.coins = 0;
-            player.lives = 3;
-            break;
-        default: ;
-    }
-
-    resetPlayerPowerups();
-}
-
-void pauseGame() {
-    var.paused = true;
-    SDL_SetRelativeMouseMode(SDL_FALSE);
-}
-
-void resumeGame() {
-#ifndef DEBUG_NO_RELATIVE_MOUSE
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-#endif
-    var.paused = false;
-    var.menu = 0;
 }
 
 void createPlayfieldBorder(GLuint *dl, const textureClass &tex) {
@@ -2398,7 +2333,7 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
                     ba.hit(br.tex.prop.glParColorInfo);
 
                     if (!player.powerup[PO_THRU] || player.difficulty == HARD) {
-                        ba.setspeed(ba.velocity + difficulty.hitbrickinc[player.difficulty]);
+                        ba.setspeed(ba.velocity + runtime_difficulty.hitbrickinc[player.difficulty]);
                     }
                 } else {
                     SDL_Log("Collision detection error: Don't know where the ball hit.");
@@ -2409,22 +2344,23 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
     } //y boxcol
 }
 
-void padcoldet(ball &b, paddle_class &p, pos &po) {
-    int i, points = 0;
-    GLfloat x, y, px = 0, py = 0;
-    bool col = 0;
+void collision_paddle_ball(ball &b, const paddle_class &p, pos &po) {
     //Er bolden tæt nok på?
 
     if (b.posy < (p.posy + p.height) + b.height && b.posy > p.posy - p.height) {
         if (b.posx > p.posx - (p.width * 2.0) - b.width && b.posx < p.posx + (p.width * 2.0) + b.width) {
-            for (i = 0; i < 32; i++) {
-                x = b.bsin[i];
-                y = b.bcos[i];
+            GLfloat py = 0;
+            GLfloat px = 0;
+            bool col = false;
+            int points = 0;
+            for (int i = 0; i < 32; i++) {
+                const GLfloat x = b.bsin[i];
+                const GLfloat y = b.bcos[i];
 
                 //Find de punkter der er inden i padden
                 if (b.posx + x > p.posx - p.width && b.posx + x < p.posx + p.width) {
                     if (b.posy + y < p.posy + p.height && b.posy + y > p.posy - p.height) {
-                        col = 1;
+                        col = true;
 
                         px += x;
                         py += y;
@@ -2434,10 +2370,10 @@ void padcoldet(ball &b, paddle_class &p, pos &po) {
             } //For loop
 
             if (col) {
-                col = 0;
+                col = false;
                 gVar.deadTime = 0;
-                px /= (float) points;
-                py /= (float) points;
+                px /= static_cast<float>(points);
+                py /= static_cast<float>(points);
 
                 px = b.posx + px;
 
@@ -2447,13 +2383,13 @@ void padcoldet(ball &b, paddle_class &p, pos &po) {
 
                     //Only decrease speed if the player does not have the go-thru powerup
                     if (!player.powerup[PO_THRU]) {
-                        b.setspeed(b.velocity + difficulty.hitpaddleinc[player.difficulty]);
+                        b.setspeed(b.velocity + runtime_difficulty.hitpaddleinc[player.difficulty]);
                     }
 
                     b.setangle(bounceOffAngle(p.width, p.posx, b.posx));
                     if (player.powerup[PO_GLUE]) {
                         b.gluedX = p.posx + p.width - px;
-                        b.glued = 1;
+                        b.glued = true;
                     }
 
                     po.x = px;
@@ -2649,9 +2585,9 @@ public:
     static void draw() {
         //GLfloat y = -1.24 + difficulty.maxballspeed[player.difficulty]/2.44*var.averageBallSpeed;
 
-        const GLfloat y = 0.48 / (difficulty.maxballspeed[player.difficulty] - difficulty.ballspeed[player.difficulty])
+        const GLfloat y = 0.48f / (runtime_difficulty.maxballspeed[player.difficulty] - runtime_difficulty.ballspeed[player.difficulty])
                           * (
-                              var.averageBallSpeed - difficulty.ballspeed[player.difficulty]);
+                              var.averageBallSpeed - runtime_difficulty.ballspeed[player.difficulty]);
 
         glDisable(GL_TEXTURE_2D);
 
@@ -2816,36 +2752,12 @@ int main(int argc, char *argv[]) {
 
     setting = settingsManager.getSettings();
     player.difficulty = setting.startingDifficulty;
+    set_fixed_difficulty();
+    runtime_difficulty = fixed_difficulty;
     var.quit = false;
     var.clearScreen = true;
     var.titleScreenShow = true;
 
-    Uint32 maxFrameAge = 1000 / setting.fps;
-
-    GLfloat mouse_x, mouse_y;
-
-    static_difficulty.ballspeed[EASY] = 0.7f;
-    static_difficulty.ballspeed[NORMAL] = 1.3f;
-    static_difficulty.ballspeed[HARD] = 1.6f;
-
-    static_difficulty.maxballspeed[EASY] = 1.5f;
-    static_difficulty.maxballspeed[NORMAL] = 2.2f;
-    static_difficulty.maxballspeed[HARD] = 3.0f;
-
-    static_difficulty.hitbrickinc[EASY] = 0.0025;
-    static_difficulty.hitbrickinc[NORMAL] = 0.003;
-    static_difficulty.hitbrickinc[HARD] = 0.004;
-
-    static_difficulty.hitpaddleinc[EASY] = -0.001;
-    static_difficulty.hitpaddleinc[NORMAL] = -0.0005;
-    static_difficulty.hitpaddleinc[HARD] = -0.0007;
-
-    //Percentage
-    static_difficulty.speedup[EASY] = 10.0f;
-    static_difficulty.speedup[NORMAL] = 20.0f;
-    static_difficulty.speedup[HARD] = 30.0f;
-
-    difficulty = static_difficulty;
 
     soundMan.init();
 
@@ -2853,7 +2765,8 @@ int main(int argc, char *argv[]) {
         var.quit = true;
     }
     initGL();
-    SDL_SetWindowIcon(display.sdlWindow, IMG_Load(themeManager.getThemeFilePath("icon32.png", setting.gfxTheme).data()));
+    SDL_SetWindowIcon(display.sdlWindow,
+                      IMG_Load(themeManager.getThemeFilePath("icon32.png", setting.gfxTheme).data()));
     SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
 
 #ifndef DEBUG_NO_RELATIVE_MOUSE
@@ -2862,6 +2775,7 @@ int main(int argc, char *argv[]) {
 
     glText = new glTextClass; // instantiate the class now that settings have been read.
 
+#pragma region texture manager
     textureManager texMgr;
 
     textureClass texPaddleBase;
@@ -2901,29 +2815,43 @@ int main(int argc, char *argv[]) {
 
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/coin.txt", setting.gfxTheme), texPowerup[PO_COIN]);
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/glue.txt", setting.gfxTheme), texPowerup[PO_GLUE]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/multiball.txt", setting.gfxTheme), texPowerup[PO_MULTIBALL]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/bigball.txt", setting.gfxTheme), texPowerup[PO_BIGBALL]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/normalball.txt", setting.gfxTheme), texPowerup[PO_NORMALBALL]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/smallball.txt", setting.gfxTheme), texPowerup[PO_SMALLBALL]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/multiball.txt", setting.gfxTheme),
+                        texPowerup[PO_MULTIBALL]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/bigball.txt", setting.gfxTheme),
+                        texPowerup[PO_BIGBALL]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/normalball.txt", setting.gfxTheme),
+                        texPowerup[PO_NORMALBALL]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/smallball.txt", setting.gfxTheme),
+                        texPowerup[PO_SMALLBALL]);
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/aim.txt", setting.gfxTheme), texPowerup[PO_AIM]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/explosive.txt", setting.gfxTheme), texPowerup[PO_EXPLOSIVE]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/explosive.txt", setting.gfxTheme),
+                        texPowerup[PO_EXPLOSIVE]);
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/gun.txt", setting.gfxTheme), texPowerup[PO_GUN]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/go-thru.txt", setting.gfxTheme), texPowerup[PO_THRU]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/go-thru.txt", setting.gfxTheme),
+                        texPowerup[PO_THRU]);
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/laser.txt", setting.gfxTheme), texPowerup[PO_LASER]);
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/life.txt", setting.gfxTheme), texPowerup[PO_LIFE]);
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/die.txt", setting.gfxTheme), texPowerup[PO_DIE]);
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/drop.txt", setting.gfxTheme), texPowerup[PO_DROP]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/detonate.txt", setting.gfxTheme), texPowerup[PO_DETONATE]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/explosive-grow.txt", setting.gfxTheme), texPowerup[PO_EXPLOSIVE_GROW]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/easybrick.txt", setting.gfxTheme), texPowerup[PO_EASYBRICK]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/nextlevel.txt", setting.gfxTheme), texPowerup[PO_NEXTLEVEL]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/aimhelp.txt", setting.gfxTheme), texPowerup[PO_AIMHELP]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/growbat.txt", setting.gfxTheme), texPowerup[PO_GROWPADDLE]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/shrinkbat.txt", setting.gfxTheme), texPowerup[PO_SHRINKPADDLE]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/detonate.txt", setting.gfxTheme),
+                        texPowerup[PO_DETONATE]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/explosive-grow.txt", setting.gfxTheme),
+                        texPowerup[PO_EXPLOSIVE_GROW]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/easybrick.txt", setting.gfxTheme),
+                        texPowerup[PO_EASYBRICK]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/nextlevel.txt", setting.gfxTheme),
+                        texPowerup[PO_NEXTLEVEL]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/aimhelp.txt", setting.gfxTheme),
+                        texPowerup[PO_AIMHELP]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/growbat.txt", setting.gfxTheme),
+                        texPowerup[PO_GROWPADDLE]);
+    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/shrinkbat.txt", setting.gfxTheme),
+                        texPowerup[PO_SHRINKPADDLE]);
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/bullet.txt", setting.gfxTheme), texBullet);
     pMan.init(texPowerup);
 
     texMgr.load(themeManager.getThemeFilePath("gfx/particle.png", setting.gfxTheme), texParticle);
+# pragma endregion texture manager
 
     GLuint sceneDL;
     createPlayfieldBorder(&sceneDL, texBorder);
@@ -2936,7 +2864,6 @@ int main(int argc, char *argv[]) {
     glScoreBoard scoreboard;
     menuClass menu;
     paddle_class paddle;
-
     paddle.tex = texPaddleBase;
     paddle.layerTex = texPaddleLayers;
 
@@ -2945,11 +2872,7 @@ int main(int argc, char *argv[]) {
     fxMan.set(FX_VAR_GRAVITY, 0.6f);
 
     titleScreenClass titleScreen(&fxMan, texPowerup, &menu);
-
     ballManager bMan(texBall);
-
-    initNewGame();
-    paddle.posy = -1.15;
 
     // This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
     highScoreClass hKeeper;
@@ -2959,30 +2882,22 @@ int main(int argc, char *argv[]) {
     hudClass hud(texBall[0], texPowerup);
 
     var.effectnum = -1;
-
+    GLfloat mouse_x, mouse_y;
+    Uint32 maxFrameAge = 1000 / setting.fps;
     Uint32 lastTick = SDL_GetTicks();
     Uint32 nonpausingLastTick = lastTick;
     char txt[256];
     Uint32 frameAge = 0; // in milliseconds
 
-#ifdef performanceTimer
-  struct timeval timeStart,timeStop;
-  int renderTime;
-#endif
-
     controllerClass control(&paddle, &bullet, &bMan);
-
     menu.joystickAttached = control.joystickAttached();
-
     soundMan.add(SND_START, 0);
 
     // Todo show in title
     SDL_Log("SDL-Ball v %s", VERSION);
     SDL_Event event;
+    initNewGame();
     while (!var.quit) {
-#ifdef performanceTimer
-    gettimeofday(&timeStart, NULL);
-#endif
         // Events
         control.get(); //Check for keypresses and joystick events
         while (SDL_PollEvent(&event)) {
@@ -3249,7 +3164,7 @@ int main(int argc, char *argv[]) {
                 var.bricksHit = true;
                 gVar.newLevel = false;
                 loadlevel(levelfile, bricks, player.level);
-                initlevels(bricks, texLvl);
+                set_up_bricks_for_level(bricks, texLvl);
                 gVar.gameOver = false;
                 gVar.newLife = true;
                 pMan.clear();
@@ -3268,7 +3183,7 @@ int main(int argc, char *argv[]) {
                 p.y = paddle.posy + paddle.height + 0.025f;
 
                 bMan.clear();
-                bMan.spawn(p, true, paddle.width, difficulty.ballspeed[player.difficulty], 1.57100000f);
+                bMan.spawn(p, true, paddle.width, runtime_difficulty.ballspeed[player.difficulty], 1.57100000f);
                 //Not exactly 90 degree, so the ball will always fall a bit to the side
             }
 
@@ -3437,17 +3352,8 @@ int main(int argc, char *argv[]) {
                 frameAge = 0;
                 globalTicksSinceLastDraw = 0;
                 globalMilliTicksSinceLastDraw = 0;
-#ifdef performanceTimer
-          SDL_Log("FrameAge:");
-      } else {
-        SDL_Log("LoopAge:");
-      }
-      gettimeofday(&timeStop, NULL);
-      renderTime = timeStop.tv_usec - timeStart.tv_usec;
-      SDL_Log("%s", renderTime);
-#else
             }
-#endif
+
             if (!gVar.bricksleft) {
                 gVar.nextlevel = true;
                 var.paused = true;
@@ -3467,4 +3373,93 @@ int main(int argc, char *argv[]) {
     }
     delete glText;
     return EXIT_SUCCESS;
+}
+
+void makeExplosive(brick &b) {
+    if (b.type != 'B') {
+        b.type = 'B';
+        b.tex = *texExplosiveBrick;
+        //NOTE: for some reason, the color of the object was changed, why??
+        b.justBecomeExplosive = true;
+    }
+}
+
+// game state
+void initNewGame() {
+    player.level = 0;
+    player.score = 0;
+    gVar.deadTime = 0;
+
+    gVar.newLevel = true;
+    gVar.newLife = true;
+
+    player.multiply = 1;
+
+    switch (player.difficulty) {
+        case EASY:
+            player.coins = 600;
+            player.lives = 5;
+            break;
+        case NORMAL:
+            player.coins = 300;
+            player.lives = 3;
+            break;
+        case HARD:
+            player.coins = 0;
+            player.lives = 3;
+            break;
+        default: ;
+    }
+    resetPlayerPowerups();
+}
+
+// game state
+void pauseGame() {
+    var.paused = true;
+    SDL_SetRelativeMouseMode(SDL_FALSE);
+}
+
+// game state
+void resumeGame() {
+#ifndef DEBUG_NO_RELATIVE_MOUSE
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+#endif
+    var.paused = false;
+    var.menu = 0;
+}
+
+// helper math
+float random_float(const float total, const float negative) {
+    thread_local std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution dist(-negative, total - negative);
+    return dist(rng);
+}
+
+// helper physics
+float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx) {
+    return ((BALL_MAX_DEGREE / (width * 2.0)) * (posx + width - hitx) + BALL_MIN_DEGREE);
+}
+
+// game state
+void set_fixed_difficulty() {
+    fixed_difficulty.ballspeed[EASY] = 0.7f;
+    fixed_difficulty.ballspeed[NORMAL] = 1.3f;
+    fixed_difficulty.ballspeed[HARD] = 1.6f;
+
+    fixed_difficulty.maxballspeed[EASY] = 1.5f;
+    fixed_difficulty.maxballspeed[NORMAL] = 2.2f;
+    fixed_difficulty.maxballspeed[HARD] = 3.0f;
+
+    fixed_difficulty.hitbrickinc[EASY] = 0.0025;
+    fixed_difficulty.hitbrickinc[NORMAL] = 0.003;
+    fixed_difficulty.hitbrickinc[HARD] = 0.004;
+
+    fixed_difficulty.hitpaddleinc[EASY] = -0.001;
+    fixed_difficulty.hitpaddleinc[NORMAL] = -0.0005;
+    fixed_difficulty.hitpaddleinc[HARD] = -0.0007;
+
+    //Percentage
+    fixed_difficulty.speedup[EASY] = 10.0f;
+    fixed_difficulty.speedup[NORMAL] = 20.0f;
+    fixed_difficulty.speedup[HARD] = 30.0f;
 }
