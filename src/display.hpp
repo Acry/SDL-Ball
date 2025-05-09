@@ -3,9 +3,8 @@
 #include <SDL2/SDL.h>
 
 class displayClass {
-    SDL_GLContext glcontext = nullptr;
     int displayToUse = 0;
-
+    SDL_GLContext glcontext = nullptr;
 public:
     SDL_Window *sdlWindow = nullptr;
     int currentW;
@@ -17,7 +16,7 @@ public:
     GLfloat playfield_ratio;
     GLfloat window_ratio;
     static bool updateForMenu();
-
+    static bool screenshot();
     void resize(int, int);
     ~displayClass();
 };

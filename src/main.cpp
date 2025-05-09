@@ -96,12 +96,12 @@ typedef unsigned int uint;
    and applies them to *tex */
 class textureManager {
 public:
-    bool load(const string &file, texture &tex) {
+    static bool load(const string &file, texture &tex) {
         SDL_Surface *temp = nullptr;
         GLint maxTexSize;
         GLuint glFormat = GL_RGBA;
 
-        if (file.substr(file.length() - 3, 3).compare("jpg") == 0) {
+        if (file.substr(file.length() - 3, 3) == "jpg") {
             glFormat = GL_RGB;
         }
 
@@ -2539,83 +2539,6 @@ void easyBrick(brick bricks[]) {
 #include "input.cpp"
 #include "title.cpp"
 
-bool screenShot() {
-    static constexpr size_t MAX_FILENAME = 256;
-    static constexpr size_t TGA_HEADER_SIZE = 12;
-    static constexpr size_t TGA_INFO_SIZE = 6;
-    static constexpr size_t CHANNELS = 3; // BGR
-
-    char fileName[MAX_FILENAME];
-    int fileIndex = 0;
-
-    // Finde freien Dateinamen
-    while (fileIndex < 9999) {
-        const int result = snprintf(fileName, MAX_FILENAME, "%s/sdl-ball_%04d.tga",
-                                    configFile.getScreenshotDir().data(), fileIndex);
-
-        if (result < 0 || static_cast<size_t>(result) >= MAX_FILENAME) {
-            SDL_Log("Filename too long");
-            return false;
-        }
-
-        FILE *test = fopen(fileName, "rb");
-        if (!test) break;
-        fclose(test);
-        fileIndex++;
-    }
-
-    if (fileIndex == 9999) {
-        SDL_Log("No free filename found");
-        return false;
-    }
-
-    // Alloziere Pixel Buffer
-    const size_t pixelCount = setting.res_x * setting.res_y * CHANNELS;
-    const auto pixels = std::make_unique<GLubyte[]>(pixelCount);
-    if (!pixels) {
-        SDL_Log("Memory allocation failed");
-        return false;
-    }
-
-    // Öffne Ausgabedatei
-    FILE *outFile = fopen(fileName, "wb");
-    if (!outFile) {
-        SDL_Log("Could not create file '%s'", fileName);
-        return false;
-    }
-
-    // Lese Framebuffer
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(0, 0, setting.res_x, setting.res_y, GL_BGR, GL_UNSIGNED_BYTE, pixels.get());
-
-    if (glGetError() != GL_NO_ERROR) {
-        SDL_Log("Failed reading OpenGL framebuffer");
-        fclose(outFile);
-        return false;
-    }
-
-    // Schreibe TGA Header
-    const unsigned char tgaHeader[TGA_HEADER_SIZE] = {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    const unsigned char tgaInfo[TGA_INFO_SIZE] = {
-        static_cast<unsigned char>(setting.res_x & 0xFF),
-        static_cast<unsigned char>((setting.res_x >> 8) & 0xFF),
-        static_cast<unsigned char>(setting.res_y & 0xFF),
-        static_cast<unsigned char>((setting.res_y >> 8) & 0xFF),
-        24, 0
-    };
-
-    if (fwrite(tgaHeader, 1, TGA_HEADER_SIZE, outFile) != TGA_HEADER_SIZE ||
-        fwrite(tgaInfo, 1, TGA_INFO_SIZE, outFile) != TGA_INFO_SIZE ||
-        fwrite(pixels.get(), 1, pixelCount, outFile) != pixelCount) {
-        SDL_Log("Failed writing TGA file");
-        fclose(outFile);
-        return false;
-    }
-
-    fclose(outFile);
-    return true;
-}
-
 int main(int argc, char *argv[]) {
     (void) argc;
     (void) argv;
@@ -2808,11 +2731,10 @@ int main(int argc, char *argv[]) {
                     if (event.key.keysym.sym == SDLK_p || event.key.keysym.sym == SDLK_PAUSE) {
                         var.paused ? resumeGame() : pauseGame();
                     }
-
                     if (event.key.keysym.sym == SDLK_q) {
                         var.quit = true;
                     } else if (event.key.keysym.sym == SDLK_s) {
-                        screenShot();
+                        display.screenshot();
                     } else if (event.key.keysym.sym == setting.keyNextPo) {
                         gVar.shopPrevItem = true;
                     } else if (event.key.keysym.sym == setting.keyBuyPo) {
