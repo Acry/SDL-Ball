@@ -489,9 +489,9 @@ public:
     }
 
     void init() {
-        posy = -0.9;
-        width = 0.08;
-        height = 0.02;
+        posy = -0.93;
+        width = 0.059;
+        height = 0.018;
         dead = false;
     }
 
@@ -2047,8 +2047,7 @@ void createPlayfieldBorder(GLuint *dl, const texture &tex) {
     *dl = glGenLists(1);
     glNewList(*dl,GL_COMPILE);
 
-    glLoadIdentity();
-    glTranslatef(0.0f, 0.0f, 0.0);
+    // glLoadIdentity();
 
     // top
     glColor4f(GL_WHITE);
@@ -2060,28 +2059,27 @@ void createPlayfieldBorder(GLuint *dl, const texture &tex) {
 
     glBegin(GL_QUADS);
 
-    const float width = 0.06f;
     // left
     // linke Säule
     glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-1.0f, 1.0f, 0.0f);
     glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(-1.0f + width, 1.0f, 0.0f);
+    glVertex3f(-1.0f + PILLAR_WIDTH, 1.0f, 0.0f);
     glTexCoord2f(1.0f, -1.0f);
-    glVertex3f(-1.0f + width, -1.0f, 0.0f);
+    glVertex3f(-1.0f + PILLAR_WIDTH, -1.0f, 0.0f);
     glTexCoord2f(0.0f, -1.0f);
     glVertex3f(-1.0f, -1.0f, 0.0f);
 
     // right
     // rechte Säule
     glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(1.0f - width, 1.0f, 0.0f);
+    glVertex3f(1.0f - PILLAR_WIDTH, 1.0f, 0.0f);
     glTexCoord2f(1.0f, 0.0f);
     glVertex3f(1.0f, 1.0f, 0.0f);
     glTexCoord2f(1.0f, -1.0f);
     glVertex3f(1.0f, -1.0f, 0.0f);
     glTexCoord2f(0.0f, -1.0f);
-    glVertex3f(1.0f - width, -1.0f, 0.0f);
+    glVertex3f(1.0f - PILLAR_WIDTH, -1.0f, 0.0f);
     glEnd();
     glEndList();
 }
@@ -2301,7 +2299,7 @@ class hudClass {
     texture *texPowerup; //Pointer to array of powerup textures
     int shopItemSelected;
 #define NUMITEMSFORSALE 13
-    struct shopItemStruct item[NUMITEMSFORSALE];
+    shopItemStruct item[NUMITEMSFORSALE];
     bool shopItemBlocked[NUMITEMSFORSALE]; //One can only buy each powerup one time each life/level
 
 public:
@@ -2371,8 +2369,8 @@ public:
                 timeStruct = *(localtime(&nixTime));
                 sprintf(clockString, "%02i:%02i", timeStruct.tm_hour, timeStruct.tm_min);
             }
-            glText->write(clockString, FONT_INTRODESCRIPTION, false, 1.0f, -0.95f,
-                          -0.975f);
+            glText->write(clockString, FONT_INTRODESCRIPTION, false, 1.5f, -0.92f,
+                          -0.97f);
         }
 
         //Draw the "shop"

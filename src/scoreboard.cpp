@@ -32,6 +32,7 @@ public:
                 sprintf(tempText, "%i", tempScore);
             }
         }
-        glText->write(tempText, FONT_HIGHSCORE, false, 1.0f, -1.0f, 0.875f);
+        glLoadIdentity();
+        glText->write(tempText, FONT_HIGHSCORE, false, 1.0f, -0.9f, 0.9f);
     }
 };

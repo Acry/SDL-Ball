@@ -87,7 +87,7 @@ public:
 
     void draw() const {
         glLoadIdentity();
-        glTranslatef(0, 0, 0);
+        glTranslatef(0, 0, -0.0001f);
 
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex.prop.texture);

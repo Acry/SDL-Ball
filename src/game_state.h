@@ -8,8 +8,9 @@
 #define BALL_MAX_DEGREE 2.61799388 // 150+15 = 165 degrees
 #define BALL_MIN_DEGREE 0.261799388 // 15 degrees
 
-#define BRICK_WIDTH 0.071f
-#define BRICK_HEIGHT 0.035f
+#define PILLAR_WIDTH 0.065f
+#define BRICK_WIDTH 0.0719f
+#define BRICK_HEIGHT 0.0575f
 
 //"Max powerups"
 #define MAXPOTEXTURES 21
