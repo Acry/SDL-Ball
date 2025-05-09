@@ -1,3 +1,167 @@
+#include <map>
+#include <regex>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <tuple>
+#include <SDL2/SDL.h>
+
+using LevelOffset = std::tuple<int, std::streampos, std::streampos>;
+
+// level ranges in levels.txt
+std::vector<LevelOffset> level_ranges;
+
+bool get_level_data(int level, brick bricks[], const std::string& filename) {
+    if (level >= level_ranges.size()) {
+        SDL_Log("Fehler: Level %d existiert nicht", level);
+        return false;
+    }
+
+    std::ifstream infile(filename);
+    if (!infile.is_open()) {
+        SDL_Log("Fehler: Konnte Level-Datei nicht öffnen: %s", filename.c_str());
+        return false;
+    }
+
+    auto [level_num, start_pos, end_pos] = level_ranges[level];
+    infile.seekg(start_pos);
+
+    std::string line;
+    int brick_index = 0;
+    int ch = 0;
+
+    while (infile.tellg() < end_pos && std::getline(infile, line)) {
+        // Prüfe auf Steuerungskommandos
+        if (line[0] == '>') {
+            if (line.substr(0, 6) == "> down") {
+                var.scrollInfo.dropspeed = std::atol(line.substr(7).c_str());
+                var.scrollInfo.drop = true;
+            }
+            continue;
+        }
+
+        // Verarbeite Brick-Daten
+        ch = 0;
+        while (ch < line.length()) {
+            bricks[brick_index].powerup = line[ch];
+            bricks[brick_index].type = line[ch + 1];
+
+            if (bricks[brick_index].type == 'D') {
+                char rgb[3][5];
+                sprintf(rgb[0], "0x%c%c", line[ch + 2], line[ch + 3]);
+                sprintf(rgb[1], "0x%c%c", line[ch + 4], line[ch + 5]);
+                sprintf(rgb[2], "0x%c%c", line[ch + 6], line[ch + 7]);
+
+                const float color_factor = 0.003921569f;  // 1/255
+                for (int i = 0; i < 3; i++) {
+                    float color_value = color_factor * std::strtol(rgb[i], nullptr, 16);
+                    bricks[brick_index].tex.prop.glTexColorInfo[i] = color_value;
+                    bricks[brick_index].tex.prop.glParColorInfo[i] = color_value;
+                }
+                bricks[brick_index].tex.prop.glTexColorInfo[3] = 1.0f;
+                ch += 8;
+            } else {
+                ch += 2;
+            }
+            brick_index++;
+        }
+    }
+
+    return true;
+}
+
+bool read_levels_structure(const std::string& filename) {
+    std::ifstream infile(filename);
+    // Prüfen ob Datei geöffnet werden kann
+    if (!infile.is_open()) {
+        SDL_Log("Fehler: Konnte Level-Datei nicht öffnen: %s", filename.c_str());
+        return false;
+    }
+    // Prüfen ob Datei leer ist
+    if (infile.peek() == std::ifstream::traits_type::eof()) {
+        SDL_Log("Level-Datei ist leer: %s", filename.c_str());
+        return false;
+    }
+
+    level_ranges.clear();
+    std::string line;
+    int level_count = 0;
+    constexpr int EXPECTED_ROWS = 23;
+    int current_row = 0;
+    std::streampos start_pos;
+    bool in_level = false;
+
+    // todo, be permissive with whitespace instead of zero
+    while (std::getline(infile, line)) {
+        constexpr int EXPECTED_COLS = 52;
+
+        // Entferne Whitespace am Ende
+        line = std::regex_replace(line, std::regex("\\s+$"), "");
+
+        if (line == "** Start **") {
+            if (in_level) {
+                SDL_Log("Fehler: Verschachteltes '** Start **' in Level %d", level_count + 1);
+                return false;
+            }
+            in_level = true;
+            start_pos = infile.tellg();
+            current_row = 0;
+            continue;
+        }
+
+        if (line == "** Stop **") {
+            if (!in_level) {
+                SDL_Log("Fehler: '** Stop **' ohne vorheriges '** Start **'");
+                return false;
+            }
+
+            // Prüfe Zeilenanzahl
+            if (current_row != EXPECTED_ROWS) {
+                SDL_Log("Fehler: Ungültige Zeilenlänge in Level %d, Zeile %d: %zu (erwartet: %d)",
+                        level_count + 1, current_row + 1, line.length(), EXPECTED_COLS);
+                return false;
+            }
+
+            level_ranges.push_back({level_count, start_pos, infile.tellg()});
+            in_level = false;
+            level_count++;
+            continue;
+        }
+
+        if (in_level && line.length() > 0 && !line.starts_with(">")) {
+            // Prüfe Zeilenlänge
+            if (line.length() != EXPECTED_COLS) {
+                std::cerr << "Fehler: Ungültige Zeilenlänge in Level " << level_count + 1
+                         << ", Zeile " << current_row + 1 << ": " << line.length()
+                         << " (erwartet: " << EXPECTED_COLS << ")" << std::endl;
+                return false;
+            }
+
+            // Prüfe Zeichengültigkeit
+            static const std::string valid_chars = "0123456789ABCDEFGHIJKLMNOPQR";
+            for (size_t i = 0; i < line.length(); i++) {
+                if (valid_chars.find(line[i]) == std::string::npos) {
+                    SDL_Log("Fehler: Ungültiges Zeichen '%c' in Level %d, Zeile %d, Position %ld", line[i], level_count + 1, current_row + 1, i + 1);
+                    return false;
+                }
+            }
+            current_row++;
+        }
+    }
+    if (in_level) {
+        SDL_Log("Fehler: Fehlendes '** Stop **' am Dateiende: %s", filename.c_str());
+        return false;
+    }
+    // Prüfen ob Level gefunden wurden
+    if (level_ranges.empty()) {
+        SDL_Log("Keine Level in Datei gefunden: %s", filename.c_str());
+        return false;
+    }
+
+    SDL_Log("%d Level erfolgreich geladen aus: %s", level_count, filename.c_str());
+    return true;
+}
+
 class powerupLoaderClass {
 public:
     //most common
@@ -80,79 +244,7 @@ public:
     }
 };
 
-void loadlevel(string file, brick bricks[], int level) {
-    ifstream levelfile(file.data());
-    if (!levelfile.is_open()) {
-        SDL_Log(" Could not open%s", file.c_str());
-        var.quit = true;
-        return;
-    }
-    string line;
-    int levelread = 0, brick = 0, ch = 0;
-    var.numlevels = 0;
-    var.scrollInfo.drop = false;
-
-    while (!levelfile.eof()) {
-        getline(levelfile, line);
-        // Har vi fundet start?
-        if (levelread == 0) {
-            // Nej, er det nu?
-            if (line.substr(0, 11) == "** Start **") {
-                levelread++;
-            }
-        } else if (levelread == 1) {
-            // Do the level stop now?
-            if (line.substr(0, 10) == "** Stop **") {
-                levelread = 0;
-                var.numlevels++;
-                brick = 0;
-            } else {
-                // Reading data from level
-                if (var.numlevels == level) {
-                    if (line[0] == '>') {
-                        if (line.substr(0, 6) == "> down") {
-                            var.scrollInfo.dropspeed = atol(line.substr(7, line.length()).data());
-                            var.scrollInfo.drop = true;
-                        }
-                    } else {
-                        while (line[ch] != 0) {
-                            bricks[brick].powerup = line[ch];
-                            bricks[brick].type = line[ch + 1];
-
-                            if (bricks[brick].type == 'D') {
-                                char rgb[3][5];
-
-                                sprintf(rgb[0], "0x%c%c", line[ch + 2], line[ch + 3]);
-                                sprintf(rgb[1], "0x%c%c", line[ch + 4], line[ch + 5]);
-                                sprintf(rgb[2], "0x%c%c", line[ch + 6], line[ch + 7]);
-
-                                bricks[brick].tex.prop.glTexColorInfo[0] = 0.003921569 * strtol(rgb[0], NULL, 16);
-                                bricks[brick].tex.prop.glTexColorInfo[1] = 0.003921569 * strtol(rgb[1], NULL, 16);
-                                bricks[brick].tex.prop.glTexColorInfo[2] = 0.003921569 * strtol(rgb[2], NULL, 16);
-
-                                bricks[brick].tex.prop.glParColorInfo[0] = 0.003921569 * strtol(rgb[0], NULL, 16);
-                                bricks[brick].tex.prop.glParColorInfo[1] = 0.003921569 * strtol(rgb[1], NULL, 16);
-                                bricks[brick].tex.prop.glParColorInfo[2] = 0.003921569 * strtol(rgb[2], NULL, 16);
-
-                                bricks[brick].tex.prop.glTexColorInfo[3] = 1.0;
-                                ch += 6;
-                            }
-                            //SDL_Log("Level:%s brick:%s Powerup:%s Type:%s\n", levelnum, brick, line[ch], line[ch+1]);
-
-                            brick++;
-                            ch += 2;
-                        }
-                        ch = 0;
-                    } //Not a command
-                } //denne level settes op
-            }
-        }
-    }
-    SDL_Log("Read %d levels from '%s'", var.numlevels, file.c_str());
-    levelfile.close();
-}
-
-void initlevels(brick bricks[], textureClass texLvl[]) {
+void set_up_bricks_for_level(brick bricks[], textureClass texLvl[]) {
     powerupLoaderClass powerupLoader;
 
     //Temp storage for custom colors
@@ -262,4 +354,18 @@ void initlevels(brick bricks[], textureClass texLvl[]) {
         }
     }
     //    SDL_Log("Powerups given to this level:%d", powerupLoader.powerupsGiven);
+}
+
+void loadlevel(const string &file, brick bricks[], int level) {
+    if (const bool have_structure = read_levels_structure(file); !have_structure) {
+        SDL_Log("Fehler: Konnte Level-Struktur nicht lesen");
+        return;
+    }
+    if (const bool have_data = get_level_data(level, bricks, file); !have_data) {
+        SDL_Log("Fehler: Konnte Level-Daten nicht lesen");
+        return;
+    }
+    // TODO
+    // Need texLvl
+    // set_up_bricks_for_level(bricks[], texLvl[]);
 }
