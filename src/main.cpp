@@ -369,13 +369,13 @@ public:
         glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(tex.pos[0], tex.pos[1]);
-        glVertex3f(posx + (-0.0616 * zoom), posy + (0.035 * zoom), 0.00); // øverst venst
+        glVertex3f(posx + (-BRICK_WIDTH/2 * zoom), posy + (BRICK_HEIGHT * zoom), 0.00);
         glTexCoord2f(tex.pos[2], tex.pos[3]);
-        glVertex3f(posx + (0.0616 * zoom), posy + (0.035 * zoom), 0.00); // øverst højre
+        glVertex3f(posx + (BRICK_WIDTH/2 * zoom), posy + (BRICK_HEIGHT * zoom), 0.00);
         glTexCoord2f(tex.pos[4], tex.pos[5]);
-        glVertex3f(posx + (0.0616 * zoom), posy + (-0.035 * zoom), 0.00); // nederst højre
+        glVertex3f(posx + (BRICK_WIDTH/2 * zoom), posy + (-BRICK_HEIGHT * zoom), 0.00);
         glTexCoord2f(tex.pos[6], tex.pos[7]);
-        glVertex3f(posx + (-0.0616 * zoom), posy + (-0.035 * zoom), 0.00); // nederst venstre
+        glVertex3f(posx + (-BRICK_WIDTH/2 * zoom), posy + (-BRICK_HEIGHT * zoom), 0.00);
         glEnd();
     }
 
