@@ -3047,8 +3047,8 @@ int main(int argc, char *argv[]) {
                 var.bricksHit = true;
                 gVar.newLevel = false;
                 //set_up_bricks_for_level(player.level, bricks, texLvl);
-                loadlevel(levelfile, bricks, player.level);
-                initlevels(bricks, texLvl);
+                load_level(levelfile, bricks, player.level);
+                init_levels(bricks, texLvl);
                 gVar.gameOver = false;
                 gVar.newLife = true;
                 pMan.clear();

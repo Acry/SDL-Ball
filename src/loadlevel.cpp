@@ -83,7 +83,7 @@ public:
     }
 };
 
-void loadlevel(string file, brick bricks[], int level) {
+void load_level(string file, brick bricks[], int level) {
     ifstream levelfile(file.data());
     if (!levelfile.is_open()) {
         SDL_Log(" Could not open%s", file.c_str());
@@ -155,7 +155,7 @@ void loadlevel(string file, brick bricks[], int level) {
     levelfile.close();
 }
 
-void initlevels(brick bricks[], texture texLvl[]) {
+void init_levels(brick bricks[], texture texLvl[]) {
     powerupLoaderClass powerupLoader;
 
     //Temp storage for custom colors
