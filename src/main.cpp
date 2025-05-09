@@ -22,6 +22,8 @@
 #include "config.h"
 #include "config_file.h"
 #include "display.hpp"
+#include "game_object.h"
+#include "moving_object.h"
 #include "settings_manager.h"
 #include "sound.h"
 #include "text.h"
@@ -212,20 +214,6 @@ public:
 
 #include "menu.cpp"
 #include "scoreboard.cpp"
-
-class game_object {
-public:
-    //     GLfloat color[3];
-    GLfloat opacity; // This is still used, because it can then be reset, and it's used for fading out bricks (i think)
-    GLfloat posx, posy;
-    GLfloat width, height;
-    GLuint dl; // opengl display list
-    bool active;
-    bool collide;
-    bool reflect; // NOTE: use this for bricks that are not going to reflect the ball? (trap brick? :D)
-
-    texture tex;
-};
 
 // nasty fix to a problem
 int nbrick[23][26];
@@ -466,17 +454,6 @@ public:
 
 //#include "loadlevel_new.cpp"
 #include "loadlevel.cpp"
-
-class moving_object : public game_object {
-public:
-    GLfloat xvel, yvel, velocity;
-
-    moving_object() {
-        xvel = 0.0;
-        yvel = 0.0;
-    }
-};
-
 class paddle_class : public game_object {
     GLfloat growspeed;
     GLfloat destwidth;
