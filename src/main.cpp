@@ -16,7 +16,6 @@
 #include <random>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <vector>
 
 #include "SaveFileManager.h"
 #include "colors.h"
@@ -79,6 +78,13 @@ float random_float(float total, float negative);
 
 float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx);
 
+// // Option 1: Struct mit benannten Koordinaten
+// struct TexCoords {
+//     GLfloat s1, t1;  // Texturkoordinaten Vertex 1
+//     GLfloat s2, t2;  // Texturkoordinaten Vertex 2
+//     GLfloat s3, t3;  // Texturkoordinaten Vertex 3
+//     GLfloat s4, t4;  // Texturkoordinaten Vertex 4
+// };
 typedef GLfloat texPos[8];
 #ifndef uint // WIN32
 typedef unsigned int uint;
