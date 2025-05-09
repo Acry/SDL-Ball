@@ -31,9 +31,9 @@ void ThemeManager::scanThemes() {
                         ti.valid = false;
 
                         // Prüfe auf gfx, snd und lvl
-                        ti.gfx = (stat((themePath + "/gfx").c_str(), &st) == 0);
-                        ti.snd = (stat((themePath + "/snd").c_str(), &st) == 0);
-                        ti.lvl = (stat((themePath + "/levels.txt").c_str(), &st) == 0);
+                        ti.gfx = (stat((themePath + "gfx").c_str(), &st) == 0);
+                        ti.snd = (stat((themePath + "snd").c_str(), &st) == 0);
+                        ti.lvl = (stat((themePath + "levels.txt").c_str(), &st) == 0);
                         ti.valid = ti.gfx || ti.snd || ti.lvl;
 
                         themes.push_back(ti);

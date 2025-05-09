@@ -98,7 +98,7 @@ titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClas
     fxMan = m;
     ticksSinceLastSpawn = 100;
     // SDL-BALL
-    texMgr.load(themeManager.getThemeFilePath("/gfx/title/title.png", setting.gfxTheme), texTitle);
+    texMgr.load(themeManager.getThemeFilePath("gfx/title/title.png", setting.gfxTheme), texTitle);
 
     glTitleList = glGenLists(1);
     glNewList(glTitleList, GL_COMPILE);

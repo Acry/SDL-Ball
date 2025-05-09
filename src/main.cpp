@@ -225,14 +225,12 @@ public:
             return false;
         }
 
-
         //Hvis større end tilladt:
         if (temp->w > maxTexSize) {
             SDL_Log("Texture manager: '%s' texturesize too large.", file.c_str());
             SDL_FreeSurface(temp);
             return false;
         }
-
 
         glGenTextures(1, &tex.prop.texture);
         glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
@@ -577,6 +575,7 @@ public:
     }
 };
 
+//#include "loadlevel_new.cpp"
 #include "loadlevel.cpp"
 
 class moving_object : public game_object {
@@ -2855,13 +2854,13 @@ int main(int argc, char *argv[]) {
     createPlayfieldBorder(&sceneDL, texBorder);
 
     brick bricks[598];
-
+    string levelfile = themeManager.getThemeFilePath("levels.txt", setting.lvlTheme);
     // todo: make property of levelManager
 
-    if (!load_levels()) {;
-        SDL_Log("Error loading levels-structure");
-        var.quit = true;
-    }
+    // if (!load_levels()) {;
+    //     SDL_Log("Error loading levels-structure");
+    //     var.quit = true;
+    // }
 
     int i = 0; //bruges i for loop xD
     glScoreBoard scoreboard;
@@ -3166,7 +3165,9 @@ int main(int argc, char *argv[]) {
             if (gVar.newLevel) {
                 var.bricksHit = true;
                 gVar.newLevel = false;
-                set_up_bricks_for_level(player.level, bricks, texLvl);
+                //set_up_bricks_for_level(player.level, bricks, texLvl);
+                loadlevel(levelfile, bricks, player.level);
+                initlevels(bricks, texLvl);
                 gVar.gameOver = false;
                 gVar.newLife = true;
                 pMan.clear();

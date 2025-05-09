@@ -107,11 +107,11 @@ public:
 
         dl = glGenLists(4); //Generate displaylists (+0 = background, +1,2 = but
 
-        texMgr.load(themeManager.getThemeFilePath("/gfx/menu/menu0.png", setting.gfxTheme), tex[0]);
-        texMgr.load(themeManager.getThemeFilePath("/gfx/menu/but0.png", setting.gfxTheme), tex[1]);
-        texMgr.load(themeManager.getThemeFilePath("/gfx/menu/but1.png", setting.gfxTheme), tex[2]);
-        texMgr.load(themeManager.getThemeFilePath("/gfx/menu/but2.png", setting.gfxTheme), tex[3]);
-        texMgr.load(themeManager.getThemeFilePath("/gfx/menu/highscorebg.png", setting.gfxTheme), tex[4]);
+        texMgr.load(themeManager.getThemeFilePath("gfx/menu/menu0.png", setting.gfxTheme), tex[0]);
+        texMgr.load(themeManager.getThemeFilePath("gfx/menu/but0.png", setting.gfxTheme), tex[1]);
+        texMgr.load(themeManager.getThemeFilePath("gfx/menu/but1.png", setting.gfxTheme), tex[2]);
+        texMgr.load(themeManager.getThemeFilePath("gfx/menu/but2.png", setting.gfxTheme), tex[3]);
+        texMgr.load(themeManager.getThemeFilePath("gfx/menu/highscorebg.png", setting.gfxTheme), tex[4]);
 
         tI = themeManager.listThemes(); //Read themes and put them in the vector tI
         saveManager.listSaveGames(saveGameName);
