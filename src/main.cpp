@@ -466,6 +466,7 @@ int nbrick[23][26];
 int updated_nbrick[23][26];
 
 textureClass *texExplosiveBrick; //NOTE:Ugly
+
 class brick : public game_object {
 public:
     int score; //Hvor meget gir den
@@ -2858,7 +2859,12 @@ int main(int argc, char *argv[]) {
 
     brick bricks[598];
 
-    string levelfile = themeManager.getThemeFilePath("levels.txt", setting.lvlTheme);
+    // todo: make property of levelManager
+
+    if (!load_levels()) {;
+        SDL_Log("Error loading levels-structure");
+        var.quit = true;
+    }
 
     int i = 0; //bruges i for loop xD
     glScoreBoard scoreboard;
@@ -3163,8 +3169,7 @@ int main(int argc, char *argv[]) {
             if (gVar.newLevel) {
                 var.bricksHit = true;
                 gVar.newLevel = false;
-                loadlevel(levelfile, bricks, player.level);
-                set_up_bricks_for_level(bricks, texLvl);
+                set_up_bricks_for_level(player.level, bricks, texLvl);
                 gVar.gameOver = false;
                 gVar.newLife = true;
                 pMan.clear();

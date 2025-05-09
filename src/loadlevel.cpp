@@ -6,14 +6,20 @@
 #include <tuple>
 #include <SDL2/SDL.h>
 
-using LevelOffset = std::tuple<int, std::streampos, std::streampos>;
+#include "game_state.h"
+#include "ThemeManager.h"
+#include "settings_manager.h"
+
+using LevelOffset = std::tuple<std::streampos, std::streampos>;
+extern ThemeManager themeManager;
+extern settings setting;
 
 // level ranges in levels.txt
 std::vector<LevelOffset> level_ranges;
 
-bool get_level_data(int level, brick bricks[], const std::string& filename) {
+bool get_level_data(size_t level, brick bricks[], const std::string& filename) {
     if (level >= level_ranges.size()) {
-        SDL_Log("Fehler: Level %d existiert nicht", level);
+        SDL_Log("Fehler: Level %ld existiert nicht", level);
         return false;
     }
 
@@ -23,12 +29,12 @@ bool get_level_data(int level, brick bricks[], const std::string& filename) {
         return false;
     }
 
-    auto [level_num, start_pos, end_pos] = level_ranges[level];
+    auto [start_pos, end_pos] = level_ranges[level];
     infile.seekg(start_pos);
 
     std::string line;
     int brick_index = 0;
-    int ch = 0;
+    size_t ch = 0;
 
     while (infile.tellg() < end_pos && std::getline(infile, line)) {
         // Prüfe auf Steuerungskommandos
@@ -72,6 +78,7 @@ bool get_level_data(int level, brick bricks[], const std::string& filename) {
 
 bool read_levels_structure(const std::string& filename) {
     std::ifstream infile(filename);
+
     // Prüfen ob Datei geöffnet werden kann
     if (!infile.is_open()) {
         SDL_Log("Fehler: Konnte Level-Datei nicht öffnen: %s", filename.c_str());
@@ -122,20 +129,22 @@ bool read_levels_structure(const std::string& filename) {
                 return false;
             }
 
-            level_ranges.push_back({level_count, start_pos, infile.tellg()});
+            level_ranges.push_back({start_pos, infile.tellg()});
             in_level = false;
             level_count++;
             continue;
         }
 
+        // todo: Prüfen auf Steuerungskommandos
+        // todo: Prüfen Typ 'D' dessen RGB-Farbwerte
         if (in_level && line.length() > 0 && !line.starts_with(">")) {
             // Prüfe Zeilenlänge
-            if (line.length() != EXPECTED_COLS) {
-                std::cerr << "Fehler: Ungültige Zeilenlänge in Level " << level_count + 1
-                         << ", Zeile " << current_row + 1 << ": " << line.length()
-                         << " (erwartet: " << EXPECTED_COLS << ")" << std::endl;
-                return false;
-            }
+            // if (line.length() != EXPECTED_COLS) {
+            //     std::cerr << "Fehler: Ungültige Zeilenlänge in Level " << level_count + 1
+            //              << ", Zeile " << current_row + 1 << ": " << line.length()
+            //              << " (erwartet: " << EXPECTED_COLS << ")" << std::endl;
+            //     return false;
+            // }
 
             // Prüfe Zeichengültigkeit
             static const std::string valid_chars = "0123456789ABCDEFGHIJKLMNOPQR";
@@ -158,17 +167,17 @@ bool read_levels_structure(const std::string& filename) {
         return false;
     }
 
-    SDL_Log("%d Level erfolgreich geladen aus: %s", level_count, filename.c_str());
+    SDL_Log("Level-Struktur aus %s gelesen. %d Level erkannt", filename.c_str(), level_count);
     return true;
 }
 
 class powerupLoaderClass {
 public:
     //most common
-    string chances[4];
+    std::string chances[4];
     int powerups;
     int powerupsGiven;
-    string evilPowerups;
+    std::string evilPowerups;
 
     powerupLoaderClass() {
         int chance = -1;
@@ -244,9 +253,17 @@ public:
     }
 };
 
-void set_up_bricks_for_level(brick bricks[], textureClass texLvl[]) {
+bool set_up_bricks_for_level(const size_t level, brick bricks[], textureClass texLvl[]) {
+    if (level >= level_ranges.size()) {
+        SDL_Log("Fehler: Level %ld existiert nicht", level);
+        return false;
+    }
     powerupLoaderClass powerupLoader;
 
+    if (const bool have_data = get_level_data(level, bricks, themeManager.getThemeFilePath("/levels.txt", setting.lvlTheme)); !have_data) {
+        SDL_Log("Fehler: Konnte Level-Daten nicht lesen");
+        return false;
+    }
     //Temp storage for custom colors
     GLfloat tempCol[4], tempParCol[3];
 
@@ -353,19 +370,16 @@ void set_up_bricks_for_level(brick bricks[], textureClass texLvl[]) {
             i++;
         }
     }
+    return true;
     //    SDL_Log("Powerups given to this level:%d", powerupLoader.powerupsGiven);
 }
 
-void loadlevel(const string &file, brick bricks[], int level) {
-    if (const bool have_structure = read_levels_structure(file); !have_structure) {
+bool load_levels() {
+    const std::string levels_file_name = themeManager.getThemeFilePath("levels.txt", setting.lvlTheme);
+    if (const bool have_structure = read_levels_structure(levels_file_name); !have_structure) {
         SDL_Log("Fehler: Konnte Level-Struktur nicht lesen");
-        return;
+        return false;
     }
-    if (const bool have_data = get_level_data(level, bricks, file); !have_data) {
-        SDL_Log("Fehler: Konnte Level-Daten nicht lesen");
-        return;
-    }
-    // TODO
-    // Need texLvl
-    // set_up_bricks_for_level(bricks[], texLvl[]);
+    return true;
 }
+
