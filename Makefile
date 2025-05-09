@@ -5,7 +5,7 @@ BINDIR?=$(PREFIX)/bin/
 
 CXX?=g++
 
-COMMON_FLAGS := -Wall -Wextra -mtune=native $(shell sdl2-config --cflags)
+COMMON_FLAGS := -std=gnu++23 -Wall -Wextra -mtune=native $(shell sdl2-config --cflags)
 LDFLAGS := -lepoxy -lGLU  $(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 DEBUG_FLAGS := -ggdb -gdwarf-5 -O0 -Wall -DDEBUG -fdebug-types-section -DDATADIR="\"./../\"" $(COMMON_FLAGS)
 RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)

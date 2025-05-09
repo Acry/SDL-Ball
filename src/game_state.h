@@ -58,7 +58,7 @@ struct player_struct {
 };
 
 struct scrollInfoScruct {
-    bool drop; //0 right, 1 left, 2 up, 3 down
+    bool drop; // 0 right, 1 left, 2 up, 3 down
     unsigned int dropspeed;
     unsigned int lastTick; // what was the time last they moved
 };
@@ -78,8 +78,8 @@ struct vars {
     int numlevels;
     bool transition_half_done;
     bool clearScreen;
-    bool idiotlock; //transition
-    bool bricksHit; //tells the mainloop if it should copy the updated array of brick status.
+    bool idiotlock; // transition
+    bool bricksHit; // tells the mainloop if it should copy the updated array of brick status.
 
     GLfloat averageBallSpeed;
     int showHighScores;
@@ -89,4 +89,18 @@ struct vars {
     int effectnum;
 
     scrollInfoScruct scrollInfo;
+};
+
+struct pos {
+    GLfloat x;
+    GLfloat y;
+};
+
+struct difficultyStruct {
+    GLfloat ballspeed[3];
+    GLfloat maxballspeed[3];
+    GLfloat hitbrickinc[3];
+    GLfloat hitpaddleinc[3];
+    GLfloat slowdown[3];
+    GLfloat speedup[3];
 };
