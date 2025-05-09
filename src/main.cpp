@@ -11,8 +11,6 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-
-#include <memory>
 #include <random>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -178,19 +176,19 @@ public:
                         sprintf(rgba[1], "0x%c%c", val[2], val[3]);
                         sprintf(rgba[2], "0x%c%c", val[4], val[5]);
                         sprintf(rgba[3], "0x%c%c", val[6], val[7]);
-                        tex.prop.glTexColorInfo[0] = 0.003921569 * strtol(rgba[0], nullptr, 16);
-                        tex.prop.glTexColorInfo[1] = 0.003921569 * strtol(rgba[1], nullptr, 16);
-                        tex.prop.glTexColorInfo[2] = 0.003921569 * strtol(rgba[2], nullptr, 16);
-                        tex.prop.glTexColorInfo[3] = 0.003921569 * strtol(rgba[3], nullptr, 16);
+                        tex.prop.glTexColorInfo[0] = 0.003921569f * strtol(rgba[0], nullptr, 16);
+                        tex.prop.glTexColorInfo[1] = 0.003921569f * strtol(rgba[1], nullptr, 16);
+                        tex.prop.glTexColorInfo[2] = 0.003921569f * strtol(rgba[2], nullptr, 16);
+                        tex.prop.glTexColorInfo[3] = 0.003921569f * strtol(rgba[3], nullptr, 16);
                     } else if (set == "parcolor") {
                         //Color in hex RGBA
                         //Example:color=FFFFFFFF
                         sprintf(rgba[0], "0x%c%c", val[0], val[1]);
                         sprintf(rgba[1], "0x%c%c", val[2], val[3]);
                         sprintf(rgba[2], "0x%c%c", val[4], val[5]);
-                        tex.prop.glParColorInfo[0] = 0.003921569 * strtol(rgba[0], nullptr, 16);
-                        tex.prop.glParColorInfo[1] = 0.003921569 * strtol(rgba[1], nullptr, 16);
-                        tex.prop.glParColorInfo[2] = 0.003921569 * strtol(rgba[2], nullptr, 16);
+                        tex.prop.glParColorInfo[0] = 0.003921569f * strtol(rgba[0], nullptr, 16);
+                        tex.prop.glParColorInfo[1] = 0.003921569f * strtol(rgba[1], nullptr, 16);
+                        tex.prop.glParColorInfo[2] = 0.003921569f * strtol(rgba[2], nullptr, 16);
                     } else if (set == "file") {
                         tex.prop.fileName = val;
                     } else {
@@ -300,7 +298,7 @@ public:
                     if (nbrick[row][bricknum - 1] != -1) {
                         svel.x = random_float(2, 0) / 3.0;
                         svel.y = random_float(2, 0) / 3.0;
-                        bricks[nbrick[row][bricknum - 1]].hit(fxMan, spos, svel, 0);
+                        bricks[nbrick[row][bricknum - 1]].hit(fxMan, spos, svel, false);
                     }
                 }
 
@@ -309,7 +307,7 @@ public:
                     if (nbrick[row][bricknum + 1] != -1) {
                         svel.x = random_float(2, 0) / 3.0;
                         svel.y = random_float(2, 0) / 3.0;
-                        bricks[nbrick[row][bricknum + 1]].hit(fxMan, spos, svel, 0);
+                        bricks[nbrick[row][bricknum + 1]].hit(fxMan, spos, svel, false);
                     }
                 }
 
@@ -317,38 +315,38 @@ public:
                     if (nbrick[row - 1][bricknum] != -1) {
                         svel.x = random_float(2, 0) / 3.0;
                         svel.y = random_float(2, 0) / 3.0;
-                        bricks[nbrick[row - 1][bricknum]].hit(fxMan, spos, svel, 0);
+                        bricks[nbrick[row - 1][bricknum]].hit(fxMan, spos, svel, false);
                     }
                 }
 
                 if (row < 22) {
                     if (nbrick[row + 1][bricknum] != -1) {
-                        svel.x = random_float(2, 0) / 3.0;
-                        svel.y = random_float(2, 0) / 3.0;
-                        bricks[nbrick[row + 1][bricknum]].hit(fxMan, spos, svel, 0);
+                        svel.x = random_float(2.0f, 0.0f) / 3.0f;
+                        svel.y = random_float(2.0f, 0.0f) / 3.0f;
+                        bricks[nbrick[row + 1][bricknum]].hit(fxMan, spos, svel, false);
                     }
                 }
 
                 if (row > 0 && bricknum > 0) {
                     if (nbrick[row - 1][bricknum - 1] != -1) {
-                        svel.x = random_float(2, 0) / 3.0;
-                        svel.y = random_float(2, 0) / 3.0;
-                        bricks[nbrick[row - 1][bricknum - 1]].hit(fxMan, spos, svel, 0);
+                        svel.x = random_float(2, 0) / 3.0f;
+                        svel.y = random_float(2, 0) / 3.0f;
+                        bricks[nbrick[row - 1][bricknum - 1]].hit(fxMan, spos, svel, false);
                     }
                 }
                 if (row > 0 && bricknum < 25) {
                     if (nbrick[row - 1][bricknum + 1] != -1) {
-                        svel.x = random_float(2, 0) / 3.0;
-                        svel.y = random_float(2, 0) / 3.0;
-                        bricks[nbrick[row - 1][bricknum + 1]].hit(fxMan, spos, svel, 0);
+                        svel.x = random_float(2, 0) / 3.0f;
+                        svel.y = random_float(2, 0) / 3.0f;
+                        bricks[nbrick[row - 1][bricknum + 1]].hit(fxMan, spos, svel, false);
                     }
                 }
 
                 if (row < 22 && bricknum > 0) {
                     if (nbrick[row + 1][bricknum - 1] != -1) {
-                        svel.x = random_float(2, 0) / 3.0;
-                        svel.y = random_float(2, 0) / 3.0;
-                        bricks[nbrick[row + 1][bricknum - 1]].hit(fxMan, spos, svel, 0);
+                        svel.x = random_float(2, 0) / 3.0f;
+                        svel.y = random_float(2, 0) / 3.0f;
+                        bricks[nbrick[row + 1][bricknum - 1]].hit(fxMan, spos, svel, false);
                     }
                 }
 
@@ -356,7 +354,7 @@ public:
                     if (nbrick[row + 1][bricknum + 1] != -1) {
                         svel.x = random_float(2, 0) / 3.0;
                         svel.y = random_float(2, 0) / 3.0;
-                        bricks[nbrick[row + 1][bricknum + 1]].hit(fxMan, spos, svel, 0);
+                        bricks[nbrick[row + 1][bricknum + 1]].hit(fxMan, spos, svel, false);
                     }
                 }
             }
@@ -397,7 +395,7 @@ public:
         glEnd();
     }
 
-    void growExplosive(brick bricks[]) {
+    void growExplosive(brick bricks[]) const {
         if (type != 'B' || justBecomeExplosive) {
             return;
         }
@@ -589,67 +587,67 @@ public:
     int active;
 
     bulletsClass(const texture &texBullet) {
-        for (int i = 0; i < 16; i++) {
-            bullets[i].active = false;
-            bullets[i].tex = texBullet;
-            bullets[i].width = 0.02;
-            bullets[i].height = 0.02;
+        for (auto & bullet : bullets) {
+            bullet.active = false;
+            bullet.tex = texBullet;
+            bullet.width = 0.02;
+            bullet.height = 0.02;
         }
     }
 
     void shoot(const pos p) {
         //Find ledig bullet
-        for (int i = 0; i < 16; i++) {
-            if (!bullets[i].active) {
+        for (auto & bullet : bullets) {
+            if (!bullet.active) {
                 soundMan.add(SND_SHOT, p.x);
-                bullets[i].active = true;
-                bullets[i].posx = p.x;
-                bullets[i].posy = p.y;
-                bullets[i].xvel = 0;
-                bullets[i].yvel = 1.0;
+                bullet.active = true;
+                bullet.posx = p.x;
+                bullet.posy = p.y;
+                bullet.xvel = 0;
+                bullet.yvel = 1.0;
                 break;
             }
         }
     }
 
     void move() {
-        for (int i = 0; i < 16; i++) {
-            if (bullets[i].active) {
+        for (auto & bullet : bullets) {
+            if (bullet.active) {
                 //Flyt
-                bullets[i].posy += bullets[i].yvel * globalMilliTicks;
+                bullet.posy += bullet.yvel * globalMilliTicks;
             }
         }
     }
 
     void draw() {
         glColor4f(GL_WHITE);
-        for (int i = 0; i < 16; i++) {
-            if (bullets[i].active) {
+        for (auto & bullet : bullets) {
+            if (bullet.active) {
                 //draw
 
-                bullets[i].tex.play();
+                bullet.tex.play();
 
                 glLoadIdentity();
-                glTranslatef(bullets[i].posx, bullets[i].posy, 0.0);
+                glTranslatef(bullet.posx, bullet.posy, 0.0);
 
-                glBindTexture(GL_TEXTURE_2D, bullets[i].tex.prop.texture);
+                glBindTexture(GL_TEXTURE_2D, bullet.tex.prop.texture);
                 glBegin(GL_QUADS);
-                glTexCoord2f(bullets[i].tex.pos[0], bullets[i].tex.pos[1]);
-                glVertex3f(-bullets[i].width, bullets[i].height, 0.0);
-                glTexCoord2f(bullets[i].tex.pos[2], bullets[i].tex.pos[3]);
-                glVertex3f(bullets[i].width, bullets[i].height, 0.0);
-                glTexCoord2f(bullets[i].tex.pos[4], bullets[i].tex.pos[5]);
-                glVertex3f(bullets[i].width, -bullets[i].height, 0.0);
-                glTexCoord2f(bullets[i].tex.pos[6], bullets[i].tex.pos[7]);
-                glVertex3f(-bullets[i].width, -bullets[i].height, 0.0);
+                glTexCoord2f(bullet.tex.pos[0], bullet.tex.pos[1]);
+                glVertex3f(-bullet.width, bullet.height, 0.0);
+                glTexCoord2f(bullet.tex.pos[2], bullet.tex.pos[3]);
+                glVertex3f(bullet.width, bullet.height, 0.0);
+                glTexCoord2f(bullet.tex.pos[4], bullet.tex.pos[5]);
+                glVertex3f(bullet.width, -bullet.height, 0.0);
+                glTexCoord2f(bullet.tex.pos[6], bullet.tex.pos[7]);
+                glVertex3f(-bullet.width, -bullet.height, 0.0);
                 glEnd();
             }
         }
     }
 
     void clear() {
-        for (int i = 0; i < 16; i++) {
-            bullets[i].active = false;
+        for (auto & bullet : bullets) {
+            bullet.active = false;
         }
     }
 
@@ -658,27 +656,27 @@ public:
         v.x = 0;
         v.y = bullets[0].xvel;
 
-        for (int i = 0; i < 16; i++) {
-            if (bullets[i].active) {
+        for (auto & bullet : bullets) {
+            if (bullet.active) {
                 //y
-                if (bullets[i].posy + bullets[i].height / 10.0 > b.posy - b.height && bullets[i].posy + bullets[i].
+                if (bullet.posy + bullet.height / 10.0 > b.posy - b.height && bullet.posy + bullet.
                     height / 10.0 < b.posy + b.height) {
                     bool hit = false;
                     pos p;
                     p.x = b.posx;
                     p.y = b.posy;
                     //Venstre side:
-                    if (bullets[i].posx > b.posx - b.width && bullets[i].posx < b.posx + b.width) {
-                        hit = 1;
+                    if (bullet.posx > b.posx - b.width && bullet.posx < b.posx + b.width) {
+                        hit = true;
                     }
 
                     if (hit) {
-                        b.hit(fxMan, p, v, 1);
+                        b.hit(fxMan, p, v, true);
 
-                        bullets[i].active = false;
+                        bullet.active = false;
 
-                        p.x = bullets[i].posx;
-                        p.y = bullets[i].posy;
+                        p.x = bullet.posx;
+                        p.y = bullet.posy;
 
                         if (setting.eyeCandy) {
                             fxMan.set(FX_VAR_TYPE, FX_SPARKS);
@@ -699,8 +697,8 @@ public:
                             fxMan.spawn(p);
                         }
                     }
-                } else if (bullets[i].posy > 1.6) {
-                    bullets[i].active = false;
+                } else if (bullet.posy > 1.6) {
+                    bullet.active = false;
                 }
             }
         }
@@ -745,14 +743,14 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
         if (isdyingnormally || isexploding) {
             return;
         }
-        player.score += (brick::score * player.multiply) * var.averageBallSpeed; //Speed bonus
+        player.score += score * player.multiply * var.averageBallSpeed; //Speed bonus
 
         if (hitsLeft < 1 || type == 'B') //Hvis brikken er explosiv kan den ikke have nogle hits tilbage
         {
-            collide = 0;
+            collide = false;
 
             updated_nbrick[row][bricknum] = -1;
-            var.bricksHit = 1;
+            var.bricksHit = true;
 
             gVar.deadTime = 0;
 
@@ -781,7 +779,7 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
             }
 
             if (type == 'B') {
-                isexploding = 1;
+                isexploding = true;
 
                 if (setting.eyeCandy) {
                     p.x = posx;
@@ -804,7 +802,7 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
                     fxMan.spawn(p);
                 }
             } else {
-                isdyingnormally = 1;
+                isdyingnormally = true;
             }
         } else {
             //No hits left
@@ -856,7 +854,7 @@ public:
         cr = 1;
         cg = cb = 0;
         height = width = 0.01;
-        for (int i = 0; i < 100; i++) active[i] = false;
+        for (bool & i : active) i = false;
     }
 
     void draw() {
@@ -880,7 +878,7 @@ public:
                 glTranslatef(x[i], y[i], 0.0);
 
                 // Alpha zusätzlich basierend auf Index reduzieren
-                float indexBasedAlpha = a[i] * (1.0f - (float) i / len);
+                float indexBasedAlpha = a[i] * (1.0f - static_cast<float>(i) / len);
                 glColor4f(r[i], g[i], b[i], indexBasedAlpha);
 
                 glBegin(GL_QUADS);
@@ -897,7 +895,7 @@ public:
         }
     }
 
-    void colorRotate(const bool explosive, GLfloat c[]) {
+    void colorRotate(const bool explosive, const GLfloat c[]) {
         color++;
         if (color > 5)
             color = 0;
@@ -973,11 +971,11 @@ public:
     }
 
     void move() {
-        //vi laver lige den her coldet her...
-        if (posx + width > 1.0f && xvel > 0.0) {
+        // Ball Border Collision
+        if (posx + width > 1.0f - PILLAR_WIDTH && xvel > 0.0) {
             soundMan.add(SND_BALL_HIT_BORDER, posx);
             xvel *= -1;
-        } else if (posx - width < -1.0f && xvel < 0.0) {
+        } else if (posx < -1.0f + PILLAR_WIDTH && xvel < 0.0) {
             soundMan.add(SND_BALL_HIT_BORDER, posx);
             xvel *= -1;
         } else if (posy + width > 1.0f && yvel > 0.0) {
@@ -1211,15 +1209,15 @@ public:
         float rad;
 
         if (s > width)
-            growing = 1;
+            growing = true;
         else if (s < width)
-            shrinking = 1;
+            shrinking = true;
 
         destwidth = s;
 
         int i = 0;
 
-        //opdater points
+        // opdater points
         for (rad = 0.0; rad < 6.3; rad += 0.2) {
             if (i < 32) {
                 bsin[i] = sin(rad) * s;
@@ -1253,10 +1251,10 @@ public:
         tex[2] = btex[2];
 
 
-        for (int i = 0; i < MAXBALLS; i++) {
-            b[i].tex = tex[0];
-            b[i].fireTex = tex[1];
-            b[i].tail.tex = &tex[2];
+        for (auto & i : b) {
+            i.tex = tex[0];
+            i.fireTex = tex[1];
+            i.tail.tex = &tex[2];
         }
 
         initBalls();
@@ -1264,9 +1262,9 @@ public:
 
     void getSpeed() {
         var.averageBallSpeed = 0.0;
-        for (int i = 0; i < MAXBALLS; i++) {
-            if (b[i].active) {
-                var.averageBallSpeed += b[i].velocity;
+        for (auto & i : b) {
+            if (i.active) {
+                var.averageBallSpeed += i.velocity;
             }
         }
         var.averageBallSpeed /= activeBalls;
@@ -1289,43 +1287,43 @@ public:
                 c++;
                 op.y = b[i].posy;
                 op.x = b[i].posx;
-                spawn(op, 0, 0.0f, b[i].velocity, random_float(BALL_MAX_DEGREE + BALL_MIN_DEGREE, 0));
+                spawn(op, false, 0.0f, b[i].velocity, random_float(BALL_MAX_DEGREE + BALL_MIN_DEGREE, 0));
             }
         }
     }
 
     void unglue() {
-        for (int i = 0; i < MAXBALLS; i++) {
-            b[i].glued = 0;
+        for (auto & i : b) {
+            i.glued = 0;
         }
     }
 
     void spawn(pos p, bool glued, GLfloat gx, GLfloat speed, GLfloat angle) {
-        for (int i = 0; i < MAXBALLS; i++) {
-            if (!b[i].active) {
+        for (auto & i : b) {
+            if (!i.active) {
                 activeBalls++;
-                b[i].tex = tex[0];
-                b[i].fireTex = tex[1];
-                b[i].glued = glued;
+                i.tex = tex[0];
+                i.fireTex = tex[1];
+                i.glued = glued;
 
-                b[i].width = 0.0;
-                b[i].height = 0.0;
-                b[i].gluedX = gx;
-                b[i].active = 1;
-                b[i].collide = 1;
-                b[i].reflect = 1;
-                b[i].lastX = p.x;
-                b[i].lastY = p.y;
-                b[i].posx = p.x;
-                b[i].posy = p.y;
-                b[i].explosive = 0;
-                b[i].setspeed(speed);
-                b[i].setangle(angle);
-                b[i].setSize(0.025);
+                i.width = 0.0;
+                i.height = 0.0;
+                i.gluedX = gx;
+                i.active = 1;
+                i.collide = 1;
+                i.reflect = 1;
+                i.lastX = p.x;
+                i.lastY = p.y;
+                i.posx = p.x;
+                i.posy = p.y;
+                i.explosive = 0;
+                i.setspeed(speed);
+                i.setangle(angle);
+                i.setSize(0.025);
 
                 //New balls get already applied powerups if not hard
                 if (player.difficulty < HARD) {
-                    b[i].explosive = player.powerup[PO_EXPLOSIVE];
+                    i.explosive = player.powerup[PO_EXPLOSIVE];
 
                     if (player.powerup[PO_SMALLBALL]) {
                         powerup(PO_SMALLBALL);
@@ -1343,8 +1341,8 @@ public:
 
     void clear() {
         activeBalls = 0;
-        for (int i = 0; i < MAXBALLS; i++) {
-            b[i].active = 0;
+        for (auto & i : b) {
+            i.active = 0;
         }
         getSpeed();
     }
@@ -1352,29 +1350,29 @@ public:
     void move() {
         int a = 0;
 
-        for (int i = 0; i < MAXBALLS; i++) {
-            if (b[i].active) {
-                b[i].move();
+        for (auto & i : b) {
+            if (i.active) {
+                i.move();
                 a++;
             }
         }
         activeBalls = a;
     }
 
-    void draw(paddle_class &paddle) {
-        for (int i = 0; i < MAXBALLS; i++) {
-            if (b[i].active) {
-                b[i].draw(paddle);
+    void draw(const paddle_class &paddle) {
+        for (auto & i : b) {
+            if (i.active) {
+                i.draw(paddle);
             }
         }
     }
 
     void bcoldet(brick &bri, effectManager &fxMan) {
         pos p;
-        for (int i = 0; i < MAXBALLS; i++) {
-            if (b[i].active) {
+        for (auto & i : b) {
+            if (i.active) {
                 p.x = 100;
-                collision_ball_brick(bri, b[i], p, fxMan);
+                collision_ball_brick(bri, i, p, fxMan);
                 if (p.x < 50) //we totally hit?? :P
                 {
                     getSpeed();
@@ -1402,13 +1400,13 @@ public:
     int pcoldet(const paddle_class &paddle, effectManager &fxMan) {
         int hits = 0;
         pos p;
-        for (int i = 0; i < MAXBALLS; i++) {
-            if (b[i].active) {
-                if (b[i].glued)
-                    b[i].posx = paddle.posx + paddle.width - b[i].gluedX;
+        for (auto & i : b) {
+            if (i.active) {
+                if (i.glued)
+                    i.posx = paddle.posx + paddle.width - i.gluedX;
 
                 p.x = 100;
-                collision_paddle_ball(b[i], paddle, p);
+                collision_paddle_ball(i, paddle, p);
                 if (p.x < 50) {
                     hits++;
                     getSpeed();
@@ -1440,35 +1438,35 @@ public:
     } //pcoldet
 
     void updatelast() {
-        for (int i = 0; i < MAXBALLS; i++) {
-            if (b[i].active) {
-                b[i].lastX = b[i].posx;
-                b[i].lastY = b[i].posy;
+        for (auto & i : b) {
+            if (i.active) {
+                i.lastX = i.posx;
+                i.lastY = i.posy;
             }
         }
     }
 
     void powerup(const int powerup) {
-        for (int i = 0; i < MAXBALLS; i++) {
-            if (b[i].active) {
+        for (auto & i : b) {
+            if (i.active) {
                 switch (powerup) {
                     case PO_BIGBALL: //big balls
-                        b[i].setSize(0.04);
-                        b[i].setspeed(runtime_difficulty.ballspeed[player.difficulty]);
+                        i.setSize(0.04);
+                        i.setspeed(runtime_difficulty.ballspeed[player.difficulty]);
                         break;
                     case PO_SMALLBALL: //small balls
-                        b[i].setSize(0.015);
+                        i.setSize(0.015);
                         //speed bolden op
-                        b[i].setspeed(
-                            b[i].velocity + ((b[i].velocity / 100.f) * runtime_difficulty.speedup[player.difficulty]));
+                        i.setspeed(
+                            i.velocity + ((i.velocity / 100.f) * runtime_difficulty.speedup[player.difficulty]));
                         break;
                     case PO_NORMALBALL: // normal balls
-                        b[i].setSize(0.025);
-                        b[i].setspeed(runtime_difficulty.ballspeed[player.difficulty]);
+                        i.setSize(0.025);
+                        i.setspeed(runtime_difficulty.ballspeed[player.difficulty]);
                         break;
                     case PO_EXPLOSIVE: //exploderer brikker
-                        b[i].explosive = true;
-                        b[i].tail.colorRotate(true, nullptr);
+                        i.explosive = true;
+                        i.tail.colorRotate(true, nullptr);
                         break;
                     default: ;
                 }
@@ -1506,18 +1504,18 @@ public:
 
 
     bool coldet(paddle_class &p, effectManager &fxMan, ballManager &bMan) {
-        bool col = 0;
+        bool col = false;
         if (posx + width > 1.6 && xvel > 0.0) {
-            col = 1;
+            col = true;
             xvel *= -1;
         } else if (posx - width < -1.6 && xvel < 0.0) {
-            col = 1;
+            col = true;
             xvel *= -1;
         } else if (posy + width > 1.25 && yvel > 0.0) {
-            col = 1;
+            col = true;
             yvel *= -1;
         } else if (posy - width < -1.24) {
-            active = 0;
+            active = false;
         }
 
         if (col) {
@@ -1526,29 +1524,30 @@ public:
 
         //idiotisk lavet...
 
-        bool ycol = 0;
+        bool ycol = false;
         bool xcol = 0;
-        pos fxpos, fxSize;
 
         //En side
         if (posx + width > p.posx - p.width && posx + width < p.posx + p.width) {
-            xcol = 1;
+            xcol = true;
         }
 
         if (posx - width > p.posx - p.width && posx - width < p.posx + p.width) {
-            xcol = 1;
+            xcol = true;
         }
 
         if (posy - height < p.posy + p.height && posy - height > p.posy - p.height) {
-            ycol = 1;
+            ycol = true;
         }
 
         if (posy + height < p.posy + p.height && posy + height > p.posy - p.height) {
-            ycol = 1;
+            ycol = true;
         }
 
         if (xcol && ycol) {
             if (setting.eyeCandy) {
+                pos fxSize;
+                pos fxpos;
                 fxpos.x = posx;
                 fxpos.y = posy;
                 fxSize.x = width;
@@ -1568,7 +1567,7 @@ public:
                           tex.prop.glParColorInfo[2]);
                 fxMan.spawn(fxpos);
             }
-            active = 0;
+            active = false;
 
             //Score
             player.score += score * player.multiply;
@@ -1580,31 +1579,31 @@ public:
                     break;
                 case PO_GLUE:
                     player.coins += 150;
-                    player.powerup[PO_GLUE] = 1;
+                    player.powerup[PO_GLUE] = true;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_BIGBALL:
                     player.coins += 30;
                     bMan.powerup(PO_BIGBALL);
-                    player.powerup[PO_BIGBALL] = 1;
-                    player.powerup[PO_NORMALBALL] = 0;
-                    player.powerup[PO_SMALLBALL] = 0;
+                    player.powerup[PO_BIGBALL] = true;
+                    player.powerup[PO_NORMALBALL] = false;
+                    player.powerup[PO_SMALLBALL] = false;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_NORMALBALL:
                     player.coins += 50;
                     bMan.powerup(PO_NORMALBALL);
-                    player.powerup[PO_NORMALBALL] = 1;
-                    player.powerup[PO_BIGBALL] = 0;
-                    player.powerup[PO_SMALLBALL] = 0;
+                    player.powerup[PO_NORMALBALL] = true;
+                    player.powerup[PO_BIGBALL] = false;
+                    player.powerup[PO_SMALLBALL] = false;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_SMALLBALL:
                     player.coins += 10;
                     bMan.powerup(PO_SMALLBALL);
-                    player.powerup[PO_SMALLBALL] = 1;
-                    player.powerup[PO_BIGBALL] = 0;
-                    player.powerup[PO_NORMALBALL] = 0;
+                    player.powerup[PO_SMALLBALL] = true;
+                    player.powerup[PO_BIGBALL] = false;
+                    player.powerup[PO_NORMALBALL] = false;
                     soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
                     break;
                 case PO_MULTIBALL:
@@ -1615,47 +1614,47 @@ public:
                 case PO_AIM:
                     player.coins += 50;
                     if (player.difficulty == 0) {
-                        player.powerup[PO_GLUE] = 1;
+                        player.powerup[PO_GLUE] = true;
                     }
                     if (!player.powerup[PO_AIM]) {
-                        player.powerup[PO_AIM] = 1;
-                        player.powerup[PO_LASER] = 1;
+                        player.powerup[PO_AIM] = true;
+                        player.powerup[PO_LASER] = true;
                     } else {
-                        player.powerup[PO_GLUE] = 1;
+                        player.powerup[PO_GLUE] = true;
                     }
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_GROWPADDLE:
                     player.coins += 100;
                     if (p.width < 0.4) p.grow(p.width + 0.03);
-                    player.powerup[PO_GUN] = 0;
+                    player.powerup[PO_GUN] = false;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_SHRINKPADDLE:
                     player.coins += 10;
                     if (p.width > 0.02) p.grow(p.width - 0.02);
-                    player.powerup[PO_GUN] = 0;
+                    player.powerup[PO_GUN] = false;
                     soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
                     break;
                 case PO_EXPLOSIVE:
                     player.coins += 150;
                     bMan.powerup(PO_EXPLOSIVE);
-                    player.powerup[PO_EXPLOSIVE] = 1;
+                    player.powerup[PO_EXPLOSIVE] = true;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_GUN:
                     player.coins += 200;
-                    player.powerup[PO_GUN] = 1;
+                    player.powerup[PO_GUN] = true;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_THRU:
                     player.coins += 300;
-                    player.powerup[PO_THRU] = 1;
+                    player.powerup[PO_THRU] = true;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_LASER:
                     player.coins += 40;
-                    player.powerup[PO_LASER] = 1;
+                    player.powerup[PO_LASER] = true;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_LIFE:
@@ -1665,38 +1664,38 @@ public:
                     break;
                 case PO_DIE:
                     player.coins += 1;
-                    player.explodePaddle = 1;
-                    player.powerup[PO_DIE] = 1;
+                    player.explodePaddle = true;
+                    player.powerup[PO_DIE] = true;
                     //NOTE: no sound here, SND_DIE is played when paddle dissapers
                     break;
                 case PO_DROP:
                     player.coins += 1;
-                    player.powerup[PO_DROP] = 1;
+                    player.powerup[PO_DROP] = true;
                     soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
                     break;
                 case PO_DETONATE:
                     player.coins += 200;
-                    player.powerup[PO_DETONATE] = 1;
+                    player.powerup[PO_DETONATE] = true;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_EXPLOSIVE_GROW:
                     player.coins += 100;
-                    player.powerup[PO_EXPLOSIVE_GROW] = 1;
+                    player.powerup[PO_EXPLOSIVE_GROW] = true;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_EASYBRICK:
                     player.coins += 90;
-                    player.powerup[PO_EASYBRICK] = 1;
+                    player.powerup[PO_EASYBRICK] = true;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_NEXTLEVEL:
                     player.coins += 100;
-                    player.powerup[PO_NEXTLEVEL] = 1;
+                    player.powerup[PO_NEXTLEVEL] = true;
                     //NOTE: no sound here, SND_NEXTLEVEL is played when changing level
                     break;
                 case PO_AIMHELP:
                     player.coins += 50;
-                    player.powerup[PO_AIMHELP] = 1;
+                    player.powerup[PO_AIMHELP] = true;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 default: ;
@@ -1708,9 +1707,9 @@ public:
     }
 
     void die(effectManager &fxMan) {
-        active = 0;
+        active = false;
         if (setting.eyeCandy) {
-            struct pos p;
+            pos p;
             p.x = posx;
             p.y = posy;
             fxMan.set(FX_VAR_TYPE, FX_SPARKS);
@@ -1779,7 +1778,7 @@ public:
 
     void clear() {
         for (i = 0; i < MAXPOWERUPS; i++) {
-            p[i].active = 0;
+            p[i].active = false;
         }
     }
 
@@ -1800,7 +1799,7 @@ public:
                 p[i].posy = spawnpos.y;
                 p[i].xvel = velocity.x * -1;
                 p[i].yvel = velocity.y * -1;
-                p[i].active = 1;
+                p[i].active = true;
 
                 //Give texture that this type has.
                 p[i].tex = tex[type];
@@ -2085,25 +2084,22 @@ void createPlayfieldBorder(GLuint *dl, const texture &tex) {
 }
 
 void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
-    GLfloat x, y;
-    int i = 0;
-
-    int points = 0;
-    GLfloat px = 0, py = 0;
-    bool col = 0;
-    bool dirfound = 0;
-    GLfloat dist[4] = {4.0, 4.0, 4.0, 4.0};
     //measure the distance from last pos to each possible impact, the shortest should be the right one
 
     //vi tager y først da der er mindst brikker
     if (ba.posy < br.posy + br.height + ba.height && ba.posy > br.posy - br.height - ba.height) {
         //SDL_Log(" y ");
         if (ba.posx > br.posx - br.width - ba.width && ba.posx < br.posx + br.width + ba.width) {
+            int i = 0;
+            int points = 0;
+            GLfloat py = 0;
+            GLfloat px = 0;
+            bool col = false;
             //SDL_Log(" x ");
             for (i = 0; i < 32; i++) // 32 punkter præcis
             {
-                x = ba.bsin[i];
-                y = ba.bcos[i];
+                GLfloat x = ba.bsin[i];
+                GLfloat y = ba.bcos[i];
 
                 if (ba.posx + x >= br.posx - br.width && ba.posx + x <= br.posx + br.width) {
                     if (ba.posy + y <= br.posy + br.height && ba.posy + y >= br.posy - br.height) {
@@ -2111,32 +2107,34 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
                         points++;
                         px += x;
                         py += y;
-                        col = 1;
+                        col = true;
                     } //y
                 } //x
             } //32 punkters for loop
 
             if (col) {
+                bool dirfound = false;
+                GLfloat dist[4] = {4.0, 4.0, 4.0, 4.0};
                 px /= points;
                 py /= points;
 
                 if (ba.lastX - px <= br.posx - br.width && !br.n(0)) //
                 {
-                    dirfound = 1;
+                    dirfound = true;
                     //    SDL_Log("På venstre");
                     dist[0] = sqrt(
                         pow(br.posx - br.width - (ba.lastX + px), 2) + pow((ba.posy + py) - (ba.lastY + py), 2));
                 }
 
                 if (ba.lastX - px >= br.posx + br.width && !br.n(1)) {
-                    dirfound = 1;
+                    dirfound = true;
                     // SDL_Log("På højre");
                     dist[1] = sqrt(
                         pow(br.posx + br.width - (ba.lastX + px), 2) + pow((ba.posy + py) - (ba.lastY + py), 2));
                 }
 
                 if (ba.lastY - py <= br.posy - br.height && !br.n(3)) {
-                    dirfound = 1;
+                    dirfound = true;
                     // SDL_Log("På bunden");
                     dist[2] = sqrt(
                         pow((ba.posx + px) - (ba.lastX + px), 2) + pow(br.posy - br.height - (ba.lastY + py), 2));
@@ -2144,7 +2142,7 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
 
                 if (ba.lastY - py >= br.posy + br.height && !br.n(2)) // &&
                 {
-                    dirfound = 1;
+                    dirfound = true;
                     // SDL_Log("På toppen");
                     dist[3] = sqrt(
                         pow((ba.posx + px) - (ba.lastX + px), 2) + pow(br.posy + br.height - (ba.lastY + py), 2));
@@ -2216,7 +2214,7 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
                 } else {
                     SDL_Log("Collision detection error: Don't know where the ball hit.");
                 }
-                br.hit(fxMan, a, b, 1);
+                br.hit(fxMan, a, b, true);
             } //collision
         } //x boxcol
     } //y boxcol
@@ -2386,16 +2384,16 @@ public:
             shopItemSelected = canAfford - 1;
         }
 
-        GLfloat shopListStartX = -((0.11 * canAfford) / 2.0);
+        const GLfloat shopListStartX = -(0.11f * canAfford / 2.0f);
         if (gVar.shopNextItem) {
-            gVar.shopNextItem = 0;
+            gVar.shopNextItem = false;
             shopItemSelected++;
 
             if (shopItemSelected > canAfford - 1) {
                 shopItemSelected = 0;
             }
         } else if (gVar.shopPrevItem) {
-            gVar.shopPrevItem = 0;
+            gVar.shopPrevItem = false;
             shopItemSelected--;
 
             if (shopItemSelected < 0) {
@@ -2405,18 +2403,18 @@ public:
                 }
             }
         } else if (gVar.shopBuyItem) {
-            gVar.shopBuyItem = 0;
+            gVar.shopBuyItem = false;
             if (item[shopItemSelected].price <= player.coins && !shopItemBlocked[shopItemSelected]) {
                 pos a, b;
-                a.x = shopListStartX + (0.11 * shopItemSelected);
-                a.y = 1.15;
-                b.x = 0.0;
-                b.y = 0.0;
+                a.x = shopListStartX + (0.11f * shopItemSelected);
+                a.y = 1.15f;
+                b.x = 0.0f;
+                b.y = 0.0f;
                 pMan.spawn(a, b, item[shopItemSelected].type);
                 player.coins -= item[shopItemSelected].price;
                 shopItemBlocked[shopItemSelected] = true;
                 gVar.shopNextItem = true;
-                soundMan.add(SND_BUY_POWERUP, 0.0);
+                soundMan.add(SND_BUY_POWERUP, 0.0f);
             }
         }
 
@@ -2485,14 +2483,15 @@ public:
 };
 
 void detonateExplosives(brick bricks[], effectManager &fxMan) {
-    struct pos p, v;
     for (int i = 0; i < 598; i++) {
         if (bricks[i].active && bricks[i].type == 'B') {
+            pos v;
+            pos p;
             p.x = bricks[i].posx;
             p.y = bricks[i].posy;
             v.x = 0.0;
             v.y = 0.0;
-            bricks[i].hit(fxMan, p, v, 0);
+            bricks[i].hit(fxMan, p, v, false);
         }
     }
 }
@@ -2524,7 +2523,7 @@ void explosiveGrow(brick bricks[]) {
     }
 
     for (int i = 0; i < 598; i++) {
-        bricks[i].justBecomeExplosive = 0;
+        bricks[i].justBecomeExplosive = false;
     }
 }
 
@@ -2787,8 +2786,8 @@ int main(int argc, char *argv[]) {
             }
 
             if (event.type == SDL_MOUSEMOTION) {
-                mouse_x = (event.motion.x - display.currentW / 2) * display.glunits_per_xpixel;
-                mouse_y = (event.motion.y - display.currentH / 2) * display.glunits_per_ypixel * -1;
+                mouse_x = (event.motion.x - display.currentW / 2.0f) * display.glunits_per_xpixel;
+                mouse_y = (event.motion.y - display.currentH / 2.0f) * display.glunits_per_ypixel * -1;
 #ifdef DEBUG_SHOW_MOUSE_COORDINATES
                 SDL_Log("Mouse:%s%s,%s%s", setw(10), mousex, setw(10), mousey);
                 SDL_Log("%s%s,%s%s", setw(8), event.motion.x, setw(8), event.motion.y);
@@ -2843,9 +2842,9 @@ int main(int argc, char *argv[]) {
 
         if (!var.paused) {
             globalTicks = SDL_GetTicks() - lastTick;
-            globalMilliTicks = globalTicks / 1000.0;
+            globalMilliTicks = globalTicks / 1000.0f;
         } else {
-            globalTicks = globalMilliTicks = 0;
+            globalTicks = globalMilliTicks = 0.0f;
         }
         lastTick = SDL_GetTicks();
 
@@ -2856,12 +2855,12 @@ int main(int argc, char *argv[]) {
         gVar.deadTime += globalTicks;
 
         glLoadIdentity();
-        // Really ugly... but easy
+        // Hideous... but simple
         if (!var.titleScreenShow) {
             pos p;
 
             if (gVar.deadTime > 20000) {
-                //give the balls explosive ability, in order to blow up cement block and get on with the game
+                //give the balls explosive ability, to blow up cement block and get on with the game
                 gVar.deadTime = 0;
                 bMan.powerup(PO_EXPLOSIVE);
             }
@@ -2879,7 +2878,7 @@ int main(int argc, char *argv[]) {
                 } else if (!gVar.gameOver) {
                     gVar.gameOver = true;
                     pauseGame();
-                    if (hKeeper.isHighScore()) {
+                    if (highScoreClass::isHighScore()) {
                         // announce.write(string text, int mslife, int fontnum);
                         announce.write("Highscore!", 3000,FONT_ANNOUNCE_GOOD);
                         var.showHighScores = 1;
@@ -2990,7 +2989,7 @@ int main(int argc, char *argv[]) {
 
                 bMan.clear();
                 bMan.spawn(p, true, paddle.width, runtime_difficulty.ballspeed[player.difficulty], 1.57100000f);
-                //Not exactly 90 degree, so the ball will always fall a bit to the side
+                // Not exactly degree 90, so the ball will always fall a bit to the side
             }
 
             if (frameAge >= maxFrameAge) {
@@ -3150,7 +3149,7 @@ int main(int argc, char *argv[]) {
                 pMan.draw();
                 bMan.draw(paddle);
                 scoreboard.draw();
-                speedo.draw();
+                speedometerClass::draw();
                 hud.draw();
                 fxMan.draw();
 
@@ -3253,8 +3252,8 @@ float random_float(const float total, const float negative) {
 }
 
 // helper physics
-float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx) {
-    return ((BALL_MAX_DEGREE / (width * 2.0)) * (posx + width - hitx) + BALL_MIN_DEGREE);
+float bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx) {
+    return BALL_MAX_DEGREE / (width * 2.0f) * (posx + width - hitx) + BALL_MIN_DEGREE;
 }
 
 // game state
