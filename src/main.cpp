@@ -490,7 +490,6 @@ public:
     int hitsLeft; //Hvor mange gange skal denne brik rammes før den dør?
     bool justBecomeExplosive; //If this brick just become a explosive one.
 
-
     [[nodiscard]] bool n(const int dir) const {
         switch (dir) {
             case 0: //Er der en brik til venstre for dig?
@@ -1366,7 +1365,7 @@ public:
     }
 };
 
-void coldet(brick &br, ball &ba, pos &p, effectManager &fxMan);
+void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan);
 
 void padcoldet(ball &b, paddle_class &p, pos &po);
 
@@ -1510,7 +1509,7 @@ public:
         for (int i = 0; i < MAXBALLS; i++) {
             if (b[i].active) {
                 p.x = 100;
-                coldet(bri, b[i], p, fxMan);
+                collision_ball_brick(bri, b[i], p, fxMan);
                 if (p.x < 50) //we totally hit?? :P
                 {
                     getSpeed();
@@ -2217,7 +2216,7 @@ void initNewGame() {
 }
 
 void pauseGame() {
-    var.paused = 1;
+    var.paused = true;
     SDL_SetRelativeMouseMode(SDL_FALSE);
 }
 
@@ -2225,7 +2224,7 @@ void resumeGame() {
 #ifndef DEBUG_NO_RELATIVE_MOUSE
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
-    var.paused = 0;
+    var.paused = false;
     var.menu = 0;
 }
 
@@ -2272,7 +2271,7 @@ void createPlayfieldBorder(GLuint *dl, const textureClass &tex) {
     glEndList();
 }
 
-void coldet(brick &br, ball &ba, pos &p, effectManager &fxMan) {
+void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
     GLfloat x, y;
     int i = 0;
 
@@ -3058,13 +3057,11 @@ int main(int argc, char *argv[]) {
                     }
                 } else if (event.key.keysym.sym == SDLK_F11) {
                     if (setting.fullscreen) {
-                        setting.fullscreen = 0;
+                        setting.fullscreen = false;
                         SDL_SetWindowFullscreen(display.sdlWindow, 0);
-                        SDL_Log("SDL_WINDOW_FULLSCREEN_DESKTOP");
                     } else {
-                        setting.fullscreen = 1;
+                        setting.fullscreen = true;
                         SDL_SetWindowFullscreen(display.sdlWindow, SDL_WINDOW_FULLSCREEN);
-                        SDL_Log("SDL_WINDOW_FULLSCREEN");
                     }
                 }
             }
@@ -3219,15 +3216,15 @@ int main(int argc, char *argv[]) {
                         if (!var.idiotlock) {
                             var.idiotlock = true;
                             player.level++;
-                            SOLPlayer = player; // Capture how player is at the start of this level
-                            //If player completed all levels, restart the game with higher multiplier
+                            SOLPlayer = player; // Capture how the player is at the start of this level
+                            // If the player completed all levels, restart the game with higher multiplier
                             if (player.level == var.numlevels) {
                                 player.multiply += player.multiply * 3;
                                 player.level = 0;
                                 announce.write("Finished!", 3500,FONT_ANNOUNCE_GOOD);
                             }
 
-                            sprintf(txt, "Level %i", player.level + 1); //+1 fordi levels starter fra 0
+                            sprintf(txt, "Level %i", player.level + 1); // +1 fordi levels starter fra 0
                             announce.write(txt, 1500,FONT_ANNOUNCE_GOOD);
 
                             //check om vi skal fjerne powerups

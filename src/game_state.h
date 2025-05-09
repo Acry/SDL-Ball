@@ -5,8 +5,11 @@
 #define PI 3.14159265
 #define RAD 6.28318531
 
-#define BALL_MAX_DEGREE 2.61799388 //150+15 = 165 degrees
-#define BALL_MIN_DEGREE 0.261799388 //15 degrees
+#define BALL_MAX_DEGREE 2.61799388 // 150+15 = 165 degrees
+#define BALL_MIN_DEGREE 0.261799388 // 15 degrees
+
+#define BRICK_WIDTH 0.06f
+#define BRICK_HEIGHT 0.035f
 
 //"Max powerups"
 #define MAXPOTEXTURES 21
@@ -34,13 +37,13 @@
 #define PO_AIMHELP 20
 
 struct gameVars {
-    bool shopNextItem, shopPrevItem, shopBuyItem; //When set to 1 shop goes next or prev
-    int deadTime; //I hvor mange millisekunder har bolden intet rørt
+    bool shopNextItem, shopPrevItem, shopBuyItem; // When set to 1 shop goes next or prev
+    int deadTime; // I hvor mange millisekunder har bolden intet rørt
     bool nextlevel;
     bool gameOver;
     bool newLife;
-    bool newLevel; //Start en ny level
-    int bricksleft; //hvor mange brikker er der tilbage
+    bool newLevel; // Start en ny level
+    int bricksleft; // hvor mange brikker er der tilbage
 };
 
 struct player_struct {

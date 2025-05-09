@@ -12,7 +12,7 @@ public:
         powerupsGiven = 0;
         string line;
 
-        //Which powerups are evil?
+        // Which powerups are evil?
         evilPowerups = "2H37"; //P
 
         ifstream powerFile(themeManager.getThemeFilePath("/powerups.txt", setting.lvlTheme).data());
@@ -45,58 +45,38 @@ public:
     char selectRandomPowerup() {
         int i = rand() % 100;
         powerupsGiven++;
-        if (i < 1) //1% of powerups are from this class
-        {
-            i = rand() % chances[3].length();
-            return (chances[3][i]);
-        } else if (i < 11) //10% of powerups are from this class
-        {
-            i = rand() % chances[2].length();
-            return (chances[2][i]);
-        } else if (i < 41) //30% of powerups are from this class
-        {
-            i = rand() % chances[1].length();
-            return (chances[1][i]);
-        } else {
-            //Rest of the powerups are from this class
-            i = rand() % chances[0].length();
-            return (chances[0][i]);
-        }
+        int group = (i < 1) ? 3 : (i < 11) ? 2 : (i < 41) ? 1 : 0;
+        i = rand() % chances[group].length();
+        return chances[group][i];
     }
 
-    char randomPowerup(char p) {
-        // First, decide if we are going to put a powerup in the brick. (based on p)
+    char randomPowerup(const char p) {
         const int i = rand() % 100;
-        if (p == 'Q') //100% chance of evil
-        {
-            return (randomEvilPowerup());
-        } else if (p == 'K') //100% chance
-        {
-            return (selectRandomPowerup());
-        } else if (p == 'N' && i < 1) //1%
-        {
-            return (selectRandomPowerup());
-        } else if (p == 'M' && i < 2) //2%
-        {
-            return (selectRandomPowerup());
-        } else if (p == 'L' && i < 5) //5%
-        {
-            return (selectRandomPowerup());
-        } else if (p == 'J' && i < 10) //10%
-        {
-            return (selectRandomPowerup());
+        switch (p) {
+            case 'Q': // 100% evil
+                return randomEvilPowerup();
+            case 'K': // 100%
+                return selectRandomPowerup();
+            case 'N': // 1%
+                if (i < 1) return selectRandomPowerup();
+                return '0';
+            case 'M': // 2%
+                if (i < 2) return selectRandomPowerup();
+                return '0';
+            case 'L': // 5%
+                if (i < 5) return selectRandomPowerup();
+                return '0';
+            case 'J': // 10%
+                if (i < 10) return selectRandomPowerup();
+                return '0';
+            default:
+                return p;
         }
-
-        //Return no powerup or return the specified.
-        if (p == 'K' || p == 'N' || p == 'M' || p == 'L' || p == 'J') {
-            return ('0');
-        }
-        return p;
     }
 
     char randomEvilPowerup() const {
         const int i = rand() % evilPowerups.length();
-        return (evilPowerups[i]);
+        return evilPowerups[i];
     }
 };
 
@@ -114,21 +94,20 @@ void loadlevel(string file, brick bricks[], int level) {
 
     while (!levelfile.eof()) {
         getline(levelfile, line);
-        //Har vi fundet start?
+        // Har vi fundet start?
         if (levelread == 0) {
-            //Nej, er det nu?
+            // Nej, er det nu?
             if (line.substr(0, 11) == "** Start **") {
                 levelread++;
             }
         } else if (levelread == 1) {
-            //Do the level stop now?
+            // Do the level stop now?
             if (line.substr(0, 10) == "** Stop **") {
                 levelread = 0;
                 var.numlevels++;
                 brick = 0;
             } else {
-                //Reading data from level
-
+                // Reading data from level
                 if (var.numlevels == level) {
                     if (line[0] == '>') {
                         if (line.substr(0, 6) == "> down") {
@@ -185,8 +164,8 @@ void initlevels(brick bricks[], textureClass texLvl[]) {
     for (int row = 0; row < 23; row++) {
         for (int brick = 0; brick < 26; brick++) {
             // säulen links und rechts
-            bricks[i].posx = -1.0f + (brick + 0.5f) * 0.1232;
-            bricks[i].posy = 1.0f - (row + 0.5f) * 0.07;
+            bricks[i].posx = -1.0f + (brick + 0.5f) * BRICK_WIDTH;
+            bricks[i].posy = 1.0f - (row + 0.5f) * BRICK_HEIGHT;
 
             if (bricks[i].type != '0') {
                 bricks[i].active = true;
@@ -199,8 +178,8 @@ void initlevels(brick bricks[], textureClass texLvl[]) {
                 bricks[i].fadespeed = 2.0;
                 bricks[i].zoom = 1.0;
                 bricks[i].zoomspeed = 4.0;
-                bricks[i].width = 0.0616;
-                bricks[i].height = 0.035;
+                bricks[i].width = BRICK_WIDTH;
+                bricks[i].height = BRICK_HEIGHT;
 
                 bricks[i].score = 11;
                 bricks[i].destroytowin = true;

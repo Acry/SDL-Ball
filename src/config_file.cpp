@@ -65,9 +65,9 @@ bool ConfigFile::checkDir(const std::string &dir) {
 }
 
 std::string ConfigFile::getUserThemeDir() const {
-    return programRoot + "/themes";
+    return programRoot + "themes";
 }
 
 std::string ConfigFile::getGlobalThemeDir() {
-    return DATADIR "/themes";
+    return DATADIR "themes";
 }

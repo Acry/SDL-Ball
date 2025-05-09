@@ -60,16 +60,26 @@ std::string ThemeManager::getDefaultTheme() {
 }
 
 std::string ThemeManager::getThemeFilePath(const std::string &path, const std::string &theme) const {
+    auto join = [](const std::string& a, const std::string& b) {
+        if (a.empty()) return b;
+        if (b.empty()) return a;
+        if (a.back() == '/' && b.front() == '/')
+            return a + b.substr(1);
+        if (a.back() != '/' && b.front() != '/')
+            return a + "/" + b;
+        return a + b;
+    };
+
     struct stat st{};
     std::string name;
 
     if (theme != "default") {
-        name = configFile.getUserThemeDir() + "/" + theme + "/" + path;
+        name = join(configFile.getUserThemeDir(), theme + "/" + path);
         if (stat(name.c_str(), &st) == 0) return name;
-        name = configFile.getGlobalThemeDir() + "/" + theme + "/" + path; // Nicht ConfigFile::getGlobalThemeDir()
+        name = join(configFile.getGlobalThemeDir(), theme + "/" + path);
         if (stat(name.c_str(), &st) == 0) return name;
     }
-    name = configFile.getGlobalThemeDir() + "/default/" + path;
+    name = join(configFile.getGlobalThemeDir(), "default/" + path);
     if (stat(name.c_str(), &st) == 0) return name;
     SDL_Log("File Error: Could not find '%s'", path.c_str());
     return name;
