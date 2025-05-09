@@ -254,7 +254,7 @@ bool read_levels_structure(const std::string& filename) {
 }
 
 // if (gVar.newLevel) {
-bool set_up_bricks_for_level(const size_t level, brick bricks[], textureClass texLvl[]) {
+bool set_up_bricks_for_level(const size_t level, brick bricks[], texture texLvl[]) {
     if (level >= level_ranges.size()) {
         SDL_Log("Fehler: Level %ld existiert nicht", level);
         return false;

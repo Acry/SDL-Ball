@@ -1,7 +1,8 @@
+#include "texture.h"
 class highScoreClass {
     string name;
     textureManager texMgr;
-    textureClass tex;
+    texture tex;
 
 public:
     highScoreClass() {

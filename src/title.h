@@ -1,7 +1,7 @@
 // title.h
 #pragma once
 #include <string>
-#include "textureClass.h"
+#include "texture.h"
 #include "moving_object.h"
 #include "effectManager.h"
 #include "menuClass.h"
@@ -12,7 +12,7 @@ class powerupDescriptionClass : public moving_object {
 public:
     powerupDescriptionClass();
 
-    textureClass *tex;
+    texture *tex;
     void draw() const;
 
     std::string name;
@@ -23,8 +23,8 @@ class titleScreenClass {
     effectManager *fxMan;
     int ticksSinceLastSpawn;
     textureManager texMgr;
-    textureClass texTitle;
-    textureClass *texPowerups;
+    texture texTitle;
+    texture *texPowerups;
     GLuint glTitleList;
     float rot;
     bool rotDir;
@@ -41,6 +41,6 @@ class titleScreenClass {
     static void readDescriptions(powerupDescriptionClass po[]);
 
 public:
-    titleScreenClass(effectManager *m, textureClass tp[], menuClass *me);
+    titleScreenClass(effectManager *m, texture tp[], menuClass *me);
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };

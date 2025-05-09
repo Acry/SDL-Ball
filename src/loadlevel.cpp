@@ -1,3 +1,5 @@
+#include "texture.h"
+
 class powerupLoaderClass {
 public:
     //most common
@@ -152,7 +154,7 @@ void loadlevel(string file, brick bricks[], int level) {
     levelfile.close();
 }
 
-void initlevels(brick bricks[], textureClass texLvl[]) {
+void initlevels(brick bricks[], texture texLvl[]) {
     powerupLoaderClass powerupLoader;
 
     //Temp storage for custom colors

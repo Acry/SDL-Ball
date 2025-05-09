@@ -1,9 +1,10 @@
+#include "texture.h"
 
 class powerupDescriptionClass : public moving_object {
 public:
     powerupDescriptionClass();
 
-    textureClass *tex;
+    texture *tex;
 
     void draw() const;
 
@@ -67,8 +68,8 @@ class titleScreenClass {
     effectManager *fxMan;
     int ticksSinceLastSpawn;
     textureManager texMgr;
-    textureClass texTitle;
-    textureClass *texPowerups;
+    texture texTitle;
+    texture *texPowerups;
     GLuint glTitleList;
     float rot;
     bool rotDir;
@@ -85,12 +86,12 @@ class titleScreenClass {
     static void readDescriptions(powerupDescriptionClass po[]);
 
 public:
-    titleScreenClass(effectManager *m, textureClass tp[], menuClass *me);
+    titleScreenClass(effectManager *m, texture tp[], menuClass *me);
 
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };
 
-titleScreenClass::titleScreenClass(effectManager *m, textureClass tp[], menuClass *me) {
+titleScreenClass::titleScreenClass(effectManager *m, texture tp[], menuClass *me) {
 
     menu = me;
     numHighScores = 7;

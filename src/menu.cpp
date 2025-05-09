@@ -1,3 +1,5 @@
+#include "texture.h"
+
 extern SettingsManager settingsManager;
 extern SaveFileManager saveManager;
 extern player_struct SOLPlayer;
@@ -91,7 +93,7 @@ score *sortScores(int *rl) {
 class menuClass {
     string saveGameName[6]; //The name of saveGames
     int saveGameSlot; //Where player choose to save/load to/from
-    textureClass tex[5];
+    texture tex[5];
     GLuint dl;
 
     bool themeChanged; //If the theme has changed change the banner.

@@ -1,4 +1,5 @@
 #include <list>
+#include "texture.h"
 
 struct effect_vars {
     int type; //Hvilken slags effekt er det?
@@ -12,7 +13,7 @@ struct effect_vars {
     GLfloat gravity; //Hvor stor er tyndgekraften
     int num; //Hvor mange elementer er der i den
     int life; //hvor mange ms lever den?
-    textureClass tex; //Texture
+    texture tex; //Texture
     int effectId; //unique id for this effect
 };
 
@@ -461,7 +462,7 @@ public:
         }
     }
 
-    void set(int var, textureClass tex) {
+    void set(int var, texture tex) {
         switch (var) {
             case FX_VAR_TEXTURE:
                 vars.tex = tex;

@@ -27,6 +27,8 @@
 #include "sound.h"
 #include "text.h"
 #include "ThemeManager.h"
+#include "texture.h"
+#include "texture_properties.h"
 
 using namespace std;
 
@@ -81,132 +83,13 @@ typedef GLfloat texPos[8];
 #ifndef uint // WIN32
 typedef unsigned int uint;
 #endif
-struct texProp {
-    GLuint texture; // Den GLtexture der er loaded
-    GLfloat xoffset; // Hvor stort er springet mellem hver subframe
-    GLfloat yoffset; //
-    int cols, rows; // hvor mange rækker og kolonner er der i denne textur
-    int ticks;
-    uint frames; // This many frames in each se
-    bool bidir; // Går Looper den fra 0 -> X - 0 eller fra 0 -> X -> 0
-    bool playing;
 
-    bool padding;
-    // Bit of a nasty hack, but if a texture is padded with 1 pixel around each frame, this have to be set to 1
-    float pxw, pxh; // pixel width, and height
-
-    GLfloat glTexColorInfo[4];
-    GLfloat glParColorInfo[3]; // This and above replaced object::color and particle colors
-
-    string fileName; // Quite the fugly.. This will be set by readTexProps();
-};
-
-class textureClass {
-private:
-    float age; //Hvor gammel er den frame vi er ved?
-    bool dir; //hvis dette er en animation der går frem og tilbage hvilken retning
-
-    uint lastframe; //check om det er den samme frame som sidst, så vi kan vide om vis skal opdatere cords
-
-public:
-    uint frame; //hvilken frame er vi nået til i texturen (den er public så vi kan lave offset)
-    bool playing; //spiller vi?
-    bool firstFrame; //If this is the first frame
-    texPos pos; //Kordinater for den frame på texturen der er nu
-    texProp prop; //Properties for den textur som dette objekt har
-
-    textureClass() {
-        age = 10000;
-        firstFrame = true;
-        lastframe = 1000;
-        frame = 1;
-        dir = false;
-    }
-
-    void play() {
-        if (prop.playing) {
-            //Skal vi skifte frame?
-            age += globalTicksSinceLastDraw;
-            if (age >= prop.ticks) //Denne frame har været vist længe nok
-            {
-                age = 0.0;
-                if (!dir) {
-                    if (frame == prop.frames) {
-                        if (prop.bidir) {
-                            dir = true;
-                        } else {
-                            frame = 1;
-                        }
-                    } else {
-                        frame++;
-                    }
-                }
-
-                if (dir) {
-                    if (frame == 1) {
-                        dir = false;
-                        frame = 2;
-                    } else {
-                        frame--;
-                    }
-                }
-            }
-        }
-
-        if (frame != lastframe || firstFrame) {
-            int row = 0;
-            uint f = 0;
-            int col = 0;
-            lastframe = frame;
-            firstFrame = false;
-
-            //hvor mange kolonner er der på en række
-
-            for (row = 0; row < prop.rows; row++) {
-                for (col = 0; col < prop.cols; col++) {
-                    f++;
-                    if (f == frame) {
-                        //Øverst Venstre
-                        pos[0] = (prop.xoffset * static_cast<float>(col)); //0.0;
-                        pos[1] = (prop.yoffset * static_cast<float>(row)); //0.0;
-
-                        //Øverst højre
-                        pos[2] = (prop.xoffset * static_cast<float>(col)) + prop.xoffset;
-                        pos[3] = (prop.yoffset * static_cast<float>(row)); //0.0;
-
-                        //Nederst højre
-                        pos[4] = (prop.xoffset * static_cast<float>(col)) + prop.xoffset; // 1
-                        pos[5] = (prop.yoffset * static_cast<float>(row)) + prop.yoffset; // 1
-
-                        //Nederst venstre
-                        pos[6] = (prop.xoffset * static_cast<float>(col)); //0.0;
-                        pos[7] = (prop.yoffset * static_cast<float>(row)) + prop.yoffset; //1
-
-                        if (prop.padding) {
-                            pos[0] += 1.0 / prop.pxw;
-                            pos[1] += 1.0 / prop.pxh;
-
-                            pos[2] -= 1.0 / prop.pxw;
-                            pos[3] += 1.0 / prop.pxh;
-
-                            pos[4] -= 1.0 / prop.pxw;
-                            pos[5] -= 1.0 / prop.pxh;
-
-                            pos[6] += 1.0 / prop.pxw;
-                            pos[7] -= 1.0 / prop.pxh;
-                        }
-                    }
-                }
-            }
-        }
-    }
-};
 
 /* This function reads textureProperties from fileName
    and applies them to *tex */
 class textureManager {
 public:
-    bool load(const string &file, textureClass &tex) {
+    bool load(const string &file, texture &tex) {
         SDL_Surface *temp = nullptr;
         GLint maxTexSize;
         GLuint glFormat = GL_RGBA;
@@ -250,7 +133,7 @@ public:
         return true;
     }
 
-    void readTexProps(string fileName, textureClass &tex) {
+    void readTexProps(string fileName, texture &tex) {
         char rgba[4][5];
         ifstream f;
         string set, val;
@@ -335,7 +218,7 @@ public:
     bool collide;
     bool reflect; // NOTE: use this for bricks that are not going to reflect the ball? (trap brick? :D)
 
-    textureClass tex;
+    texture tex;
 };
 
 // nasty fix to a problem
@@ -344,7 +227,7 @@ int updated_nbrick[23][26];
 class brick;
 
 void makeExplosive(brick &b);
-textureClass *texExplosiveBrick; //NOTE:Ugly
+texture *texExplosiveBrick; //NOTE:Ugly
 class brick : public game_object {
 public:
     int score; //Hvor meget gir den
@@ -596,7 +479,7 @@ class paddle_class : public game_object {
 
 public:
     bool dead;
-    textureClass *layerTex;
+    texture *layerTex;
 
     paddle_class() {
         init();
@@ -705,7 +588,7 @@ class bulletsClass {
 public:
     int active;
 
-    bulletsClass(const textureClass &texBullet) {
+    bulletsClass(const texture &texBullet) {
         for (int i = 0; i < 16; i++) {
             bullets[i].active = false;
             bullets[i].tex = texBullet;
@@ -963,7 +846,7 @@ class tracer {
 
 public:
     GLfloat height, width;
-    textureClass *tex;
+    texture *tex;
     int len;
 
     // Constructor bleibt gleich
@@ -1069,7 +952,7 @@ public:
     GLfloat bsin[32], bcos[32];
 
     bool aimdir;
-    textureClass fireTex;
+    texture fireTex;
 
     GLfloat lastX, lastY;
 
@@ -1357,14 +1240,14 @@ class ballManager {
 public:
     int activeBalls;
     ball b[MAXBALLS];
-    textureClass tex[3];
+    texture tex[3];
 
     void initBalls() {
         activeBalls = 0;
         clear();
     }
 
-    ballManager(textureClass btex[]) {
+    ballManager(texture btex[]) {
         tex[0] = btex[0];
         tex[1] = btex[1];
         tex[2] = btex[2];
@@ -1882,11 +1765,11 @@ class powerupManager {
 private:
     int i;
     powerupClass p[MAXPOWERUPS];
-    textureClass *tex;
+    texture *tex;
 
 public:
-    void init(textureClass texPowerup[]) {
-        tex = new textureClass[40];
+    void init(texture texPowerup[]) {
+        tex = new texture[40];
         tex = texPowerup;
     }
 
@@ -2160,7 +2043,7 @@ void initGL() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void createPlayfieldBorder(GLuint *dl, const textureClass &tex) {
+void createPlayfieldBorder(GLuint *dl, const texture &tex) {
     *dl = glGenLists(1);
     glNewList(*dl,GL_COMPILE);
 
@@ -2405,7 +2288,7 @@ struct shopItemStruct {
 };
 
 class hudClass {
-    textureClass texBall;
+    texture texBall;
 
     // For the hud text
     int ticksSinceLastClockCheck;
@@ -2415,14 +2298,14 @@ class hudClass {
 
 
     //For the powerup "shop"
-    textureClass *texPowerup; //Pointer to array of powerup textures
+    texture *texPowerup; //Pointer to array of powerup textures
     int shopItemSelected;
 #define NUMITEMSFORSALE 13
     struct shopItemStruct item[NUMITEMSFORSALE];
     bool shopItemBlocked[NUMITEMSFORSALE]; //One can only buy each powerup one time each life/level
 
 public:
-    hudClass(textureClass texB, textureClass texPo[]) {
+    hudClass(texture texB, texture texPo[]) {
         texPowerup = texPo;
         texBall = texB;
         ticksSinceLastClockCheck = 1001;
@@ -2775,16 +2658,16 @@ int main(int argc, char *argv[]) {
 #pragma region texture manager
     textureManager texMgr;
 
-    textureClass texPaddleBase;
-    textureClass texPaddleLayers[2];
-    textureClass texBall[3];
-    textureClass texLvl[13];
+    texture texPaddleBase;
+    texture texPaddleLayers[2];
+    texture texBall[3];
+    texture texLvl[13];
     texExplosiveBrick = &texLvl[0];
 
-    textureClass texBorder;
-    textureClass texPowerup[MAXPOTEXTURES];
-    textureClass texBullet;
-    textureClass texParticle;
+    texture texBorder;
+    texture texPowerup[MAXPOTEXTURES];
+    texture texBullet;
+    texture texParticle;
 
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/paddle/base.txt", setting.gfxTheme), texPaddleBase);
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/paddle/glue.txt", setting.gfxTheme), texPaddleLayers[0]);
