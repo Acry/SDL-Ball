@@ -37,9 +37,6 @@ SaveFileManager saveManager(configFile);
 ThemeManager themeManager(configFile);
 
 class effectManager;
-class ball;
-class paddle_class;
-class brick;
 
 gameVars gVar;
 // current player
@@ -67,6 +64,23 @@ float globalMilliTicksSinceLastDraw;
 
 difficultyStruct fixed_difficulty, runtime_difficulty;
 
+
+void initNewGame();
+
+void pauseGame();
+
+void resumeGame();
+
+void set_fixed_difficulty();
+
+float random_float(float total, float negative);
+
+float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx);
+
+typedef GLfloat texPos[8];
+#ifndef uint // WIN32
+typedef unsigned int uint;
+#endif
 struct texProp {
     GLuint texture; // Den GLtexture der er loaded
     GLfloat xoffset; // Hvor stort er springet mellem hver subframe
@@ -86,25 +100,6 @@ struct texProp {
 
     string fileName; // Quite the fugly.. This will be set by readTexProps();
 };
-
-void initNewGame();
-
-void pauseGame();
-
-void resumeGame();
-
-void set_fixed_difficulty();
-
-float random_float(float total, float negative);
-
-float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx);
-
-void makeExplosive(brick &b);
-
-typedef GLfloat texPos[8];
-#ifndef uint // WIN32
-typedef unsigned int uint;
-#endif
 
 class textureClass {
 private:
@@ -345,128 +340,13 @@ public:
     textureClass tex;
 };
 
-class moving_object : public game_object {
-public:
-    GLfloat xvel, yvel, velocity;
-
-    moving_object() {
-        xvel = 0.0;
-        yvel = 0.0;
-    }
-};
-
-class paddle_class : public game_object {
-    GLfloat growspeed;
-    GLfloat destwidth;
-    GLfloat aspect; // Verhältnis, um wie viel die Höhe zur Breite wächst.
-    bool growing;
-
-public:
-    bool dead;
-    textureClass *layerTex;
-
-    paddle_class() {
-        init();
-        growing = false;
-        growspeed = 0.05f;
-        aspect = 0.2f;
-    }
-
-    void init() {
-        posy = -0.9;
-        width = 0.08;
-        height = 0.02;
-        dead = false;
-    }
-
-    void grow(const GLfloat width) {
-        destwidth = width;
-        growing = true;
-    }
-
-    void draw() {
-        if (!dead) {
-            if (player.powerup[PO_DIE]) {
-                player.powerup[PO_DIE] = false;
-                dead = true;
-                width = 0.0;
-                height = 0.0;
-            }
-
-            if (growing) {
-                const GLfloat ix = growspeed * globalTicksSinceLastDraw;
-
-                width += ix;
-
-                if (width >= destwidth) {
-                    width = destwidth;
-                    height = aspect * destwidth;
-                    growing = false;
-                }
-            }
-            glLoadIdentity();
-            //glPushMatrix();
-            glTranslatef(posx, posy, 0.0);
-
-            tex.play();
-            glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
-            glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2],
-                      tex.prop.glTexColorInfo[3]);
-            glBegin(GL_QUADS);
-            glTexCoord2f(tex.pos[0], tex.pos[1]);
-            glVertex3f(-width, height, 0.0f);
-            glTexCoord2f(tex.pos[2], tex.pos[3]);
-            glVertex3f(width, height, 0.0f);
-            glTexCoord2f(tex.pos[4], tex.pos[5]);
-            glVertex3f(width, -height, 0.0f);
-            glTexCoord2f(tex.pos[6], tex.pos[7]);
-            glVertex3f(-width, -height, 0.0f);
-            // glPopMatrix();
-
-            // Hvis glue?
-            if (player.powerup[PO_GLUE]) {
-                glBindTexture(GL_TEXTURE_2D, layerTex[0].prop.texture);
-                glColor4f(layerTex[0].prop.glTexColorInfo[0], layerTex[0].prop.glTexColorInfo[1],
-                          layerTex[0].prop.glTexColorInfo[2], layerTex[0].prop.glTexColorInfo[3]);
-                glBegin(GL_QUADS);
-                glTexCoord2f(0.0f, 0.0f);
-                glVertex3f(-width, height, 0.0f);
-                glTexCoord2f(1.0f, 0.0f);
-                glVertex3f(width, height, 0.0f);
-                glTexCoord2f(1.0f, 0.99f);
-                glVertex3f(width, -height, 0.0f);
-                glTexCoord2f(0.0f, 0.99f);
-                glVertex3f(-width, -height, 0.0f);
-                glEnd();
-            }
-
-            //Hvis gun
-            if (player.powerup[PO_GUN]) {
-                layerTex[1].play();
-                glBindTexture(GL_TEXTURE_2D, layerTex[1].prop.texture);
-                glColor4f(layerTex[1].prop.glTexColorInfo[0], layerTex[1].prop.glTexColorInfo[1],
-                          layerTex[1].prop.glTexColorInfo[2], layerTex[1].prop.glTexColorInfo[3]);
-                glBegin(GL_QUADS);
-                glTexCoord2f(layerTex[1].pos[0], layerTex[1].pos[1]);
-                glVertex3f(-width, height * 4, 0.0f);
-                glTexCoord2f(layerTex[1].pos[2], layerTex[1].pos[3]);
-                glVertex3f(width, height * 4, 0.0f);
-                glTexCoord2f(layerTex[1].pos[4], layerTex[1].pos[5] - 0.01f);
-                glVertex3f(width, height, 0.0f);
-                glTexCoord2f(layerTex[1].pos[6], layerTex[1].pos[7] - 0.01f);
-                glVertex3f(-width, height, 0.0f);
-                glEnd();
-            }
-        }
-    }
-};
-
 // nasty fix to a problem
 int nbrick[23][26];
 int updated_nbrick[23][26];
+class brick;
 
+void makeExplosive(brick &b);
 textureClass *texExplosiveBrick; //NOTE:Ugly
-
 class brick : public game_object {
 public:
     int score; //Hvor meget gir den
@@ -698,6 +578,123 @@ public:
 };
 
 #include "loadlevel.cpp"
+
+class moving_object : public game_object {
+public:
+    GLfloat xvel, yvel, velocity;
+
+    moving_object() {
+        xvel = 0.0;
+        yvel = 0.0;
+    }
+};
+
+class paddle_class : public game_object {
+    GLfloat growspeed;
+    GLfloat destwidth;
+    GLfloat aspect; // Verhältnis, um wie viel die Höhe zur Breite wächst.
+    bool growing;
+
+public:
+    bool dead;
+    textureClass *layerTex;
+
+    paddle_class() {
+        init();
+        growing = false;
+        growspeed = 0.05f;
+        aspect = 0.2f;
+    }
+
+    void init() {
+        posy = -0.9;
+        width = 0.08;
+        height = 0.02;
+        dead = false;
+    }
+
+    void grow(const GLfloat width) {
+        destwidth = width;
+        growing = true;
+    }
+
+    void draw() {
+        if (!dead) {
+            if (player.powerup[PO_DIE]) {
+                player.powerup[PO_DIE] = false;
+                dead = true;
+                width = 0.0;
+                height = 0.0;
+            }
+
+            if (growing) {
+                const GLfloat ix = growspeed * globalTicksSinceLastDraw;
+
+                width += ix;
+
+                if (width >= destwidth) {
+                    width = destwidth;
+                    height = aspect * destwidth;
+                    growing = false;
+                }
+            }
+            glLoadIdentity();
+            //glPushMatrix();
+            glTranslatef(posx, posy, 0.0);
+
+            tex.play();
+            glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
+            glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2],
+                      tex.prop.glTexColorInfo[3]);
+            glBegin(GL_QUADS);
+            glTexCoord2f(tex.pos[0], tex.pos[1]);
+            glVertex3f(-width, height, 0.0f);
+            glTexCoord2f(tex.pos[2], tex.pos[3]);
+            glVertex3f(width, height, 0.0f);
+            glTexCoord2f(tex.pos[4], tex.pos[5]);
+            glVertex3f(width, -height, 0.0f);
+            glTexCoord2f(tex.pos[6], tex.pos[7]);
+            glVertex3f(-width, -height, 0.0f);
+            // glPopMatrix();
+
+            // Hvis glue?
+            if (player.powerup[PO_GLUE]) {
+                glBindTexture(GL_TEXTURE_2D, layerTex[0].prop.texture);
+                glColor4f(layerTex[0].prop.glTexColorInfo[0], layerTex[0].prop.glTexColorInfo[1],
+                          layerTex[0].prop.glTexColorInfo[2], layerTex[0].prop.glTexColorInfo[3]);
+                glBegin(GL_QUADS);
+                glTexCoord2f(0.0f, 0.0f);
+                glVertex3f(-width, height, 0.0f);
+                glTexCoord2f(1.0f, 0.0f);
+                glVertex3f(width, height, 0.0f);
+                glTexCoord2f(1.0f, 0.99f);
+                glVertex3f(width, -height, 0.0f);
+                glTexCoord2f(0.0f, 0.99f);
+                glVertex3f(-width, -height, 0.0f);
+                glEnd();
+            }
+
+            //Hvis gun
+            if (player.powerup[PO_GUN]) {
+                layerTex[1].play();
+                glBindTexture(GL_TEXTURE_2D, layerTex[1].prop.texture);
+                glColor4f(layerTex[1].prop.glTexColorInfo[0], layerTex[1].prop.glTexColorInfo[1],
+                          layerTex[1].prop.glTexColorInfo[2], layerTex[1].prop.glTexColorInfo[3]);
+                glBegin(GL_QUADS);
+                glTexCoord2f(layerTex[1].pos[0], layerTex[1].pos[1]);
+                glVertex3f(-width, height * 4, 0.0f);
+                glTexCoord2f(layerTex[1].pos[2], layerTex[1].pos[3]);
+                glVertex3f(width, height * 4, 0.0f);
+                glTexCoord2f(layerTex[1].pos[4], layerTex[1].pos[5] - 0.01f);
+                glVertex3f(width, height, 0.0f);
+                glTexCoord2f(layerTex[1].pos[6], layerTex[1].pos[7] - 0.01f);
+                glVertex3f(-width, height, 0.0f);
+                glEnd();
+            }
+        }
+    }
+};
+
 #include "effects.cpp"
 #include "background.cpp"
 
