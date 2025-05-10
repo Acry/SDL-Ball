@@ -12,7 +12,7 @@ struct themeInfo {
 
 class ThemeManager {
 public:
-    explicit ThemeManager(const ConfigFileManager& configFile);
+    explicit ThemeManager(const ConfigFileManager& configFileManager);
 
     std::vector<themeInfo> listThemes();
     bool themeExists(const std::string& name) const;
@@ -21,6 +21,6 @@ public:
 
 private:
     std::vector<themeInfo> themes;
-    const ConfigFileManager& configFile;
+    const ConfigFileManager& configFileManager;
     void scanThemes();
 };

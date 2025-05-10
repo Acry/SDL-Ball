@@ -5,14 +5,14 @@
 #include <fstream>
 #include <SDL2/SDL_log.h>
 
-ThemeManager::ThemeManager(const ConfigFileManager &configFile) : configFile(configFile) {
+ThemeManager::ThemeManager(const ConfigFileManager &configFileManager) : configFileManager(configFileManager) {
     scanThemes();
 }
 
 void ThemeManager::scanThemes() {
     themes.clear();
     const std::vector themeDirs = {
-        configFile.getUserThemeDir(),
+        configFileManager.getUserThemeDir(),
         ConfigFileManager::getGlobalThemeDir()
     };
 
@@ -74,12 +74,12 @@ std::string ThemeManager::getThemeFilePath(const std::string &path, const std::s
     std::string name;
 
     if (theme != "default") {
-        name = join(configFile.getUserThemeDir(), theme + "/" + path);
+        name = join(configFileManager.getUserThemeDir(), theme + "/" + path);
         if (stat(name.c_str(), &st) == 0) return name;
-        name = join(configFile.getGlobalThemeDir(), theme + "/" + path);
+        name = join(configFileManager.getGlobalThemeDir(), theme + "/" + path);
         if (stat(name.c_str(), &st) == 0) return name;
     }
-    name = join(configFile.getGlobalThemeDir(), "default/" + path);
+    name = join(configFileManager.getGlobalThemeDir(), "default/" + path);
     if (stat(name.c_str(), &st) == 0) return name;
     SDL_Log("File Error: Could not find '%s'", path.c_str());
     return name;

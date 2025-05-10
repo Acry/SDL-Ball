@@ -4,12 +4,12 @@
 #include "Display.hpp"
 #include <memory>
 
-#include "settings_manager.h"
+#include "SettingsManager.h"
 
 using namespace std;
 
 extern settings setting;
-extern ConfigFileManager configFile;
+extern ConfigFileManager configFileManager;
 
 bool Display::init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -145,7 +145,7 @@ bool Display::screenshot() {
     // Finde freien Dateinamen
     while (fileIndex < 9999) {
         const int result = snprintf(fileName, MAX_FILENAME, "%s/sdl-ball_%04d.tga",
-                                    configFile.getScreenshotDir().data(), fileIndex);
+                                    configFileManager.getScreenshotDir().data(), fileIndex);
 
         if (result < 0 || static_cast<size_t>(result) >= MAX_FILENAME) {
             SDL_Log("Filename too long");

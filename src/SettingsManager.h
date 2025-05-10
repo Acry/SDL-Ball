@@ -32,7 +32,7 @@ struct settings {
 extern settings setting;
 class SettingsManager {
     settings currentSettings;
-    ConfigFileManager &configFile;
+    ConfigFileManager &configFileManager;
 
     bool hasChanges;
 

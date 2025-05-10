@@ -19,5 +19,5 @@ public:
     int listSaveGames(std::string slotNames[6]) const;
 
 private:
-    ConfigFileManager &configFile;
+    ConfigFileManager &configFileManager;
 };

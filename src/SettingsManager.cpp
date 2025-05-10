@@ -1,11 +1,11 @@
 // settings_manager.cpp
-#include "settings_manager.h"
+#include "SettingsManager.h"
 #include <SDL2/SDL.h>
 #include "config.h"
 
 settings setting;
 
-SettingsManager::SettingsManager(ConfigFileManager &cf) : currentSettings(), configFile(cf) {
+SettingsManager::SettingsManager(ConfigFileManager &cf) : currentSettings(), configFileManager(cf) {
     hasChanges = false;
 }
 
@@ -59,7 +59,7 @@ bool SettingsManager::init() {
 }
 
 bool SettingsManager::readFromFile() {
-    std::ifstream file(configFile.getSettingsFile());
+    std::ifstream file(configFileManager.getSettingsFile());
     if (!file.is_open()) {
         return false;
     }
@@ -134,7 +134,7 @@ bool SettingsManager::validateSettings() {
 }
 
 bool SettingsManager::writeToFile() const {
-    std::ofstream file(configFile.getSettingsFile());
+    std::ofstream file(configFileManager.getSettingsFile());
     if (!file.is_open()) {
         return false;
     }

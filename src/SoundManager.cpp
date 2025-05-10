@@ -5,7 +5,7 @@
 #include <SDL_log.h>
 #include <string>
 
-#include "settings_manager.h"
+#include "SettingsManager.h"
 #include "ThemeManager.h"
 
 extern settings setting;

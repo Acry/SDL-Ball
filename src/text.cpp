@@ -5,7 +5,7 @@
 
 #include <fstream>
 
-#include "settings_manager.h"
+#include "SettingsManager.h"
 #include "ThemeManager.h"
 
 extern settings setting;

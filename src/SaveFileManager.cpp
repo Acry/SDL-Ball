@@ -6,7 +6,7 @@
 
 #include "config.h"
 
-SaveFileManager::SaveFileManager(ConfigFileManager &cfg) : configFile(cfg) {}
+SaveFileManager::SaveFileManager(ConfigFileManager &cfg) : configFileManager(cfg) {}
 
 void SaveFileManager::saveGame(const int slot, const std::string &name, const player_struct &player) const {
     std::fstream file;
@@ -14,7 +14,7 @@ void SaveFileManager::saveGame(const int slot, const std::string &name, const pl
     std::strncpy(game.name, name.c_str(), sizeof(game.name));
     game.name[sizeof(game.name) - 1] = '\0';
     game.player = player;
-    file.open(configFile.getSaveGameFile().c_str(), std::ios::out | std::ios::in | std::ios::binary);
+    file.open(configFileManager.getSaveGameFile().c_str(), std::ios::out | std::ios::in | std::ios::binary);
     if (!file.is_open()) return;
     file.seekp(sizeof(int) + (sizeof(savedGame) * slot));
     file.write(reinterpret_cast<char*>(&game), sizeof(savedGame));
@@ -24,9 +24,9 @@ void SaveFileManager::saveGame(const int slot, const std::string &name, const pl
 bool SaveFileManager::loadGame(const int slot, player_struct &player) const {
     std::fstream file;
     savedGame game;
-    file.open(configFile.getSaveGameFile().c_str(), std::ios::in | std::ios::binary);
+    file.open(configFileManager.getSaveGameFile().c_str(), std::ios::in | std::ios::binary);
     if (!file.is_open()) {
-        SDL_Log("Could not open '%s' for Reading.", configFile.getSaveGameFile().c_str());
+        SDL_Log("Could not open '%s' for Reading.", configFileManager.getSaveGameFile().c_str());
         return false;
     }
     file.seekg(sizeof(int) + (sizeof(savedGame) * slot));
@@ -41,9 +41,9 @@ bool SaveFileManager::loadGame(const int slot, player_struct &player) const {
 
 void SaveFileManager::clearSaveGames() const {
     std::fstream file;
-    file.open(configFile.getSaveGameFile().c_str(), std::ios::out | std::ios::in | std::ios::binary);
+    file.open(configFileManager.getSaveGameFile().c_str(), std::ios::out | std::ios::in | std::ios::binary);
     if (!file.is_open()) {
-        SDL_Log("Could not open '%s' for Read+Write.", configFile.getSaveGameFile().c_str());
+        SDL_Log("Could not open '%s' for Read+Write.", configFileManager.getSaveGameFile().c_str());
         return;
     }
     //Write the header
@@ -58,14 +58,14 @@ int SaveFileManager::listSaveGames(std::string slotNames[6]) const {
     std::fstream file;
     savedGame slot[6];
     int i = 0;
-    file.open(configFile.getSaveGameFile().c_str(), std::ios::in | std::ios::binary);
+    file.open(configFileManager.getSaveGameFile().c_str(), std::ios::in | std::ios::binary);
     if (!file.is_open()) return 0;
     int sgHead = 0;
     file.read(reinterpret_cast<char*>(&sgHead), sizeof(int));
     if (sgHead != SAVEGAME_VERSION) {
         file.close();
         clearSaveGames();
-        file.open(configFile.getSaveGameFile().c_str(), std::ios::in | std::ios::binary);
+        file.open(configFileManager.getSaveGameFile().c_str(), std::ios::in | std::ios::binary);
         file.seekp(sizeof(int));
     }
     while (i < 6) {

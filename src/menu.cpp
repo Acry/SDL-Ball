@@ -17,7 +17,7 @@ score *sortScores(int *rl) {
     score *final = nullptr, *temp = nullptr;
     final = new score[1];
 
-    hsList.open(configFile.getHighScoreFile().data());
+    hsList.open(configFileManager.getHighScoreFile().data());
 
     if (hsList.is_open()) {
         int delim[2];

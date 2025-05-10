@@ -31,10 +31,10 @@
 
 using namespace std;
 
-ConfigFileManager configFile;
-SettingsManager settingsManager(configFile);
-SaveFileManager saveManager(configFile);
-ThemeManager themeManager(configFile);
+ConfigFileManager configFileManager;
+SettingsManager settingsManager(configFileManager);
+SaveFileManager saveManager(configFileManager);
+ThemeManager themeManager(configFileManager);
 
 class effectManager;
 
@@ -2529,7 +2529,7 @@ int main(int argc, char *argv[]) {
     (void) argc;
     (void) argv;
 
-    if (!configFile.init()) {
+    if (!configFileManager.init()) {
         SDL_Log("Fehler beim Initialisieren der Konfigurationspfade");
     }
 
