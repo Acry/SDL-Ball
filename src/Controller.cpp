@@ -60,11 +60,11 @@ Controller::~Controller() {
 
 void Controller::movePaddle(GLfloat px) {
     if (!var.paused) {
-        paddle->posx = px;
-        if (paddle->posx > 1.66 - paddle->width - 0.06) {
-            paddle->posx = 1.66 - paddle->width - 0.06;
-        } else if (paddle->posx < -1.66 + paddle->width + 0.06) {
-            paddle->posx = -1.66 + paddle->width + 0.06;
+        paddle->pos_x = px;
+        if (paddle->pos_x > 1.66 - paddle->width - 0.06) {
+            paddle->pos_x = 1.66 - paddle->width - 0.06;
+        } else if (paddle->pos_x < -1.66 + paddle->width + 0.06) {
+            paddle->pos_x = -1.66 + paddle->width + 0.06;
         }
     }
 }
@@ -83,10 +83,10 @@ void Controller::btnPress() {
             bMan->unglue();
             var.startedPlaying = 1;
             if (player.powerup[PO_GUN]) {
-                p.x = paddle->posx - paddle->width / 1.5;
-                p.y = paddle->posy;
+                p.x = paddle->pos_x - paddle->width / 1.5;
+                p.y = paddle->pos_y;
                 bullet->shoot(p);
-                p.x = paddle->posx + paddle->width / 1.5;
+                p.x = paddle->pos_x + paddle->width / 1.5;
                 bullet->shoot(p);
             }
         }
@@ -153,7 +153,7 @@ bool Controller::get() {
                 gVar.shopPrevItem = 1;
             }
             //Move the paddle:
-            movePaddle(paddle->posx += (x * globalMilliTicks));
+            movePaddle(paddle->pos_x += (x * globalMilliTicks));
         }
     }
     //React to keystates here, this way, if joyisdig it will press keys
@@ -161,12 +161,12 @@ bool Controller::get() {
         accel += globalMilliTicks * setting.controlAccel;
         if (accel > setting.controlMaxSpeed)
             accel = setting.controlMaxSpeed;
-        movePaddle(paddle->posx - (accel * globalMilliTicks));
+        movePaddle(paddle->pos_x - (accel * globalMilliTicks));
     } else if (keyDown[1]) {
         accel += globalMilliTicks * setting.controlAccel;
         if (accel > setting.controlMaxSpeed)
             accel = setting.controlMaxSpeed;
-        movePaddle(paddle->posx + (accel * globalMilliTicks));
+        movePaddle(paddle->pos_x + (accel * globalMilliTicks));
     } else {
         accel = setting.controlStartSpeed;
     }

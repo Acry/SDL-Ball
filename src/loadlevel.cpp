@@ -129,15 +129,15 @@ void load_level(const string& file, brick bricks[], const int level) {
                                 sprintf(rgb[1], "0x%c%c", line[ch + 4], line[ch + 5]);
                                 sprintf(rgb[2], "0x%c%c", line[ch + 6], line[ch + 7]);
 
-                                bricks[brick].tex.textureProperties.glTexColorInfo[0] = 0.003921569 * strtol(rgb[0], nullptr, 16);
-                                bricks[brick].tex.textureProperties.glTexColorInfo[1] = 0.003921569 * strtol(rgb[1], nullptr, 16);
-                                bricks[brick].tex.textureProperties.glTexColorInfo[2] = 0.003921569 * strtol(rgb[2], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glTexColorInfo[0] = 0.003921569 * strtol(rgb[0], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glTexColorInfo[1] = 0.003921569 * strtol(rgb[1], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glTexColorInfo[2] = 0.003921569 * strtol(rgb[2], nullptr, 16);
 
-                                bricks[brick].tex.textureProperties.glParColorInfo[0] = 0.003921569 * strtol(rgb[0], nullptr, 16);
-                                bricks[brick].tex.textureProperties.glParColorInfo[1] = 0.003921569 * strtol(rgb[1], nullptr, 16);
-                                bricks[brick].tex.textureProperties.glParColorInfo[2] = 0.003921569 * strtol(rgb[2], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glParColorInfo[0] = 0.003921569 * strtol(rgb[0], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glParColorInfo[1] = 0.003921569 * strtol(rgb[1], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glParColorInfo[2] = 0.003921569 * strtol(rgb[2], nullptr, 16);
 
-                                bricks[brick].tex.textureProperties.glTexColorInfo[3] = 1.0;
+                                bricks[brick].texture.textureProperties.glTexColorInfo[3] = 1.0;
                                 ch += 6;
                             }
                             // SDL_Log("Level:%s brick:%s Powerup:%s Type:%s\n", levelnum, brick, line[ch], line[ch+1]);
@@ -183,8 +183,8 @@ void init_levels(brick bricks[], Texture texLvl[]) {
             // -1 <----+----> +1
             //         |
             //        -1
-            bricks[i].posx = -1.0f + PILLAR_WIDTH + static_cast<float>(column) * BRICK_WIDTH;
-            bricks[i].posy = -1.0f + 0.38f + static_cast<float>(row) * BRICK_HEIGHT;
+            bricks[i].pos_x = -1.0f + PILLAR_WIDTH + static_cast<float>(column) * BRICK_WIDTH;
+            bricks[i].pos_y = -1.0f + 0.38f + static_cast<float>(row) * BRICK_HEIGHT;
 
             if (bricks[i].type != '0') {
                 bricks[i].active = true;
@@ -220,59 +220,59 @@ void init_levels(brick bricks[], Texture texLvl[]) {
             }
 
             if (bricks[i].type == '1') {
-                bricks[i].tex = texLvl[6];
+                bricks[i].texture = texLvl[6];
                 bricks[i].opacity = texLvl[6].textureProperties.glTexColorInfo[3];
             } else if (bricks[i].type == '2') {
-                bricks[i].tex = texLvl[7];
+                bricks[i].texture = texLvl[7];
                 bricks[i].opacity = texLvl[7].textureProperties.glTexColorInfo[3];
             } else if (bricks[i].type == '3') {
                 bricks[i].powerup = '0';
-                bricks[i].tex = texLvl[2];
+                bricks[i].texture = texLvl[2];
                 bricks[i].opacity = texLvl[2].textureProperties.glTexColorInfo[3];
                 bricks[i].score = 30;
                 bricks[i].destroytowin = false;
             } else if (bricks[i].type == '4') {
-                bricks[i].tex = texLvl[4]; //glass texture
+                bricks[i].texture = texLvl[4]; //glass texture
                 bricks[i].hitsLeft = 2; //takes two hits to kill
                 bricks[i].opacity = texLvl[4].textureProperties.glTexColorInfo[3];
             } else if (bricks[i].type == '5') {
-                bricks[i].tex = texLvl[8];
+                bricks[i].texture = texLvl[8];
                 bricks[i].opacity = texLvl[8].textureProperties.glTexColorInfo[3];
             } else if (bricks[i].type == '6') {
-                bricks[i].tex = texLvl[9];
+                bricks[i].texture = texLvl[9];
                 bricks[i].opacity = texLvl[9].textureProperties.glTexColorInfo[3];
             } else if (bricks[i].type == '7') {
-                bricks[i].tex = texLvl[10];
+                bricks[i].texture = texLvl[10];
                 bricks[i].opacity = texLvl[10].textureProperties.glTexColorInfo[3];
             } else if (bricks[i].type == '8') {
-                bricks[i].tex = texLvl[11];
+                bricks[i].texture = texLvl[11];
                 bricks[i].opacity = texLvl[11].textureProperties.glTexColorInfo[3];
             } else if (bricks[i].type == '9') {
-                bricks[i].tex = texLvl[5]; //invisible texture
-                bricks[i].tex.frame = 1;
+                bricks[i].texture = texLvl[5]; //invisible texture
+                bricks[i].texture.frame = 1;
                 bricks[i].hitsLeft = 3; //takes 3 to kill
                 bricks[i].opacity = texLvl[5].textureProperties.glTexColorInfo[3];
             } else if (bricks[i].type == 'A') {
-                bricks[i].tex = texLvl[12];
+                bricks[i].texture = texLvl[12];
                 bricks[i].opacity = texLvl[12].textureProperties.glTexColorInfo[3];
             } else if (bricks[i].type == 'B') {
-                bricks[i].tex = texLvl[0];
+                bricks[i].texture = texLvl[0];
                 bricks[i].opacity = texLvl[0].textureProperties.glTexColorInfo[3];
             } else if (bricks[i].type == 'C') {
-                bricks[i].tex = texLvl[3];
+                bricks[i].texture = texLvl[3];
                 bricks[i].opacity = texLvl[3].textureProperties.glTexColorInfo[3];
                 bricks[i].powerup = powerupLoader.randomEvilPowerup();
             } else if (bricks[i].type == 'D') //type D get colors applied by loadlevel.
             {
                 //Hold the colors while applying texture props
-                memcpy(tempCol, bricks[i].tex.textureProperties.glTexColorInfo, sizeof(tempCol));
-                memcpy(tempParCol, bricks[i].tex.textureProperties.glParColorInfo, sizeof(tempParCol));
+                memcpy(tempCol, bricks[i].texture.textureProperties.glTexColorInfo, sizeof(tempCol));
+                memcpy(tempParCol, bricks[i].texture.textureProperties.glParColorInfo, sizeof(tempParCol));
 
-                bricks[i].tex = texLvl[1];
+                bricks[i].texture = texLvl[1];
 
                 //Put pack the colors
-                memcpy(bricks[i].tex.textureProperties.glTexColorInfo, tempCol, sizeof(tempCol));
-                memcpy(bricks[i].tex.textureProperties.glParColorInfo, tempParCol, sizeof(tempParCol));
+                memcpy(bricks[i].texture.textureProperties.glTexColorInfo, tempCol, sizeof(tempCol));
+                memcpy(bricks[i].texture.textureProperties.glParColorInfo, tempParCol, sizeof(tempParCol));
 
                 bricks[i].opacity = tempCol[3];
             }

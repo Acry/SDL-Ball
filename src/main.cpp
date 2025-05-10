@@ -147,8 +147,8 @@ public:
                 active = false;
 
                 pos spos, svel;
-                spos.x = posx;
-                spos.y = posy;
+                spos.x = pos_x;
+                spos.y = pos_y;
 
 
                 if (bricknum > 0) {
@@ -217,11 +217,11 @@ public:
             }
         }
 
-        tex.play();
+        texture.play();
 
-        glColor4f(tex.textureProperties.glTexColorInfo[0], tex.textureProperties.glTexColorInfo[1], tex.textureProperties.glTexColorInfo[2], opacity);
+        glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1], texture.textureProperties.glTexColorInfo[2], opacity);
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
+        glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
         glLoadIdentity();
         glBegin(GL_QUADS);
         // Berechne die Ecken des Quads
@@ -232,22 +232,22 @@ public:
         // -1 <----+----> +1
         //         |
         //        -1
-        float left = posx * zoom;
-        float right = posx + BRICK_WIDTH * zoom;
-        float top = posy * zoom;
-        float bottom = posy + BRICK_HEIGHT * zoom;
+        float left = pos_x * zoom;
+        float right = pos_x + BRICK_WIDTH * zoom;
+        float top = pos_y * zoom;
+        float bottom = pos_y + BRICK_HEIGHT * zoom;
 
         // Zeichne das Quad mit den Texturkoordinaten
-        glTexCoord2f(tex.texturePosition[0], tex.texturePosition[1]);
+        glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
         glVertex3f(left, top, 0.0f);      // Oben links
 
-        glTexCoord2f(tex.texturePosition[2], tex.texturePosition[3]);
+        glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
         glVertex3f(right, top, 0.0f);     // Oben rechts
 
-        glTexCoord2f(tex.texturePosition[4], tex.texturePosition[5]);
+        glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
         glVertex3f(right, bottom, 0.0f);  // Unten rechts
 
-        glTexCoord2f(tex.texturePosition[6], tex.texturePosition[7]);
+        glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
         glVertex3f(left, bottom, 0.0f);   // Unten links
         glEnd();
         glDisable(GL_TEXTURE_2D);
@@ -311,16 +311,16 @@ public:
             score = 300;
             hitsLeft = 1;
             type = '1'; //hehe..
-            tex.frame = 2;
-            tex.play();
+            texture.frame = 2;
+            texture.play();
         } else if (type == '4') {
             hitsLeft = 1;
-            tex.frame = 2;
-            tex.play();
+            texture.frame = 2;
+            texture.play();
         } else if (type == '9') {
             hitsLeft = 1;
-            tex.frame = 3;
-            tex.play();
+            texture.frame = 3;
+            texture.play();
         }
     }
 };
@@ -345,7 +345,7 @@ public:
     }
 
     void init() {
-        posy = -0.93;
+        pos_y = -0.93;
         width = 0.059;
         height = 0.018;
         dead = false;
@@ -378,21 +378,21 @@ public:
             }
             glLoadIdentity();
             //glPushMatrix();
-            glTranslatef(posx, posy, 0.0);
+            glTranslatef(pos_x, pos_y, 0.0);
 
-            tex.play();
+            texture.play();
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
-            glColor4f(tex.textureProperties.glTexColorInfo[0], tex.textureProperties.glTexColorInfo[1], tex.textureProperties.glTexColorInfo[2],
-                      tex.textureProperties.glTexColorInfo[3]);
+            glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
+            glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1], texture.textureProperties.glTexColorInfo[2],
+                      texture.textureProperties.glTexColorInfo[3]);
             glBegin(GL_QUADS);
-            glTexCoord2f(tex.texturePosition[0], tex.texturePosition[1]);
+            glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
             glVertex3f(-width, height, 0.0f);
-            glTexCoord2f(tex.texturePosition[2], tex.texturePosition[3]);
+            glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
             glVertex3f(width, height, 0.0f);
-            glTexCoord2f(tex.texturePosition[4], tex.texturePosition[5]);
+            glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
             glVertex3f(width, -height, 0.0f);
-            glTexCoord2f(tex.texturePosition[6], tex.texturePosition[7]);
+            glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
             glVertex3f(-width, -height, 0.0f);
             glDisable(GL_TEXTURE_2D);
             // glPopMatrix();
@@ -454,7 +454,7 @@ public:
     bulletsClass(const Texture &texBullet) {
         for (auto & bullet : bullets) {
             bullet.active = false;
-            bullet.tex = texBullet;
+            bullet.texture = texBullet;
             bullet.width = 0.02;
             bullet.height = 0.02;
         }
@@ -466,8 +466,8 @@ public:
             if (!bullet.active) {
                 soundManager.add(SND_SHOT, p.x);
                 bullet.active = true;
-                bullet.posx = p.x;
-                bullet.posy = p.y;
+                bullet.pos_x = p.x;
+                bullet.pos_y = p.y;
                 bullet.xvel = 0;
                 bullet.yvel = 1.0;
                 break;
@@ -479,7 +479,7 @@ public:
         for (auto & bullet : bullets) {
             if (bullet.active) {
                 //Flyt
-                bullet.posy += bullet.yvel * globalMilliTicks;
+                bullet.pos_y += bullet.yvel * globalMilliTicks;
             }
         }
     }
@@ -490,20 +490,20 @@ public:
             if (bullet.active) {
                 //draw
 
-                bullet.tex.play();
+                bullet.texture.play();
 
                 glLoadIdentity();
-                glTranslatef(bullet.posx, bullet.posy, 0.0);
+                glTranslatef(bullet.pos_x, bullet.pos_y, 0.0);
                 glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, bullet.tex.textureProperties.texture);
+                glBindTexture(GL_TEXTURE_2D, bullet.texture.textureProperties.texture);
                 glBegin(GL_QUADS);
-                glTexCoord2f(bullet.tex.texturePosition[0], bullet.tex.texturePosition[1]);
+                glTexCoord2f(bullet.texture.texturePosition[0], bullet.texture.texturePosition[1]);
                 glVertex3f(-bullet.width, bullet.height, 0.0);
-                glTexCoord2f(bullet.tex.texturePosition[2], bullet.tex.texturePosition[3]);
+                glTexCoord2f(bullet.texture.texturePosition[2], bullet.texture.texturePosition[3]);
                 glVertex3f(bullet.width, bullet.height, 0.0);
-                glTexCoord2f(bullet.tex.texturePosition[4], bullet.tex.texturePosition[5]);
+                glTexCoord2f(bullet.texture.texturePosition[4], bullet.texture.texturePosition[5]);
                 glVertex3f(bullet.width, -bullet.height, 0.0);
-                glTexCoord2f(bullet.tex.texturePosition[6], bullet.tex.texturePosition[7]);
+                glTexCoord2f(bullet.texture.texturePosition[6], bullet.texture.texturePosition[7]);
                 glVertex3f(-bullet.width, -bullet.height, 0.0);
                 glDisable(GL_TEXTURE_2D);
                 glEnd();
@@ -525,14 +525,14 @@ public:
         for (auto & bullet : bullets) {
             if (bullet.active) {
                 //y
-                if (bullet.posy + bullet.height / 10.0 > b.posy - b.height && bullet.posy + bullet.
-                    height / 10.0 < b.posy + b.height) {
+                if (bullet.pos_y + bullet.height / 10.0 > b.pos_y - b.height && bullet.pos_y + bullet.
+                    height / 10.0 < b.pos_y + b.height) {
                     bool hit = false;
                     pos p;
-                    p.x = b.posx;
-                    p.y = b.posy;
+                    p.x = b.pos_x;
+                    p.y = b.pos_y;
                     //Venstre side:
-                    if (bullet.posx > b.posx - b.width && bullet.posx < b.posx + b.width) {
+                    if (bullet.pos_x > b.pos_x - b.width && bullet.pos_x < b.pos_x + b.width) {
                         hit = true;
                     }
 
@@ -541,8 +541,8 @@ public:
 
                         bullet.active = false;
 
-                        p.x = bullet.posx;
-                        p.y = bullet.posy;
+                        p.x = bullet.pos_x;
+                        p.y = bullet.pos_y;
 
                         if (setting.eyeCandy) {
                             fxMan.set(FX_VAR_TYPE, FX_SPARKS);
@@ -563,7 +563,7 @@ public:
                             fxMan.spawn(p);
                         }
                     }
-                } else if (bullet.posy > 1.6) {
+                } else if (bullet.pos_y > 1.6) {
                     bullet.active = false;
                 }
             }
@@ -581,25 +581,25 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
     if (ballHitMe || type == 'B') {
         if (type == '3') //cement
         {
-            soundManager.add(SND_CEMENT_BRICK_HIT, posx);
+            soundManager.add(SND_CEMENT_BRICK_HIT, pos_x);
         } else if (type == '4' || type == '9') //glass or invisible
         {
             if (hitsLeft == 2) {
-                soundManager.add(SND_INVISIBLE_BRICK_APPEAR, posx);
+                soundManager.add(SND_INVISIBLE_BRICK_APPEAR, pos_x);
             } else if (hitsLeft == 1) {
-                soundManager.add(SND_GLASS_BRICK_HIT, posx);
+                soundManager.add(SND_GLASS_BRICK_HIT, pos_x);
             } else {
-                soundManager.add(SND_GLASS_BRICK_BREAK, posx);
+                soundManager.add(SND_GLASS_BRICK_BREAK, pos_x);
             }
         } else if (type == 'B') //explosive
         {
-            soundManager.add(SND_EXPL_BRICK_BREAK, posx);
+            soundManager.add(SND_EXPL_BRICK_BREAK, pos_x);
         } else if (type == 'C') //Doom brick
         {
-            soundManager.add(SND_DOOM_BRICK_BREAK, posx);
+            soundManager.add(SND_DOOM_BRICK_BREAK, pos_x);
         } else {
             //All the other bricks
-            soundManager.add(SND_NORM_BRICK_BREAK, posx);
+            soundManager.add(SND_NORM_BRICK_BREAK, pos_x);
         }
     }
 
@@ -624,8 +624,8 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
             powerup = '0';
 
             if (setting.eyeCandy) {
-                p.x = posx;
-                p.y = posy;
+                p.x = pos_x;
+                p.y = pos_y;
                 s.x = width * 2;
                 s.y = height * 2;
 
@@ -639,8 +639,8 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
 
                 fxMan.set(FX_VAR_RECTANGLE, s);
 
-                fxMan.set(FX_VAR_COLOR, tex.textureProperties.glParColorInfo[0], tex.textureProperties.glParColorInfo[1],
-                          tex.textureProperties.glParColorInfo[2]);
+                fxMan.set(FX_VAR_COLOR, texture.textureProperties.glParColorInfo[0], texture.textureProperties.glParColorInfo[1],
+                          texture.textureProperties.glParColorInfo[2]);
                 fxMan.spawn(p);
             }
 
@@ -648,8 +648,8 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
                 isexploding = true;
 
                 if (setting.eyeCandy) {
-                    p.x = posx;
-                    p.y = posy;
+                    p.x = pos_x;
+                    p.y = pos_y;
                     fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
                     fxMan.set(FX_VAR_COLDET, 1);
                     fxMan.set(FX_VAR_LIFE, 1200);
@@ -672,8 +672,8 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
             }
         } else {
             //No hits left
-            tex.frame++;
-            tex.play();
+            texture.frame++;
+            texture.play();
         } //Hits left
     }
 }
@@ -830,8 +830,8 @@ public:
         width = 0.0;
         height = 0.0;
         glued = false;
-        posx = 0.0f;
-        posy = 0.0f;
+        pos_x = 0.0f;
+        pos_y = 0.0f;
         aimdir = false;
     }
 
@@ -842,29 +842,29 @@ public:
 
     void move() {
         // Ball Border Collision
-        if (posx + width > 1.0f - PILLAR_WIDTH && xvel > 0.0) {
-            soundManager.add(SND_BALL_HIT_BORDER, posx);
+        if (pos_x + width > 1.0f - PILLAR_WIDTH && xvel > 0.0) {
+            soundManager.add(SND_BALL_HIT_BORDER, pos_x);
             xvel *= -1;
-        } else if (posx < -1.0f + PILLAR_WIDTH && xvel < 0.0) {
-            soundManager.add(SND_BALL_HIT_BORDER, posx);
+        } else if (pos_x < -1.0f + PILLAR_WIDTH && xvel < 0.0) {
+            soundManager.add(SND_BALL_HIT_BORDER, pos_x);
             xvel *= -1;
-        } else if (posy + width > 1.0f && yvel > 0.0) {
-            soundManager.add(SND_BALL_HIT_BORDER, posx);
+        } else if (pos_y + width > 1.0f && yvel > 0.0) {
+            soundManager.add(SND_BALL_HIT_BORDER, pos_x);
             yvel *= -1;
-        } else if (posy - width < -1.0f) {
+        } else if (pos_y - width < -1.0f) {
             active = false;
         }
 
-        posx += xvel * globalMilliTicks;
+        pos_x += xvel * globalMilliTicks;
 
         if (!glued) {
-            posy += yvel * globalMilliTicks;
+            pos_y += yvel * globalMilliTicks;
         } else {
             gVar.deadTime = 0;
         }
 
         if (setting.eyeCandy)
-            tail.update(posx, posy);
+            tail.update(pos_x, pos_y);
     }
 
     void draw(const paddle_class &paddle) {
@@ -924,7 +924,7 @@ public:
 
             glDisable(GL_TEXTURE_2D);
             glLoadIdentity();
-            glTranslatef(posx, posy, 0.0f);
+            glTranslatef(pos_x, pos_y, 0.0f);
             glLineWidth(1.0);
             glEnable(GL_LINE_SMOOTH);
             glBegin(GL_LINES);
@@ -948,20 +948,20 @@ public:
 
             getRad();
             GLfloat p[4], b[4], o[2]; //Paddle line, ball line, bounceoff endpoint
-            p[0] = paddle.posx - paddle.width;
-            p[1] = paddle.posx + paddle.width;
+            p[0] = paddle.pos_x - paddle.width;
+            p[1] = paddle.pos_x + paddle.width;
 
-            p[2] = paddle.posy + paddle.height + height;
-            p[3] = paddle.posy + paddle.height + height;
+            p[2] = paddle.pos_y + paddle.height + height;
+            p[3] = paddle.pos_y + paddle.height + height;
 
-            b[0] = posx;
-            b[1] = posx + (cos(rad) * 3.0);
-            b[2] = posy;
-            b[3] = posy + (sin(rad) * 3.0);
+            b[0] = pos_x;
+            b[1] = pos_x + (cos(rad) * 3.0);
+            b[2] = pos_y;
+            b[3] = pos_y + (sin(rad) * 3.0);
 
             GLfloat cx, cy;
             if (LinesCross(p[0], p[2], p[1], p[3], b[0], b[2], b[1], b[3], &cx, &cy)) {
-                const GLfloat R = bounceOffAngle(paddle.width, paddle.posx, cx);
+                const GLfloat R = bounceOffAngle(paddle.width, paddle.pos_x, cx);
                 o[0] = cx + (cos(R) * 2.0);
                 o[1] = cy + (sin(R) * 2.0);
                 glLineWidth(2.0);
@@ -981,7 +981,7 @@ public:
         }
 
         glLoadIdentity();
-        glTranslatef(posx, posy, 0.0);
+        glTranslatef(pos_x, pos_y, 0.0);
         glColor4f(GL_WHITE);
 
         if (explosive) {
@@ -1003,20 +1003,20 @@ public:
             glEnd();
             glDisable( GL_TEXTURE_2D );
         } else {
-            tex.play();
+            texture.play();
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
-            glColor4f(tex.textureProperties.glTexColorInfo[0], tex.textureProperties.glTexColorInfo[1], tex.textureProperties.glTexColorInfo[2],
-                      tex.textureProperties.glTexColorInfo[3]);
+            glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
+            glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1], texture.textureProperties.glTexColorInfo[2],
+                      texture.textureProperties.glTexColorInfo[3]);
             glLoadIdentity();
             glBegin(GL_QUADS);
-            glTexCoord2f(tex.texturePosition[0], tex.texturePosition[1]);
+            glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
             glVertex3f(-width, height, 0.0);
-            glTexCoord2f(tex.texturePosition[2], tex.texturePosition[3]);
+            glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
             glVertex3f(width, height, 0.0);
-            glTexCoord2f(tex.texturePosition[4], tex.texturePosition[5]);
+            glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
             glVertex3f(width, -height, 0.0);
-            glTexCoord2f(tex.texturePosition[6], tex.texturePosition[7]);
+            glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
             glVertex3f(-width, -height, 0.0);
             glEnd();
             glDisable( GL_TEXTURE_2D );
@@ -1101,8 +1101,8 @@ public:
     static void checkPaddleCollision(ball &b, const paddle_class &p, pos &po) {
     //Er bolden tæt nok på?
 
-    if (b.posy < (p.posy + p.height) + b.height && b.posy > p.posy - p.height) {
-        if (b.posx > p.posx - (p.width * 2.0) - b.width && b.posx < p.posx + (p.width * 2.0) + b.width) {
+    if (b.pos_y < (p.pos_y + p.height) + b.height && b.pos_y > p.pos_y - p.height) {
+        if (b.pos_x > p.pos_x - (p.width * 2.0) - b.width && b.pos_x < p.pos_x + (p.width * 2.0) + b.width) {
             GLfloat py = 0;
             GLfloat px = 0;
             bool col = false;
@@ -1112,8 +1112,8 @@ public:
                 const GLfloat y = b.bcos[i];
 
                 //Find de punkter der er inden i padden
-                if (b.posx + x > p.posx - p.width && b.posx + x < p.posx + p.width) {
-                    if (b.posy + y < p.posy + p.height && b.posy + y > p.posy - p.height) {
+                if (b.pos_x + x > p.pos_x - p.width && b.pos_x + x < p.pos_x + p.width) {
+                    if (b.pos_y + y < p.pos_y + p.height && b.pos_y + y > p.pos_y - p.height) {
                         col = true;
 
                         px += x;
@@ -1129,20 +1129,20 @@ public:
                 px /= static_cast<float>(points);
                 py /= static_cast<float>(points);
 
-                px = b.posx + px;
+                px = b.pos_x + px;
 
                 //Ved at reagere herinde fungerer yvel som en switch, så det kun sker een gang ;)
                 if (b.yvel < 0) {
-                    b.posy = p.posy + p.height + b.height; //løft op over pad
+                    b.pos_y = p.pos_y + p.height + b.height; //løft op over pad
 
                     //Only decrease speed if the player does not have the go-thru powerup
                     if (!player.powerup[PO_THRU]) {
                         b.setspeed(b.velocity + runtime_difficulty.hitpaddleinc[player.difficulty]);
                     }
 
-                    b.setangle(bounceOffAngle(p.width, p.posx, b.posx));
+                    b.setangle(bounceOffAngle(p.width, p.pos_x, b.pos_x));
                     if (player.powerup[PO_GLUE]) {
-                        b.gluedX = p.posx + p.width - px;
+                        b.gluedX = p.pos_x + p.width - px;
                         b.glued = true;
                     }
 
@@ -1176,7 +1176,7 @@ public:
 
 
         for (auto & i : b) {
-            i.tex = tex[0];
+            i.texture = tex[0];
             i.fireTex = tex[1];
             i.tail.tex = &tex[2];
         }
@@ -1209,8 +1209,8 @@ public:
             if (b[i].active && c != a) {
                 pos op;
                 c++;
-                op.y = b[i].posy;
-                op.x = b[i].posx;
+                op.y = b[i].pos_y;
+                op.x = b[i].pos_x;
                 spawn(op, false, 0.0f, b[i].velocity, random_float(BALL_MAX_DEGREE + BALL_MIN_DEGREE, 0));
             }
         }
@@ -1226,7 +1226,7 @@ public:
         for (auto & i : b) {
             if (!i.active) {
                 activeBalls++;
-                i.tex = tex[0];
+                i.texture = tex[0];
                 i.fireTex = tex[1];
                 i.glued = glued;
 
@@ -1238,8 +1238,8 @@ public:
                 i.reflect = true;
                 i.lastX = p.x;
                 i.lastY = p.y;
-                i.posx = p.x;
-                i.posy = p.y;
+                i.pos_x = p.x;
+                i.pos_y = p.y;
                 i.explosive = false;
                 i.setspeed(speed);
                 i.setangle(angle);
@@ -1327,7 +1327,7 @@ public:
         for (auto & i : b) {
             if (i.active) {
                 if (i.glued)
-                    i.posx = paddle.posx + paddle.width - i.gluedX;
+                    i.pos_x = paddle.pos_x + paddle.width - i.gluedX;
 
                 p.x = 100;
                 i.checkPaddleCollision(i, paddle, p);
@@ -1351,7 +1351,7 @@ public:
                         fxMan.set(FX_VAR_COLDET, 1);
                         fxMan.set(FX_VAR_SIZE, 0.01f);
                         fxMan.set(FX_VAR_COLOR, 1.0, 1.0, 0.8);
-                        p.y = paddle.posy + paddle.height;
+                        p.y = paddle.pos_y + paddle.height;
                         fxMan.set(FX_VAR_SPEED, 0.5f);
                         fxMan.spawn(p);
                     } //eyecandy
@@ -1364,8 +1364,8 @@ public:
     void updateLast() {
         for (auto & i : b) {
             if (i.active) {
-                i.lastX = i.posx;
-                i.lastY = i.posy;
+                i.lastX = i.pos_x;
+                i.lastY = i.pos_y;
             }
         }
     }
@@ -1410,8 +1410,8 @@ public:
     GLfloat gravity;
 
     PowerupClass() {
-        posx = 0.0;
-        posy = 0.0;
+        pos_x = 0.0;
+        pos_y = 0.0;
         xvel = 0.0;
         yvel = 0.0;
         width = 0.055;
@@ -1422,28 +1422,28 @@ public:
         //grav
         yvel -= gravity * globalMilliTicks;
         //SDL_Log("%s", yvel);
-        posx += xvel * globalMilliTicks;
-        posy += yvel * globalMilliTicks;
+        pos_x += xvel * globalMilliTicks;
+        pos_y += yvel * globalMilliTicks;
     }
 
 
     bool coldet(paddle_class &p, effectManager &fxMan, BallManager &bMan) {
         bool col = false;
-        if (posx + width > 1.6 && xvel > 0.0) {
+        if (pos_x + width > 1.6 && xvel > 0.0) {
             col = true;
             xvel *= -1;
-        } else if (posx - width < -1.6 && xvel < 0.0) {
+        } else if (pos_x - width < -1.6 && xvel < 0.0) {
             col = true;
             xvel *= -1;
-        } else if (posy + width > 1.25 && yvel > 0.0) {
+        } else if (pos_y + width > 1.25 && yvel > 0.0) {
             col = true;
             yvel *= -1;
-        } else if (posy - width < -1.24) {
+        } else if (pos_y - width < -1.24) {
             active = false;
         }
 
         if (col) {
-            soundManager.add(SND_PO_HIT_BORDER, posx);
+            soundManager.add(SND_PO_HIT_BORDER, pos_x);
         }
 
         //idiotisk lavet...
@@ -1452,19 +1452,19 @@ public:
         bool xcol = false;
 
         //En side
-        if (posx + width > p.posx - p.width && posx + width < p.posx + p.width) {
+        if (pos_x + width > p.pos_x - p.width && pos_x + width < p.pos_x + p.width) {
             xcol = true;
         }
 
-        if (posx - width > p.posx - p.width && posx - width < p.posx + p.width) {
+        if (pos_x - width > p.pos_x - p.width && pos_x - width < p.pos_x + p.width) {
             xcol = true;
         }
 
-        if (posy - height < p.posy + p.height && posy - height > p.posy - p.height) {
+        if (pos_y - height < p.pos_y + p.height && pos_y - height > p.pos_y - p.height) {
             ycol = true;
         }
 
-        if (posy + height < p.posy + p.height && posy + height > p.posy - p.height) {
+        if (pos_y + height < p.pos_y + p.height && pos_y + height > p.pos_y - p.height) {
             ycol = true;
         }
 
@@ -1472,8 +1472,8 @@ public:
             if (setting.eyeCandy) {
                 pos fxSize;
                 pos fxpos;
-                fxpos.x = posx;
-                fxpos.y = posy;
+                fxpos.x = pos_x;
+                fxpos.y = pos_y;
                 fxSize.x = width;
                 fxSize.y = height;
 
@@ -1487,8 +1487,8 @@ public:
 
                 fxMan.set(FX_VAR_RECTANGLE, fxSize);
 
-                fxMan.set(FX_VAR_COLOR, tex.textureProperties.glParColorInfo[0], tex.textureProperties.glParColorInfo[1],
-                          tex.textureProperties.glParColorInfo[2]);
+                fxMan.set(FX_VAR_COLOR, texture.textureProperties.glParColorInfo[0], texture.textureProperties.glParColorInfo[1],
+                          texture.textureProperties.glParColorInfo[2]);
                 fxMan.spawn(fxpos);
             }
             active = false;
@@ -1499,12 +1499,12 @@ public:
             switch (type) {
                 case PO_COIN:
                     player.coins += 1000;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_GLUE:
                     player.coins += 150;
                     player.powerup[PO_GLUE] = true;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_BIGBALL:
                     player.coins += 30;
@@ -1512,7 +1512,7 @@ public:
                     player.powerup[PO_BIGBALL] = true;
                     player.powerup[PO_NORMALBALL] = false;
                     player.powerup[PO_SMALLBALL] = false;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_NORMALBALL:
                     player.coins += 50;
@@ -1520,7 +1520,7 @@ public:
                     player.powerup[PO_NORMALBALL] = true;
                     player.powerup[PO_BIGBALL] = false;
                     player.powerup[PO_SMALLBALL] = false;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_SMALLBALL:
                     player.coins += 10;
@@ -1528,12 +1528,12 @@ public:
                     player.powerup[PO_SMALLBALL] = true;
                     player.powerup[PO_BIGBALL] = false;
                     player.powerup[PO_NORMALBALL] = false;
-                    soundManager.add(SND_EVIL_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_EVIL_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_MULTIBALL:
                     player.coins += 100;
                     bMan.multiply();
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_AIM:
                     player.coins += 50;
@@ -1546,45 +1546,45 @@ public:
                     } else {
                         player.powerup[PO_GLUE] = true;
                     }
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_GROWPADDLE:
                     player.coins += 100;
                     if (p.width < 0.4) p.grow(p.width + 0.03);
                     player.powerup[PO_GUN] = false;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_SHRINKPADDLE:
                     player.coins += 10;
                     if (p.width > 0.02) p.grow(p.width - 0.02);
                     player.powerup[PO_GUN] = false;
-                    soundManager.add(SND_EVIL_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_EVIL_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_EXPLOSIVE:
                     player.coins += 150;
                     bMan.applyPowerup(PO_EXPLOSIVE);
                     player.powerup[PO_EXPLOSIVE] = true;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_GUN:
                     player.coins += 200;
                     player.powerup[PO_GUN] = true;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_THRU:
                     player.coins += 300;
                     player.powerup[PO_THRU] = true;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_LASER:
                     player.coins += 40;
                     player.powerup[PO_LASER] = true;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_LIFE:
                     player.coins += 400;
                     player.lives++;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_DIE:
                     player.coins += 1;
@@ -1595,22 +1595,22 @@ public:
                 case PO_DROP:
                     player.coins += 1;
                     player.powerup[PO_DROP] = true;
-                    soundManager.add(SND_EVIL_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_EVIL_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_DETONATE:
                     player.coins += 200;
                     player.powerup[PO_DETONATE] = true;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_EXPLOSIVE_GROW:
                     player.coins += 100;
                     player.powerup[PO_EXPLOSIVE_GROW] = true;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_EASYBRICK:
                     player.coins += 90;
                     player.powerup[PO_EASYBRICK] = true;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 case PO_NEXTLEVEL:
                     player.coins += 100;
@@ -1620,7 +1620,7 @@ public:
                 case PO_AIMHELP:
                     player.coins += 50;
                     player.powerup[PO_AIMHELP] = true;
-                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, pos_x);
                     break;
                 default: ;
             }
@@ -1634,8 +1634,8 @@ public:
         active = false;
         if (setting.eyeCandy) {
             pos p;
-            p.x = posx;
-            p.y = posy;
+            p.x = pos_x;
+            p.y = pos_y;
             fxMan.set(FX_VAR_TYPE, FX_SPARKS);
             fxMan.set(FX_VAR_COLDET, 1);
             fxMan.set(FX_VAR_LIFE, 1250);
@@ -1644,7 +1644,7 @@ public:
             fxMan.set(FX_VAR_SPEED, 0.8f);
             fxMan.set(FX_VAR_GRAVITY, 0.6f);
             fxMan.set(FX_VAR_SIZE, 0.025f);
-            fxMan.set(FX_VAR_COLOR, tex.textureProperties.glParColorInfo[0], tex.textureProperties.glParColorInfo[1], tex.textureProperties.glParColorInfo[2]);
+            fxMan.set(FX_VAR_COLOR, texture.textureProperties.glParColorInfo[0], texture.textureProperties.glParColorInfo[1], texture.textureProperties.glParColorInfo[2]);
             fxMan.spawn(p);
 
             fxMan.set(FX_VAR_SPEED, 0.4f);
@@ -1662,21 +1662,21 @@ public:
     }
 
     void draw() {
-        tex.play();
+        texture.play();
         glEnable( GL_TEXTURE_2D );
-        glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
-        glColor4f(tex.textureProperties.glTexColorInfo[0], tex.textureProperties.glTexColorInfo[1], tex.textureProperties.glTexColorInfo[2],
-                  tex.textureProperties.glTexColorInfo[3]);
+        glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
+        glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1], texture.textureProperties.glTexColorInfo[2],
+                  texture.textureProperties.glTexColorInfo[3]);
         glLoadIdentity();
-        glTranslatef(posx, posy, 0.0f);
+        glTranslatef(pos_x, pos_y, 0.0f);
         glBegin(GL_QUADS);
-        glTexCoord2f(tex.texturePosition[0], tex.texturePosition[1]);
+        glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
         glVertex3f(-width, height, 0.00); // øverst venst
-        glTexCoord2f(tex.texturePosition[2], tex.texturePosition[3]);
+        glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
         glVertex3f(width, height, 0.00); // øverst højre
-        glTexCoord2f(tex.texturePosition[4], tex.texturePosition[5]);
+        glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
         glVertex3f(width, -height, 0.00); // nederst højre
-        glTexCoord2f(tex.texturePosition[6], tex.texturePosition[7]);
+        glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
         glVertex3f(-width, -height, 0.00); // nederst venstre
         glEnd();
         glDisable( GL_TEXTURE_2D );
@@ -1718,14 +1718,14 @@ public:
             if (!p[i].active) {
                 p[i].gravity = 0.7;
                 p[i].type = type;
-                p[i].posx = spawnpos.x;
-                p[i].posy = spawnpos.y;
+                p[i].pos_x = spawnpos.x;
+                p[i].pos_y = spawnpos.y;
                 p[i].xvel = velocity.x * -1;
                 p[i].yvel = velocity.y * -1;
                 p[i].active = true;
 
                 //Give texture that this type has.
-                p[i].tex = tex[type];
+                p[i].texture = tex[type];
 
                 //FIXME: rewrite as a switch
                 //Set colors and score
@@ -1971,9 +1971,9 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
     //measure the distance from last pos to each possible impact, the shortest should be the right one
 
     //vi tager y først da der er mindst brikker
-    if (ba.posy < br.posy + br.height + ba.height && ba.posy > br.posy - br.height - ba.height) {
+    if (ba.pos_y < br.pos_y + br.height + ba.height && ba.pos_y > br.pos_y - br.height - ba.height) {
         //SDL_Log(" y ");
-        if (ba.posx > br.posx - br.width - ba.width && ba.posx < br.posx + br.width + ba.width) {
+        if (ba.pos_x > br.pos_x - br.width - ba.width && ba.pos_x < br.pos_x + br.width + ba.width) {
             int i = 0;
             int points = 0;
             GLfloat py = 0;
@@ -1985,8 +1985,8 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
                 GLfloat x = ba.bsin[i];
                 GLfloat y = ba.bcos[i];
 
-                if (ba.posx + x >= br.posx - br.width && ba.posx + x <= br.posx + br.width) {
-                    if (ba.posy + y <= br.posy + br.height && ba.posy + y >= br.posy - br.height) {
+                if (ba.pos_x + x >= br.pos_x - br.width && ba.pos_x + x <= br.pos_x + br.width) {
+                    if (ba.pos_y + y <= br.pos_y + br.height && ba.pos_y + y >= br.pos_y - br.height) {
                         //Vi har helt sikkert ramt
                         points++;
                         px += x;
@@ -2002,69 +2002,69 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
                 px /= points;
                 py /= points;
 
-                if (ba.lastX - px <= br.posx - br.width && !br.n(0)) //
+                if (ba.lastX - px <= br.pos_x - br.width && !br.n(0)) //
                 {
                     dirfound = true;
                     //    SDL_Log("På venstre");
                     dist[0] = sqrt(
-                        pow(br.posx - br.width - (ba.lastX + px), 2) + pow((ba.posy + py) - (ba.lastY + py), 2));
+                        pow(br.pos_x - br.width - (ba.lastX + px), 2) + pow((ba.pos_y + py) - (ba.lastY + py), 2));
                 }
 
-                if (ba.lastX - px >= br.posx + br.width && !br.n(1)) {
+                if (ba.lastX - px >= br.pos_x + br.width && !br.n(1)) {
                     dirfound = true;
                     // SDL_Log("På højre");
                     dist[1] = sqrt(
-                        pow(br.posx + br.width - (ba.lastX + px), 2) + pow((ba.posy + py) - (ba.lastY + py), 2));
+                        pow(br.pos_x + br.width - (ba.lastX + px), 2) + pow((ba.pos_y + py) - (ba.lastY + py), 2));
                 }
 
-                if (ba.lastY - py <= br.posy - br.height && !br.n(3)) {
+                if (ba.lastY - py <= br.pos_y - br.height && !br.n(3)) {
                     dirfound = true;
                     // SDL_Log("På bunden");
                     dist[2] = sqrt(
-                        pow((ba.posx + px) - (ba.lastX + px), 2) + pow(br.posy - br.height - (ba.lastY + py), 2));
+                        pow((ba.pos_x + px) - (ba.lastX + px), 2) + pow(br.pos_y - br.height - (ba.lastY + py), 2));
                 }
 
-                if (ba.lastY - py >= br.posy + br.height && !br.n(2)) // &&
+                if (ba.lastY - py >= br.pos_y + br.height && !br.n(2)) // &&
                 {
                     dirfound = true;
                     // SDL_Log("På toppen");
                     dist[3] = sqrt(
-                        pow((ba.posx + px) - (ba.lastX + px), 2) + pow(br.posy + br.height - (ba.lastY + py), 2));
+                        pow((ba.pos_x + px) - (ba.lastX + px), 2) + pow(br.pos_y + br.height - (ba.lastY + py), 2));
                 }
 
 
                 //Was hit on left
                 if (dist[0] < dist[1] && dist[0] < dist[2] && dist[0] < dist[3]) {
-                    ba.posx = br.posx - br.width - ba.width;
+                    ba.pos_x = br.pos_x - br.width - ba.width;
                     if (ba.xvel > 0.0 && !player.powerup[PO_THRU])
                         ba.xvel *= -1;
                 }
 
                 //Was hit on right
                 if (dist[1] < dist[0] && dist[1] < dist[2] && dist[1] < dist[3]) {
-                    ba.posx = br.posx + br.width + ba.width;
+                    ba.pos_x = br.pos_x + br.width + ba.width;
                     if (ba.xvel < 0 && !player.powerup[PO_THRU])
                         ba.xvel *= -1;
                 }
 
                 //Was hit on bottom
                 if (dist[2] < dist[0] && dist[2] < dist[1] && dist[2] < dist[3]) {
-                    ba.posy = br.posy - br.height - ba.height;
+                    ba.pos_y = br.pos_y - br.height - ba.height;
                     if (ba.yvel > 0 && !player.powerup[PO_THRU])
                         ba.yvel *= -1;
                 }
 
                 //Was hit on top
                 if (dist[3] < dist[0] && dist[3] < dist[1] && dist[3] < dist[2]) {
-                    ba.posy = br.posy + br.height + ba.height;
+                    ba.pos_y = br.pos_y + br.height + ba.height;
                     if (ba.yvel < 0 && !player.powerup[PO_THRU])
                         ba.yvel *= -1;
                 }
 
                 //Setup vars for spawning powerups
                 pos a, b;
-                a.x = br.posx;
-                a.y = br.posy;
+                a.x = br.pos_x;
+                a.y = br.pos_y;
 
                 //Hastigheden en powerup blier sendt afsted med
 
@@ -2086,11 +2086,11 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
                     }
 
                     //Update p, used by caller to find out if we hit anything..
-                    p.x = ba.posx + px;
-                    p.y = ba.posy + py;
+                    p.x = ba.pos_x + px;
+                    p.y = ba.pos_y + py;
 
 
-                    ba.hit(br.tex.textureProperties.glParColorInfo);
+                    ba.hit(br.texture.textureProperties.glParColorInfo);
 
                     if (!player.powerup[PO_THRU] || player.difficulty == HARD) {
                         ba.setspeed(ba.velocity + runtime_difficulty.hitbrickinc[player.difficulty]);
@@ -2286,8 +2286,8 @@ void detonateExplosives(brick bricks[], effectManager &fxMan) {
         if (bricks[i].active && bricks[i].type == 'B') {
             pos v;
             pos p;
-            p.x = bricks[i].posx;
-            p.y = bricks[i].posy;
+            p.x = bricks[i].pos_x;
+            p.y = bricks[i].pos_y;
             v.x = 0.0;
             v.y = 0.0;
             bricks[i].hit(fxMan, p, v, false);
@@ -2300,10 +2300,10 @@ void updateBrickPositions(brick bricks[]) {
         if (!bricks[i].active) continue;
 
         // Original Fallgeschwindigkeit beibehalten
-        bricks[i].posy -= bricks[i].height * 2;
+        bricks[i].pos_y -= bricks[i].height * 2;
 
         // Original untere Grenze beibehalten
-        if (bricks[i].posy < -1.00 - bricks[i].height) {
+        if (bricks[i].pos_y < -1.00 - bricks[i].height) {
             bricks[i].active = false;
             updated_nbrick[bricks[i].row][bricks[i].bricknum] = -1;
             player.score -= bricks[i].score;
@@ -2463,7 +2463,7 @@ int main(int argc, char *argv[]) {
     Score score;
     Menu menu;
     paddle_class paddle;
-    paddle.tex = texPaddleBase;
+    paddle.texture = texPaddleBase;
     paddle.layerTex = texPaddleLayers;
 
     effectManager fxMan;
@@ -2605,7 +2605,7 @@ int main(int argc, char *argv[]) {
                     else
                         var.menuItem = 0;
                 } else {
-                    control.movePaddle(paddle.posx + event.motion.xrel * display.glunits_per_xpixel);
+                    control.movePaddle(paddle.pos_x + event.motion.xrel * display.glunits_per_xpixel);
                 }
             } else if (event.type == SDL_MOUSEBUTTONDOWN) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
@@ -2765,7 +2765,7 @@ int main(int argc, char *argv[]) {
                 gVar.newLife = true;
                 powerupManager.clear();
                 bullet.clear();
-                paddle.posx = 0.0;
+                paddle.pos_x = 0.0;
                 var.startedPlaying = false;
                 background.updateBgIfNeeded(textureManager);
                 hud.clearShop();
@@ -2774,9 +2774,9 @@ int main(int argc, char *argv[]) {
             if (gVar.newLife) {
                 gVar.newLife = false;
                 paddle.init();
-                p.x = paddle.posx;
+                p.x = paddle.pos_x;
 
-                p.y = paddle.posy + paddle.height + 0.025f;
+                p.y = paddle.pos_y + paddle.height + 0.025f;
 
                 ballManager.clear();
                 ballManager.spawn(p, true, paddle.width, runtime_difficulty.ballspeed[player.difficulty], 1.57100000f);
@@ -2881,8 +2881,8 @@ int main(int argc, char *argv[]) {
                         p.y = paddle.height * 2;
                         fxMan.set(FX_VAR_RECTANGLE, p);
 
-                        p.x = paddle.posx;
-                        p.y = paddle.posy;
+                        p.x = paddle.pos_x;
+                        p.y = paddle.pos_y;
 
                         fxMan.set(FX_VAR_LIFE, 2000);
                         fxMan.set(FX_VAR_NUM, 20);
@@ -2962,7 +2962,7 @@ int main(int argc, char *argv[]) {
 void makeExplosive(brick &b) {
     if (b.type != 'B') {
         b.type = 'B';
-        b.tex = *texExplosiveBrick;
+        b.texture = *texExplosiveBrick;
         // NOTE: for some reason, the color of the object was changed, why??
         b.justBecomeExplosive = true;
     }

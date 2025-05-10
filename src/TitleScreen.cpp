@@ -28,31 +28,31 @@ void powerupDescriptionClass::draw() const {
               tex->textureProperties.glTexColorInfo[3]);
     glBegin(GL_QUADS);
     glTexCoord2f(tex->texturePosition[0], tex->texturePosition[1]);
-    glVertex3f(-width + posx, height + posy, 0.00); // top left
+    glVertex3f(-width + pos_x, height + pos_y, 0.00); // top left
     glTexCoord2f(tex->texturePosition[2], tex->texturePosition[3]);
-    glVertex3f(width + posx, height + posy, 0.00); // top right
+    glVertex3f(width + pos_x, height + pos_y, 0.00); // top right
     glTexCoord2f(tex->texturePosition[4], tex->texturePosition[5]);
-    glVertex3f(width + posx, -height + posy, 0.00); // bottom right
+    glVertex3f(width + pos_x, -height + pos_y, 0.00); // bottom right
     glTexCoord2f(tex->texturePosition[6], tex->texturePosition[7]);
-    glVertex3f(-width + posx, -height + posy, 0.00); // bottom left
+    glVertex3f(-width + pos_x, -height + pos_y, 0.00); // bottom left
     glEnd();
     glDisable(GL_TEXTURE_2D);
     constexpr float spacing = 0.05f;
     // Write the name and description
     constexpr float scale = 1.0f; // Scale for the text
     constexpr float leading = -0.018f; // Leading for the text
-    const float textX = posx + spacing;
+    const float textX = pos_x + spacing;
     text.write(name,
                   FONT_INTRODESCRIPTION,
                   false,
                   scale, textX,
-                  posy - leading);
+                  pos_y - leading);
     text.write(description,
                   FONT_INTRODESCRIPTION,
                   false,
                   scale,
                   textX,
-                  posy - height - leading);
+                  pos_y - height - leading);
 }
 
 class TitleScreen {
@@ -67,6 +67,8 @@ class TitleScreen {
     bool rotDir;
     powerupDescriptionClass powerUp[MAXPOTEXTURES];
     int numHighScores; //Number of highscores to show in the intro
+    // why is runner not a class?
+    // why is runner not a derived class from movingObject?
     pos runnerPos;
     Menu *menu; //Here is the highscore text
     int runnerTime;
@@ -128,8 +130,8 @@ TitleScreen::TitleScreen(effectManager *m, Texture tp[], Menu *me): text(Text::g
         for (int column = 0; column < 3; column++) {
             int idx = column + 3 * row;
             powerUp[idx].tex = &texPowerups[idx];
-            powerUp[idx].posx = startX + column * (iconWidth + spacing);
-            powerUp[idx].posy = startY - (leading + iconHeight) * row;
+            powerUp[idx].pos_x = startX + column * (iconWidth + spacing);
+            powerUp[idx].pos_y = startY - (leading + iconHeight) * row;
         }
     }
 

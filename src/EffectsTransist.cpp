@@ -120,27 +120,27 @@ public:
     }
 
     void coldet(brick &b) {
-        if (p.x > b.posx - b.width && p.x < b.posx + b.width) {
-            if (p.y > b.posy - b.height && p.y < b.posy + b.height) {
+        if (p.x > b.pos_x - b.width && p.x < b.pos_x + b.width) {
+            if (p.y > b.pos_y - b.height && p.y < b.pos_y + b.height) {
                 //Hvor ramte vi fra?
-                if (p.y < b.posy && !b.n(3)) {
+                if (p.y < b.pos_y && !b.n(3)) {
                     //bunden
                     v.y *= -1;
                     //p.y = b.posy-b.height-0.01;
-                } else if (p.y > b.posy && !b.n(2)) {
+                } else if (p.y > b.pos_y && !b.n(2)) {
                     //toppen
-                    p.y = b.posy + b.height;
+                    p.y = b.pos_y + b.height;
                     if (v.y < 0) {
                         v.y *= -1;
                         v.y /= 2.0;
                         f += 0.01;
                     }
-                } else if (p.x > b.posx && !b.n(1)) {
+                } else if (p.x > b.pos_x && !b.n(1)) {
                     //p.x = b.posx+b.width;
                     //højre
                     if (v.x < 0)
                         v.x *= -1;
-                } else if (p.x < b.posx && !b.n(0)) {
+                } else if (p.x < b.pos_x && !b.n(0)) {
                     //p.x = b.posx-b.width;
                     //venstre
                     if (v.x > 0)
@@ -151,29 +151,29 @@ public:
     }
 
     void pcoldet(paddle_class &b) {
-        if (p.x > b.posx - b.width && p.x < b.posx + b.width) {
-            if (p.y > b.posy - b.height && p.y < b.posy + b.height) {
+        if (p.x > b.pos_x - b.width && p.x < b.pos_x + b.width) {
+            if (p.y > b.pos_y - b.height && p.y < b.pos_y + b.height) {
                 //Hvor ramte vi fra?
-                if (p.y < b.posy) {
+                if (p.y < b.pos_y) {
                     //bunden
-                    p.y = b.posy - b.height;
+                    p.y = b.pos_y - b.height;
                 }
 
-                if (p.y > b.posy) {
+                if (p.y > b.pos_y) {
                     //toppen
-                    p.y = b.posy + b.height;
+                    p.y = b.pos_y + b.height;
                     if (v.y < 0) {
                         v.y *= -1;
                         v.y /= 2.0;
                         f += 0.01;
                     }
-                } else if (p.x > b.posx) {
-                    p.x = b.posx + b.width;
+                } else if (p.x > b.pos_x) {
+                    p.x = b.pos_x + b.width;
                     //højre
                     if (v.x < 0)
                         v.x *= -1;
-                } else if (p.x < b.posx) {
-                    p.x = b.posx - b.width;
+                } else if (p.x < b.pos_x) {
+                    p.x = b.pos_x - b.width;
                     //venstre
                     if (v.x > 0)
                         v.x *= -1;

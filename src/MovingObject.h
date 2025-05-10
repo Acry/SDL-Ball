@@ -6,7 +6,7 @@
 
 class MovingObject : public GameObject {
 public:
-    GLfloat xvel, yvel, velocity;
+    GLfloat xvel, yvel, velocity{};
 
     MovingObject() : xvel(0.0f), yvel(0.0f) {}
 };
