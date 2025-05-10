@@ -1,11 +1,11 @@
 #include "texture.h"
-class highScoreClass {
+class HighScore {
     string name;
-    textureManager texMgr;
+    TextureManager texMgr;
     texture tex;
 
 public:
-    highScoreClass() {
+    HighScore() {
         name = "";
         texMgr.load(themeManager.getThemeFilePath("gfx/highscore/entername.png", setting.gfxTheme), tex);
     }
@@ -13,7 +13,6 @@ public:
     void draw() const {
         // draw texture
         glLoadIdentity();
-        glTranslatef(0, 0, 0.0);
         glColor4f(GL_WHITE);
 
         glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
@@ -27,11 +26,6 @@ public:
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(-1.0f, -0.5f, 0.0f);
         glEnd();
-
-        // FIXME
-        glLoadIdentity();
-        glTranslatef(0, 0, 0);
-        glColor4f(GL_WHITE);
 
         glText->write(name, FONT_MENUHIGHSCORE, true, 2.0, 0.0, 0.2);
     }

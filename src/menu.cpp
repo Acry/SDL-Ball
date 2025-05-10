@@ -105,7 +105,7 @@ public:
 
     menuClass() {
         refreshHighScoreList(); //load the highscore file (if exists)
-        textureManager texMgr;
+        TextureManager texMgr;
 
         dl = glGenLists(4); //Generate displaylists (+0 = background, +1,2 = but
 

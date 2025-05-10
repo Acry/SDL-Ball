@@ -67,7 +67,7 @@ void powerupDescriptionClass::draw() const {
 class titleScreenClass {
     effectManager *fxMan;
     int ticksSinceLastSpawn;
-    textureManager texMgr;
+    TextureManager texMgr;
     texture texTitle;
     texture *texPowerups;
     GLuint glTitleList;

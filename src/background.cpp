@@ -11,7 +11,7 @@ public:
         firstTexture = true;
     }
 
-    void init(textureManager &texMgr) {
+    void init(TextureManager &texMgr) {
         bool l;
         // Don't delete texture 0 the first time the function is called
         if (!firstTexture)

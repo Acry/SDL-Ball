@@ -7,7 +7,9 @@
 extern gameVars gVar;
 extern vars var;
 extern player_struct player;
-extern difficultyStruct fixed_difficulty, runtime_difficulty;
+
+difficultyStruct fixed_difficulty;
+difficultyStruct runtime_difficulty;
 
 void resetPlayerPowerups();
 

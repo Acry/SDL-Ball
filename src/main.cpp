@@ -31,7 +31,6 @@
 
 using namespace std;
 
-settings setting;
 ConfigFile configFile;
 SettingsManager settingsManager(configFile);
 SaveFileManager saveManager(configFile);
@@ -56,22 +55,13 @@ soundClass soundMan; //Public object so all objects can use it
 //     #define DEBUG_NO_RELATIVE_MOUSE
 //     #define DEBUG_SHOW_MOUSE_COORDINATES
 
+// timing
 int globalTicks;
 float globalMilliTicks;
 Uint32 nonpausingGlobalTicks;
 float nonpausingGlobalMilliTicks;
 int globalTicksSinceLastDraw;
 float globalMilliTicksSinceLastDraw;
-
-difficultyStruct fixed_difficulty, runtime_difficulty;
-
-void initNewGame();
-
-void pauseGame();
-
-void resumeGame();
-
-void set_fixed_difficulty();
 
 float random_float(float total, float negative);
 
@@ -89,10 +79,9 @@ typedef GLfloat texPos[8];
 typedef unsigned int uint;
 #endif
 
-
 /* This function reads textureProperties from fileName
    and applies them to *tex */
-class textureManager {
+class TextureManager {
 public:
     static bool load(const string &file, texture &tex) {
         SDL_Surface *temp = nullptr;
@@ -939,7 +928,9 @@ class ball : public moving_object {
     GLfloat rad;
     bool growing, shrinking;
     GLfloat destwidth, growspeed;
-
+    float bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx) {
+        return BALL_MAX_DEGREE / (width * 2.0f) * (posx + width - hitx) + BALL_MIN_DEGREE;
+    }
 public:
     tracer tail;
     bool explosive; //Makes brick explosive (to get a explosion effect) and explode it
@@ -1226,15 +1217,72 @@ public:
             i++;
         }
     }
+
+    void checkPaddleCollision(ball &b, const paddle_class &p, pos &po) {
+    //Er bolden tæt nok på?
+
+    if (b.posy < (p.posy + p.height) + b.height && b.posy > p.posy - p.height) {
+        if (b.posx > p.posx - (p.width * 2.0) - b.width && b.posx < p.posx + (p.width * 2.0) + b.width) {
+            GLfloat py = 0;
+            GLfloat px = 0;
+            bool col = false;
+            int points = 0;
+            for (int i = 0; i < 32; i++) {
+                const GLfloat x = b.bsin[i];
+                const GLfloat y = b.bcos[i];
+
+                //Find de punkter der er inden i padden
+                if (b.posx + x > p.posx - p.width && b.posx + x < p.posx + p.width) {
+                    if (b.posy + y < p.posy + p.height && b.posy + y > p.posy - p.height) {
+                        col = true;
+
+                        px += x;
+                        py += y;
+                        points++;
+                    }
+                }
+            } //For loop
+
+            if (col) {
+                col = false;
+                gVar.deadTime = 0;
+                px /= static_cast<float>(points);
+                py /= static_cast<float>(points);
+
+                px = b.posx + px;
+
+                //Ved at reagere herinde fungerer yvel som en switch, så det kun sker een gang ;)
+                if (b.yvel < 0) {
+                    b.posy = p.posy + p.height + b.height; //løft op over pad
+
+                    //Only decrease speed if the player does not have the go-thru powerup
+                    if (!player.powerup[PO_THRU]) {
+                        b.setspeed(b.velocity + runtime_difficulty.hitpaddleinc[player.difficulty]);
+                    }
+
+                    b.setangle(bounceOffAngle(p.width, p.posx, b.posx));
+                    if (player.powerup[PO_GLUE]) {
+                        b.gluedX = p.posx + p.width - px;
+                        b.glued = true;
+                    }
+
+                    po.x = px;
+                    po.y = py;
+                }
+            }
+        }
+    }
+}
 };
 
 void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan);
 
-void collision_paddle_ball(ball &b, const paddle_class &p, pos &po);
+void checkPaddleCollision(ball &b, const paddle_class &p, pos &po);
 
 #define MAXBALLS 16
 
-class ballManager {
+class BallManager {
+    // verwaltet mehrere Bälle
 public:
     int activeBalls;
     ball b[MAXBALLS];
@@ -1245,7 +1293,7 @@ public:
         clear();
     }
 
-    ballManager(texture btex[]) {
+    BallManager(texture btex[]) {
         tex[0] = btex[0];
         tex[1] = btex[1];
         tex[2] = btex[2];
@@ -1326,11 +1374,11 @@ public:
                     i.explosive = player.powerup[PO_EXPLOSIVE];
 
                     if (player.powerup[PO_SMALLBALL]) {
-                        powerup(PO_SMALLBALL);
+                        applyPowerup(PO_SMALLBALL);
                     }
 
                     if (player.powerup[PO_BIGBALL]) {
-                        powerup(PO_BIGBALL);
+                        applyPowerup(PO_BIGBALL);
                     }
                 }
                 getSpeed();
@@ -1367,7 +1415,7 @@ public:
         }
     }
 
-    void bcoldet(brick &bri, effectManager &fxMan) {
+    void checkBallCollision(brick &bri, effectManager &fxMan) {
         pos p;
         for (auto & i : b) {
             if (i.active) {
@@ -1397,7 +1445,7 @@ public:
         }
     }
 
-    int pcoldet(const paddle_class &paddle, effectManager &fxMan) {
+    int checkPaddleCollision(const paddle_class &paddle, effectManager &fxMan) {
         int hits = 0;
         pos p;
         for (auto & i : b) {
@@ -1406,7 +1454,7 @@ public:
                     i.posx = paddle.posx + paddle.width - i.gluedX;
 
                 p.x = 100;
-                collision_paddle_ball(i, paddle, p);
+                i.checkPaddleCollision(i, paddle, p);
                 if (p.x < 50) {
                     hits++;
                     getSpeed();
@@ -1446,7 +1494,7 @@ public:
         }
     }
 
-    void powerup(const int powerup) {
+    void applyPowerup(const int powerup) {
         for (auto & i : b) {
             if (i.active) {
                 switch (powerup) {
@@ -1478,14 +1526,14 @@ public:
 };
 
 // Powerups
-class powerupClass : public moving_object {
+class PowerupClass : public moving_object {
 public:
     int score;
     int type;
     int level, maxlevel;
     GLfloat gravity;
 
-    powerupClass() {
+    PowerupClass() {
         posx = 0.0;
         posy = 0.0;
         xvel = 0.0;
@@ -1503,7 +1551,7 @@ public:
     }
 
 
-    bool coldet(paddle_class &p, effectManager &fxMan, ballManager &bMan) {
+    bool coldet(paddle_class &p, effectManager &fxMan, BallManager &bMan) {
         bool col = false;
         if (posx + width > 1.6 && xvel > 0.0) {
             col = true;
@@ -1584,7 +1632,7 @@ public:
                     break;
                 case PO_BIGBALL:
                     player.coins += 30;
-                    bMan.powerup(PO_BIGBALL);
+                    bMan.applyPowerup(PO_BIGBALL);
                     player.powerup[PO_BIGBALL] = true;
                     player.powerup[PO_NORMALBALL] = false;
                     player.powerup[PO_SMALLBALL] = false;
@@ -1592,7 +1640,7 @@ public:
                     break;
                 case PO_NORMALBALL:
                     player.coins += 50;
-                    bMan.powerup(PO_NORMALBALL);
+                    bMan.applyPowerup(PO_NORMALBALL);
                     player.powerup[PO_NORMALBALL] = true;
                     player.powerup[PO_BIGBALL] = false;
                     player.powerup[PO_SMALLBALL] = false;
@@ -1600,7 +1648,7 @@ public:
                     break;
                 case PO_SMALLBALL:
                     player.coins += 10;
-                    bMan.powerup(PO_SMALLBALL);
+                    bMan.applyPowerup(PO_SMALLBALL);
                     player.powerup[PO_SMALLBALL] = true;
                     player.powerup[PO_BIGBALL] = false;
                     player.powerup[PO_NORMALBALL] = false;
@@ -1638,7 +1686,7 @@ public:
                     break;
                 case PO_EXPLOSIVE:
                     player.coins += 150;
-                    bMan.powerup(PO_EXPLOSIVE);
+                    bMan.applyPowerup(PO_EXPLOSIVE);
                     player.powerup[PO_EXPLOSIVE] = true;
                     soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
@@ -1760,10 +1808,10 @@ public:
 
 #define MAXPOWERUPS 64
 
-class powerupManager {
-private:
+class PowerupManager {
+
     int i;
-    powerupClass p[MAXPOWERUPS];
+    PowerupClass p[MAXPOWERUPS];
     texture *tex;
 
 public:
@@ -1772,7 +1820,7 @@ public:
         tex = texPowerup;
     }
 
-    powerupManager() {
+    PowerupManager() {
         clear();
     }
 
@@ -1892,7 +1940,7 @@ public:
         }
     }
 
-    int coldet(paddle_class &paddle, effectManager &fxMan, ballManager &bMan) {
+    int coldet(paddle_class &paddle, effectManager &fxMan, BallManager &bMan) {
         int hits = 0;
         for (i = 0; i < MAXPOWERUPS; i++) {
             if (p[i].active) {
@@ -1921,7 +1969,7 @@ public:
     }
 };
 
-powerupManager pMan;
+PowerupManager pMan;
 
 void spawnpowerup(char powerup, pos a, pos b) {
     if (powerup == '1') {
@@ -2220,62 +2268,6 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
     } //y boxcol
 }
 
-void collision_paddle_ball(ball &b, const paddle_class &p, pos &po) {
-    //Er bolden tæt nok på?
-
-    if (b.posy < (p.posy + p.height) + b.height && b.posy > p.posy - p.height) {
-        if (b.posx > p.posx - (p.width * 2.0) - b.width && b.posx < p.posx + (p.width * 2.0) + b.width) {
-            GLfloat py = 0;
-            GLfloat px = 0;
-            bool col = false;
-            int points = 0;
-            for (int i = 0; i < 32; i++) {
-                const GLfloat x = b.bsin[i];
-                const GLfloat y = b.bcos[i];
-
-                //Find de punkter der er inden i padden
-                if (b.posx + x > p.posx - p.width && b.posx + x < p.posx + p.width) {
-                    if (b.posy + y < p.posy + p.height && b.posy + y > p.posy - p.height) {
-                        col = true;
-
-                        px += x;
-                        py += y;
-                        points++;
-                    }
-                }
-            } //For loop
-
-            if (col) {
-                col = false;
-                gVar.deadTime = 0;
-                px /= static_cast<float>(points);
-                py /= static_cast<float>(points);
-
-                px = b.posx + px;
-
-                //Ved at reagere herinde fungerer yvel som en switch, så det kun sker een gang ;)
-                if (b.yvel < 0) {
-                    b.posy = p.posy + p.height + b.height; //løft op over pad
-
-                    //Only decrease speed if the player does not have the go-thru powerup
-                    if (!player.powerup[PO_THRU]) {
-                        b.setspeed(b.velocity + runtime_difficulty.hitpaddleinc[player.difficulty]);
-                    }
-
-                    b.setangle(bounceOffAngle(p.width, p.posx, b.posx));
-                    if (player.powerup[PO_GLUE]) {
-                        b.gluedX = p.posx + p.width - px;
-                        b.glued = true;
-                    }
-
-                    po.x = px;
-                    po.y = py;
-                }
-            }
-        }
-    }
-}
-
 #include "highscores.cpp"
 
 struct shopItemStruct {
@@ -2558,7 +2550,7 @@ int main(int argc, char *argv[]) {
     var.clearScreen = true;
     var.titleScreenShow = true;
 
-
+    // CAREFUL: When I inialize this after display.init(), rendering was broken for me.
     soundMan.init();
 
     if (!display.init()) {
@@ -2576,7 +2568,7 @@ int main(int argc, char *argv[]) {
     glText = new glTextClass; // instantiate the class now that settings have been read.
 
 #pragma region texture manager
-    textureManager texMgr;
+    TextureManager texMgr;
 
     texture texPaddleBase;
     texture texPaddleLayers[2];
@@ -2677,10 +2669,10 @@ int main(int argc, char *argv[]) {
     fxMan.set(FX_VAR_GRAVITY, 0.6f);
 
     titleScreenClass titleScreen(&fxMan, texPowerup, &menu);
-    ballManager bMan(texBall);
+    BallManager ballManager(texBall);
 
     // This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
-    highScoreClass hKeeper;
+    HighScore hKeeper;
     backgroundClass bg;
     bulletsClass bullet(texBullet);
     speedometerClass speedo;
@@ -2694,7 +2686,7 @@ int main(int argc, char *argv[]) {
     char txt[256];
     Uint32 frameAge = 0; // in milliseconds
 
-    controllerClass control(&paddle, &bullet, &bMan);
+    controllerClass control(&paddle, &bullet, &ballManager);
     menu.joystickAttached = control.joystickAttached();
     soundMan.add(SND_START, 0);
 
@@ -2862,10 +2854,10 @@ int main(int argc, char *argv[]) {
             if (gVar.deadTime > 20000) {
                 //give the balls explosive ability, to blow up cement block and get on with the game
                 gVar.deadTime = 0;
-                bMan.powerup(PO_EXPLOSIVE);
+                ballManager.applyPowerup(PO_EXPLOSIVE);
             }
 
-            if (bMan.activeBalls == 0 && !gVar.newLevel)
+            if (ballManager.activeBalls == 0 && !gVar.newLevel)
             // only check if we are dead if we have actually started playing
             {
                 player.lives--;
@@ -2878,7 +2870,7 @@ int main(int argc, char *argv[]) {
                 } else if (!gVar.gameOver) {
                     gVar.gameOver = true;
                     pauseGame();
-                    if (highScoreClass::isHighScore()) {
+                    if (HighScore::isHighScore()) {
                         // announce.write(string text, int mslife, int fontnum);
                         announce.write("Highscore!", 3000,FONT_ANNOUNCE_GOOD);
                         var.showHighScores = 1;
@@ -2914,9 +2906,9 @@ int main(int argc, char *argv[]) {
                     announce.write("Well Done!", 1000, FONT_ANNOUNCE_GOOD);
                     soundMan.add(SND_NEXTLEVEL, 0);
 
-                    if (bMan.activeBalls > 1) {
-                        sprintf(txt, "Bonus: %i", bMan.activeBalls * 150);
-                        player.score += (bMan.activeBalls * 150) * player.multiply;
+                    if (ballManager.activeBalls > 1) {
+                        sprintf(txt, "Bonus: %i", ballManager.activeBalls * 150);
+                        player.score += (ballManager.activeBalls * 150) * player.multiply;
                         announce.write(txt, 2000, FONT_ANNOUNCE_GOOD);
                     }
 
@@ -2987,8 +2979,8 @@ int main(int argc, char *argv[]) {
 
                 p.y = paddle.posy + paddle.height + 0.025f;
 
-                bMan.clear();
-                bMan.spawn(p, true, paddle.width, runtime_difficulty.ballspeed[player.difficulty], 1.57100000f);
+                ballManager.clear();
+                ballManager.spawn(p, true, paddle.width, runtime_difficulty.ballspeed[player.difficulty], 1.57100000f);
                 // Not exactly degree 90, so the ball will always fall a bit to the side
             }
 
@@ -3036,7 +3028,7 @@ int main(int argc, char *argv[]) {
                     }
 
                     if (bricks[i].collide) {
-                        bMan.bcoldet(bricks[i], fxMan);
+                        ballManager.checkBallCollision(bricks[i], fxMan);
                         //bullets
                         if (player.powerup[PO_GUN]) {
                             bullet.coldet(bricks[i], fxMan);
@@ -3064,19 +3056,19 @@ int main(int argc, char *argv[]) {
             } // for loop
 
             // Collision between paddle and balls
-            if (bMan.pcoldet(paddle, fxMan)) {
+            if (ballManager.checkPaddleCollision(paddle, fxMan)) {
                 if (player.powerup[PO_DROP]) {
                     updateBrickPositions(bricks);
                 }
             }
 
-            bMan.move();
+            ballManager.move();
 
             if (setting.particleCollide && setting.eyeCandy && frameAge >= maxFrameAge)
                 fxMan.pcoldet(paddle);
 
             pMan.move();
-            if (pMan.coldet(paddle, fxMan, bMan)) {
+            if (pMan.coldet(paddle, fxMan, ballManager)) {
                 if (player.powerup[PO_DETONATE]) {
                     player.powerup[PO_DETONATE] = false;
                     detonateExplosives(bricks, fxMan);
@@ -3142,12 +3134,12 @@ int main(int argc, char *argv[]) {
                     }
                 }
 
-                bMan.updatelast();
+                ballManager.updatelast();
                 glColor3d(255, 255, 255);
                 bullet.draw();
                 paddle.draw();
                 pMan.draw();
-                bMan.draw(paddle);
+                ballManager.draw(paddle);
                 scoreboard.draw();
                 speedometerClass::draw();
                 hud.draw();
@@ -3200,82 +3192,9 @@ void makeExplosive(brick &b) {
     }
 }
 
-// game state
-void initNewGame() {
-    player.level = 0;
-    player.score = 0;
-    gVar.deadTime = 0;
-
-    gVar.newLevel = true;
-    gVar.newLife = true;
-
-    player.multiply = 1;
-
-    switch (player.difficulty) {
-        case EASY:
-            player.coins = 600;
-            player.lives = 5;
-            break;
-        case NORMAL:
-            player.coins = 300;
-            player.lives = 3;
-            break;
-        case HARD:
-            player.coins = 0;
-            player.lives = 3;
-            break;
-        default: ;
-    }
-    resetPlayerPowerups();
-}
-
-// game state
-void pauseGame() {
-    var.paused = true;
-    SDL_SetRelativeMouseMode(SDL_FALSE);
-}
-
-// game state
-void resumeGame() {
-#ifndef DEBUG_NO_RELATIVE_MOUSE
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-#endif
-    var.paused = false;
-    var.menu = 0;
-}
-
 // helper math
 float random_float(const float total, const float negative) {
     thread_local std::mt19937 rng(std::random_device{}());
     std::uniform_real_distribution dist(-negative, total - negative);
     return dist(rng);
-}
-
-// helper physics
-float bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx) {
-    return BALL_MAX_DEGREE / (width * 2.0f) * (posx + width - hitx) + BALL_MIN_DEGREE;
-}
-
-// game state
-void set_fixed_difficulty() {
-    fixed_difficulty.ballspeed[EASY] = 0.7f;
-    fixed_difficulty.ballspeed[NORMAL] = 1.3f;
-    fixed_difficulty.ballspeed[HARD] = 1.6f;
-
-    fixed_difficulty.maxballspeed[EASY] = 1.5f;
-    fixed_difficulty.maxballspeed[NORMAL] = 2.2f;
-    fixed_difficulty.maxballspeed[HARD] = 3.0f;
-
-    fixed_difficulty.hitbrickinc[EASY] = 0.0025;
-    fixed_difficulty.hitbrickinc[NORMAL] = 0.003;
-    fixed_difficulty.hitbrickinc[HARD] = 0.004;
-
-    fixed_difficulty.hitpaddleinc[EASY] = -0.001;
-    fixed_difficulty.hitpaddleinc[NORMAL] = -0.0005;
-    fixed_difficulty.hitpaddleinc[HARD] = -0.0007;
-
-    //Percentage
-    fixed_difficulty.speedup[EASY] = 10.0f;
-    fixed_difficulty.speedup[NORMAL] = 20.0f;
-    fixed_difficulty.speedup[HARD] = 30.0f;
 }

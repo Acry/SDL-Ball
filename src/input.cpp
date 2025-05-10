@@ -3,7 +3,7 @@ extern SettingsManager settingsManager;
 class controllerClass {
     paddle_class *paddle;
     bulletsClass *bullet;
-    ballManager *bMan;
+    BallManager *bMan;
 #define ITEMSELECTTIME 300 /* Milliseconds before changing item */
     int shotTime, itemSelectTime;
     float accel;
@@ -17,7 +17,7 @@ class controllerClass {
     int calMin, calMax, calLowJitter, calHighJitter;
 
 public:
-    controllerClass(paddle_class *pc, bulletsClass *bu, ballManager *bm);
+    controllerClass(paddle_class *pc, bulletsClass *bu, BallManager *bm);
 
     ~controllerClass();
 
@@ -32,7 +32,7 @@ public:
     bool joystickAttached() const;
 };
 
-controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, ballManager *bm) {
+controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, BallManager *bm) {
     paddle = pc;
     bullet = bu;
     bMan = bm;

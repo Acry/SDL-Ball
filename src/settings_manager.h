@@ -29,6 +29,7 @@ struct settings {
     int startingDifficulty;
 };
 
+extern settings setting;
 class SettingsManager {
     settings currentSettings;
     ConfigFile &configFile;

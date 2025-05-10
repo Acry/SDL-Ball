@@ -106,6 +106,10 @@ struct difficultyStruct {
     GLfloat speedup[3];
 };
 
+extern difficultyStruct fixed_difficulty;
+extern difficultyStruct runtime_difficulty;
+
 void initNewGame();
 void pauseGame();
 void resumeGame();
+void set_fixed_difficulty();

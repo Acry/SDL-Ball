@@ -3,6 +3,8 @@
 #include <SDL2/SDL.h>
 #include "config.h"
 
+settings setting;
+
 SettingsManager::SettingsManager(ConfigFile &cf) : currentSettings(), configFile(cf) {
     hasChanges = false;
 }
