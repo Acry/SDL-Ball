@@ -81,7 +81,7 @@ public:
 
             //er vi indenfor skærmen?
             if (p.x > 1.67 || p.y < -1.7 || p.x < -1.67) {
-                active = 0;
+                active = false;
             }
 
             v.y -= vars.gravity * globalMilliTicksSinceLastDraw;
@@ -96,10 +96,9 @@ public:
             p.x += v.x * globalMilliTicksSinceLastDraw;
             p.y += v.y * globalMilliTicksSinceLastDraw;
 
+            glColor4f(vars.col[0], vars.col[1], vars.col[2], (1.0 / static_cast<float>(life)) * static_cast<float>(lifeleft));
 
-            glColor4f(vars.col[0], vars.col[1], vars.col[2], (1.0 / (float) life) * (float) lifeleft);
-
-            GLfloat curSize = size / (float) life * (float) lifeleft;
+            const GLfloat curSize = size / static_cast<float>(life) * static_cast<float>(lifeleft);
 
             glBindTexture(GL_TEXTURE_2D, vars.tex.prop.texture);
             glBegin(GL_QUADS);
@@ -113,7 +112,7 @@ public:
             glVertex3f(p.x - curSize, p.y - curSize, 0.0);
             glEnd();
         } else {
-            active = 0;
+            active = false;
         }
     }
 
@@ -207,12 +206,12 @@ public:
 void particleFieldClass::init(effect_vars varsP, pos spawnPos) {
     vars = varsP;
     spawnTimeout = 0;
-    vars.active = 1;
+    vars.active = true;
     sparks = new sparkle[vars.num];
     p = spawnPos;
 
     for (int i = 0; i < vars.num; i++) {
-        sparks[i].active = 1;
+        sparks[i].active = true;
         sparks[i].vars = vars; //NOTE:remove effect_vars from sparkle class?
         spawnSpark(i);
     }
@@ -223,7 +222,7 @@ particleFieldClass::~particleFieldClass() {
 }
 
 void particleFieldClass::spawnSpark(int sparkNum) {
-    GLfloat angle = (RAD / vars.num - 1) * (random_float(vars.num, 0.0));
+    const GLfloat angle = (RAD / vars.num - 1) * (random_float(vars.num, 0.0));
     //FIXME: Make this elegant: Choose a random angle (in radients)
     spawnTimeout = rand() % 10;
     sparks[sparkNum].life = rand() % vars.life;
@@ -236,14 +235,12 @@ void particleFieldClass::spawnSpark(int sparkNum) {
 
     sparks[sparkNum].p.x += random_float(vars.rect.x, (vars.rect.x / 2.0));
     sparks[sparkNum].p.y += random_float(vars.rect.y, (vars.rect.y / 2.0));
-    sparks[sparkNum].active = 1;
+    sparks[sparkNum].active = true;
 }
 
 void particleFieldClass::draw() {
     spawnTimeout -= globalTicksSinceLastDraw;
 
-    glLoadIdentity();
-    glTranslatef(0.0, 0.0, 0.0);
     int t = 0;
 
     for (int i = 0; i < vars.num; i++) {
@@ -274,10 +271,8 @@ void particleFieldClass::pcoldet(paddle_class &b) {
 }
 
 class effect_class {
-private:
     pos spawn_pos;
-    sparkle *sparks; //wohoo ;)
-
+    sparkle *sparks;
 
 public:
     transit_effect_class transit;
@@ -285,28 +280,27 @@ public:
     effect_vars vars;
 
     effect_class() {
-        vars.active = 0; //når den bliver oprettet i hukkommelsen er den ikke i brug endnu
+        vars.active = false; //når den bliver oprettet i hukkommelsen er den ikke i brug endnu
     }
 
     void init(pos p) {
         int i;
         GLfloat angle = 0.0;
-        vars.active = 1;
+        vars.active = true;
         spawn_pos = p;
-        int life;
         //SDL_Log("Spawned effect type%s at%s,%s with%sms life", vars.type, p.x, p.y, vars.life);
 
         switch (vars.type) {
             case FX_SPARKS:
                 sparks = new sparkle[vars.num];
-                if (sparks == NULL) {
+                if (sparks == nullptr) {
                     SDL_Log("Could not allocate %d sparks", vars.num);
                     i = vars.num + 10;
                 }
 
                 for (i = 0; i < vars.num; i++) {
                     sparks[i].size = random_float(vars.size, 0);
-                    life = rand() % vars.life;
+                    int life = rand() % vars.life;
                     angle = (RAD / vars.num - 1) * (random_float(vars.num, 0.0));
                     //FIXME: Make this elegant: Choose a random angle (in radients)
                     sparks[i].life = life;
@@ -326,17 +320,18 @@ public:
                 break;
 
             case FX_PARTICLEFIELD:
-                pf = NULL;
+                pf = nullptr;
                 pf = new particleFieldClass;
                 pf->init(vars, p);
                 break;
+            default: ;
         }
     }
 
     void draw() {
         //find ud af hvor længe der er gået siden sidst
         int i;
-        bool stay = 0;
+        bool stay = false;
         switch (vars.type) {
             case FX_SPARKS:
                 glLoadIdentity();
@@ -344,7 +339,7 @@ public:
                 for (i = 0; i < vars.num; i++) {
                     if (sparks[i].active) {
                         sparks[i].draw();
-                        stay = 1;
+                        stay = true;
                     }
                 }
                 break;
@@ -352,22 +347,23 @@ public:
             case FX_TRANSIT:
                 transit.draw();
                 if (transit.age <= vars.life)
-                    stay = 1;
+                    stay = true;
                 break;
 
             case FX_PARTICLEFIELD:
                 pf->draw();
                 if (pf->vars.active)
-                    stay = 1;
+                    stay = true;
                 break;
+            default: ;
         }
 
         //Ugley hack, to prevent transit from flickering when spark effects are deleted.
         if (var.effectnum != -1 && vars.type != FX_TRANSIT)
-            stay = 1;
+            stay = true;
 
         if (!stay) {
-            vars.active = 0;
+            vars.active = false;
             switch (vars.type) {
                 case FX_SPARKS:
                     delete[] sparks; //Free sparks again ;)
@@ -376,14 +372,14 @@ public:
                 case FX_PARTICLEFIELD:
                     delete pf; //remove the particlefield
                     break;
+                default: ;
             }
         }
     }
 
     void coldet(brick &b) {
-        int i;
         if (vars.type == FX_SPARKS) {
-            for (i = 0; i < vars.num; i++) {
+            for (int i = 0; i < vars.num; i++) {
                 if (sparks[i].active) {
                     sparks[i].coldet(b);
                 }
@@ -394,9 +390,8 @@ public:
     }
 
     void pcoldet(paddle_class &b) {
-        int i;
         if (vars.type == FX_SPARKS) {
-            for (i = 0; i < vars.num; i++) {
+            for (int i = 0; i < vars.num; i++) {
                 if (sparks[i].active) {
                     sparks[i].pcoldet(b);
                 }
@@ -432,10 +427,11 @@ public:
                 break;
             case FX_VAR_GRAVITY:
                 vars.gravity = val;
+            default: ;
         }
     }
 
-    void set(int var, int val) {
+    void set(const int var, const int val) {
         switch (var) {
             case FX_VAR_NUM:
                 vars.num = val;
@@ -449,6 +445,7 @@ public:
             case FX_VAR_COLDET:
                 vars.coldet = val;
                 break;
+            default: ;
         }
     }
 
@@ -459,6 +456,7 @@ public:
                 vars.col[1] = g;
                 vars.col[2] = b;
                 break;
+            default: ;
         }
     }
 
@@ -467,6 +465,7 @@ public:
             case FX_VAR_TEXTURE:
                 vars.tex = tex;
                 break;
+            default: ;
         }
     }
 
@@ -475,6 +474,7 @@ public:
             case FX_VAR_RECTANGLE:
                 vars.rect = p;
                 break;
+            default: ;
         }
     }
 
@@ -535,7 +535,6 @@ public:
 };
 
 class glAnnounceMessageClass {
-private:
     int age;
     GLfloat zoom, fade;
     bool fadedir;
@@ -555,7 +554,6 @@ public:
     }
 
     void draw() {
-        GLfloat s;
         zoom += 4000.0 / life * globalMilliTicksSinceLastDraw;
 
         if (fadedir) {
@@ -565,23 +563,22 @@ public:
         }
 
         glLoadIdentity();
-        glTranslatef(0.0, 0.0, 0.0);
 
         glColor4f(1.0, 0.0, 0.0, fade);
-        s = zoom * 0.85;
-        glText->write(text, font, 1, s, 0.0, 0.0);
+        GLfloat s = zoom * 0.85f;
+        glText->write(text, font, true, s, 0.0, 0.0);
 
         glColor4f(0.0, 1.0, 0.0, fade);
-        s = zoom * 0.90;
-        glText->write(text, font, 1, s, 0.0, 0.0);
+        s = zoom * 0.90f;
+        glText->write(text, font, true, s, 0.0, 0.0);
 
         glColor4f(0.0, 0.0, 1.0, fade);
-        s = zoom * 0.95;
-        glText->write(text, font, 1, s, 0.0, 0.0);
+        s = zoom * 0.95f;
+        glText->write(text, font, true, s, 0.0, 0.0);
 
         glColor4f(1.0, 1.0, 1.0, fade);
         s = zoom;
-        glText->write(text, font, 1, s, 0.0, 0.0);
+        glText->write(text, font, true, s, 0.0, 0.0);
 
 
         age += globalTicksSinceLastDraw;
@@ -606,7 +603,7 @@ public:
         len = 0;
     }
 
-    void write(const char *text, int ttl, int font) {
+    void write(const char *text, const int ttl, const int font) {
         len++;
 
         msg.resize(len);
