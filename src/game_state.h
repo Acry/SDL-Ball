@@ -105,3 +105,7 @@ struct difficultyStruct {
     GLfloat slowdown[3];
     GLfloat speedup[3];
 };
+
+void initNewGame();
+void pauseGame();
+void resumeGame();
