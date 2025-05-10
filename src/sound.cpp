@@ -108,20 +108,20 @@ void soundClass::play() {
     int freeChannel = -1; //The channel we will use for this sample
 
     //Loop through queue and find samples thare are the same, average their position and put in a new vector
-    for (std::vector<sampleQueuedItem>::iterator it = q.begin(); it != q.end(); ++it) {
+    for (auto & it : q) {
         //Loop thrugh the playlist to see find out if this allready exist
         same = false;
         for (plIt = pl.begin(); plIt != pl.end(); ++plIt) {
-            if (plIt->s == it->s) {
+            if (plIt->s == it.s) {
                 same = true;
                 plIt->num++;
-                plIt->p += it->p;
+                plIt->p += it.p;
             }
         }
 
         //this sample is not yet in the playlist
         if (!same) {
-            pl.push_back(*it);
+            pl.push_back(it);
             plIt = pl.end();
             --plIt;
             plIt->num = 1;
@@ -173,8 +173,8 @@ void soundClass::play() {
 }
 
 soundClass::~soundClass() {
-    for (int i = 0; i < USED_SOUND_SAMPLES; i++) {
-        Mix_FreeChunk(sample[i]);
+    for (const auto & i : sample) {
+        Mix_FreeChunk(i);
     }
     Mix_CloseAudio();
 }

@@ -25,7 +25,7 @@ score *sortScores(int *rl) {
         while (!hsList.eof()) {
             getline(hsList, line);
 
-            if (line != "") {
+            if (!line.empty()) {
                 if (line[0] == '[') {
                     delim[0] = line.find(']');
                     delim[1] = line.find('|', delim[0] + 1);
@@ -237,7 +237,7 @@ public:
     void enterSaveGameName(SDL_Event e) {
         if (e.key.keysym.sym != SDLK_RETURN && e.key.keysym.sym != SDLK_ESCAPE) {
             if (e.key.keysym.sym == SDLK_BACKSPACE) {
-                if (saveGameName[saveGameSlot].length() > 0)
+                if (!saveGameName[saveGameSlot].empty())
                     saveGameName[saveGameSlot].erase(saveGameName[saveGameSlot].length() - 1);
             } else {
                 saveGameName[saveGameSlot] += e.key.keysym.sym;

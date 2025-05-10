@@ -43,5 +43,4 @@ public:
     [[nodiscard]] const std::string &getSettingsFile() const { return settingsFile; }
     [[nodiscard]] const std::string &getHighScoreFile() const { return highScoreFile; }
     [[nodiscard]] const std::string &getScreenshotDir() const { return screenshotDir; }
-
 };

@@ -48,7 +48,7 @@ public:
 
             if (e.key.keysym.sym != SDLK_RETURN) {
                 if (e.key.keysym.sym == SDLK_BACKSPACE) {
-                    if (name.length() > 0)
+                    if (!name.empty())
                         name.erase(name.length() - 1);
                 } else {
                     name += e.key.keysym.sym;

@@ -83,7 +83,7 @@ public:
     }
 };
 
-void load_level(string file, brick bricks[], int level) {
+void load_level(const string& file, brick bricks[], const int level) {
     ifstream levelfile(file.data());
     if (!levelfile.is_open()) {
         SDL_Log(" Could not open%s", file.c_str());
@@ -129,25 +129,25 @@ void load_level(string file, brick bricks[], int level) {
                                 sprintf(rgb[1], "0x%c%c", line[ch + 4], line[ch + 5]);
                                 sprintf(rgb[2], "0x%c%c", line[ch + 6], line[ch + 7]);
 
-                                bricks[brick].tex.prop.glTexColorInfo[0] = 0.003921569 * strtol(rgb[0], NULL, 16);
-                                bricks[brick].tex.prop.glTexColorInfo[1] = 0.003921569 * strtol(rgb[1], NULL, 16);
-                                bricks[brick].tex.prop.glTexColorInfo[2] = 0.003921569 * strtol(rgb[2], NULL, 16);
+                                bricks[brick].tex.prop.glTexColorInfo[0] = 0.003921569 * strtol(rgb[0], nullptr, 16);
+                                bricks[brick].tex.prop.glTexColorInfo[1] = 0.003921569 * strtol(rgb[1], nullptr, 16);
+                                bricks[brick].tex.prop.glTexColorInfo[2] = 0.003921569 * strtol(rgb[2], nullptr, 16);
 
-                                bricks[brick].tex.prop.glParColorInfo[0] = 0.003921569 * strtol(rgb[0], NULL, 16);
-                                bricks[brick].tex.prop.glParColorInfo[1] = 0.003921569 * strtol(rgb[1], NULL, 16);
-                                bricks[brick].tex.prop.glParColorInfo[2] = 0.003921569 * strtol(rgb[2], NULL, 16);
+                                bricks[brick].tex.prop.glParColorInfo[0] = 0.003921569 * strtol(rgb[0], nullptr, 16);
+                                bricks[brick].tex.prop.glParColorInfo[1] = 0.003921569 * strtol(rgb[1], nullptr, 16);
+                                bricks[brick].tex.prop.glParColorInfo[2] = 0.003921569 * strtol(rgb[2], nullptr, 16);
 
                                 bricks[brick].tex.prop.glTexColorInfo[3] = 1.0;
                                 ch += 6;
                             }
-                            //SDL_Log("Level:%s brick:%s Powerup:%s Type:%s\n", levelnum, brick, line[ch], line[ch+1]);
+                            // SDL_Log("Level:%s brick:%s Powerup:%s Type:%s\n", levelnum, brick, line[ch], line[ch+1]);
 
                             brick++;
                             ch += 2;
                         }
                         ch = 0;
-                    } //Not a command
-                } //denne level settes op
+                    } // Not a command
+                } // denne level settes op
             }
         }
     }
@@ -183,8 +183,8 @@ void init_levels(brick bricks[], texture texLvl[]) {
             // -1 <----+----> +1
             //         |
             //        -1
-            bricks[i].posx = -1.0f + PILLAR_WIDTH + column * BRICK_WIDTH;
-            bricks[i].posy = -1.0f + 0.38f + row * BRICK_HEIGHT;
+            bricks[i].posx = -1.0f + PILLAR_WIDTH + static_cast<float>(column) * BRICK_WIDTH;
+            bricks[i].posy = -1.0f + 0.38f + static_cast<float>(row) * BRICK_HEIGHT;
 
             if (bricks[i].type != '0') {
                 bricks[i].active = true;
