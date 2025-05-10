@@ -9,15 +9,14 @@ using texPos = float[8];
 class Texture {
     float age;         // Current frame age
     bool dir;          // Animation direction for bidirectional
-    uint lastframe;    // Last rendered frame
+    uint lastFrame;    // Last rendered frame
 
 public:
     uint frame;        // Current animation frame
     bool playing;      // Animation playing state
     bool firstFrame;   // First frame flag
-    texPos pos;        // Current frame texture coordinates
-    texProp prop;      // Texture properties
-
+    texPos texturePosition;        // Current frame texture coordinates
+    texProp textureProperties;      // Texture properties
     Texture();
     void play();
 };

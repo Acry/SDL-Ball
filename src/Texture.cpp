@@ -5,23 +5,23 @@ extern int globalTicksSinceLastDraw;
 Texture::Texture() :
     age(10000),
     dir(false),
-    lastframe(1000),
+    lastFrame(1000),
     frame(1),
     firstFrame(true)
 {
 }
 
 void Texture::play() {
-    if (prop.playing) {
+    if (textureProperties.playing) {
         // Check if frame needs updating
         age += globalTicksSinceLastDraw;
-        if (age >= prop.ticks) {
+        if (age >= textureProperties.ticks) {
             age = 0.0f;
 
             // Update frame counter based on direction
             if (!dir) {
-                if (frame == prop.frames) {
-                    if (prop.bidir) {
+                if (frame == textureProperties.frames) {
+                    if (textureProperties.bidir) {
                         dir = true;
                     } else {
                         frame = 1;
@@ -43,47 +43,47 @@ void Texture::play() {
     }
 
     // Update texture coordinates if frame changed
-    if (frame != lastframe || firstFrame) {
+    if (frame != lastFrame || firstFrame) {
         int row = 0;
         uint f = 0;
         int col = 0;
-        lastframe = frame;
+        lastFrame = frame;
         firstFrame = false;
 
         // Calculate texture coordinates for current frame
-        for (row = 0; row < prop.rows; row++) {
-            for (col = 0; col < prop.cols; col++) {
+        for (row = 0; row < textureProperties.rows; row++) {
+            for (col = 0; col < textureProperties.cols; col++) {
                 f++;
                 if (f == frame) {
                     // Top left
-                    pos[0] = (prop.xoffset * static_cast<float>(col));
-                    pos[1] = (prop.yoffset * static_cast<float>(row));
+                    texturePosition[0] = (textureProperties.xoffset * static_cast<float>(col));
+                    texturePosition[1] = (textureProperties.yoffset * static_cast<float>(row));
 
                     // Top right
-                    pos[2] = (prop.xoffset * static_cast<float>(col)) + prop.xoffset;
-                    pos[3] = (prop.yoffset * static_cast<float>(row));
+                    texturePosition[2] = (textureProperties.xoffset * static_cast<float>(col)) + textureProperties.xoffset;
+                    texturePosition[3] = (textureProperties.yoffset * static_cast<float>(row));
 
                     // Bottom right
-                    pos[4] = (prop.xoffset * static_cast<float>(col)) + prop.xoffset;
-                    pos[5] = (prop.yoffset * static_cast<float>(row)) + prop.yoffset;
+                    texturePosition[4] = (textureProperties.xoffset * static_cast<float>(col)) + textureProperties.xoffset;
+                    texturePosition[5] = (textureProperties.yoffset * static_cast<float>(row)) + textureProperties.yoffset;
 
                     // Bottom left
-                    pos[6] = (prop.xoffset * static_cast<float>(col));
-                    pos[7] = (prop.yoffset * static_cast<float>(row)) + prop.yoffset;
+                    texturePosition[6] = (textureProperties.xoffset * static_cast<float>(col));
+                    texturePosition[7] = (textureProperties.yoffset * static_cast<float>(row)) + textureProperties.yoffset;
 
                     // Apply padding if enabled
-                    if (prop.padding) {
-                        pos[0] += 1.0f / prop.pxw;
-                        pos[1] += 1.0f / prop.pxh;
+                    if (textureProperties.padding) {
+                        texturePosition[0] += 1.0f / textureProperties.pxw;
+                        texturePosition[1] += 1.0f / textureProperties.pxh;
 
-                        pos[2] -= 1.0f / prop.pxw;
-                        pos[3] += 1.0f / prop.pxh;
+                        texturePosition[2] -= 1.0f / textureProperties.pxw;
+                        texturePosition[3] += 1.0f / textureProperties.pxh;
 
-                        pos[4] -= 1.0f / prop.pxw;
-                        pos[5] -= 1.0f / prop.pxh;
+                        texturePosition[4] -= 1.0f / textureProperties.pxw;
+                        texturePosition[5] -= 1.0f / textureProperties.pxh;
 
-                        pos[6] += 1.0f / prop.pxw;
-                        pos[7] -= 1.0f / prop.pxh;
+                        texturePosition[6] += 1.0f / textureProperties.pxw;
+                        texturePosition[7] -= 1.0f / textureProperties.pxh;
                     }
                 }
             }

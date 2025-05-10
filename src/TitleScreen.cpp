@@ -23,17 +23,17 @@ void powerupDescriptionClass::draw() const {
     tex->play();
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, tex->prop.texture);
-    glColor4f(tex->prop.glTexColorInfo[0], tex->prop.glTexColorInfo[1], tex->prop.glTexColorInfo[2],
-              tex->prop.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, tex->textureProperties.texture);
+    glColor4f(tex->textureProperties.glTexColorInfo[0], tex->textureProperties.glTexColorInfo[1], tex->textureProperties.glTexColorInfo[2],
+              tex->textureProperties.glTexColorInfo[3]);
     glBegin(GL_QUADS);
-    glTexCoord2f(tex->pos[0], tex->pos[1]);
+    glTexCoord2f(tex->texturePosition[0], tex->texturePosition[1]);
     glVertex3f(-width + posx, height + posy, 0.00); // top left
-    glTexCoord2f(tex->pos[2], tex->pos[3]);
+    glTexCoord2f(tex->texturePosition[2], tex->texturePosition[3]);
     glVertex3f(width + posx, height + posy, 0.00); // top right
-    glTexCoord2f(tex->pos[4], tex->pos[5]);
+    glTexCoord2f(tex->texturePosition[4], tex->texturePosition[5]);
     glVertex3f(width + posx, -height + posy, 0.00); // bottom right
-    glTexCoord2f(tex->pos[6], tex->pos[7]);
+    glTexCoord2f(tex->texturePosition[6], tex->texturePosition[7]);
     glVertex3f(-width + posx, -height + posy, 0.00); // bottom left
     glEnd();
     glDisable(GL_TEXTURE_2D);
@@ -97,7 +97,7 @@ TitleScreen::TitleScreen(effectManager *m, Texture tp[], Menu *me): text(Text::g
     glNewList(glTitleList, GL_COMPILE);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texTitle.prop.texture);
+    glBindTexture(GL_TEXTURE_2D, texTitle.textureProperties.texture);
     glBegin(GL_QUADS);
     for (int i = 0; i < 32; i++) {
         glColor4f(1.0f, 1.0f, 1.0f, 0.1f);

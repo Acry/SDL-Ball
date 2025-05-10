@@ -3,7 +3,7 @@
 #include <string>
 #include "Texture.h"
 #include "MovingObject.h"
-
+#include "TextureManager.h""
 #include "Menu.h"
 
 constexpr int MAXPOTEXTURES = 21;

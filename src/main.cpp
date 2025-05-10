@@ -219,9 +219,9 @@ public:
 
         tex.play();
 
-        glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2], opacity);
+        glColor4f(tex.textureProperties.glTexColorInfo[0], tex.textureProperties.glTexColorInfo[1], tex.textureProperties.glTexColorInfo[2], opacity);
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
+        glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
         glLoadIdentity();
         glBegin(GL_QUADS);
         // Berechne die Ecken des Quads
@@ -238,16 +238,16 @@ public:
         float bottom = posy + BRICK_HEIGHT * zoom;
 
         // Zeichne das Quad mit den Texturkoordinaten
-        glTexCoord2f(tex.pos[0], tex.pos[1]);
+        glTexCoord2f(tex.texturePosition[0], tex.texturePosition[1]);
         glVertex3f(left, top, 0.0f);      // Oben links
 
-        glTexCoord2f(tex.pos[2], tex.pos[3]);
+        glTexCoord2f(tex.texturePosition[2], tex.texturePosition[3]);
         glVertex3f(right, top, 0.0f);     // Oben rechts
 
-        glTexCoord2f(tex.pos[4], tex.pos[5]);
+        glTexCoord2f(tex.texturePosition[4], tex.texturePosition[5]);
         glVertex3f(right, bottom, 0.0f);  // Unten rechts
 
-        glTexCoord2f(tex.pos[6], tex.pos[7]);
+        glTexCoord2f(tex.texturePosition[6], tex.texturePosition[7]);
         glVertex3f(left, bottom, 0.0f);   // Unten links
         glEnd();
         glDisable(GL_TEXTURE_2D);
@@ -382,17 +382,17 @@ public:
 
             tex.play();
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
-            glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2],
-                      tex.prop.glTexColorInfo[3]);
+            glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
+            glColor4f(tex.textureProperties.glTexColorInfo[0], tex.textureProperties.glTexColorInfo[1], tex.textureProperties.glTexColorInfo[2],
+                      tex.textureProperties.glTexColorInfo[3]);
             glBegin(GL_QUADS);
-            glTexCoord2f(tex.pos[0], tex.pos[1]);
+            glTexCoord2f(tex.texturePosition[0], tex.texturePosition[1]);
             glVertex3f(-width, height, 0.0f);
-            glTexCoord2f(tex.pos[2], tex.pos[3]);
+            glTexCoord2f(tex.texturePosition[2], tex.texturePosition[3]);
             glVertex3f(width, height, 0.0f);
-            glTexCoord2f(tex.pos[4], tex.pos[5]);
+            glTexCoord2f(tex.texturePosition[4], tex.texturePosition[5]);
             glVertex3f(width, -height, 0.0f);
-            glTexCoord2f(tex.pos[6], tex.pos[7]);
+            glTexCoord2f(tex.texturePosition[6], tex.texturePosition[7]);
             glVertex3f(-width, -height, 0.0f);
             glDisable(GL_TEXTURE_2D);
             // glPopMatrix();
@@ -401,9 +401,9 @@ public:
             if (player.powerup[PO_GLUE]) {
                 glLoadIdentity();
                 glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, layerTex[0].prop.texture);
-                glColor4f(layerTex[0].prop.glTexColorInfo[0], layerTex[0].prop.glTexColorInfo[1],
-                          layerTex[0].prop.glTexColorInfo[2], layerTex[0].prop.glTexColorInfo[3]);
+                glBindTexture(GL_TEXTURE_2D, layerTex[0].textureProperties.texture);
+                glColor4f(layerTex[0].textureProperties.glTexColorInfo[0], layerTex[0].textureProperties.glTexColorInfo[1],
+                          layerTex[0].textureProperties.glTexColorInfo[2], layerTex[0].textureProperties.glTexColorInfo[3]);
                 glBegin(GL_QUADS);
                 glTexCoord2f(0.0f, 0.0f);
                 glVertex3f(-width, height, 0.0f);
@@ -422,17 +422,17 @@ public:
                 layerTex[1].play();
                 glLoadIdentity();
                 glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, layerTex[1].prop.texture);
-                glColor4f(layerTex[1].prop.glTexColorInfo[0], layerTex[1].prop.glTexColorInfo[1],
-                          layerTex[1].prop.glTexColorInfo[2], layerTex[1].prop.glTexColorInfo[3]);
+                glBindTexture(GL_TEXTURE_2D, layerTex[1].textureProperties.texture);
+                glColor4f(layerTex[1].textureProperties.glTexColorInfo[0], layerTex[1].textureProperties.glTexColorInfo[1],
+                          layerTex[1].textureProperties.glTexColorInfo[2], layerTex[1].textureProperties.glTexColorInfo[3]);
                 glBegin(GL_QUADS);
-                glTexCoord2f(layerTex[1].pos[0], layerTex[1].pos[1]);
+                glTexCoord2f(layerTex[1].texturePosition[0], layerTex[1].texturePosition[1]);
                 glVertex3f(-width, height * 4, 0.0f);
-                glTexCoord2f(layerTex[1].pos[2], layerTex[1].pos[3]);
+                glTexCoord2f(layerTex[1].texturePosition[2], layerTex[1].texturePosition[3]);
                 glVertex3f(width, height * 4, 0.0f);
-                glTexCoord2f(layerTex[1].pos[4], layerTex[1].pos[5] - 0.01f);
+                glTexCoord2f(layerTex[1].texturePosition[4], layerTex[1].texturePosition[5] - 0.01f);
                 glVertex3f(width, height, 0.0f);
-                glTexCoord2f(layerTex[1].pos[6], layerTex[1].pos[7] - 0.01f);
+                glTexCoord2f(layerTex[1].texturePosition[6], layerTex[1].texturePosition[7] - 0.01f);
                 glVertex3f(-width, height, 0.0f);
                 glEnd();
                 glDisable(GL_TEXTURE_2D);
@@ -495,15 +495,15 @@ public:
                 glLoadIdentity();
                 glTranslatef(bullet.posx, bullet.posy, 0.0);
                 glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, bullet.tex.prop.texture);
+                glBindTexture(GL_TEXTURE_2D, bullet.tex.textureProperties.texture);
                 glBegin(GL_QUADS);
-                glTexCoord2f(bullet.tex.pos[0], bullet.tex.pos[1]);
+                glTexCoord2f(bullet.tex.texturePosition[0], bullet.tex.texturePosition[1]);
                 glVertex3f(-bullet.width, bullet.height, 0.0);
-                glTexCoord2f(bullet.tex.pos[2], bullet.tex.pos[3]);
+                glTexCoord2f(bullet.tex.texturePosition[2], bullet.tex.texturePosition[3]);
                 glVertex3f(bullet.width, bullet.height, 0.0);
-                glTexCoord2f(bullet.tex.pos[4], bullet.tex.pos[5]);
+                glTexCoord2f(bullet.tex.texturePosition[4], bullet.tex.texturePosition[5]);
                 glVertex3f(bullet.width, -bullet.height, 0.0);
-                glTexCoord2f(bullet.tex.pos[6], bullet.tex.pos[7]);
+                glTexCoord2f(bullet.tex.texturePosition[6], bullet.tex.texturePosition[7]);
                 glVertex3f(-bullet.width, -bullet.height, 0.0);
                 glDisable(GL_TEXTURE_2D);
                 glEnd();
@@ -639,8 +639,8 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
 
                 fxMan.set(FX_VAR_RECTANGLE, s);
 
-                fxMan.set(FX_VAR_COLOR, tex.prop.glParColorInfo[0], tex.prop.glParColorInfo[1],
-                          tex.prop.glParColorInfo[2]);
+                fxMan.set(FX_VAR_COLOR, tex.textureProperties.glParColorInfo[0], tex.textureProperties.glParColorInfo[1],
+                          tex.textureProperties.glParColorInfo[2]);
                 fxMan.spawn(p);
             }
 
@@ -740,7 +740,7 @@ public:
 
                 tex->play();
                 glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, tex->prop.texture);
+                glBindTexture(GL_TEXTURE_2D, tex->textureProperties.texture);
                 glLoadIdentity();
                 glTranslatef(x[i], y[i], 0.0);
 
@@ -749,13 +749,13 @@ public:
                 glColor4f(r[i], g[i], b[i], indexBasedAlpha);
 
                 glBegin(GL_QUADS);
-                glTexCoord2f(tex->pos[0], tex->pos[1]);
+                glTexCoord2f(tex->texturePosition[0], tex->texturePosition[1]);
                 glVertex3f(-width * s[i], height * s[i], 0.00);
-                glTexCoord2f(tex->pos[2], tex->pos[3]);
+                glTexCoord2f(tex->texturePosition[2], tex->texturePosition[3]);
                 glVertex3f(width * s[i], height * s[i], 0.00);
-                glTexCoord2f(tex->pos[4], tex->pos[5]);
+                glTexCoord2f(tex->texturePosition[4], tex->texturePosition[5]);
                 glVertex3f(width * s[i], -height * s[i], 0.00);
-                glTexCoord2f(tex->pos[6], tex->pos[7]);
+                glTexCoord2f(tex->texturePosition[6], tex->texturePosition[7]);
                 glVertex3f(-width * s[i], -height * s[i], 0.00);
                 glEnd();
                 glDisable(GL_TEXTURE_2D);
@@ -987,36 +987,36 @@ public:
         if (explosive) {
             fireTex.play();
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, fireTex.prop.texture);
-            glColor4f(fireTex.prop.glTexColorInfo[0], fireTex.prop.glTexColorInfo[1], fireTex.prop.glTexColorInfo[2],
-                      fireTex.prop.glTexColorInfo[3]);
+            glBindTexture(GL_TEXTURE_2D, fireTex.textureProperties.texture);
+            glColor4f(fireTex.textureProperties.glTexColorInfo[0], fireTex.textureProperties.glTexColorInfo[1], fireTex.textureProperties.glTexColorInfo[2],
+                      fireTex.textureProperties.glTexColorInfo[3]);
             glLoadIdentity();
             glBegin(GL_QUADS);
-            glTexCoord2f(fireTex.pos[0], fireTex.pos[1]);
+            glTexCoord2f(fireTex.texturePosition[0], fireTex.texturePosition[1]);
             glVertex3f(-width, height, 0.0);
-            glTexCoord2f(fireTex.pos[2], fireTex.pos[3]);
+            glTexCoord2f(fireTex.texturePosition[2], fireTex.texturePosition[3]);
             glVertex3f(width, height, 0.0);
-            glTexCoord2f(fireTex.pos[4], fireTex.pos[5]);
+            glTexCoord2f(fireTex.texturePosition[4], fireTex.texturePosition[5]);
             glVertex3f(width, -height, 0.0);
-            glTexCoord2f(fireTex.pos[6], fireTex.pos[7]);
+            glTexCoord2f(fireTex.texturePosition[6], fireTex.texturePosition[7]);
             glVertex3f(-width, -height, 0.0);
             glEnd();
             glDisable( GL_TEXTURE_2D );
         } else {
             tex.play();
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
-            glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2],
-                      tex.prop.glTexColorInfo[3]);
+            glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
+            glColor4f(tex.textureProperties.glTexColorInfo[0], tex.textureProperties.glTexColorInfo[1], tex.textureProperties.glTexColorInfo[2],
+                      tex.textureProperties.glTexColorInfo[3]);
             glLoadIdentity();
             glBegin(GL_QUADS);
-            glTexCoord2f(tex.pos[0], tex.pos[1]);
+            glTexCoord2f(tex.texturePosition[0], tex.texturePosition[1]);
             glVertex3f(-width, height, 0.0);
-            glTexCoord2f(tex.pos[2], tex.pos[3]);
+            glTexCoord2f(tex.texturePosition[2], tex.texturePosition[3]);
             glVertex3f(width, height, 0.0);
-            glTexCoord2f(tex.pos[4], tex.pos[5]);
+            glTexCoord2f(tex.texturePosition[4], tex.texturePosition[5]);
             glVertex3f(width, -height, 0.0);
-            glTexCoord2f(tex.pos[6], tex.pos[7]);
+            glTexCoord2f(tex.texturePosition[6], tex.texturePosition[7]);
             glVertex3f(-width, -height, 0.0);
             glEnd();
             glDisable( GL_TEXTURE_2D );
@@ -1487,8 +1487,8 @@ public:
 
                 fxMan.set(FX_VAR_RECTANGLE, fxSize);
 
-                fxMan.set(FX_VAR_COLOR, tex.prop.glParColorInfo[0], tex.prop.glParColorInfo[1],
-                          tex.prop.glParColorInfo[2]);
+                fxMan.set(FX_VAR_COLOR, tex.textureProperties.glParColorInfo[0], tex.textureProperties.glParColorInfo[1],
+                          tex.textureProperties.glParColorInfo[2]);
                 fxMan.spawn(fxpos);
             }
             active = false;
@@ -1644,7 +1644,7 @@ public:
             fxMan.set(FX_VAR_SPEED, 0.8f);
             fxMan.set(FX_VAR_GRAVITY, 0.6f);
             fxMan.set(FX_VAR_SIZE, 0.025f);
-            fxMan.set(FX_VAR_COLOR, tex.prop.glParColorInfo[0], tex.prop.glParColorInfo[1], tex.prop.glParColorInfo[2]);
+            fxMan.set(FX_VAR_COLOR, tex.textureProperties.glParColorInfo[0], tex.textureProperties.glParColorInfo[1], tex.textureProperties.glParColorInfo[2]);
             fxMan.spawn(p);
 
             fxMan.set(FX_VAR_SPEED, 0.4f);
@@ -1664,19 +1664,19 @@ public:
     void draw() {
         tex.play();
         glEnable( GL_TEXTURE_2D );
-        glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
-        glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2],
-                  tex.prop.glTexColorInfo[3]);
+        glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
+        glColor4f(tex.textureProperties.glTexColorInfo[0], tex.textureProperties.glTexColorInfo[1], tex.textureProperties.glTexColorInfo[2],
+                  tex.textureProperties.glTexColorInfo[3]);
         glLoadIdentity();
         glTranslatef(posx, posy, 0.0f);
         glBegin(GL_QUADS);
-        glTexCoord2f(tex.pos[0], tex.pos[1]);
+        glTexCoord2f(tex.texturePosition[0], tex.texturePosition[1]);
         glVertex3f(-width, height, 0.00); // øverst venst
-        glTexCoord2f(tex.pos[2], tex.pos[3]);
+        glTexCoord2f(tex.texturePosition[2], tex.texturePosition[3]);
         glVertex3f(width, height, 0.00); // øverst højre
-        glTexCoord2f(tex.pos[4], tex.pos[5]);
+        glTexCoord2f(tex.texturePosition[4], tex.texturePosition[5]);
         glVertex3f(width, -height, 0.00); // nederst højre
-        glTexCoord2f(tex.pos[6], tex.pos[7]);
+        glTexCoord2f(tex.texturePosition[6], tex.texturePosition[7]);
         glVertex3f(-width, -height, 0.00); // nederst venstre
         glEnd();
         glDisable( GL_TEXTURE_2D );
@@ -1939,7 +1939,7 @@ void createPlayfieldBorderList(GLuint *dl, const Texture &tex) {
     glDisable(GL_BLEND);
     glColor4f(GL_WHITE);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
+    glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
     glBegin(GL_QUADS);
 
     // linke Säule
@@ -2090,7 +2090,7 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
                     p.y = ba.posy + py;
 
 
-                    ba.hit(br.tex.prop.glParColorInfo);
+                    ba.hit(br.tex.textureProperties.glParColorInfo);
 
                     if (!player.powerup[PO_THRU] || player.difficulty == HARD) {
                         ba.setspeed(ba.velocity + runtime_difficulty.hitbrickinc[player.difficulty]);
@@ -2164,20 +2164,20 @@ public:
         int i;
         glLoadIdentity();
         //Draw lives left.
-        glColor4f(texBall.prop.glTexColorInfo[0], texBall.prop.glTexColorInfo[1], texBall.prop.glTexColorInfo[2],
-                  texBall.prop.glTexColorInfo[3]);
+        glColor4f(texBall.textureProperties.glTexColorInfo[0], texBall.textureProperties.glTexColorInfo[1], texBall.textureProperties.glTexColorInfo[2],
+                  texBall.textureProperties.glTexColorInfo[3]);
         glEnable( GL_TEXTURE_2D );
-        glBindTexture(GL_TEXTURE_2D, texBall.prop.texture);
+        glBindTexture(GL_TEXTURE_2D, texBall.textureProperties.texture);
         texBall.play();
         glBegin(GL_QUADS);
         for (i = 0; i < player.lives - 1; i++) {
-            glTexCoord2f(texBall.pos[0], texBall.pos[1]);
+            glTexCoord2f(texBall.texturePosition[0], texBall.texturePosition[1]);
             glVertex3f(1.55 - (0.05 * i), 1.2, 0.0);
-            glTexCoord2f(texBall.pos[2], texBall.pos[3]);
+            glTexCoord2f(texBall.texturePosition[2], texBall.texturePosition[3]);
             glVertex3f(1.5 - (0.05 * i), 1.2, 0.0);
-            glTexCoord2f(texBall.pos[4], texBall.pos[5]);
+            glTexCoord2f(texBall.texturePosition[4], texBall.texturePosition[5]);
             glVertex3f(1.5 - (0.05 * i), 1.15, 0.0);
-            glTexCoord2f(texBall.pos[6], texBall.pos[7]);
+            glTexCoord2f(texBall.texturePosition[6], texBall.texturePosition[7]);
             glVertex3f(1.55 - (0.05 * i), 1.15, 0.0);
         }
         glEnd();
@@ -2258,15 +2258,15 @@ public:
             }
             texPowerup[item[i].type].play();
             glEnable( GL_TEXTURE_2D );
-            glBindTexture(GL_TEXTURE_2D, texPowerup[item[i].type].prop.texture);
+            glBindTexture(GL_TEXTURE_2D, texPowerup[item[i].type].textureProperties.texture);
             glBegin(GL_QUADS);
-            glTexCoord2f(texPowerup[item[i].type].pos[0], texPowerup[item[i].type].pos[1]);
+            glTexCoord2f(texPowerup[item[i].type].texturePosition[0], texPowerup[item[i].type].texturePosition[1]);
             glVertex3f(-0.055, 0.055, 0.00);
-            glTexCoord2f(texPowerup[item[i].type].pos[2], texPowerup[item[i].type].pos[3]);
+            glTexCoord2f(texPowerup[item[i].type].texturePosition[2], texPowerup[item[i].type].texturePosition[3]);
             glVertex3f(0.055, 0.055, 0.00);
-            glTexCoord2f(texPowerup[item[i].type].pos[4], texPowerup[item[i].type].pos[5]);
+            glTexCoord2f(texPowerup[item[i].type].texturePosition[4], texPowerup[item[i].type].texturePosition[5]);
             glVertex3f(0.055, -0.055, 0.00);
-            glTexCoord2f(texPowerup[item[i].type].pos[6], texPowerup[item[i].type].pos[7]);
+            glTexCoord2f(texPowerup[item[i].type].texturePosition[6], texPowerup[item[i].type].texturePosition[7]);
             glVertex3f(-0.055, -0.055, 0.00);
             glEnd();
             glDisable( GL_TEXTURE_2D );

@@ -14,7 +14,7 @@ public:
     void draw() const {
         glColor4f(GL_WHITE);
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
+        glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(-1.0f, 0.5f, 0.0f);

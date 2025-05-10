@@ -64,7 +64,7 @@ void Background::draw() const {
 void Background::drawQuad() const {
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
+    glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
     glBegin(GL_QUADS);
     glColor4f(r[0], g[0], b[0], a);
     glTexCoord2f(0.0f, 0.0f);

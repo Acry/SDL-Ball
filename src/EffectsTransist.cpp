@@ -102,7 +102,7 @@ public:
 
             const GLfloat curSize = size / static_cast<float>(life) * static_cast<float>(lifeleft);
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, vars.tex.prop.texture);
+            glBindTexture(GL_TEXTURE_2D, vars.tex.textureProperties.texture);
             glBegin(GL_QUADS);
             glTexCoord2f(0, 0);
             glVertex3f(p.x - curSize, p.y + curSize, 0.0);

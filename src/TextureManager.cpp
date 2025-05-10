@@ -36,8 +36,8 @@ bool TextureManager::load(const std::string& file, Texture& tex) {
         return false;
     }
 
-    glGenTextures(1, &tex.prop.texture);
-    glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
+    glGenTextures(1, &tex.textureProperties.texture);
+    glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -47,8 +47,8 @@ bool TextureManager::load(const std::string& file, Texture& tex) {
 
     glTexImage2D(GL_TEXTURE_2D, 0, glFormat, temp->w, temp->h, 0, glFormat, GL_UNSIGNED_BYTE, temp->pixels);
 
-    tex.prop.pxw = temp->w;
-    tex.prop.pxh = temp->h;
+    tex.textureProperties.pxw = temp->w;
+    tex.textureProperties.pxh = temp->h;
     SDL_FreeSurface(temp);
 
     return true;
@@ -68,49 +68,49 @@ void TextureManager::readTexProps(std::string fileName, Texture& tex) {
                 set = line.substr(0, line.find('='));
                 val = line.substr(line.find('=') + 1);
                 if (set == "xoffset") {
-                    tex.prop.xoffset = atof(val.data());
+                    tex.textureProperties.xoffset = atof(val.data());
                 } else if (set == "yoffset") {
-                    tex.prop.yoffset = atof(val.data());
+                    tex.textureProperties.yoffset = atof(val.data());
                 } else if (set == "cols") {
-                    tex.prop.cols = atoi(val.data());
+                    tex.textureProperties.cols = atoi(val.data());
                 } else if (set == "rows") {
-                    tex.prop.rows = atoi(val.data());
+                    tex.textureProperties.rows = atoi(val.data());
                 } else if (set == "ticks") {
-                    tex.prop.ticks = atoi(val.data());
+                    tex.textureProperties.ticks = atoi(val.data());
                 } else if (set == "frames") {
-                    tex.prop.frames = atoi(val.data());
+                    tex.textureProperties.frames = atoi(val.data());
                 } else if (set == "bidir") {
-                    tex.prop.bidir = atoi(val.data());
+                    tex.textureProperties.bidir = atoi(val.data());
                 } else if (set == "playing") {
-                    tex.prop.playing = atoi(val.data());
+                    tex.textureProperties.playing = atoi(val.data());
                 } else if (set == "padding") {
-                    tex.prop.padding = atoi(val.data());
+                    tex.textureProperties.padding = atoi(val.data());
                 } else if (set == "texcolor") {
                     sprintf(rgba[0], "0x%c%c", val[0], val[1]);
                     sprintf(rgba[1], "0x%c%c", val[2], val[3]);
                     sprintf(rgba[2], "0x%c%c", val[4], val[5]);
                     sprintf(rgba[3], "0x%c%c", val[6], val[7]);
-                    tex.prop.glTexColorInfo[0] = 0.003921569f * strtol(rgba[0], nullptr, 16);
-                    tex.prop.glTexColorInfo[1] = 0.003921569f * strtol(rgba[1], nullptr, 16);
-                    tex.prop.glTexColorInfo[2] = 0.003921569f * strtol(rgba[2], nullptr, 16);
-                    tex.prop.glTexColorInfo[3] = 0.003921569f * strtol(rgba[3], nullptr, 16);
+                    tex.textureProperties.glTexColorInfo[0] = 0.003921569f * strtol(rgba[0], nullptr, 16);
+                    tex.textureProperties.glTexColorInfo[1] = 0.003921569f * strtol(rgba[1], nullptr, 16);
+                    tex.textureProperties.glTexColorInfo[2] = 0.003921569f * strtol(rgba[2], nullptr, 16);
+                    tex.textureProperties.glTexColorInfo[3] = 0.003921569f * strtol(rgba[3], nullptr, 16);
                 } else if (set == "parcolor") {
                     sprintf(rgba[0], "0x%c%c", val[0], val[1]);
                     sprintf(rgba[1], "0x%c%c", val[2], val[3]);
                     sprintf(rgba[2], "0x%c%c", val[4], val[5]);
-                    tex.prop.glParColorInfo[0] = 0.003921569f * strtol(rgba[0], nullptr, 16);
-                    tex.prop.glParColorInfo[1] = 0.003921569f * strtol(rgba[1], nullptr, 16);
-                    tex.prop.glParColorInfo[2] = 0.003921569f * strtol(rgba[2], nullptr, 16);
+                    tex.textureProperties.glParColorInfo[0] = 0.003921569f * strtol(rgba[0], nullptr, 16);
+                    tex.textureProperties.glParColorInfo[1] = 0.003921569f * strtol(rgba[1], nullptr, 16);
+                    tex.textureProperties.glParColorInfo[2] = 0.003921569f * strtol(rgba[2], nullptr, 16);
                 } else if (set == "file") {
-                    tex.prop.fileName = val;
+                    tex.textureProperties.fileName = val;
                 } else {
                     SDL_Log("Error: '%s' invalid setting '%s' with value '%s'", fileName.c_str(), set.c_str(), val.c_str());
                 }
             }
         }
 
-        if (tex.prop.fileName.length() > 1) {
-            std::string name = "gfx/" + tex.prop.fileName;
+        if (tex.textureProperties.fileName.length() > 1) {
+            std::string name = "gfx/" + tex.textureProperties.fileName;
             load(themeManager.getThemeFilePath(name, setting.gfxTheme), tex);
         }
     } else {

@@ -125,7 +125,7 @@ public:
         glNewList(dl, GL_COMPILE);
         glLoadIdentity();
         glEnable( GL_TEXTURE_2D );
-        glBindTexture(GL_TEXTURE_2D, tex[0].prop.texture);
+        glBindTexture(GL_TEXTURE_2D, tex[0].textureProperties.texture);
         glColor4f(GL_WHITE);
         glBegin(GL_QUADS);
 
@@ -151,7 +151,7 @@ public:
         glNewList(dl + 1, GL_COMPILE);
         glLoadIdentity();
         glEnable( GL_TEXTURE_2D );
-        glBindTexture(GL_TEXTURE_2D, tex[1].prop.texture);
+        glBindTexture(GL_TEXTURE_2D, tex[1].textureProperties.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
         glVertex3f(-half_width, 0.07, 0.0);
@@ -169,7 +169,7 @@ public:
         glNewList(dl + 2, GL_COMPILE);
         glLoadIdentity();
         glEnable( GL_TEXTURE_2D );
-        glBindTexture(GL_TEXTURE_2D, tex[2].prop.texture);
+        glBindTexture(GL_TEXTURE_2D, tex[2].textureProperties.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
         glVertex3f(-half_width, 0.07, 0.0);
@@ -187,7 +187,7 @@ public:
         glNewList(dl + 3, GL_COMPILE);
         glLoadIdentity();
         glEnable( GL_TEXTURE_2D );
-        glBindTexture(GL_TEXTURE_2D, tex[3].prop.texture);
+        glBindTexture(GL_TEXTURE_2D, tex[3].textureProperties.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
         glVertex3f(-half_width, 0.07, 0.0);
@@ -842,7 +842,7 @@ public:
 
             glTranslatef(0.0, -0.75, 0.0f);
             glEnable( GL_TEXTURE_2D );
-            glBindTexture(GL_TEXTURE_2D, tex[4].prop.texture);
+            glBindTexture(GL_TEXTURE_2D, tex[4].textureProperties.texture);
             glColor4f(1.0, 1.0, 1.0, 1.0);
             glBegin(GL_QUADS);
             glTexCoord2f(0.0, 0.0);
