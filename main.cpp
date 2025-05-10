@@ -33,7 +33,7 @@
 #ifdef WIN32
 #include <windows.h>
 #endif
-
+#include <unistd.h>
 /* ******************************************** *
      Here are the compile-time options !! ;)
  * ******************************************** */
@@ -1179,7 +1179,7 @@ int LinesCross(float x0,float y0,float x1,float y1,float x2,float y2,float x3,fl
 //Leaves an trail of the ball
 class tracer {
   private:
-    GLfloat x[100], y[100], r[100], g[100], b[100], a[100],s[100], cr,cg,cb,;
+    GLfloat x[100], y[100], r[100], g[100], b[100], a[100],s[100], cr,cg,cb;
     bool active[100];
     int color;
     GLfloat lastX, lastY; //Last position where we spawned one
@@ -3901,12 +3901,12 @@ int main (int argc, char *argv[]) {
    SDL_ShowCursor(SDL_DISABLE);
 
    SDL_EnableUNICODE (1);
-
+  soundMan.init();
   initScreen();
 
   initGL();
 
-  soundMan.init();
+
   TTF_Init();
   fonts[0] = TTF_OpenFont( DATADIR"/font/ack.ttf", 50 );
   fonts[3] = TTF_OpenFont( DATADIR"/font/ack.ttf", 25);
@@ -4553,6 +4553,7 @@ int main (int argc, char *argv[]) {
 #ifdef WIN32
 	Sleep( 1 );
 #else
+
     usleep( 1000 );
 #endif
   }
