@@ -18,12 +18,12 @@
 #include "SaveFileManager.h"
 #include "colors.h"
 #include "config.h"
-#include "config_file.h"
-#include "display.hpp"
+#include "ConfigFileManager.h"
+#include "Display.hpp"
 #include "game_object.h"
 #include "moving_object.h"
-#include "settings_manager.h"
-#include "sound.h"
+#include "SettingsManager.h"
+#include "SoundManager.h"
 #include "text.h"
 #include "ThemeManager.h"
 #include "texture.h"
@@ -31,7 +31,7 @@
 
 using namespace std;
 
-ConfigFile configFile;
+ConfigFileManager configFile;
 SettingsManager settingsManager(configFile);
 SaveFileManager saveManager(configFile);
 ThemeManager themeManager(configFile);
@@ -44,18 +44,13 @@ player_struct player;
 // start of round player - for save game
 player_struct SOLPlayer;
 vars var;
-displayClass display;
+Display display;
 glTextClass *glText;
 // Pointer to the object, since we can't init (load fonts) because the settings have not been read yet.
 
-soundClass soundMan; //Public object so all objects can use it
+SoundManager soundMan; //Public object so all objects can use it
 
-//#define debugBall 1
-//     #define DEBUG_DRAW_BALL_QUAD
-//     #define DEBUG_NO_RELATIVE_MOUSE
-//     #define DEBUG_SHOW_MOUSE_COORDINATES
-
-// timing
+// Timing
 int globalTicks;
 float globalMilliTicks;
 Uint32 nonpausingGlobalTicks;
@@ -564,7 +559,7 @@ public:
     }
 };
 
-#include "effects.cpp"
+#include "EffectsTransist.cpp"
 #include "background.cpp"
 
 void spawnpowerup(char powerup, pos a, pos b);
@@ -1279,7 +1274,7 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan);
 
 void checkPaddleCollision(ball &b, const paddle_class &p, pos &po);
 
-#define MAXBALLS 16
+
 
 class BallManager {
     // verwaltet mehrere Bälle
@@ -1806,7 +1801,7 @@ public:
     }
 };
 
-#define MAXPOWERUPS 64
+
 
 class PowerupManager {
 
@@ -2288,7 +2283,7 @@ class hudClass {
     //For the powerup "shop"
     texture *texPowerup; //Pointer to array of powerup textures
     int shopItemSelected;
-#define NUMITEMSFORSALE 13
+
     shopItemStruct item[NUMITEMSFORSALE];
     bool shopItemBlocked[NUMITEMSFORSALE]; //One can only buy each powerup one time each life/level
 

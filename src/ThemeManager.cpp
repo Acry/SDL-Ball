@@ -5,7 +5,7 @@
 #include <fstream>
 #include <SDL2/SDL_log.h>
 
-ThemeManager::ThemeManager(const ConfigFile &configFile) : configFile(configFile) {
+ThemeManager::ThemeManager(const ConfigFileManager &configFile) : configFile(configFile) {
     scanThemes();
 }
 
@@ -13,7 +13,7 @@ void ThemeManager::scanThemes() {
     themes.clear();
     const std::vector themeDirs = {
         configFile.getUserThemeDir(),
-        ConfigFile::getGlobalThemeDir()
+        ConfigFileManager::getGlobalThemeDir()
     };
 
     for (const auto &dir: themeDirs) {

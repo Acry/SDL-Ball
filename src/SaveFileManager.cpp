@@ -6,7 +6,7 @@
 
 #include "config.h"
 
-SaveFileManager::SaveFileManager(ConfigFile &cfg) : configFile(cfg) {}
+SaveFileManager::SaveFileManager(ConfigFileManager &cfg) : configFile(cfg) {}
 
 void SaveFileManager::saveGame(const int slot, const std::string &name, const player_struct &player) const {
     std::fstream file;

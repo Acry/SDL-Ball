@@ -14,6 +14,9 @@
 
 //"Max powerups"
 #define MAXPOTEXTURES 21
+#define MAXBALLS 16
+#define MAXPOWERUPS 64
+#define NUMITEMSFORSALE 13
 
 #define PO_COIN 0
 #define PO_BIGBALL    1

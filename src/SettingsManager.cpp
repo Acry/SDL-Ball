@@ -5,7 +5,7 @@
 
 settings setting;
 
-SettingsManager::SettingsManager(ConfigFile &cf) : currentSettings(), configFile(cf) {
+SettingsManager::SettingsManager(ConfigFileManager &cf) : currentSettings(), configFile(cf) {
     hasChanges = false;
 }
 

@@ -1,11 +1,9 @@
 #include <vector>
 #include <SDL2/SDL_mixer.h>
-#include "sound.h"
+#include "SoundManager.h"
 
 #include <SDL_log.h>
 #include <string>
-
-
 
 #include "settings_manager.h"
 #include "ThemeManager.h"
@@ -13,7 +11,7 @@
 extern settings setting;
 extern ThemeManager themeManager;
 
-bool soundClass::init() {
+bool SoundManager::init() {
     constexpr Uint16 audio_format = AUDIO_S16; /* 16-bit stereo */
     constexpr int audio_channels = 2;
     constexpr int audio_buffers = 1024;
@@ -38,7 +36,7 @@ bool soundClass::init() {
     return true;
 }
 
-void soundClass::loadSample(const char *SampleName, int sampleNum) {
+void SoundManager::loadSample(const char *SampleName, int sampleNum) {
     std::string F = "snd/";
     F += SampleName;
 
@@ -49,7 +47,7 @@ void soundClass::loadSample(const char *SampleName, int sampleNum) {
 }
 
 /* This function puts a sample in queue for playing */
-void soundClass::add(int i, GLfloat x) {
+void SoundManager::add(int i, GLfloat x) {
     if (setting.sound == 0)
         return;
 
@@ -64,7 +62,7 @@ void soundClass::add(int i, GLfloat x) {
     q.push_back(qt);
 }
 
-void soundClass::loadSounds() {
+void SoundManager::loadSounds() {
     loadSample("start.ogg", SND_START);
     loadSample("ball-hit-border.ogg", SND_BALL_HIT_BORDER);
     loadSample("ball-hit-paddle.ogg", SND_BALL_HIT_PADDLE);
@@ -97,7 +95,7 @@ void soundClass::loadSounds() {
 
 /* This function is called only when drawing a frame, and plays the queue of samples,
    It will average the x/stereo position of a sample if it is queued more than once */
-void soundClass::play() {
+void SoundManager::play() {
     if (setting.sound == 0)
         return;
 
@@ -172,7 +170,7 @@ void soundClass::play() {
     }
 }
 
-soundClass::~soundClass() {
+SoundManager::~SoundManager() {
     for (const auto & i : sample) {
         Mix_FreeChunk(i);
     }

@@ -1,13 +1,14 @@
+#include "ConfigFileManager.h"
+
 #include "config.h"
-#include "config_file.h"
 #include <sys/stat.h>
 #include <cstdlib>
 #include <utility>
 
-ConfigFile::ConfigFile(std::string root) : programRoot(std::move(root)) {
+ConfigFileManager::ConfigFileManager(std::string root) : programRoot(std::move(root)) {
 }
 
-bool ConfigFile::init() {
+bool ConfigFileManager::init() {
     // XDG oder Home Verzeichnis ermitteln
     if (programRoot.empty()) {
         if (getenv("XDG_CONFIG_HOME") != nullptr) {
@@ -51,7 +52,7 @@ bool ConfigFile::init() {
     return true;
 }
 
-bool ConfigFile::checkDir(const std::string &dir) {
+bool ConfigFileManager::checkDir(const std::string &dir) {
     struct stat st{};
 
     // Prüft ob Verzeichnis existiert (stat == 0 bedeutet existiert)
@@ -64,10 +65,10 @@ bool ConfigFile::checkDir(const std::string &dir) {
     return true;
 }
 
-std::string ConfigFile::getUserThemeDir() const {
+std::string ConfigFileManager::getUserThemeDir() const {
     return programRoot + "themes";
 }
 
-std::string ConfigFile::getGlobalThemeDir() {
+std::string ConfigFileManager::getGlobalThemeDir() {
     return DATADIR "themes";
 }

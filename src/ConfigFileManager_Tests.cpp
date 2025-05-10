@@ -1,11 +1,11 @@
-#include "config_file.h"
+#include "ConfigFileManager.h"
 #include "settings_manager.h"
 #include <iostream>
 #include <cassert>
 
 #include "config.h"
 
-void testConfigPaths(const ConfigFile &config) {
+void testConfigPaths(const ConfigFileManager &config) {
     std::cout << "Test Konfigurationspfade:\n"
             << "Root: " << config.getProgramRoot() << "\n"
             << "Config: " << config.getSettingsFile() << "\n"
@@ -14,7 +14,7 @@ void testConfigPaths(const ConfigFile &config) {
             << "Screenshots: " << config.getScreenshotDir() << "\n";
 }
 
-void testSettingsManager(ConfigFile &config) {
+void testSettingsManager(ConfigFileManager &config) {
     std::cout << "\nTest SettingsManager:\n";
 
     // Debug-Ausgabe
@@ -40,7 +40,7 @@ void testSettingsManager(ConfigFile &config) {
 }
 
 int main() {
-    ConfigFile config("./test"); // Explizites Testverzeichnis
+    ConfigFileManager config("./test"); // Explizites Testverzeichnis
     assert(config.init()); // Sicherstellen dass init erfolgreich war
 
     testConfigPaths(config);

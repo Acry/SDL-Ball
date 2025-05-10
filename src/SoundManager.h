@@ -9,7 +9,7 @@ struct sampleQueuedItem {
     int s, p, num;
 };
 
-class soundClass {
+class SoundManager {
     Mix_Chunk *sample[USED_SOUND_SAMPLES];
     std::vector<sampleQueuedItem> q;
 
@@ -23,5 +23,5 @@ public:
     void play();
     void add(int i, GLfloat x);
     void loadSounds();
-    ~soundClass();
+    ~SoundManager();
 };

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <epoxy/gl.h>
 #include <SDL2/SDL.h>
-#include "display.hpp"
+#include "Display.hpp"
 #include <memory>
 
 #include "settings_manager.h"
@@ -9,9 +9,9 @@
 using namespace std;
 
 extern settings setting;
-extern ConfigFile configFile;
+extern ConfigFileManager configFile;
 
-bool displayClass::init() {
+bool Display::init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_Log("Fehler bei SDL Video Init: %s", SDL_GetError());
         return false;
@@ -83,11 +83,11 @@ bool displayClass::init() {
     return true;
 }
 
-bool displayClass::updateForMenu() {
+bool Display::updateForMenu() {
     return true;
 }
 
-void displayClass::resize(const int width, const int height) {
+void Display::resize(const int width, const int height) {
     if (height == 0)
         return;
 
@@ -133,7 +133,7 @@ void displayClass::resize(const int width, const int height) {
     glLoadIdentity();
 }
 
-bool displayClass::screenshot() {
+bool Display::screenshot() {
     static constexpr size_t MAX_FILENAME = 256;
     static constexpr size_t TGA_HEADER_SIZE = 12;
     static constexpr size_t TGA_INFO_SIZE = 6;
@@ -210,7 +210,7 @@ bool displayClass::screenshot() {
     return true;
 }
 
-displayClass::~displayClass() {
+Display::~Display() {
     SDL_DestroyWindow(sdlWindow);
     SDL_GL_DeleteContext(glcontext);
     SDL_SetRelativeMouseMode(SDL_FALSE);

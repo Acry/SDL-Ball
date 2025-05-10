@@ -9,7 +9,7 @@
  * and screenshots. It supports both custom and automatically determined root paths
  * following the XDG Base Directory Specification.
  */
-class ConfigFile {
+class ConfigFileManager {
     std::string programRoot;
     std::string saveGameFile;
     std::string settingsFile;
@@ -18,10 +18,10 @@ class ConfigFile {
 
 public:
     /**
-     * @brief Constructs a ConfigFile object
+     * @brief Constructs a ConfigFileManager object
      * @param root Optional custom root path. If empty, the path will be auto-detected
      */
-    explicit ConfigFile(std::string root = "");
+    explicit ConfigFileManager(std::string root = "");
     [[nodiscard]] std::string getUserThemeDir() const;
     [[nodiscard]] static std::string getGlobalThemeDir();
     /**

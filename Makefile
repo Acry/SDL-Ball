@@ -14,7 +14,7 @@ RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)
 BUILD_DIR := build/
 SOURCE_DIR := src/
 
-SOURCES := $(addprefix $(SOURCE_DIR), display.cpp main.cpp config_file.cpp settings_manager.cpp text.cpp SaveFileManager.cpp sound.cpp ThemeManager.cpp texture.cpp game_state.cpp)
+SOURCES := $(addprefix $(SOURCE_DIR), Display.cpp main.cpp ConfigFileManager.cpp settings_manager.cpp text.cpp SaveFileManager.cpp SoundManager.cpp ThemeManager.cpp texture.cpp game_state.cpp)
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 
 # Create the build directory if it doesn't exist
@@ -65,11 +65,11 @@ config-test: $(CONFIG_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(CONFIG_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)config-test
 
 # Spezielle Regel für die Test-Objekte
-$(BUILD_DIR)config_file_test.o: $(SOURCE_DIR)config_file_test.cpp
+$(BUILD_DIR)config_file_test.o: $(SOURCE_DIR)ConfigFileManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
-$(BUILD_DIR)config_file.o: $(SOURCE_DIR)config_file.cpp
+$(BUILD_DIR)config_file.o: $(SOURCE_DIR)ConfigFileManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
-$(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)settings_manager.cpp
+$(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)SettingsManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@

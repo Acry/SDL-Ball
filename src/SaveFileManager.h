@@ -1,7 +1,7 @@
 // SaveFileManager.hpp
 #pragma once
 #include <string>
-#include "config_file.h"
+#include "ConfigFileManager.h"
 #include "game_state.h"
 
 struct savedGame {
@@ -11,7 +11,7 @@ struct savedGame {
 
 class SaveFileManager {
 public:
-    explicit SaveFileManager(ConfigFile &cfg);
+    explicit SaveFileManager(ConfigFileManager &cfg);
 
     void saveGame(int slot, const std::string &name, const player_struct &player) const;
     bool loadGame(int slot, player_struct &player) const;
@@ -19,5 +19,5 @@ public:
     int listSaveGames(std::string slotNames[6]) const;
 
 private:
-    ConfigFile &configFile;
+    ConfigFileManager &configFile;
 };

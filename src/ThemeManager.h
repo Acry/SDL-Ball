@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "config_file.h"
+#include "ConfigFileManager.h"
 
 struct themeInfo {
     std::string name;
@@ -12,7 +12,7 @@ struct themeInfo {
 
 class ThemeManager {
 public:
-    explicit ThemeManager(const ConfigFile& configFile);
+    explicit ThemeManager(const ConfigFileManager& configFile);
 
     std::vector<themeInfo> listThemes();
     bool themeExists(const std::string& name) const;
@@ -21,6 +21,6 @@ public:
 
 private:
     std::vector<themeInfo> themes;
-    const ConfigFile& configFile;
+    const ConfigFileManager& configFile;
     void scanThemes();
 };

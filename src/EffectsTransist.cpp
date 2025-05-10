@@ -17,7 +17,7 @@ struct effect_vars {
     int effectId; //unique id for this effect
 };
 
-class transit_effect_class {
+class EffectsTransist {
     GLfloat opacity;
 
 public:
@@ -275,7 +275,7 @@ class effect_class {
     sparkle *sparks;
 
 public:
-    transit_effect_class transit;
+    EffectsTransist transit;
     particleFieldClass *pf;
     effect_vars vars;
 

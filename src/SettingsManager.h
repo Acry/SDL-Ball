@@ -1,7 +1,7 @@
 // settings_manager.h
 #pragma once
 
-#include "config_file.h"
+#include "ConfigFileManager.h"
 #include <string>
 #include <fstream>
 #include <SDL2/SDL_keycode.h>
@@ -32,7 +32,7 @@ struct settings {
 extern settings setting;
 class SettingsManager {
     settings currentSettings;
-    ConfigFile &configFile;
+    ConfigFileManager &configFile;
 
     bool hasChanges;
 
@@ -45,7 +45,7 @@ class SettingsManager {
     bool validateSettings();
 
 public:
-    explicit SettingsManager(ConfigFile &cf);
+    explicit SettingsManager(ConfigFileManager &cf);
 
     ~SettingsManager() = default;
 

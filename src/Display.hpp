@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL.h>
 
-class displayClass {
+class Display {
     int displayToUse = 0;
     SDL_GLContext glcontext = nullptr;
 public:
@@ -18,6 +18,6 @@ public:
     static bool updateForMenu();
     static bool screenshot();
     void resize(int, int);
-    ~displayClass();
+    ~Display();
 };
 
