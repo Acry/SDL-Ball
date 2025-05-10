@@ -1,10 +1,10 @@
-#include "texture.h"
+#include "Texture.h"
 
 class powerupDescriptionClass : public MovingObject {
+    Text& text;
 public:
     powerupDescriptionClass();
-
-    texture *tex;
+    Texture *tex;
 
     void draw() const;
 
@@ -12,7 +12,7 @@ public:
     string description;
 };
 
-powerupDescriptionClass::powerupDescriptionClass() {
+powerupDescriptionClass::powerupDescriptionClass() : text(Text::getInstance()) {
     // Icon size
     width = 0.035;
     height = 0.035;
@@ -42,12 +42,12 @@ void powerupDescriptionClass::draw() const {
     constexpr float scale = 1.0f; // Scale for the text
     constexpr float leading = -0.018f; // Leading for the text
     const float textX = posx + spacing;
-    glText->write(name,
+    text.write(name,
                   FONT_INTRODESCRIPTION,
                   false,
                   scale, textX,
                   posy - leading);
-    glText->write(description,
+    text.write(description,
                   FONT_INTRODESCRIPTION,
                   false,
                   scale,
@@ -56,18 +56,19 @@ void powerupDescriptionClass::draw() const {
 }
 
 class TitleScreen {
+    Text& text;  // Als Referenz
     effectManager *fxMan;
     int ticksSinceLastSpawn;
     TextureManager texMgr;
-    texture texTitle;
-    texture *texPowerups;
+    Texture texTitle;
+    Texture *texPowerups;
     GLuint glTitleList;
     float rot;
     bool rotDir;
     powerupDescriptionClass powerUp[MAXPOTEXTURES];
     int numHighScores; //Number of highscores to show in the intro
     pos runnerPos;
-    menuClass *menu; //Here is the highscore text
+    Menu *menu; //Here is the highscore text
     int runnerTime;
     float runnerVelX, runnerVelY;
     int hilight;
@@ -77,13 +78,13 @@ class TitleScreen {
     static void readDescriptions(powerupDescriptionClass po[]);
 
 public:
-    TitleScreen(effectManager *m, texture tp[], menuClass *me);
+    TitleScreen(effectManager *m, Texture tp[], Menu *me);
 
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };
 
-TitleScreen::TitleScreen(effectManager *m, texture tp[], menuClass *me) {
-
+TitleScreen::TitleScreen(effectManager *m, Texture tp[], Menu *me): text(Text::getInstance())
+{
     menu = me;
     numHighScores = 7;
     texPowerups = tp;
@@ -95,7 +96,7 @@ TitleScreen::TitleScreen(effectManager *m, texture tp[], menuClass *me) {
     glTitleList = glGenLists(1);
     glNewList(glTitleList, GL_COMPILE);
 
-    glEnable( GL_TEXTURE_2D );
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texTitle.prop.texture);
     glBegin(GL_QUADS);
     for (int i = 0; i < 32; i++) {
@@ -111,7 +112,7 @@ TitleScreen::TitleScreen(effectManager *m, texture tp[], menuClass *me) {
         glVertex3f(-1.0f, 0.75f, 0.005f * i);
     }
     glEnd();
-    glDisable( GL_TEXTURE_2D );
+    glDisable(GL_TEXTURE_2D);
     glEndList();
 
     // set position for powerup icons
@@ -246,7 +247,7 @@ void TitleScreen::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
                 const float a = 1.0 - 1.0 / static_cast<float>(numHighScores * 2) * std::abs(hilight - i);
                 glColor4f(0.9f, 0.9f, 0.9f, a);
                 // SDL_Log("alpha: %f", a);
-                glText->write(menu->highScores[i], FONT_INTROHIGHSCORE, true, 0.5, 0.0, 0.063 * i);
+                text.write(menu->highScores[i], FONT_INTROHIGHSCORE, true, 0.5, 0.0, 0.063 * i);
             }
         }
 

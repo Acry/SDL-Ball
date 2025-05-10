@@ -23,10 +23,20 @@ struct glFontInfo_struct {
     glCharInfo_struct ch[255];
 };
 
-class glTextClass {
+class Text {
+    static Text* instance;
+    Text();  // Konstruktor private
 public:
-    glTextClass();
-    ~glTextClass();
+    Text(const Text&) = delete;
+    void operator=(const Text&) = delete;
+
+    static Text& getInstance() {
+        if (instance == nullptr) {
+            instance = new Text();
+        }
+        return *instance;
+    }
+    ~Text();
     GLfloat getHeight(int font) const;
     void write(const std::string &text, int font, bool center, GLfloat scale, GLfloat x, GLfloat y) const;
 

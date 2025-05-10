@@ -1,8 +1,8 @@
-#include "texture.h"
+#include "Texture.h"
 
 extern int globalTicksSinceLastDraw;
 
-texture::texture() :
+Texture::Texture() :
     age(10000),
     dir(false),
     lastframe(1000),
@@ -11,7 +11,7 @@ texture::texture() :
 {
 }
 
-void texture::play() {
+void Texture::play() {
     if (prop.playing) {
         // Check if frame needs updating
         age += globalTicksSinceLastDraw;

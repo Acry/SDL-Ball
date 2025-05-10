@@ -1,17 +1,14 @@
 // HUD
 #include "Score.h"
-#include "text.h"
+#include "Text.h"
 
-extern glTextClass *glText;
 
-Score::Score() {
-    init();
-}
-
-void Score::init() {
-    tempScore = 1;
-    score = 0;
+void Score::reset() {
     lastScoreTick = SDL_GetTicks();
+    tempScore = 0;
+    score = 0;
+    tempText[0] = '0';
+    tempText[1] = '\0';
 }
 
 void Score::update(const int point) {
@@ -31,6 +28,5 @@ void Score::draw() {
             sprintf(tempText, "%i", tempScore);
         }
     }
-    glText->write(tempText, FONT_HIGHSCORE, false, 0.75f, -0.9f, 0.9f);
+    text.write(tempText, FONT_HIGHSCORE, false, 0.75f, -0.9f, 0.9f);
 }
-

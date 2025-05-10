@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <epoxy/gl.h>
-#include "texture.h"
+#include "Texture.h"
 #include "TextureManager.h"
 #include "ThemeManager.h"
 #include "game_state.h"

@@ -1,7 +1,7 @@
 #include <epoxy/gl.h>
 #include <SDL2/SDL_ttf.h>
 #include <GL/glu.h>
-#include "text.h"
+#include "Text.h"
 
 #include <fstream>
 
@@ -11,11 +11,11 @@
 extern settings setting;
 extern ThemeManager themeManager;
 
-GLfloat glTextClass::getHeight(const int font) const {
+GLfloat Text::getHeight(const int font) const {
     return fontInfo[font].height;
 }
 
-glTextClass::glTextClass(): fontInfo{} {
+Text::Text(): fontInfo{} {
     TTF_Init();
 
     // Parse font-description file
@@ -76,7 +76,7 @@ glTextClass::glTextClass(): fontInfo{} {
     }
 }
 
-void glTextClass::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
+void Text::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
     TTF_Font *ttfFont = nullptr;
     SDL_Surface *c, *t;
     Uint32 rmask, gmask, bmask, amask;
@@ -161,7 +161,7 @@ void glTextClass::genFontTex(const std::string &TTFfontName, const int fontSize,
     SDL_FreeSurface(t); //Free text-surface
 }
 
-void glTextClass::write(const std::string &text, const int font, const bool center, const GLfloat scale,
+void Text::write(const std::string &text, const int font, const bool center, const GLfloat scale,
                         const GLfloat x,
                         const GLfloat y) const {
     unsigned char c;
@@ -210,6 +210,6 @@ void glTextClass::write(const std::string &text, const int font, const bool cent
     glPopMatrix();
 }
 
-glTextClass::~glTextClass() {
+Text::~Text() {
     TTF_Quit();
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "MovingObject.h"
-#include "texture.h"
 #include <string>
+#include "Text.h"
 
 // Jeder Index entspricht einer bestimmten Font-Konfiguration aus der Datei fonts.txt.
 #define FONT_MENU 0
@@ -16,9 +16,9 @@
 class powerupDescriptionClass : public MovingObject {
 public:
     powerupDescriptionClass();
-    void draw() const;
-
-    texture* tex;
+    void draw();
+    Texture *tex;
+    Text& text;  // Als Referenz
     std::string name;
     std::string description;
 };

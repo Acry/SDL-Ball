@@ -1,11 +1,11 @@
 #pragma once
-#include "texture.h"
+#include "Texture.h"
 
 class TextureManager;
 class Background {
     GLuint displayList;
     GLfloat r[4], g[4], b[4], a;
-    texture tex;
+    Texture tex;
     int currentBgNumber;
 
     void drawQuad() const;

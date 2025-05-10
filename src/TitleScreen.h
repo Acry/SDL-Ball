@@ -1,10 +1,10 @@
 // title.h
 #pragma once
 #include <string>
-#include "texture.h"
+#include "Texture.h"
 #include "MovingObject.h"
-#include "effectManager.h"
-#include "menuClass.h"
+
+#include "Menu.h"
 
 constexpr int MAXPOTEXTURES = 21;
 
@@ -12,7 +12,7 @@ class powerupDescriptionClass : public MovingObject {
 public:
     powerupDescriptionClass();
 
-    texture *tex;
+    Texture *tex;
     void draw() const;
 
     std::string name;
@@ -23,8 +23,8 @@ class TitleScreen {
     effectManager *fxMan;
     int ticksSinceLastSpawn;
     TextureManager texMgr;
-    texture texTitle;
-    texture *texPowerups;
+    Texture texTitle;
+    Texture *texPowerups;
     GLuint glTitleList;
     float rot;
     bool rotDir;
@@ -41,6 +41,6 @@ class TitleScreen {
     static void readDescriptions(powerupDescriptionClass po[]);
 
 public:
-    TitleScreen(effectManager *m, texture tp[], menuClass *me);
+    TitleScreen(effectManager *m, Texture tp[], menuClass *me);
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };

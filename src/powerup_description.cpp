@@ -1,14 +1,14 @@
 // powerup_description.cpp
 #include "powerup_description.h"
-#include "gl_text.h"
+#include "MovingObject.h"
 #include <GL/gl.h>
 
-powerupDescriptionClass::powerupDescriptionClass() {
+powerupDescriptionClass::powerupDescriptionClass() : text(Text::getInstance()) {
     width = 0.035;
     height = 0.035;
 }
 
-void powerupDescriptionClass::draw() const {
+void powerupDescriptionClass::draw()  {
     // draw powerup icon, name and description
     tex->play();
     glLoadIdentity();
@@ -32,12 +32,12 @@ void powerupDescriptionClass::draw() const {
     constexpr float scale = 1.0f; // Scale for the text
     constexpr float leading = -0.018f; // Leading for the text
     const float textX = posx + spacing;
-    glText->write(name,
+    text.write(name,
                   FONT_INTRODESCRIPTION,
                   false,
                   scale, textX,
                   posy - leading);
-    glText->write(description,
+    text.write(description,
                   FONT_INTRODESCRIPTION,
                   false,
                   scale,

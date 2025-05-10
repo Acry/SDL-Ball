@@ -2,13 +2,13 @@
 #pragma once
 #include <string>
 
-#include "texture.h"
+#include "Texture.h"
 
 
 class TextureManager {
 public:
-    static bool load(const std::string& file, texture& tex);
-    void readTexProps(std::string fileName, texture& tex);
+    static bool load(const std::string& file, Texture& tex);
+    void readTexProps(std::string fileName, Texture& tex);
 };
 
 

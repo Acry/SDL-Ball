@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "Texture.h"
 #include "game_state.h"
 
 class powerupLoaderClass {
@@ -155,7 +155,7 @@ void load_level(const string& file, brick bricks[], const int level) {
     levelfile.close();
 }
 
-void init_levels(brick bricks[], texture texLvl[]) {
+void init_levels(brick bricks[], Texture texLvl[]) {
     powerupLoaderClass powerupLoader;
 
     //Temp storage for custom colors

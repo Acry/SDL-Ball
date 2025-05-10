@@ -23,13 +23,14 @@
 #include "MovingObject.h"
 #include "SettingsManager.h"
 #include "SoundManager.h"
-#include "text.h"
+#include "Text.h"
 #include "ThemeManager.h"
-#include "texture.h"
+#include "Texture.h"
 #include "texture_properties.h"
 #include "Score.h"
 #include "Background.h"
 #include "TextureManager.h"
+#include "Speedometer.h"
 
 using namespace std;
 
@@ -37,15 +38,12 @@ ConfigFileManager configFileManager;
 SettingsManager settingsManager(configFileManager);
 SaveFileManager saveManager(configFileManager);
 ThemeManager themeManager(configFileManager);
-
-class effectManager;
 Display display;
-glTextClass *glText;
-// Pointer to the object, since we can't init (load fonts) because the settings have not been read yet.
+class effectManager;
 
 SoundManager soundMan; //Public object so all objects can use it
 TextureManager texMgr;
-
+Text* Text::instance = nullptr;
 // Timing
 int globalTicks;
 float globalMilliTicks;
@@ -69,7 +67,7 @@ typedef unsigned int uint;
 #endif
 
 
-#include "menu.cpp"
+#include "Menu.cpp"
 
 // nasty fix to a problem
 int nbrick[23][26];
@@ -77,7 +75,7 @@ int updated_nbrick[23][26];
 class brick;
 
 void makeExplosive(brick &b);
-texture *texExplosiveBrick; //NOTE:Ugly
+Texture *texExplosiveBrick; //NOTE:Ugly
 class brick : public GameObject {
 public:
     int score; //Hvor meget gir den
@@ -337,7 +335,7 @@ class paddle_class : public GameObject {
 
 public:
     bool dead;
-    texture *layerTex;
+    Texture *layerTex;
 
     paddle_class() {
         init();
@@ -453,7 +451,7 @@ class bulletsClass {
 public:
     int active;
 
-    bulletsClass(const texture &texBullet) {
+    bulletsClass(const Texture &texBullet) {
         for (auto & bullet : bullets) {
             bullet.active = false;
             bullet.tex = texBullet;
@@ -712,7 +710,7 @@ class tracer {
 
 public:
     GLfloat height, width;
-    texture *tex;
+    Texture *tex;
     int len;
 
     // Constructor bleibt gleich
@@ -809,7 +807,7 @@ class ball : public MovingObject {
     GLfloat rad;
     bool growing, shrinking;
     GLfloat destwidth, growspeed;
-    float bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx) {
+    static float bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx) {
         return BALL_MAX_DEGREE / (width * 2.0f) * (posx + width - hitx) + BALL_MIN_DEGREE;
     }
 public:
@@ -822,7 +820,7 @@ public:
     GLfloat bsin[32], bcos[32];
 
     bool aimdir;
-    texture fireTex;
+    Texture fireTex;
 
     GLfloat lastX, lastY;
 
@@ -1100,7 +1098,7 @@ public:
         }
     }
 
-    void checkPaddleCollision(ball &b, const paddle_class &p, pos &po) {
+    static void checkPaddleCollision(ball &b, const paddle_class &p, pos &po) {
     //Er bolden tæt nok på?
 
     if (b.posy < (p.posy + p.height) + b.height && b.posy > p.posy - p.height) {
@@ -1164,14 +1162,14 @@ class BallManager {
 public:
     int activeBalls;
     ball b[MAXBALLS];
-    texture tex[3];
+    Texture tex[3];
 
     void initBalls() {
         activeBalls = 0;
         clear();
     }
 
-    BallManager(texture btex[]) {
+    BallManager(Texture btex[]) {
         tex[0] = btex[0];
         tex[1] = btex[1];
         tex[2] = btex[2];
@@ -1220,7 +1218,7 @@ public:
 
     void unglue() {
         for (auto & i : b) {
-            i.glued = 0;
+            i.glued = false;
         }
     }
 
@@ -1235,14 +1233,14 @@ public:
                 i.width = 0.0;
                 i.height = 0.0;
                 i.gluedX = gx;
-                i.active = 1;
-                i.collide = 1;
-                i.reflect = 1;
+                i.active = true;
+                i.collide = true;
+                i.reflect = true;
                 i.lastX = p.x;
                 i.lastY = p.y;
                 i.posx = p.x;
                 i.posy = p.y;
-                i.explosive = 0;
+                i.explosive = false;
                 i.setspeed(speed);
                 i.setangle(angle);
                 i.setSize(0.025);
@@ -1451,7 +1449,7 @@ public:
         //idiotisk lavet...
 
         bool ycol = false;
-        bool xcol = 0;
+        bool xcol = false;
 
         //En side
         if (posx + width > p.posx - p.width && posx + width < p.posx + p.width) {
@@ -1689,11 +1687,11 @@ class PowerupManager {
 
     int i;
     PowerupClass p[MAXPOWERUPS];
-    texture *tex;
+    Texture *tex;
 
 public:
-    void init(texture texPowerup[]) {
-        tex = new texture[40];
+    void init(Texture texPowerup[]) {
+        tex = new Texture[40];
         tex = texPowerup;
     }
 
@@ -1934,7 +1932,7 @@ void spawnpowerup(char powerup, pos a, pos b) {
     }
 }
 
-void createPlayfieldBorderList(GLuint *dl, const texture &tex) {
+void createPlayfieldBorderList(GLuint *dl, const Texture &tex) {
     *dl = glGenLists(1);
     glNewList(*dl,GL_COMPILE);
     glLoadIdentity();
@@ -2114,28 +2112,26 @@ struct shopItemStruct {
 };
 
 class hudClass {
-    texture texBall;
-
+    Texture texBall;
+    Text& text;  // Referenz auf das Singleton
     // For the hud text
     int ticksSinceLastClockCheck;
     time_t nixTime; //Seconds since epoch
     tm timeStruct; //Time struct
     char clockString[13]; //Clock: 00:00\0
-
-
-    //For the powerup "shop"
-    texture *texPowerup; //Pointer to array of powerup textures
+    Texture *texPowerup; //Pointer to array of powerup textures
     int shopItemSelected;
-
     shopItemStruct item[NUMITEMSFORSALE];
     bool shopItemBlocked[NUMITEMSFORSALE]; //One can only buy each powerup one time each life/level
 
 public:
-    hudClass(texture texB, texture texPo[]) {
-        texPowerup = texPo;
-        texBall = texB;
-        ticksSinceLastClockCheck = 1001;
-
+    hudClass(Texture texB, Texture texPo[]):
+        texBall(texB),
+        text(Text::getInstance()),
+        ticksSinceLastClockCheck(1001),
+        texPowerup(texPo),
+        shopItemSelected(0)
+    {
         item[0].type = PO_LASER;
         item[0].price = 600;
         item[1].type = PO_NORMALBALL;
@@ -2162,8 +2158,6 @@ public:
         item[11].price = 4000;
         item[12].type = PO_LIFE;
         item[12].price = 6000;
-
-        shopItemSelected = 0;
     }
 
     void draw() {
@@ -2196,7 +2190,7 @@ public:
                 timeStruct = *(localtime(&nixTime));
                 sprintf(clockString, "%02i:%02i", timeStruct.tm_hour, timeStruct.tm_min);
             }
-            glText->write(clockString, FONT_INTRODESCRIPTION, false, 1.5f, -0.92f,
+            text.write(clockString, FONT_INTRODESCRIPTION, false, 1.5f, -0.92f,
                           -0.97f);
         }
 
@@ -2287,25 +2281,6 @@ public:
     }
 };
 
-class Speedometer {
-public:
-    static void draw() {
-        //GLfloat y = -1.24 + difficulty.maxballspeed[player.difficulty]/2.44*var.averageBallSpeed;
-        const GLfloat y = 0.48f / (runtime_difficulty.maxballspeed[player.difficulty] - runtime_difficulty.ballspeed[player.difficulty])
-                          * (
-                              var.averageBallSpeed - runtime_difficulty.ballspeed[player.difficulty]);
-        glTranslatef(1.0f, -1.0, 0.0);
-        glBegin(GL_QUADS);
-        glColor4f(GL_FULL_GREEN);
-        glVertex3f(0, y, 0);
-        glVertex3f(0.03, y, 0);
-        glColor4f(GL_WHITE);
-        glVertex3f(0.03, 0, 0);
-        glVertex3f(0, 0, 0);
-        glEnd();
-    }
-};
-
 void detonateExplosives(brick bricks[], effectManager &fxMan) {
     for (int i = 0; i < 598; i++) {
         if (bricks[i].active && bricks[i].type == 'B') {
@@ -2360,7 +2335,7 @@ void easyBrick(brick bricks[]) {
 }
 
 #include "Controller.cpp"
-#include "title.cpp"
+#include "TitleScreen.cpp"
 
 int main(int argc, char *argv[]) {
     (void) argc;
@@ -2396,21 +2371,17 @@ int main(int argc, char *argv[]) {
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
 
-    glText = new glTextClass; // instantiate the class now that settings have been read.
-
 #pragma region texture manager
-
-
-    texture texPaddleBase;
-    texture texPaddleLayers[2];
-    texture texBall[3];
-    texture texLvl[13];
+    Texture texPaddleBase;
+    Texture texPaddleLayers[2];
+    Texture texBall[3];
+    Texture texLvl[13];
     texExplosiveBrick = &texLvl[0];
 
-    texture texBorder;
-    texture texPowerup[MAXPOTEXTURES];
-    texture texBullet;
-    texture texParticle;
+    Texture texBorder;
+    Texture texPowerup[MAXPOTEXTURES];
+    Texture texBullet;
+    Texture texParticle;
 
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/paddle/base.txt", setting.gfxTheme), texPaddleBase);
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/paddle/glue.txt", setting.gfxTheme), texPaddleLayers[0]);
@@ -2489,8 +2460,8 @@ int main(int argc, char *argv[]) {
     // }
 
     int i = 0; //bruges i for loop xD
-    Score scoreboard;
-    menuClass menu;
+    Score score;
+    Menu menu;
     paddle_class paddle;
     paddle.tex = texPaddleBase;
     paddle.layerTex = texPaddleLayers;
@@ -2819,7 +2790,7 @@ int main(int argc, char *argv[]) {
                 if (setting.showBg)
                     background.draw();
                 glCallList(playfieldBorderList);
-                scoreboard.update(player.score);
+                score.update(player.score);
                 if (var.scrollInfo.drop) {
                     if (SDL_GetTicks() - var.scrollInfo.lastTick > var.scrollInfo.dropspeed) {
                         var.scrollInfo.lastTick = SDL_GetTicks();
@@ -2946,7 +2917,7 @@ int main(int argc, char *argv[]) {
                 paddle.draw();
                 powerupManager.draw();
                 ballManager.draw(paddle);
-                scoreboard.draw();
+                score.draw();
                 speedo.draw();
                 hud.draw();
                 fxMan.draw();
@@ -2985,7 +2956,6 @@ int main(int argc, char *argv[]) {
             SDL_Log("Fehler beim Speichern der Einstellungen");
         }
     }
-    delete glText;
     return EXIT_SUCCESS;
 }
 
@@ -2993,7 +2963,7 @@ void makeExplosive(brick &b) {
     if (b.type != 'B') {
         b.type = 'B';
         b.tex = *texExplosiveBrick;
-        //NOTE: for some reason, the color of the object was changed, why??
+        // NOTE: for some reason, the color of the object was changed, why??
         b.justBecomeExplosive = true;
     }
 }

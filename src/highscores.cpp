@@ -1,11 +1,12 @@
-#include "texture.h"
+#include "Texture.h"
 class HighScore {
     string name;
     TextureManager texMgr;
-    texture tex;
-
+    Texture tex;
+    Text& text;  // Als Referenz
 public:
-    HighScore() {
+    HighScore()  : text(Text::getInstance())
+    {
         name = "";
         texMgr.load(themeManager.getThemeFilePath("gfx/highscore/entername.png", setting.gfxTheme), tex);
     }
@@ -25,10 +26,10 @@ public:
         glVertex3f(-1.0f, -0.5f, 0.0f);
         glEnd();
         glDisable(GL_TEXTURE_2D);
-        glText->write(name, FONT_MENUHIGHSCORE, true, 2.0, 0.0, 0.2);
+        text.write(name, FONT_MENUHIGHSCORE, true, 2.0, 0.0, 0.2);
     }
 
-    void type(const SDL_Event &e, menuClass &menu) {
+    void type(const SDL_Event &e, Menu &menu) {
         if (var.showHighScores == 1) {
             if (e.key.keysym.sym == SDLK_ESCAPE) {
                 var.showHighScores = 0;

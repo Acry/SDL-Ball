@@ -2,7 +2,7 @@
 #pragma once
 
 #include <epoxy/gl.h>
-#include "texture.h"
+#include "Texture.h"
 
 class GameObject {
 public:
@@ -15,5 +15,5 @@ public:
     bool collide;
     bool reflect; // NOTE: use this for bricks that are not going to reflect the ball? (trap brick? :D)
 
-    texture tex;
+    Texture tex;
 };

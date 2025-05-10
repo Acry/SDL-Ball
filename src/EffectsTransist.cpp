@@ -1,5 +1,6 @@
 #include <list>
-#include "texture.h"
+#include "Texture.h"
+#include "Text.h"
 
 struct effect_vars {
     int type; //Hvilken slags effekt er det?
@@ -13,21 +14,24 @@ struct effect_vars {
     GLfloat gravity; //Hvor stor er tyndgekraften
     int num; //Hvor mange elementer er der i den
     int life; //hvor mange ms lever den?
-    texture tex; //Texture
+    Texture tex; //Texture
     int effectId; //unique id for this effect
 };
 
 class EffectsTransist {
     GLfloat opacity;
-
 public:
+    Text& text;  // Als Referenz
     int age;
     effect_vars vars;
+
+    // Konstruktor initialisiert die Referenz
+    EffectsTransist() : text(Text::getInstance()){}
 
     void init() {
         age = 0;
         opacity = 0.0f;
-        var.transition_half_done = 0;
+        var.transition_half_done = false;
     }
 
     void draw() {
@@ -457,7 +461,7 @@ public:
         }
     }
 
-    void set(int var, texture tex) {
+    void set(int var, Texture tex) {
         switch (var) {
             case FX_VAR_TEXTURE:
                 vars.tex = tex;
@@ -532,17 +536,19 @@ public:
 };
 
 class glAnnounceMessageClass {
+
     int age;
     GLfloat zoom, fade;
     bool fadedir;
 
 public:
+    Text& text;  // Referenz statt Instanz
     bool active;
     int life;
-    string text;
+    string announcement;
     int font;
 
-    glAnnounceMessageClass() {
+    glAnnounceMessageClass() : text(Text::getInstance()) {
         active = true;
         age = 0;
         fade = 0;
@@ -563,19 +569,19 @@ public:
 
         glColor4f(1.0, 0.0, 0.0, fade);
         GLfloat s = zoom * 0.85f;
-        glText->write(text, font, true, s, 0.0, 0.0);
+        text.write(announcement, font, true, s, 0.0, 0.0);
 
         glColor4f(0.0, 1.0, 0.0, fade);
         s = zoom * 0.90f;
-        glText->write(text, font, true, s, 0.0, 0.0);
+        text.write(announcement, font, true, s, 0.0, 0.0);
 
         glColor4f(0.0, 0.0, 1.0, fade);
         s = zoom * 0.95f;
-        glText->write(text, font, true, s, 0.0, 0.0);
+        text.write(announcement, font, true, s, 0.0, 0.0);
 
         glColor4f(1.0, 1.0, 1.0, fade);
         s = zoom;
-        glText->write(text, font, true, s, 0.0, 0.0);
+        text.write(announcement, font, true, s, 0.0, 0.0);
 
 
         age += globalTicksSinceLastDraw;
@@ -591,35 +597,36 @@ public:
 #define MAXMSG 10
 
 class glAnnounceTextClass {
+
     int len; //hvor mange mangler vi at vise
-    list<glAnnounceMessageClass> msg;
-    list<glAnnounceMessageClass>::iterator it;
+    list<glAnnounceMessageClass> announcement;
+    list<glAnnounceMessageClass>::iterator iterator;
 
 public:
     glAnnounceTextClass() {
         len = 0;
     }
 
-    void write(const char *text, const int ttl, const int font) {
+    void write(const char *message, const int ttl, const int font) {
         len++;
 
-        msg.resize(len);
+        announcement.resize(len);
 
-        it = msg.end();
-        --it;
+        iterator = announcement.end();
+        --iterator;
 
-        it->life = ttl;
-        it->text = text;
-        it->font = font;
+        iterator->life = ttl;
+        iterator->announcement = message;
+        iterator->font = font;
     }
 
     void draw() {
         if (len > 0) {
-            it = msg.begin();
-            if (it->active) {
-                it->draw();
+            iterator = announcement.begin();
+            if (iterator->active) {
+                iterator->draw();
             } else {
-                msg.erase(it);
+                announcement.erase(iterator);
                 len--;
             }
         }

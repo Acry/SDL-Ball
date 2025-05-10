@@ -11,7 +11,7 @@ extern settings setting;
 extern TextureManager texMgr;
 extern ThemeManager themeManager;
 
-bool TextureManager::load(const std::string& file, texture& tex) {
+bool TextureManager::load(const std::string& file, Texture& tex) {
     SDL_Surface* temp = nullptr;
     GLint maxTexSize;
     GLuint glFormat = GL_RGBA;
@@ -54,7 +54,7 @@ bool TextureManager::load(const std::string& file, texture& tex) {
     return true;
 }
 
-void TextureManager::readTexProps(std::string fileName, texture& tex) {
+void TextureManager::readTexProps(std::string fileName, Texture& tex) {
     char rgba[4][5];
     std::ifstream f;
     std::string set, val;
