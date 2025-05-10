@@ -149,7 +149,7 @@ TitleScreen::TitleScreen(effectManager *m, Texture tp[], Menu *me): text(Text::g
 
 void TitleScreen::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
     if (*frameAge >= *maxFrameAge) {
-        soundMan.play();
+        soundManager.play();
         glLoadIdentity();
         if (var.clearScreen) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

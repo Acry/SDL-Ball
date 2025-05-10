@@ -678,10 +678,9 @@ public:
                             setting.sound = false;
                         } else {
                             setting.sound = true;
-                            soundMan.loadSounds();
+                            soundManager.loadSounds();
                         }
                         settingsManager.settingsChanged();
-
                         break;
                     default: ;
                 }

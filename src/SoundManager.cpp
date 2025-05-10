@@ -12,12 +12,13 @@ extern settings setting;
 extern ThemeManager themeManager;
 
 bool SoundManager::init() {
-    constexpr Uint16 audio_format = AUDIO_S16; /* 16-bit stereo */
-    constexpr int audio_channels = 2;
-    constexpr int audio_buffers = 1024;
-    constexpr int audio_rate = 44100;
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {
-        SDL_Log("Error: Could not open audio device.Sound have been disabled.");
+    // Initialize SDL2_mixer with support for common audio formats
+    if (Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG) < 0) {
+        SDL_Log("Mix_Init failed: %s\n", Mix_GetError());
+        return false;
+    }
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0) {
+        SDL_Log("Mix_OpenAudio failed: %s\n", Mix_GetError());
         setting.sound = false;
         return false;
     }
@@ -175,4 +176,5 @@ SoundManager::~SoundManager() {
         Mix_FreeChunk(i);
     }
     Mix_CloseAudio();
+    Mix_Quit();
 }

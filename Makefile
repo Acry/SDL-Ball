@@ -3,9 +3,9 @@ PREFIX?=~/.local
 DATADIR?=$(PREFIX)share/sdl-ball/themes/
 BINDIR?=$(PREFIX)/bin/
 
-CXX?=g++
+CXX=clang++
 
-COMMON_FLAGS := -std=gnu++23 -Wall -Wextra -mtune=native $(shell sdl2-config --cflags)
+COMMON_FLAGS := -std=c++23 -Wall -Wextra -mtune=native $(shell sdl2-config --cflags)
 LDFLAGS := -lepoxy -lGLU  $(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 DEBUG_FLAGS := -ggdb -gdwarf-5 -O0 -Wall -DDEBUG -fdebug-types-section -DDATADIR="\"./../\"" $(COMMON_FLAGS)
 RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)
@@ -30,9 +30,6 @@ release: $(BUILD_DIR)$(TARGET)
 
 debug: $(OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)$(TARGET)
-
-$(BUILD_DIR)%.o: $(SOURCE_DIR)%.cpp
-	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
 $(BUILD_DIR)%.o: $(SOURCE_DIR)%.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@

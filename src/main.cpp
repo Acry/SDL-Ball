@@ -39,11 +39,12 @@ SettingsManager settingsManager(configFileManager);
 SaveFileManager saveManager(configFileManager);
 ThemeManager themeManager(configFileManager);
 Display display;
-class effectManager;
-
-SoundManager soundMan; //Public object so all objects can use it
+SoundManager soundManager;
 TextureManager textureManager;
 Text* Text::instance = nullptr;
+class effectManager;
+
+
 // Timing
 int globalTicks;
 float globalMilliTicks;
@@ -65,7 +66,6 @@ typedef GLfloat texPos[8];
 #ifndef uint // WIN32
 typedef unsigned int uint;
 #endif
-
 
 #include "Menu.cpp"
 
@@ -464,7 +464,7 @@ public:
         //Find ledig bullet
         for (auto & bullet : bullets) {
             if (!bullet.active) {
-                soundMan.add(SND_SHOT, p.x);
+                soundManager.add(SND_SHOT, p.x);
                 bullet.active = true;
                 bullet.posx = p.x;
                 bullet.posy = p.y;
@@ -581,25 +581,25 @@ void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballH
     if (ballHitMe || type == 'B') {
         if (type == '3') //cement
         {
-            soundMan.add(SND_CEMENT_BRICK_HIT, posx);
+            soundManager.add(SND_CEMENT_BRICK_HIT, posx);
         } else if (type == '4' || type == '9') //glass or invisible
         {
             if (hitsLeft == 2) {
-                soundMan.add(SND_INVISIBLE_BRICK_APPEAR, posx);
+                soundManager.add(SND_INVISIBLE_BRICK_APPEAR, posx);
             } else if (hitsLeft == 1) {
-                soundMan.add(SND_GLASS_BRICK_HIT, posx);
+                soundManager.add(SND_GLASS_BRICK_HIT, posx);
             } else {
-                soundMan.add(SND_GLASS_BRICK_BREAK, posx);
+                soundManager.add(SND_GLASS_BRICK_BREAK, posx);
             }
         } else if (type == 'B') //explosive
         {
-            soundMan.add(SND_EXPL_BRICK_BREAK, posx);
+            soundManager.add(SND_EXPL_BRICK_BREAK, posx);
         } else if (type == 'C') //Doom brick
         {
-            soundMan.add(SND_DOOM_BRICK_BREAK, posx);
+            soundManager.add(SND_DOOM_BRICK_BREAK, posx);
         } else {
             //All the other bricks
-            soundMan.add(SND_NORM_BRICK_BREAK, posx);
+            soundManager.add(SND_NORM_BRICK_BREAK, posx);
         }
     }
 
@@ -843,13 +843,13 @@ public:
     void move() {
         // Ball Border Collision
         if (posx + width > 1.0f - PILLAR_WIDTH && xvel > 0.0) {
-            soundMan.add(SND_BALL_HIT_BORDER, posx);
+            soundManager.add(SND_BALL_HIT_BORDER, posx);
             xvel *= -1;
         } else if (posx < -1.0f + PILLAR_WIDTH && xvel < 0.0) {
-            soundMan.add(SND_BALL_HIT_BORDER, posx);
+            soundManager.add(SND_BALL_HIT_BORDER, posx);
             xvel *= -1;
         } else if (posy + width > 1.0f && yvel > 0.0) {
-            soundMan.add(SND_BALL_HIT_BORDER, posx);
+            soundManager.add(SND_BALL_HIT_BORDER, posx);
             yvel *= -1;
         } else if (posy - width < -1.0f) {
             active = false;
@@ -1336,9 +1336,9 @@ public:
                     getSpeed();
 
                     if (player.powerup[PO_GLUE]) {
-                        soundMan.add(SND_GLUE_BALL_HIT_PADDLE, p.x);
+                        soundManager.add(SND_GLUE_BALL_HIT_PADDLE, p.x);
                     } else {
-                        soundMan.add(SND_BALL_HIT_PADDLE, p.x);
+                        soundManager.add(SND_BALL_HIT_PADDLE, p.x);
                     }
 
 
@@ -1443,7 +1443,7 @@ public:
         }
 
         if (col) {
-            soundMan.add(SND_PO_HIT_BORDER, posx);
+            soundManager.add(SND_PO_HIT_BORDER, posx);
         }
 
         //idiotisk lavet...
@@ -1499,12 +1499,12 @@ public:
             switch (type) {
                 case PO_COIN:
                     player.coins += 1000;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_GLUE:
                     player.coins += 150;
                     player.powerup[PO_GLUE] = true;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_BIGBALL:
                     player.coins += 30;
@@ -1512,7 +1512,7 @@ public:
                     player.powerup[PO_BIGBALL] = true;
                     player.powerup[PO_NORMALBALL] = false;
                     player.powerup[PO_SMALLBALL] = false;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_NORMALBALL:
                     player.coins += 50;
@@ -1520,7 +1520,7 @@ public:
                     player.powerup[PO_NORMALBALL] = true;
                     player.powerup[PO_BIGBALL] = false;
                     player.powerup[PO_SMALLBALL] = false;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_SMALLBALL:
                     player.coins += 10;
@@ -1528,12 +1528,12 @@ public:
                     player.powerup[PO_SMALLBALL] = true;
                     player.powerup[PO_BIGBALL] = false;
                     player.powerup[PO_NORMALBALL] = false;
-                    soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_EVIL_PO_HIT_PADDLE, posx);
                     break;
                 case PO_MULTIBALL:
                     player.coins += 100;
                     bMan.multiply();
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_AIM:
                     player.coins += 50;
@@ -1546,45 +1546,45 @@ public:
                     } else {
                         player.powerup[PO_GLUE] = true;
                     }
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_GROWPADDLE:
                     player.coins += 100;
                     if (p.width < 0.4) p.grow(p.width + 0.03);
                     player.powerup[PO_GUN] = false;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_SHRINKPADDLE:
                     player.coins += 10;
                     if (p.width > 0.02) p.grow(p.width - 0.02);
                     player.powerup[PO_GUN] = false;
-                    soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_EVIL_PO_HIT_PADDLE, posx);
                     break;
                 case PO_EXPLOSIVE:
                     player.coins += 150;
                     bMan.applyPowerup(PO_EXPLOSIVE);
                     player.powerup[PO_EXPLOSIVE] = true;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_GUN:
                     player.coins += 200;
                     player.powerup[PO_GUN] = true;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_THRU:
                     player.coins += 300;
                     player.powerup[PO_THRU] = true;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_LASER:
                     player.coins += 40;
                     player.powerup[PO_LASER] = true;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_LIFE:
                     player.coins += 400;
                     player.lives++;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_DIE:
                     player.coins += 1;
@@ -1595,22 +1595,22 @@ public:
                 case PO_DROP:
                     player.coins += 1;
                     player.powerup[PO_DROP] = true;
-                    soundMan.add(SND_EVIL_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_EVIL_PO_HIT_PADDLE, posx);
                     break;
                 case PO_DETONATE:
                     player.coins += 200;
                     player.powerup[PO_DETONATE] = true;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_EXPLOSIVE_GROW:
                     player.coins += 100;
                     player.powerup[PO_EXPLOSIVE_GROW] = true;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_EASYBRICK:
                     player.coins += 90;
                     player.powerup[PO_EASYBRICK] = true;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 case PO_NEXTLEVEL:
                     player.coins += 100;
@@ -1620,7 +1620,7 @@ public:
                 case PO_AIMHELP:
                     player.coins += 50;
                     player.powerup[PO_AIMHELP] = true;
-                    soundMan.add(SND_GOOD_PO_HIT_PADDLE, posx);
+                    soundManager.add(SND_GOOD_PO_HIT_PADDLE, posx);
                     break;
                 default: ;
             }
@@ -2237,7 +2237,7 @@ public:
                 player.coins -= item[shopItemSelected].price;
                 shopItemBlocked[shopItemSelected] = true;
                 gVar.shopNextItem = true;
-                soundMan.add(SND_BUY_POWERUP, 0.0f);
+                soundManager.add(SND_BUY_POWERUP, 0.0f);
             }
         }
         glLoadIdentity();
@@ -2357,8 +2357,8 @@ int main(int argc, char *argv[]) {
     var.clearScreen = true;
     var.titleScreenShow = true;
 
-    // CAREFUL: When I inialize this after display.init(), rendering was broken for me.
-    soundMan.init();
+    // CAREFUL: When I initialize this after display.init(), rendering was broken for me.
+    soundManager.init();
 
     if (!display.init()) {
         var.quit = true;
@@ -2490,7 +2490,7 @@ int main(int argc, char *argv[]) {
 
     Controller control(&paddle, &bullet, &ballManager);
     menu.joystickAttached = control.joystickAttached();
-    soundMan.add(SND_START, 0);
+    soundManager.add(SND_START, 0);
 
     // Todo show in title
     SDL_Log("SDL-Ball v %s", VERSION);
@@ -2612,7 +2612,7 @@ int main(int argc, char *argv[]) {
                     if (var.menu) {
                         var.menuPressed = true;
                         if (var.menuItem > 0)
-                            soundMan.add(SND_MENUCLICK, 0);
+                            soundManager.add(SND_MENUCLICK, 0);
                     }
                     control.btnPress();
                 } else if (event.button.button == SDL_BUTTON_RIGHT) {
@@ -2674,7 +2674,7 @@ int main(int argc, char *argv[]) {
                         // announce.write(string text, int mslife, int fontnum);
                         announce.write("Highscore!", 3000,FONT_ANNOUNCE_GOOD);
                         var.showHighScores = 1;
-                        soundMan.add(SND_HIGHSCORE, 0);
+                        soundManager.add(SND_HIGHSCORE, 0);
                     }
                 } else if (gVar.gameOver && !var.showHighScores) {
                     //Only ran if there is gameover and no highscore
@@ -2688,7 +2688,7 @@ int main(int argc, char *argv[]) {
                         //Kør en transition effekt
                         var.effectnum = fxMan.spawn(p);
                         announce.write("GameOver!", 1500,FONT_ANNOUNCE_BAD);
-                        soundMan.add(SND_GAMEOVER, 0);
+                        soundManager.add(SND_GAMEOVER, 0);
                     } else {
                         if (var.transition_half_done) {
                             var.titleScreenShow = true;
@@ -2703,7 +2703,7 @@ int main(int argc, char *argv[]) {
             if (gVar.nextlevel) {
                 if (var.effectnum == -1) {
                     announce.write("Well Done!", 1000, FONT_ANNOUNCE_GOOD);
-                    soundMan.add(SND_NEXTLEVEL, 0);
+                    soundManager.add(SND_NEXTLEVEL, 0);
 
                     if (ballManager.activeBalls > 1) {
                         sprintf(txt, "Bonus: %i", ballManager.activeBalls * 150);
@@ -2869,11 +2869,11 @@ int main(int argc, char *argv[]) {
             }
 
             if (frameAge >= maxFrameAge) {
-                soundMan.play();
+                soundManager.play();
 
                 if (player.explodePaddle) {
                     player.explodePaddle = false;
-                    soundMan.add(SND_DIE, 0);
+                    soundManager.add(SND_DIE, 0);
                     if (setting.eyeCandy) {
                         fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
 
