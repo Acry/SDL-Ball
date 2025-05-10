@@ -45,7 +45,6 @@ public:
 
         glLoadIdentity();
         glDisable(GL_TEXTURE_2D);
-        glTranslatef(0.0, 0.0, 0.0);
         glColor4f(vars.col[0], vars.col[1], vars.col[2], opacity);
         glBegin(GL_QUADS);
         glVertex3f(-1.0f, 1.0f, 0.0);
@@ -53,7 +52,6 @@ public:
         glVertex3f(1.0f, -1.0f, 0.0);
         glVertex3f(-1.0f, -1.0f, 0.0);
         glEnd();
-        glEnable(GL_TEXTURE_2D);
     }
 };
 
@@ -101,6 +99,7 @@ public:
             const GLfloat curSize = size / static_cast<float>(life) * static_cast<float>(lifeleft);
 
             glBindTexture(GL_TEXTURE_2D, vars.tex.prop.texture);
+            glLoadIdentity();
             glBegin(GL_QUADS);
             glTexCoord2f(0, 0);
             glVertex3f(p.x - curSize, p.y + curSize, 0.0);
@@ -334,8 +333,6 @@ public:
         bool stay = false;
         switch (vars.type) {
             case FX_SPARKS:
-                glLoadIdentity();
-                glTranslatef(0.0, 0.0, 0.0);
                 for (i = 0; i < vars.num; i++) {
                     if (sparks[i].active) {
                         sparks[i].draw();

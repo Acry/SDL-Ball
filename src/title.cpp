@@ -103,6 +103,7 @@ titleScreenClass::titleScreenClass(effectManager *m, texture tp[], menuClass *me
 
     glTitleList = glGenLists(1);
     glNewList(glTitleList, GL_COMPILE);
+        //glLoadIdentity();
     glBindTexture(GL_TEXTURE_2D, texTitle.prop.texture);
     glBegin(GL_QUADS);
     for (int i = 0; i < 32; i++) {
@@ -171,7 +172,7 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
 
-        glEnable(GL_TEXTURE_2D);
+
 
         // icons and text
         ticksSinceLastSpawn += globalTicksSinceLastDraw;

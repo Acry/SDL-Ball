@@ -177,12 +177,7 @@ void glTextClass::write(const std::string &text, const int font, const bool cent
         posX *= -1;
     }
     posX += x;
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
 
-    glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
 
@@ -199,7 +194,6 @@ void glTextClass::write(const std::string &text, const int font, const bool cent
         sX = fontInfo[font].ch[c].width;
         const GLfloat sY = fontInfo[font].height;
         drawPosX += sX;
-
         glBegin(GL_QUADS);
         glTexCoord2f(fontInfo[font].ch[c].Xa, fontInfo[font].ch[c].Ya);
         glVertex3f(-sX + drawPosX, sY, 0);
@@ -212,11 +206,8 @@ void glTextClass::write(const std::string &text, const int font, const bool cent
         glEnd();
         drawPosX += sX;
     }
+    glDisable(GL_TEXTURE_2D);
     glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    // glDisable(GL_TEXTURE_2D);
 }
 
 glTextClass::~glTextClass() {

@@ -14,7 +14,7 @@ RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)
 BUILD_DIR := build/
 SOURCE_DIR := src/
 
-SOURCES := $(addprefix $(SOURCE_DIR), Display.cpp main.cpp ConfigFileManager.cpp settings_manager.cpp text.cpp SaveFileManager.cpp SoundManager.cpp ThemeManager.cpp texture.cpp game_state.cpp)
+SOURCES := $(addprefix $(SOURCE_DIR), Display.cpp main.cpp ConfigFileManager.cpp settings_manager.cpp text.cpp SaveFileManager.cpp SoundManager.cpp ThemeManager.cpp texture.cpp game_state.cpp Score.cpp Background.cpp TextureManager.cpp)
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 
 # Create the build directory if it doesn't exist

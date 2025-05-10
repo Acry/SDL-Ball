@@ -111,8 +111,13 @@ struct difficultyStruct {
 
 extern difficultyStruct fixed_difficulty;
 extern difficultyStruct runtime_difficulty;
+extern player_struct SOLPlayer;
+extern vars var;
+extern gameVars gVar;
+extern player_struct player;
 
 void initNewGame();
 void pauseGame();
 void resumeGame();
 void set_fixed_difficulty();
+void resetPlayerPowerups();

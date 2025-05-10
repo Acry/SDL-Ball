@@ -4,10 +4,13 @@
 
 #include "config.h"
 
-extern gameVars gVar;
-extern vars var;
-extern player_struct player;
 
+vars var;
+gameVars gVar;
+// current player
+player_struct player;
+// save game player
+player_struct SOLPlayer;
 difficultyStruct fixed_difficulty;
 difficultyStruct runtime_difficulty;
 
@@ -75,4 +78,10 @@ void set_fixed_difficulty() {
     fixed_difficulty.speedup[EASY] = 10.0f;
     fixed_difficulty.speedup[NORMAL] = 20.0f;
     fixed_difficulty.speedup[HARD] = 30.0f;
+}
+
+void resetPlayerPowerups() {
+    for (bool &i: player.powerup) {
+        i = false;
+    }
 }

@@ -151,7 +151,7 @@ void load_level(const string& file, brick bricks[], const int level) {
             }
         }
     }
-    SDL_Log("Read %d levels from '%s'", var.numlevels, file.c_str());
+    // SDL_Log("Read %d levels from '%s'", var.numlevels, file.c_str());
     levelfile.close();
 }
 

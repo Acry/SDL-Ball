@@ -10,7 +10,6 @@
 #include <dirent.h>
 #include <fstream>
 #include <iomanip>
-#include <iostream>
 #include <random>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -28,6 +27,9 @@
 #include "ThemeManager.h"
 #include "texture.h"
 #include "texture_properties.h"
+#include "Score.h"
+#include "Background.h"
+#include "TextureManager.h"
 
 using namespace std;
 
@@ -37,18 +39,12 @@ SaveFileManager saveManager(configFileManager);
 ThemeManager themeManager(configFileManager);
 
 class effectManager;
-
-gameVars gVar;
-// current player
-player_struct player;
-// start of round player - for save game
-player_struct SOLPlayer;
-vars var;
 Display display;
 glTextClass *glText;
 // Pointer to the object, since we can't init (load fonts) because the settings have not been read yet.
 
 SoundManager soundMan; //Public object so all objects can use it
+TextureManager texMgr;
 
 // Timing
 int globalTicks;
@@ -59,8 +55,6 @@ int globalTicksSinceLastDraw;
 float globalMilliTicksSinceLastDraw;
 
 float random_float(float total, float negative);
-
-float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx);
 
 // // Option 1: Struct mit benannten Koordinaten
 // struct TexCoords {
@@ -74,127 +68,8 @@ typedef GLfloat texPos[8];
 typedef unsigned int uint;
 #endif
 
-/* This function reads textureProperties from fileName
-   and applies them to *tex */
-class TextureManager {
-public:
-    static bool load(const string &file, texture &tex) {
-        SDL_Surface *temp = nullptr;
-        GLint maxTexSize;
-        GLuint glFormat = GL_RGBA;
-
-        if (file.substr(file.length() - 3, 3) == "jpg") {
-            glFormat = GL_RGB;
-        }
-
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
-
-        temp = IMG_Load(file.data());
-
-        if (temp == nullptr) {
-            SDL_Log("Texture manager:%s :%s", file.c_str(), SDL_GetError());
-            SDL_FreeSurface(temp);
-            return false;
-        }
-
-        //Hvis større end tilladt:
-        if (temp->w > maxTexSize) {
-            SDL_Log("Texture manager: '%s' texturesize too large.", file.c_str());
-            SDL_FreeSurface(temp);
-            return false;
-        }
-
-        glGenTextures(1, &tex.prop.texture);
-        glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, glFormat, temp->w, temp->h, 0, glFormat, GL_UNSIGNED_BYTE, temp->pixels);
-
-        tex.prop.pxw = temp->w;
-        tex.prop.pxh = temp->h;
-        SDL_FreeSurface(temp);
-
-        return true;
-    }
-
-    void readTexProps(string fileName, texture &tex) {
-        char rgba[4][5];
-        ifstream f;
-        string set, val;
-        f.open(fileName.data());
-
-        if (f.is_open()) {
-            string line;
-            while (!f.eof()) {
-                getline(f, line);
-                if (line.find('=') != string::npos) {
-                    set = line.substr(0, line.find('='));
-                    val = line.substr(line.find('=') + 1);
-                    if (set == "xoffset") {
-                        tex.prop.xoffset = atof(val.data());
-                    } else if (set == "yoffset") {
-                        tex.prop.yoffset = atof(val.data());
-                    } else if (set == "cols") {
-                        tex.prop.cols = atoi(val.data());
-                    } else if (set == "rows") {
-                        tex.prop.rows = atoi(val.data());
-                    } else if (set == "ticks") {
-                        tex.prop.ticks = atoi(val.data());
-                    } else if (set == "frames") {
-                        tex.prop.frames = atoi(val.data());
-                    } else if (set == "bidir") {
-                        tex.prop.bidir = atoi(val.data());
-                    } else if (set == "playing") {
-                        tex.prop.playing = atoi(val.data());
-                    } else if (set == "padding") {
-                        tex.prop.padding = atoi(val.data());
-                    } else if (set == "texcolor") {
-                        //Color in hex RGBA
-                        //Example:color=FFFFFFFF
-                        sprintf(rgba[0], "0x%c%c", val[0], val[1]);
-                        sprintf(rgba[1], "0x%c%c", val[2], val[3]);
-                        sprintf(rgba[2], "0x%c%c", val[4], val[5]);
-                        sprintf(rgba[3], "0x%c%c", val[6], val[7]);
-                        tex.prop.glTexColorInfo[0] = 0.003921569f * strtol(rgba[0], nullptr, 16);
-                        tex.prop.glTexColorInfo[1] = 0.003921569f * strtol(rgba[1], nullptr, 16);
-                        tex.prop.glTexColorInfo[2] = 0.003921569f * strtol(rgba[2], nullptr, 16);
-                        tex.prop.glTexColorInfo[3] = 0.003921569f * strtol(rgba[3], nullptr, 16);
-                    } else if (set == "parcolor") {
-                        //Color in hex RGBA
-                        //Example:color=FFFFFFFF
-                        sprintf(rgba[0], "0x%c%c", val[0], val[1]);
-                        sprintf(rgba[1], "0x%c%c", val[2], val[3]);
-                        sprintf(rgba[2], "0x%c%c", val[4], val[5]);
-                        tex.prop.glParColorInfo[0] = 0.003921569f * strtol(rgba[0], nullptr, 16);
-                        tex.prop.glParColorInfo[1] = 0.003921569f * strtol(rgba[1], nullptr, 16);
-                        tex.prop.glParColorInfo[2] = 0.003921569f * strtol(rgba[2], nullptr, 16);
-                    } else if (set == "file") {
-                        tex.prop.fileName = val;
-                    } else {
-                        SDL_Log("Error: '%s' invalid setting '%s' with value '%s'", fileName.c_str(), set.c_str(),
-                                val.c_str());
-                    }
-                }
-            }
-
-            //Load the texture if we have a filename.
-            if (tex.prop.fileName.length() > 1) {
-                string name = "gfx/" + tex.prop.fileName;
-                load(themeManager.getThemeFilePath(name, setting.gfxTheme), tex);
-            }
-        } else {
-            SDL_Log("readTexProps: Cannot open '%s'", fileName.c_str());
-        }
-    }
-};
 
 #include "menu.cpp"
-#include "Score.cpp"
 
 // nasty fix to a problem
 int nbrick[23][26];
@@ -523,6 +398,7 @@ public:
 
             // Hvis glue?
             if (player.powerup[PO_GLUE]) {
+                glLoadIdentity();
                 glBindTexture(GL_TEXTURE_2D, layerTex[0].prop.texture);
                 glColor4f(layerTex[0].prop.glTexColorInfo[0], layerTex[0].prop.glTexColorInfo[1],
                           layerTex[0].prop.glTexColorInfo[2], layerTex[0].prop.glTexColorInfo[3]);
@@ -541,6 +417,7 @@ public:
             //Hvis gun
             if (player.powerup[PO_GUN]) {
                 layerTex[1].play();
+                glLoadIdentity();
                 glBindTexture(GL_TEXTURE_2D, layerTex[1].prop.texture);
                 glColor4f(layerTex[1].prop.glTexColorInfo[0], layerTex[1].prop.glTexColorInfo[1],
                           layerTex[1].prop.glTexColorInfo[2], layerTex[1].prop.glTexColorInfo[3]);
@@ -560,7 +437,6 @@ public:
 };
 
 #include "EffectsTransist.cpp"
-#include "background.cpp"
 
 void spawnpowerup(char powerup, pos a, pos b);
 
@@ -1079,11 +955,10 @@ public:
                 const GLfloat R = bounceOffAngle(paddle.width, paddle.posx, cx);
                 o[0] = cx + (cos(R) * 2.0);
                 o[1] = cy + (sin(R) * 2.0);
-                glLoadIdentity();
-                glTranslatef(0.0, 0.0, 0.0);
                 glDisable(GL_TEXTURE_2D);
                 glLineWidth(2.0);
                 glEnable(GL_LINE_SMOOTH);
+                glLoadIdentity();
                 glBegin(GL_LINE_STRIP);
                 //Line from ball to paddle
                 glColor4f(1.0, 0.0, 0.0, 0.0); // ???
@@ -1108,7 +983,7 @@ public:
             glBindTexture(GL_TEXTURE_2D, fireTex.prop.texture);
             glColor4f(fireTex.prop.glTexColorInfo[0], fireTex.prop.glTexColorInfo[1], fireTex.prop.glTexColorInfo[2],
                       fireTex.prop.glTexColorInfo[3]);
-
+            glLoadIdentity();
             glBegin(GL_QUADS);
             glTexCoord2f(fireTex.pos[0], fireTex.pos[1]);
             glVertex3f(-width, height, 0.0);
@@ -1124,7 +999,7 @@ public:
             glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
             glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2],
                       tex.prop.glTexColorInfo[3]);
-
+            glLoadIdentity();
             glBegin(GL_QUADS);
             glTexCoord2f(tex.pos[0], tex.pos[1]);
             glVertex3f(-width, height, 0.0);
@@ -2046,17 +1921,11 @@ void spawnpowerup(char powerup, pos a, pos b) {
     }
 }
 
-void resetPlayerPowerups() {
-    for (bool &i: player.powerup) {
-        i = false;
-    }
-}
-
 void createPlayfieldBorder(GLuint *dl, const texture &tex) {
     *dl = glGenLists(1);
     glNewList(*dl,GL_COMPILE);
 
-    // glLoadIdentity();
+    glLoadIdentity();
 
     // top
     glColor4f(GL_WHITE);
@@ -2292,9 +2161,8 @@ public:
 
     void draw() {
         int i;
-        //Draw lives left.
         glLoadIdentity();
-        glTranslatef(0, 0, 0.0);
+        //Draw lives left.
         glColor4f(texBall.prop.glTexColorInfo[0], texBall.prop.glTexColorInfo[1], texBall.prop.glTexColorInfo[2],
                   texBall.prop.glTexColorInfo[3]);
 
@@ -2371,7 +2239,7 @@ public:
                 soundMan.add(SND_BUY_POWERUP, 0.0f);
             }
         }
-
+        glLoadIdentity();
         glTranslatef(shopListStartX, 1.0f, 0.0f);
         for (i = 0; i < canAfford; i++) {
             if (i == shopItemSelected) {
@@ -2418,13 +2286,13 @@ public:
         const GLfloat y = 0.48f / (runtime_difficulty.maxballspeed[player.difficulty] - runtime_difficulty.ballspeed[player.difficulty])
                           * (
                               var.averageBallSpeed - runtime_difficulty.ballspeed[player.difficulty]);
-
-        glDisable(GL_TEXTURE_2D);
-
         glLoadIdentity();
+        glDisable(GL_TEXTURE_2D);
+        glPushMatrix();
         glTranslatef(1.0f, -1.0, 0.0);
+        glPopMatrix();
         glBegin(GL_QUADS);
-        glColor4f(0, 1, 0, 1);
+        glColor4f(GL_FULL_GREEN);
         glVertex3f(0, y, 0);
         glVertex3f(0.03, y, 0);
         glColor4f(GL_WHITE);
@@ -2529,7 +2397,7 @@ int main(int argc, char *argv[]) {
     glText = new glTextClass; // instantiate the class now that settings have been read.
 
 #pragma region texture manager
-    TextureManager texMgr;
+
 
     texture texPaddleBase;
     texture texPaddleLayers[2];
@@ -2634,7 +2502,7 @@ int main(int argc, char *argv[]) {
 
     // This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
     HighScore hKeeper;
-    backgroundClass bg;
+    Background background;
     bulletsClass bullet(texBullet);
     speedometerClass speedo;
     hudClass hud(texBall[0], texPowerup);
@@ -2929,7 +2797,7 @@ int main(int argc, char *argv[]) {
                 bullet.clear();
                 paddle.posx = 0.0;
                 var.startedPlaying = false;
-                bg.init(texMgr);
+                background.updateBgIfNeeded(texMgr);
                 hud.clearShop();
             }
 
@@ -2955,7 +2823,7 @@ int main(int argc, char *argv[]) {
 
                 // Background
                 if (setting.showBg)
-                    bg.draw();
+                    background.draw();
 
                 // Borders
                 glCallList(sceneDL);
@@ -3000,18 +2868,7 @@ int main(int argc, char *argv[]) {
                             fxMan.coldet(bricks[i]);
                     }
                     if (frameAge >= maxFrameAge) {
-                        glPushMatrix();
-                        glLoadIdentity();
-                        glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
-                        glMatrixMode(GL_MODELVIEW);
-                        glPushMatrix();
-                        glLoadIdentity();
-                        glLoadIdentity();
                         bricks[i].draw(bricks, fxMan);
-                        glPopMatrix();
-                        glMatrixMode(GL_PROJECTION);
-                        glPopMatrix();
-                        glMatrixMode(GL_MODELVIEW);
                     }
                 } //aktiv brik
             } // for loop

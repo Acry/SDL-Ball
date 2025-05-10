@@ -1,37 +1,36 @@
-class Score {
-    unsigned int lastScoreTick;
-    uint tempScore;
-    uint score;
-    char tempText[255];
+// HUD
+#include "Score.h"
+#include "text.h"
 
-public:
-    Score() {
-        init();
-    }
+extern glTextClass *glText;
 
-    void init() {
-        tempScore = 1;
-        score = 0;
-        lastScoreTick = SDL_GetTicks();
-    }
+Score::Score() {
+    init();
+}
 
-    void update(const int point) {
-        score = point;
-    }
+void Score::init() {
+    tempScore = 1;
+    score = 0;
+    lastScoreTick = SDL_GetTicks();
+}
 
-    void draw() {
-        const int dif = score - tempScore;
+void Score::update(const int point) {
+    score = point;
+}
 
-        if (tempScore != score) {
-            if (lastScoreTick + 50 < SDL_GetTicks()) {
-                tempScore += static_cast<float>(dif) / 7.0f + 1.0f;;
-                if (tempScore > score)
-                    tempScore = score;
-                lastScoreTick = SDL_GetTicks();
+void Score::draw() {
+    const int dif = score - tempScore;
 
-                sprintf(tempText, "%i", tempScore);
-            }
+    if (tempScore != score) {
+        if (lastScoreTick + 50 < SDL_GetTicks()) {
+            tempScore += static_cast<float>(dif) / 7.0f + 1.0f;
+            if (tempScore > score)
+                tempScore = score;
+            lastScoreTick = SDL_GetTicks();
+
+            sprintf(tempText, "%i", tempScore);
         }
-        glText->write(tempText, FONT_HIGHSCORE, false, 0.75f, -0.9f, 0.9f);
     }
-};
+    glText->write(tempText, FONT_HIGHSCORE, false, 0.75f, -0.9f, 0.9f);
+}
+

@@ -120,6 +120,7 @@ public:
 
         // Menu-Hintergrund
         glNewList(dl, GL_COMPILE);
+        glLoadIdentity();
         glBindTexture(GL_TEXTURE_2D, tex[0].prop.texture);
         glColor4f(GL_WHITE);
         glBegin(GL_QUADS);
@@ -143,6 +144,7 @@ public:
         // bläulich
         float half_width = 0.425f;
         glNewList(dl + 1, GL_COMPILE);
+        glLoadIdentity();
         glBindTexture(GL_TEXTURE_2D, tex[1].prop.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
@@ -158,6 +160,7 @@ public:
 
         // rötlich
         glNewList(dl + 2, GL_COMPILE);
+        glLoadIdentity();
         glBindTexture(GL_TEXTURE_2D, tex[2].prop.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
@@ -173,6 +176,7 @@ public:
 
         // grünlich
         glNewList(dl + 3, GL_COMPILE);
+        glLoadIdentity();
         glBindTexture(GL_TEXTURE_2D, tex[3].prop.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
