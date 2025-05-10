@@ -42,7 +42,7 @@ Display display;
 class effectManager;
 
 SoundManager soundMan; //Public object so all objects can use it
-TextureManager texMgr;
+TextureManager textureManager;
 Text* Text::instance = nullptr;
 // Timing
 int globalTicks;
@@ -2383,68 +2383,68 @@ int main(int argc, char *argv[]) {
     Texture texBullet;
     Texture texParticle;
 
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/paddle/base.txt", setting.gfxTheme), texPaddleBase);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/paddle/glue.txt", setting.gfxTheme), texPaddleLayers[0]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/paddle/gun.txt", setting.gfxTheme), texPaddleLayers[1]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/paddle/base.txt", setting.gfxTheme), texPaddleBase);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/paddle/glue.txt", setting.gfxTheme), texPaddleLayers[0]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/paddle/gun.txt", setting.gfxTheme), texPaddleLayers[1]);
 
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/ball/normal.txt", setting.gfxTheme), texBall[0]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/ball/fireball.txt", setting.gfxTheme), texBall[1]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/ball/tail.txt", setting.gfxTheme), texBall[2]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/ball/normal.txt", setting.gfxTheme), texBall[0]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/ball/fireball.txt", setting.gfxTheme), texBall[1]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/ball/tail.txt", setting.gfxTheme), texBall[2]);
 
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/explosive.txt", setting.gfxTheme), texLvl[0]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/base.txt", setting.gfxTheme), texLvl[1]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/cement.txt", setting.gfxTheme), texLvl[2]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/doom.txt", setting.gfxTheme), texLvl[3]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/glass.txt", setting.gfxTheme), texLvl[4]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/invisible.txt", setting.gfxTheme), texLvl[5]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/blue.txt", setting.gfxTheme), texLvl[6]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/yellow.txt", setting.gfxTheme), texLvl[7]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/green.txt", setting.gfxTheme), texLvl[8]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/grey.txt", setting.gfxTheme), texLvl[9]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/purple.txt", setting.gfxTheme), texLvl[10]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/white.txt", setting.gfxTheme), texLvl[11]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/brick/red.txt", setting.gfxTheme), texLvl[12]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/explosive.txt", setting.gfxTheme), texLvl[0]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/base.txt", setting.gfxTheme), texLvl[1]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/cement.txt", setting.gfxTheme), texLvl[2]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/doom.txt", setting.gfxTheme), texLvl[3]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/glass.txt", setting.gfxTheme), texLvl[4]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/invisible.txt", setting.gfxTheme), texLvl[5]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/blue.txt", setting.gfxTheme), texLvl[6]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/yellow.txt", setting.gfxTheme), texLvl[7]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/green.txt", setting.gfxTheme), texLvl[8]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/grey.txt", setting.gfxTheme), texLvl[9]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/purple.txt", setting.gfxTheme), texLvl[10]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/white.txt", setting.gfxTheme), texLvl[11]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/brick/red.txt", setting.gfxTheme), texLvl[12]);
 
-    texMgr.load(themeManager.getThemeFilePath("gfx/border.png", setting.gfxTheme), texBorder);
+    textureManager.load(themeManager.getThemeFilePath("gfx/border.png", setting.gfxTheme), texBorder);
 
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/coin.txt", setting.gfxTheme), texPowerup[PO_COIN]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/glue.txt", setting.gfxTheme), texPowerup[PO_GLUE]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/multiball.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/coin.txt", setting.gfxTheme), texPowerup[PO_COIN]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/glue.txt", setting.gfxTheme), texPowerup[PO_GLUE]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/multiball.txt", setting.gfxTheme),
                         texPowerup[PO_MULTIBALL]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/bigball.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/bigball.txt", setting.gfxTheme),
                         texPowerup[PO_BIGBALL]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/normalball.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/normalball.txt", setting.gfxTheme),
                         texPowerup[PO_NORMALBALL]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/smallball.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/smallball.txt", setting.gfxTheme),
                         texPowerup[PO_SMALLBALL]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/aim.txt", setting.gfxTheme), texPowerup[PO_AIM]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/explosive.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/aim.txt", setting.gfxTheme), texPowerup[PO_AIM]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/explosive.txt", setting.gfxTheme),
                         texPowerup[PO_EXPLOSIVE]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/gun.txt", setting.gfxTheme), texPowerup[PO_GUN]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/go-thru.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/gun.txt", setting.gfxTheme), texPowerup[PO_GUN]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/go-thru.txt", setting.gfxTheme),
                         texPowerup[PO_THRU]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/laser.txt", setting.gfxTheme), texPowerup[PO_LASER]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/life.txt", setting.gfxTheme), texPowerup[PO_LIFE]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/die.txt", setting.gfxTheme), texPowerup[PO_DIE]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/drop.txt", setting.gfxTheme), texPowerup[PO_DROP]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/detonate.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/laser.txt", setting.gfxTheme), texPowerup[PO_LASER]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/life.txt", setting.gfxTheme), texPowerup[PO_LIFE]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/die.txt", setting.gfxTheme), texPowerup[PO_DIE]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/drop.txt", setting.gfxTheme), texPowerup[PO_DROP]);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/detonate.txt", setting.gfxTheme),
                         texPowerup[PO_DETONATE]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/explosive-grow.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/explosive-grow.txt", setting.gfxTheme),
                         texPowerup[PO_EXPLOSIVE_GROW]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/easybrick.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/easybrick.txt", setting.gfxTheme),
                         texPowerup[PO_EASYBRICK]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/nextlevel.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/nextlevel.txt", setting.gfxTheme),
                         texPowerup[PO_NEXTLEVEL]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/aimhelp.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/aimhelp.txt", setting.gfxTheme),
                         texPowerup[PO_AIMHELP]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/growbat.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/growbat.txt", setting.gfxTheme),
                         texPowerup[PO_GROWPADDLE]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/shrinkbat.txt", setting.gfxTheme),
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/shrinkbat.txt", setting.gfxTheme),
                         texPowerup[PO_SHRINKPADDLE]);
-    texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/bullet.txt", setting.gfxTheme), texBullet);
+    textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/bullet.txt", setting.gfxTheme), texBullet);
     powerupManager.init(texPowerup);
 
-    texMgr.load(themeManager.getThemeFilePath("gfx/particle.png", setting.gfxTheme), texParticle);
+    textureManager.load(themeManager.getThemeFilePath("gfx/particle.png", setting.gfxTheme), texParticle);
 # pragma endregion texture manager
 
     GLuint playfieldBorderList;
@@ -2767,7 +2767,7 @@ int main(int argc, char *argv[]) {
                 bullet.clear();
                 paddle.posx = 0.0;
                 var.startedPlaying = false;
-                background.updateBgIfNeeded(texMgr);
+                background.updateBgIfNeeded(textureManager);
                 hud.clearShop();
             }
 

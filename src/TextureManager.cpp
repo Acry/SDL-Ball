@@ -8,7 +8,7 @@
 #include "ThemeManager.h"
 
 extern settings setting;
-extern TextureManager texMgr;
+extern TextureManager textureManager;
 extern ThemeManager themeManager;
 
 bool TextureManager::load(const std::string& file, Texture& tex) {
