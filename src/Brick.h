@@ -1,6 +1,6 @@
 #pragma once
 #include <GL/gl.h>
-#include "game_object.h"
+#include "GameObject.h"
 #include <array>
 
 // nasty fix to a problem
@@ -16,7 +16,7 @@ int updated_nbrick[23][26];
     brick.updateGridPosition(42); // Setzt Position im Grid
 */
 
-class Brick : public game_object {
+class Brick : public GameObject {
 public:
     static constexpr int ROWS = 23;
     static constexpr int COLS = 26;

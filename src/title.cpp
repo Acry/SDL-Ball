@@ -1,6 +1,6 @@
 #include "texture.h"
 
-class powerupDescriptionClass : public moving_object {
+class powerupDescriptionClass : public MovingObject {
 public:
     powerupDescriptionClass();
 

@@ -1,9 +1,9 @@
-// nasty fix to a problem
+#include"Brick.h"
 int nbrick[23][26];
 int updated_nbrick[23][26];
 
 
-class brick : public game_object {
+class Brick : public GameObject {
 public:
     int score; //Hvor meget gir den
     bool destroytowin; // Skal den smadres for at man kan vinde?

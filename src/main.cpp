@@ -20,8 +20,8 @@
 #include "config.h"
 #include "ConfigFileManager.h"
 #include "Display.hpp"
-#include "game_object.h"
-#include "moving_object.h"
+#include "GameObject.h"
+#include "MovingObject.h"
 #include "SettingsManager.h"
 #include "SoundManager.h"
 #include "text.h"
@@ -194,7 +194,7 @@ public:
 };
 
 #include "menu.cpp"
-#include "scoreboard.cpp"
+#include "Score.cpp"
 
 // nasty fix to a problem
 int nbrick[23][26];
@@ -203,7 +203,7 @@ class brick;
 
 void makeExplosive(brick &b);
 texture *texExplosiveBrick; //NOTE:Ugly
-class brick : public game_object {
+class brick : public GameObject {
 public:
     int score; //Hvor meget gir den
     bool destroytowin; // Skal den smadres for at man kan vinde?
@@ -453,7 +453,7 @@ public:
 
 //#include "loadlevel_new.cpp"
 #include "loadlevel.cpp"
-class paddle_class : public game_object {
+class paddle_class : public GameObject {
     GLfloat growspeed;
     GLfloat destwidth;
     GLfloat aspect; // Verhältnis, um wie viel die Höhe zur Breite wächst.
@@ -565,7 +565,7 @@ public:
 void spawnpowerup(char powerup, pos a, pos b);
 
 class bulletsClass {
-    moving_object bullets[16];
+    MovingObject bullets[16];
 
 public:
     int active;
@@ -919,7 +919,7 @@ public:
     }
 };
 
-class ball : public moving_object {
+class ball : public MovingObject {
     GLfloat rad;
     bool growing, shrinking;
     GLfloat destwidth, growspeed;
@@ -1272,12 +1272,8 @@ public:
 
 void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan);
 
-void checkPaddleCollision(ball &b, const paddle_class &p, pos &po);
-
-
-
 class BallManager {
-    // verwaltet mehrere Bälle
+// verwaltet mehrere Bälle
 public:
     int activeBalls;
     ball b[MAXBALLS];
@@ -1385,7 +1381,7 @@ public:
     void clear() {
         activeBalls = 0;
         for (auto & i : b) {
-            i.active = 0;
+            i.active = false;
         }
         getSpeed();
     }
@@ -1478,9 +1474,9 @@ public:
             } //if active
         } //for loop
         return (hits);
-    } //pcoldet
+    }
 
-    void updatelast() {
+    void updateLast() {
         for (auto & i : b) {
             if (i.active) {
                 i.lastX = i.posx;
@@ -1521,7 +1517,7 @@ public:
 };
 
 // Powerups
-class PowerupClass : public moving_object {
+class PowerupClass : public MovingObject {
 public:
     int score;
     int type;
@@ -1801,8 +1797,6 @@ public:
     }
 };
 
-
-
 class PowerupManager {
 
     int i;
@@ -2056,33 +2050,6 @@ void resetPlayerPowerups() {
     for (bool &i: player.powerup) {
         i = false;
     }
-}
-
-// GL
-void initGL() {
-    //     printf("GL_RENDERER   = %s\n", (char *) glGetString(GL_RENDERER));
-    // printf("GL_VERSION    = %s\n", (char *) glGetString(GL_VERSION));
-    //     printf("GL_VENDOR     = %s\n", (char *) glGetString(GL_VENDOR));
-    //printf("GL_EXTENSIONS = %s\n", (char *) glGetString(GL_EXTENSIONS));
-
-    /* Enable smooth shading */
-    glShadeModel(GL_SMOOTH);
-
-    /* Set the background black */
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-    /* Depth buffer setup */
-    glClearDepth(1.0f);
-
-    /* Enables Depth Testing */
-    //  glEnable( GL_DEPTH_TEST );
-
-    /* The Type Of Depth Test To Do */
-    glDepthFunc(GL_LEQUAL);
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void createPlayfieldBorder(GLuint *dl, const texture &tex) {
@@ -2522,7 +2489,7 @@ void easyBrick(brick bricks[]) {
     }
 }
 
-#include "input.cpp"
+#include "Controller.cpp"
 #include "title.cpp"
 
 int main(int argc, char *argv[]) {
@@ -2551,7 +2518,6 @@ int main(int argc, char *argv[]) {
     if (!display.init()) {
         var.quit = true;
     }
-    initGL();
     SDL_SetWindowIcon(display.sdlWindow,
                       IMG_Load(themeManager.getThemeFilePath("icon32.png", setting.gfxTheme).data()));
     SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
@@ -2653,7 +2619,7 @@ int main(int argc, char *argv[]) {
     // }
 
     int i = 0; //bruges i for loop xD
-    glScoreBoard scoreboard;
+    Score scoreboard;
     menuClass menu;
     paddle_class paddle;
     paddle.tex = texPaddleBase;
@@ -2681,7 +2647,7 @@ int main(int argc, char *argv[]) {
     char txt[256];
     Uint32 frameAge = 0; // in milliseconds
 
-    controllerClass control(&paddle, &bullet, &ballManager);
+    Controller control(&paddle, &bullet, &ballManager);
     menu.joystickAttached = control.joystickAttached();
     soundMan.add(SND_START, 0);
 
@@ -3129,7 +3095,7 @@ int main(int argc, char *argv[]) {
                     }
                 }
 
-                ballManager.updatelast();
+                ballManager.updateLast();
                 glColor3d(255, 255, 255);
                 bullet.draw();
                 paddle.draw();

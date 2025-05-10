@@ -1,6 +1,6 @@
 extern SettingsManager settingsManager;
 
-class controllerClass {
+class Controller {
     paddle_class *paddle;
     bulletsClass *bullet;
     BallManager *bMan;
@@ -17,9 +17,9 @@ class controllerClass {
     int calMin, calMax, calLowJitter, calHighJitter;
 
 public:
-    controllerClass(paddle_class *pc, bulletsClass *bu, BallManager *bm);
+    Controller(paddle_class *pc, bulletsClass *bu, BallManager *bm);
 
-    ~controllerClass();
+    ~Controller();
 
     void movePaddle(GLfloat px);
 
@@ -32,7 +32,7 @@ public:
     bool joystickAttached() const;
 };
 
-controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, BallManager *bm) {
+Controller::Controller(paddle_class *pc, bulletsClass *bu, BallManager *bm) {
     paddle = pc;
     bullet = bu;
     bMan = bm;
@@ -54,11 +54,11 @@ controllerClass::controllerClass(paddle_class *pc, bulletsClass *bu, BallManager
     }
 }
 
-controllerClass::~controllerClass() {
+Controller::~Controller() {
     SDL_JoystickClose(0);
 }
 
-void controllerClass::movePaddle(GLfloat px) {
+void Controller::movePaddle(GLfloat px) {
     if (!var.paused) {
         paddle->posx = px;
         if (paddle->posx > 1.66 - paddle->width - 0.06) {
@@ -69,7 +69,7 @@ void controllerClass::movePaddle(GLfloat px) {
     }
 }
 
-void controllerClass::btnPress() {
+void Controller::btnPress() {
     if (var.titleScreenShow) {
         var.titleScreenShow = 0;
         SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, 0);
@@ -93,7 +93,7 @@ void controllerClass::btnPress() {
     }
 }
 
-bool controllerClass::get() {
+bool Controller::get() {
     const Uint8 *keyStates;
     Uint8 keyDown[3]; //Need this since its not a good idea to write to keyStates for some reason
     shotTime += globalTicks;
@@ -178,7 +178,7 @@ bool controllerClass::get() {
     return false;
 }
 
-void controllerClass::calibrate() {
+void Controller::calibrate() {
     Sint16 x = 0;
     if (SDL_TRUE == joystickAttached()) {
         x = SDL_JoystickGetAxis(joystick, 0);
@@ -229,6 +229,6 @@ void controllerClass::calibrate() {
     }
 }
 
-bool controllerClass::joystickAttached() const {
+bool Controller::joystickAttached() const {
     return joystick != nullptr;
 }

@@ -1,11 +1,11 @@
-class glScoreBoard {
+class Score {
     unsigned int lastScoreTick;
     uint tempScore;
     uint score;
     char tempText[255];
 
 public:
-    glScoreBoard() {
+    Score() {
         init();
     }
 
@@ -32,7 +32,6 @@ public:
                 sprintf(tempText, "%i", tempScore);
             }
         }
-        glLoadIdentity();
-        glText->write(tempText, FONT_HIGHSCORE, false, 1.0f, -0.9f, 0.9f);
+        glText->write(tempText, FONT_HIGHSCORE, false, 0.75f, -0.9f, 0.9f);
     }
 };

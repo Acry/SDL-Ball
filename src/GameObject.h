@@ -4,7 +4,7 @@
 #include <epoxy/gl.h>
 #include "texture.h"
 
-class game_object {
+class GameObject {
 public:
     //     GLfloat color[3];
     GLfloat opacity; // This is still used, because it can then be reset, and it's used for fading out bricks (i think)

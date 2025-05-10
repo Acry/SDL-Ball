@@ -2,13 +2,13 @@
 #pragma once
 #include <string>
 #include "texture.h"
-#include "moving_object.h"
+#include "MovingObject.h"
 #include "effectManager.h"
 #include "menuClass.h"
 
 constexpr int MAXPOTEXTURES = 21;
 
-class powerupDescriptionClass : public moving_object {
+class powerupDescriptionClass : public MovingObject {
 public:
     powerupDescriptionClass();
 

@@ -79,6 +79,7 @@ bool Display::init() {
     int doubleBuffered = 0;
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &doubleBuffered);
     SDL_Log("Double buffering %s", doubleBuffered ? "aktiviert" : "deaktiviert");
+    initGL();
     resize(currentW, currentH);
     return true;
 }
@@ -208,6 +209,27 @@ bool Display::screenshot() {
 
     fclose(outFile);
     return true;
+}
+
+void Display::initGL() {
+    /* Enable smooth shading */
+    glShadeModel(GL_SMOOTH);
+
+    /* Set the background black */
+    glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+
+    /* Depth buffer setup */
+    glClearDepth(1.0f);
+
+    /* Enables Depth Testing */
+    //  glEnable( GL_DEPTH_TEST );
+
+    /* The Type Of Depth Test To Do */
+    glDepthFunc(GL_LEQUAL);
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 Display::~Display() {
