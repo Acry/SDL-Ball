@@ -11,10 +11,8 @@ public:
     }
 
     void draw() const {
-        // draw texture
-        glLoadIdentity();
         glColor4f(GL_WHITE);
-
+        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
@@ -26,7 +24,7 @@ public:
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(-1.0f, -0.5f, 0.0f);
         glEnd();
-
+        glDisable(GL_TEXTURE_2D);
         glText->write(name, FONT_MENUHIGHSCORE, true, 2.0, 0.0, 0.2);
     }
 

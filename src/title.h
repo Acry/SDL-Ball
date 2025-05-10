@@ -19,7 +19,7 @@ public:
     std::string description;
 };
 
-class titleScreenClass {
+class TitleScreen {
     effectManager *fxMan;
     int ticksSinceLastSpawn;
     TextureManager texMgr;
@@ -41,6 +41,6 @@ class titleScreenClass {
     static void readDescriptions(powerupDescriptionClass po[]);
 
 public:
-    titleScreenClass(effectManager *m, texture tp[], menuClass *me);
+    TitleScreen(effectManager *m, texture tp[], menuClass *me);
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };

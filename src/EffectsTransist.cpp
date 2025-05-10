@@ -97,9 +97,8 @@ public:
             glColor4f(vars.col[0], vars.col[1], vars.col[2], (1.0 / static_cast<float>(life)) * static_cast<float>(lifeleft));
 
             const GLfloat curSize = size / static_cast<float>(life) * static_cast<float>(lifeleft);
-
+            glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, vars.tex.prop.texture);
-            glLoadIdentity();
             glBegin(GL_QUADS);
             glTexCoord2f(0, 0);
             glVertex3f(p.x - curSize, p.y + curSize, 0.0);
@@ -110,6 +109,7 @@ public:
             glTexCoord2f(1, 0);
             glVertex3f(p.x - curSize, p.y - curSize, 0.0);
             glEnd();
+            glDisable(GL_TEXTURE_2D);
         } else {
             active = false;
         }

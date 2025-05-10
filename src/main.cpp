@@ -222,7 +222,7 @@ public:
         tex.play();
 
         glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2], opacity);
-
+        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
         glLoadIdentity();
         glBegin(GL_QUADS);
@@ -252,6 +252,7 @@ public:
         glTexCoord2f(tex.pos[6], tex.pos[7]);
         glVertex3f(left, bottom, 0.0f);   // Unten links
         glEnd();
+        glDisable(GL_TEXTURE_2D);
     }
 
     void growExplosive(brick bricks[]) const {
@@ -382,6 +383,7 @@ public:
             glTranslatef(posx, posy, 0.0);
 
             tex.play();
+            glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
             glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2],
                       tex.prop.glTexColorInfo[3]);
@@ -394,11 +396,13 @@ public:
             glVertex3f(width, -height, 0.0f);
             glTexCoord2f(tex.pos[6], tex.pos[7]);
             glVertex3f(-width, -height, 0.0f);
+            glDisable(GL_TEXTURE_2D);
             // glPopMatrix();
 
             // Hvis glue?
             if (player.powerup[PO_GLUE]) {
                 glLoadIdentity();
+                glEnable(GL_TEXTURE_2D);
                 glBindTexture(GL_TEXTURE_2D, layerTex[0].prop.texture);
                 glColor4f(layerTex[0].prop.glTexColorInfo[0], layerTex[0].prop.glTexColorInfo[1],
                           layerTex[0].prop.glTexColorInfo[2], layerTex[0].prop.glTexColorInfo[3]);
@@ -412,12 +416,14 @@ public:
                 glTexCoord2f(0.0f, 0.99f);
                 glVertex3f(-width, -height, 0.0f);
                 glEnd();
+                glDisable(GL_TEXTURE_2D);
             }
 
             //Hvis gun
             if (player.powerup[PO_GUN]) {
                 layerTex[1].play();
                 glLoadIdentity();
+                glEnable(GL_TEXTURE_2D);
                 glBindTexture(GL_TEXTURE_2D, layerTex[1].prop.texture);
                 glColor4f(layerTex[1].prop.glTexColorInfo[0], layerTex[1].prop.glTexColorInfo[1],
                           layerTex[1].prop.glTexColorInfo[2], layerTex[1].prop.glTexColorInfo[3]);
@@ -431,6 +437,7 @@ public:
                 glTexCoord2f(layerTex[1].pos[6], layerTex[1].pos[7] - 0.01f);
                 glVertex3f(-width, height, 0.0f);
                 glEnd();
+                glDisable(GL_TEXTURE_2D);
             }
         }
     }
@@ -489,7 +496,7 @@ public:
 
                 glLoadIdentity();
                 glTranslatef(bullet.posx, bullet.posy, 0.0);
-
+                glEnable(GL_TEXTURE_2D);
                 glBindTexture(GL_TEXTURE_2D, bullet.tex.prop.texture);
                 glBegin(GL_QUADS);
                 glTexCoord2f(bullet.tex.pos[0], bullet.tex.pos[1]);
@@ -500,6 +507,7 @@ public:
                 glVertex3f(bullet.width, -bullet.height, 0.0);
                 glTexCoord2f(bullet.tex.pos[6], bullet.tex.pos[7]);
                 glVertex3f(-bullet.width, -bullet.height, 0.0);
+                glDisable(GL_TEXTURE_2D);
                 glEnd();
             }
         }
@@ -733,6 +741,7 @@ public:
                 }
 
                 tex->play();
+                glEnable(GL_TEXTURE_2D);
                 glBindTexture(GL_TEXTURE_2D, tex->prop.texture);
                 glLoadIdentity();
                 glTranslatef(x[i], y[i], 0.0);
@@ -751,6 +760,7 @@ public:
                 glTexCoord2f(tex->pos[6], tex->pos[7]);
                 glVertex3f(-width * s[i], -height * s[i], 0.00);
                 glEnd();
+                glDisable(GL_TEXTURE_2D);
             }
         }
     }
@@ -914,9 +924,9 @@ public:
             const GLfloat bxb = cos(rad) * 0.5f;
             const GLfloat byb = sin(rad) * 0.5f;
 
+            glDisable(GL_TEXTURE_2D);
             glLoadIdentity();
             glTranslatef(posx, posy, 0.0f);
-            glDisable(GL_TEXTURE_2D);
             glLineWidth(1.0);
             glEnable(GL_LINE_SMOOTH);
             glBegin(GL_LINES);
@@ -932,6 +942,7 @@ public:
             glBegin(GL_POINTS);
             glVertex3f(bxb, byb, 0.0);
             glEnd();
+            glEnable(GL_TEXTURE_2D);
         }
 
         if (!glued && player.powerup[PO_AIMHELP]) {
@@ -955,7 +966,6 @@ public:
                 const GLfloat R = bounceOffAngle(paddle.width, paddle.posx, cx);
                 o[0] = cx + (cos(R) * 2.0);
                 o[1] = cy + (sin(R) * 2.0);
-                glDisable(GL_TEXTURE_2D);
                 glLineWidth(2.0);
                 glEnable(GL_LINE_SMOOTH);
                 glLoadIdentity();
@@ -974,12 +984,11 @@ public:
 
         glLoadIdentity();
         glTranslatef(posx, posy, 0.0);
-        glEnable(GL_TEXTURE_2D);
-
         glColor4f(GL_WHITE);
 
         if (explosive) {
             fireTex.play();
+            glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, fireTex.prop.texture);
             glColor4f(fireTex.prop.glTexColorInfo[0], fireTex.prop.glTexColorInfo[1], fireTex.prop.glTexColorInfo[2],
                       fireTex.prop.glTexColorInfo[3]);
@@ -994,8 +1003,10 @@ public:
             glTexCoord2f(fireTex.pos[6], fireTex.pos[7]);
             glVertex3f(-width, -height, 0.0);
             glEnd();
+            glDisable( GL_TEXTURE_2D );
         } else {
             tex.play();
+            glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
             glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2],
                       tex.prop.glTexColorInfo[3]);
@@ -1010,6 +1021,7 @@ public:
             glTexCoord2f(tex.pos[6], tex.pos[7]);
             glVertex3f(-width, -height, 0.0);
             glEnd();
+            glDisable( GL_TEXTURE_2D );
         }
 
 #ifdef DEBUG_DRAW_BALL_QUAD
@@ -1653,7 +1665,7 @@ public:
 
     void draw() {
         tex.play();
-
+        glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
         glColor4f(tex.prop.glTexColorInfo[0], tex.prop.glTexColorInfo[1], tex.prop.glTexColorInfo[2],
                   tex.prop.glTexColorInfo[3]);
@@ -1669,6 +1681,7 @@ public:
         glTexCoord2f(tex.pos[6], tex.pos[7]);
         glVertex3f(-width, -height, 0.00); // nederst venstre
         glEnd();
+        glDisable( GL_TEXTURE_2D );
     }
 };
 
@@ -1833,111 +1846,104 @@ public:
     }
 };
 
-PowerupManager pMan;
+PowerupManager powerupManager;
 
 void spawnpowerup(char powerup, pos a, pos b) {
     if (powerup == '1') {
-        pMan.spawn(a, b,PO_GROWPADDLE);
+        powerupManager.spawn(a, b,PO_GROWPADDLE);
     }
 
     if (powerup == '2') {
-        pMan.spawn(a, b,PO_SHRINKPADDLE);
+        powerupManager.spawn(a, b,PO_SHRINKPADDLE);
     }
 
     if (powerup == '3') {
-        pMan.spawn(a, b,PO_DIE);
+        powerupManager.spawn(a, b,PO_DIE);
     }
 
     if (powerup == '4') {
-        pMan.spawn(a, b,PO_GLUE);
+        powerupManager.spawn(a, b,PO_GLUE);
     }
 
     if (powerup == 'A') {
-        pMan.spawn(a, b,PO_EASYBRICK);
+        powerupManager.spawn(a, b,PO_EASYBRICK);
     }
 
     if (powerup == 'B') {
-        pMan.spawn(a, b,PO_EXPLOSIVE);
+        powerupManager.spawn(a, b,PO_EXPLOSIVE);
     }
 
     if (powerup == 'C') {
-        pMan.spawn(a, b,PO_NEXTLEVEL);
+        powerupManager.spawn(a, b,PO_NEXTLEVEL);
     }
 
     if (powerup == 'D') {
-        pMan.spawn(a, b,PO_AIMHELP);
+        powerupManager.spawn(a, b,PO_AIMHELP);
     }
 
     if (powerup == 'E') {
-        pMan.spawn(a, b,PO_COIN);
+        powerupManager.spawn(a, b,PO_COIN);
     }
 
     if (powerup == '5') {
-        pMan.spawn(a, b,PO_MULTIBALL);
+        powerupManager.spawn(a, b,PO_MULTIBALL);
     }
 
     if (powerup == '6') {
-        pMan.spawn(a, b,PO_THRU);
+        powerupManager.spawn(a, b,PO_THRU);
     }
 
     if (powerup == '7') {
-        pMan.spawn(a, b,PO_DROP);
+        powerupManager.spawn(a, b,PO_DROP);
     }
 
     if (powerup == '8') {
-        pMan.spawn(a, b,PO_DETONATE);
+        powerupManager.spawn(a, b,PO_DETONATE);
     }
 
     if (powerup == '9') {
-        pMan.spawn(a, b,PO_EXPLOSIVE_GROW);
+        powerupManager.spawn(a, b,PO_EXPLOSIVE_GROW);
     }
 
     if (powerup == 'F') {
-        pMan.spawn(a, b,PO_BIGBALL);
+        powerupManager.spawn(a, b,PO_BIGBALL);
     }
 
     if (powerup == 'G') {
-        pMan.spawn(a, b,PO_NORMALBALL);
+        powerupManager.spawn(a, b,PO_NORMALBALL);
     }
 
     if (powerup == 'H') {
-        pMan.spawn(a, b,PO_SMALLBALL);
+        powerupManager.spawn(a, b,PO_SMALLBALL);
     }
 
     if (powerup == 'I') {
-        pMan.spawn(a, b,PO_AIM);
+        powerupManager.spawn(a, b,PO_AIM);
     }
 
     if (powerup == 'P') {
-        pMan.spawn(a, b,PO_GUN);
+        powerupManager.spawn(a, b,PO_GUN);
     }
 
     if (powerup == 'R') {
-        pMan.spawn(a, b,PO_LASER);
+        powerupManager.spawn(a, b,PO_LASER);
     }
 
     if (powerup == 'O') {
-        pMan.spawn(a, b,PO_LIFE);
+        powerupManager.spawn(a, b,PO_LIFE);
     }
 }
 
-void createPlayfieldBorder(GLuint *dl, const texture &tex) {
+void createPlayfieldBorderList(GLuint *dl, const texture &tex) {
     *dl = glGenLists(1);
     glNewList(*dl,GL_COMPILE);
-
     glLoadIdentity();
-
-    // top
+    glDisable(GL_BLEND);
     glColor4f(GL_WHITE);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
-    glBegin(GL_POINTS);
-    glVertex3f(-1.0f, 1.0f, 0.0);
-    glEnd();
-
     glBegin(GL_QUADS);
 
-    // left
     // linke Säule
     glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-1.0f, 1.0f, 0.0f);
@@ -1948,17 +1954,18 @@ void createPlayfieldBorder(GLuint *dl, const texture &tex) {
     glTexCoord2f(0.0f, -1.0f);
     glVertex3f(-1.0f, -1.0f, 0.0f);
 
-    // right
     // rechte Säule
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(1.0f - PILLAR_WIDTH, 1.0f, 0.0f);
     glTexCoord2f(1.0f, 0.0f);
+    glVertex3f(1.0f - PILLAR_WIDTH, 1.0f, 0.0f);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(1.0f, 1.0f, 0.0f);
-    glTexCoord2f(1.0f, -1.0f);
-    glVertex3f(1.0f, -1.0f, 0.0f);
     glTexCoord2f(0.0f, -1.0f);
+    glVertex3f(1.0f, -1.0f, 0.0f);
+    glTexCoord2f(1.0f, -1.0f);
     glVertex3f(1.0f - PILLAR_WIDTH, -1.0f, 0.0f);
     glEnd();
+    glEnable(GL_BLEND);
+    glDisable( GL_TEXTURE_2D );
     glEndList();
 }
 
@@ -2165,7 +2172,7 @@ public:
         //Draw lives left.
         glColor4f(texBall.prop.glTexColorInfo[0], texBall.prop.glTexColorInfo[1], texBall.prop.glTexColorInfo[2],
                   texBall.prop.glTexColorInfo[3]);
-
+        glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, texBall.prop.texture);
         texBall.play();
         glBegin(GL_QUADS);
@@ -2180,7 +2187,7 @@ public:
             glVertex3f(1.55 - (0.05 * i), 1.15, 0.0);
         }
         glEnd();
-
+        glDisable( GL_TEXTURE_2D );
         if (setting.showClock) {
             ticksSinceLastClockCheck += globalTicksSinceLastDraw;
             if (ticksSinceLastClockCheck > 1000) {
@@ -2232,7 +2239,7 @@ public:
                 a.y = 1.15f;
                 b.x = 0.0f;
                 b.y = 0.0f;
-                pMan.spawn(a, b, item[shopItemSelected].type);
+                powerupManager.spawn(a, b, item[shopItemSelected].type);
                 player.coins -= item[shopItemSelected].price;
                 shopItemBlocked[shopItemSelected] = true;
                 gVar.shopNextItem = true;
@@ -2256,6 +2263,7 @@ public:
                 }
             }
             texPowerup[item[i].type].play();
+            glEnable( GL_TEXTURE_2D );
             glBindTexture(GL_TEXTURE_2D, texPowerup[item[i].type].prop.texture);
             glBegin(GL_QUADS);
             glTexCoord2f(texPowerup[item[i].type].pos[0], texPowerup[item[i].type].pos[1]);
@@ -2267,6 +2275,7 @@ public:
             glTexCoord2f(texPowerup[item[i].type].pos[6], texPowerup[item[i].type].pos[7]);
             glVertex3f(-0.055, -0.055, 0.00);
             glEnd();
+            glDisable( GL_TEXTURE_2D );
             glTranslatef(0.11, 0.0, 0.0f);
         }
     }
@@ -2278,19 +2287,14 @@ public:
     }
 };
 
-class speedometerClass {
+class Speedometer {
 public:
     static void draw() {
         //GLfloat y = -1.24 + difficulty.maxballspeed[player.difficulty]/2.44*var.averageBallSpeed;
-
         const GLfloat y = 0.48f / (runtime_difficulty.maxballspeed[player.difficulty] - runtime_difficulty.ballspeed[player.difficulty])
                           * (
                               var.averageBallSpeed - runtime_difficulty.ballspeed[player.difficulty]);
-        glLoadIdentity();
-        glDisable(GL_TEXTURE_2D);
-        glPushMatrix();
         glTranslatef(1.0f, -1.0, 0.0);
-        glPopMatrix();
         glBegin(GL_QUADS);
         glColor4f(GL_FULL_GREEN);
         glVertex3f(0, y, 0);
@@ -2299,8 +2303,6 @@ public:
         glVertex3f(0.03, 0, 0);
         glVertex3f(0, 0, 0);
         glEnd();
-
-        glEnable(GL_TEXTURE_2D);
     }
 };
 
@@ -2469,13 +2471,13 @@ int main(int argc, char *argv[]) {
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/shrinkbat.txt", setting.gfxTheme),
                         texPowerup[PO_SHRINKPADDLE]);
     texMgr.readTexProps(themeManager.getThemeFilePath("gfx/powerup/bullet.txt", setting.gfxTheme), texBullet);
-    pMan.init(texPowerup);
+    powerupManager.init(texPowerup);
 
     texMgr.load(themeManager.getThemeFilePath("gfx/particle.png", setting.gfxTheme), texParticle);
 # pragma endregion texture manager
 
-    GLuint sceneDL;
-    createPlayfieldBorder(&sceneDL, texBorder);
+    GLuint playfieldBorderList;
+    createPlayfieldBorderList(&playfieldBorderList, texBorder);
 
     brick bricks[598];
     string levelfile = themeManager.getThemeFilePath("levels.txt", setting.lvlTheme);
@@ -2497,14 +2499,14 @@ int main(int argc, char *argv[]) {
     fxMan.set(FX_VAR_TEXTURE, texParticle);
     fxMan.set(FX_VAR_GRAVITY, 0.6f);
 
-    titleScreenClass titleScreen(&fxMan, texPowerup, &menu);
+    TitleScreen titleScreen(&fxMan, texPowerup, &menu);
     BallManager ballManager(texBall);
 
     // This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
     HighScore hKeeper;
     Background background;
     bulletsClass bullet(texBullet);
-    speedometerClass speedo;
+    Speedometer speedo;
     hudClass hud(texBall[0], texPowerup);
 
     var.effectnum = -1;
@@ -2570,7 +2572,6 @@ int main(int argc, char *argv[]) {
                         }
                     }
                 }
-
                 //Toggle menu
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     if (var.titleScreenShow)
@@ -2605,7 +2606,6 @@ int main(int argc, char *argv[]) {
                     }
                 }
             }
-
             if (event.type == SDL_MOUSEMOTION) {
                 mouse_x = (event.motion.x - display.currentW / 2.0f) * display.glunits_per_xpixel;
                 mouse_y = (event.motion.y - display.currentH / 2.0f) * display.glunits_per_ypixel * -1;
@@ -2654,13 +2654,13 @@ int main(int argc, char *argv[]) {
             }
         }
 
+#pragma region timing
         // Timing
         nonpausingGlobalTicks = SDL_GetTicks() - nonpausingLastTick;
         frameAge += nonpausingGlobalTicks;
 
         nonpausingGlobalMilliTicks = nonpausingGlobalTicks / 1000.0f;
         nonpausingLastTick = SDL_GetTicks();
-
         if (!var.paused) {
             globalTicks = SDL_GetTicks() - lastTick;
             globalMilliTicks = globalTicks / 1000.0f;
@@ -2668,14 +2668,14 @@ int main(int argc, char *argv[]) {
             globalTicks = globalMilliTicks = 0.0f;
         }
         lastTick = SDL_GetTicks();
-
         globalTicksSinceLastDraw += nonpausingGlobalTicks;
         globalMilliTicksSinceLastDraw += nonpausingGlobalMilliTicks;
 
         // Update
         gVar.deadTime += globalTicks;
+#pragma endregion
 
-        glLoadIdentity();
+#pragma region update & rendering
         // Hideous... but simple
         if (!var.titleScreenShow) {
             pos p;
@@ -2695,7 +2695,7 @@ int main(int argc, char *argv[]) {
                     gVar.newLife = true;
                     if (!paddle.dead)
                         player.explodePaddle = true;
-                    pMan.die(fxMan);
+                    powerupManager.die(fxMan);
                 } else if (!gVar.gameOver) {
                     gVar.gameOver = true;
                     pauseGame();
@@ -2729,7 +2729,6 @@ int main(int argc, char *argv[]) {
                     }
                 }
             }
-
             if (gVar.nextlevel) {
                 if (var.effectnum == -1) {
                     announce.write("Well Done!", 1000, FONT_ANNOUNCE_GOOD);
@@ -2793,7 +2792,7 @@ int main(int argc, char *argv[]) {
                 init_levels(bricks, texLvl);
                 gVar.gameOver = false;
                 gVar.newLife = true;
-                pMan.clear();
+                powerupManager.clear();
                 bullet.clear();
                 paddle.posx = 0.0;
                 var.startedPlaying = false;
@@ -2817,31 +2816,22 @@ int main(int argc, char *argv[]) {
                 if (var.clearScreen) {
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 }
-
-                // Update player score
-                scoreboard.update(player.score);
-
-                // Background
                 if (setting.showBg)
                     background.draw();
-
-                // Borders
-                glCallList(sceneDL);
-
+                glCallList(playfieldBorderList);
+                scoreboard.update(player.score);
                 if (var.scrollInfo.drop) {
                     if (SDL_GetTicks() - var.scrollInfo.lastTick > var.scrollInfo.dropspeed) {
                         var.scrollInfo.lastTick = SDL_GetTicks();
                         updateBrickPositions(bricks);
                     }
                 }
-
                 if (gVar.bricksleft == 1) {
                     player.powerup[PO_AIMHELP] = true;
                 }
             }
 
             bullet.move();
-
             gVar.bricksleft = 0;
 
             // Update nbrick here
@@ -2862,7 +2852,6 @@ int main(int argc, char *argv[]) {
                         if (player.powerup[PO_GUN]) {
                             bullet.coldet(bricks[i], fxMan);
                         }
-
                         //check kollision på effekterne
                         if (setting.particleCollide && setting.eyeCandy && frameAge >= maxFrameAge)
                             fxMan.coldet(bricks[i]);
@@ -2879,14 +2868,13 @@ int main(int argc, char *argv[]) {
                     updateBrickPositions(bricks);
                 }
             }
-
             ballManager.move();
 
             if (setting.particleCollide && setting.eyeCandy && frameAge >= maxFrameAge)
                 fxMan.pcoldet(paddle);
 
-            pMan.move();
-            if (pMan.coldet(paddle, fxMan, ballManager)) {
+            powerupManager.move();
+            if (powerupManager.coldet(paddle, fxMan, ballManager)) {
                 if (player.powerup[PO_DETONATE]) {
                     player.powerup[PO_DETONATE] = false;
                     detonateExplosives(bricks, fxMan);
@@ -2956,10 +2944,10 @@ int main(int argc, char *argv[]) {
                 glColor3d(255, 255, 255);
                 bullet.draw();
                 paddle.draw();
-                pMan.draw();
+                powerupManager.draw();
                 ballManager.draw(paddle);
                 scoreboard.draw();
-                speedometerClass::draw();
+                speedo.draw();
                 hud.draw();
                 fxMan.draw();
 
@@ -2985,9 +2973,9 @@ int main(int argc, char *argv[]) {
                 var.paused = true;
             }
         } else {
-            //Show the title screen
             titleScreen.draw(&frameAge, &maxFrameAge);
         }
+#pragma endregion update & rendering
         usleep(1000);
     }
 

@@ -4,6 +4,7 @@
 #include "Display.hpp"
 #include <memory>
 
+#include "colors.h"
 #include "SettingsManager.h"
 
 using namespace std;
@@ -216,13 +217,13 @@ void Display::initGL() {
     glShadeModel(GL_SMOOTH);
 
     /* Set the background black */
-    glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+    glClearColor(GL_BLACK);
 
     /* Depth buffer setup */
     glClearDepth(1.0f);
 
     /* Enables Depth Testing */
-    //  glEnable( GL_DEPTH_TEST );
+    glEnable( GL_DEPTH_TEST );
 
     /* The Type Of Depth Test To Do */
     glDepthFunc(GL_LEQUAL);

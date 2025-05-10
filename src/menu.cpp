@@ -121,6 +121,7 @@ public:
         // Menu-Hintergrund
         glNewList(dl, GL_COMPILE);
         glLoadIdentity();
+        glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[0].prop.texture);
         glColor4f(GL_WHITE);
         glBegin(GL_QUADS);
@@ -139,12 +140,14 @@ public:
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(-0.8f, -0.8f, 0.0f);
         glEnd();
+        glDisable( GL_TEXTURE_2D );
         glEndList();
 
         // bläulich
         float half_width = 0.425f;
         glNewList(dl + 1, GL_COMPILE);
         glLoadIdentity();
+        glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[1].prop.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
@@ -156,11 +159,13 @@ public:
         glTexCoord2f(0.132f, 0.7f);
         glVertex3f(-half_width, -0.07, 0.0);
         glEnd();
+        glDisable( GL_TEXTURE_2D );
         glEndList();
 
         // rötlich
         glNewList(dl + 2, GL_COMPILE);
         glLoadIdentity();
+        glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[2].prop.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
@@ -172,11 +177,13 @@ public:
         glTexCoord2f(0.132f, 0.7f);
         glVertex3f(-half_width, -0.07, 0.0);
         glEnd();
+        glDisable( GL_TEXTURE_2D );
         glEndList();
 
         // grünlich
         glNewList(dl + 3, GL_COMPILE);
         glLoadIdentity();
+        glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[3].prop.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
@@ -188,14 +195,13 @@ public:
         glTexCoord2f(0.132f, 0.7f);
         glVertex3f(-half_width, -0.07, 0.0);
         glEnd();
+        glDisable( GL_TEXTURE_2D );
         glEndList();
     }
 
     void refreshHighScoreList() {
         int lines;
-
         score *final = sortScores(&lines);
-
         //Fill out remaining highscore slots (if any)
         for (int t = lines; t < 20; t++) {
             switch (t) {
@@ -694,7 +700,6 @@ public:
             var.menuNumItems = 7;
         } else if (var.menu == 5) {
             // New game?
-            glLoadIdentity();
             glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);
 
@@ -790,37 +795,31 @@ public:
         } else if (var.menu == 6) {
 
             // Exit
-            glLoadIdentity();
-            glPushMatrix();
-            glTranslatef(0.0f, 0.4f, 0.0f);
             glColor4f(GL_WHITE);
             glCallList(dl + 2);
-            glPopMatrix();
             glColor4f(GL_BLACK);
             glText->write("Exit Game?", FONT_MENU, true, 1.0, 0.0, 0.4f);
 
             // Yes
-            glPushMatrix();
+
             glTranslatef(0.0, 0.02f, 0.0f);
             glColor4f(GL_WHITE);
             if (var.menuItem == 5)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glPopMatrix();
             glColor4f(GL_FULL_RED);
             glText->write("Yes.", FONT_MENU, true, 1.0, 0.0, 0.02f);
             glColor4f(GL_WHITE);
 
             // Noes!
-            glPushMatrix();
+
             glTranslatef(0.0, -0.15, 0.0f);
             glColor4f(GL_WHITE);
             if (var.menuItem == 4)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glPopMatrix();
 
             glColor4f(GL_FULL_GREEN);
             glText->write("No way!", FONT_MENU, true, 1.0, 0.0, -0.15);
@@ -842,7 +841,6 @@ public:
         } else if (var.menu == 7) // highscores
         {
             // Highscores
-            glLoadIdentity();
             glTranslatef(0.0, 0.54, 0.0f);
             if (var.menuItem == 7)
                 glCallList(dl + 2);
@@ -853,8 +851,8 @@ public:
             glText->write("Highscores", FONT_MENU, 1, 1.0, 0.0, -0.005);
 
             glTranslatef(0.0, -0.75, 0.0f);
+            glEnable( GL_TEXTURE_2D );
             glBindTexture(GL_TEXTURE_2D, tex[4].prop.texture);
-            glEnable(GL_TEXTURE_2D);
             glColor4f(1.0, 1.0, 1.0, 1.0);
             glBegin(GL_QUADS);
             glTexCoord2f(0.0, 0.0);
@@ -866,8 +864,7 @@ public:
             glTexCoord2f(0.0, 1.0);
             glVertex3f(-0.8, -0.63, 0.0);
             glEnd();
-
-            glLoadIdentity();
+            glDisable( GL_TEXTURE_2D );
             glTranslatef(0.0, 0.435, 0.0f);
 
             //Find out how many lines we have room for in the box.
@@ -894,7 +891,6 @@ public:
             }
         } else if (var.menu == 8) {
             // Load game
-            glLoadIdentity();
             glTranslatef(0.0, 0.54, 0.0f);
             if (var.menuItem == 8)
                 glCallList(dl + 2);
@@ -938,7 +934,6 @@ public:
                 glColor4f(1, 0, 0, 1);
             }
 
-            glLoadIdentity();
             glTranslatef(0.0, 0.54, 0.0f);
 
             if (var.menuItem == 8)
@@ -971,7 +966,6 @@ public:
             }
         } else if (var.menu == 10) {
             // Joystick options
-            glLoadIdentity();
             glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);
             glColor4f(GL_WHITE);
@@ -1065,7 +1059,6 @@ public:
         }
         else if (var.menu == 12) //Theme selector (Main screen)
         {
-            glLoadIdentity();
             glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);
 

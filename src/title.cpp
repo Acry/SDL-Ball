@@ -13,6 +13,7 @@ public:
 };
 
 powerupDescriptionClass::powerupDescriptionClass() {
+    // Icon size
     width = 0.035;
     height = 0.035;
 }
@@ -20,14 +21,8 @@ powerupDescriptionClass::powerupDescriptionClass() {
 void powerupDescriptionClass::draw() const {
     // draw powerup icon, name and description
     tex->play();
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex->prop.texture);
     glColor4f(tex->prop.glTexColorInfo[0], tex->prop.glTexColorInfo[1], tex->prop.glTexColorInfo[2],
               tex->prop.glTexColorInfo[3]);
@@ -41,11 +36,7 @@ void powerupDescriptionClass::draw() const {
     glTexCoord2f(tex->pos[6], tex->pos[7]);
     glVertex3f(-width + posx, -height + posy, 0.00); // bottom left
     glEnd();
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-
+    glDisable(GL_TEXTURE_2D);
     constexpr float spacing = 0.05f;
     // Write the name and description
     constexpr float scale = 1.0f; // Scale for the text
@@ -64,7 +55,7 @@ void powerupDescriptionClass::draw() const {
                   posy - height - leading);
 }
 
-class titleScreenClass {
+class TitleScreen {
     effectManager *fxMan;
     int ticksSinceLastSpawn;
     TextureManager texMgr;
@@ -86,12 +77,12 @@ class titleScreenClass {
     static void readDescriptions(powerupDescriptionClass po[]);
 
 public:
-    titleScreenClass(effectManager *m, texture tp[], menuClass *me);
+    TitleScreen(effectManager *m, texture tp[], menuClass *me);
 
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };
 
-titleScreenClass::titleScreenClass(effectManager *m, texture tp[], menuClass *me) {
+TitleScreen::TitleScreen(effectManager *m, texture tp[], menuClass *me) {
 
     menu = me;
     numHighScores = 7;
@@ -103,32 +94,26 @@ titleScreenClass::titleScreenClass(effectManager *m, texture tp[], menuClass *me
 
     glTitleList = glGenLists(1);
     glNewList(glTitleList, GL_COMPILE);
-        //glLoadIdentity();
+
+    glEnable( GL_TEXTURE_2D );
     glBindTexture(GL_TEXTURE_2D, texTitle.prop.texture);
     glBegin(GL_QUADS);
     for (int i = 0; i < 32; i++) {
-        glColor4f(1, 1, 1, 0.1);
+        glColor4f(1.0f, 1.0f, 1.0f, 0.1f);
         glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(-1.0f, 1.0f, 0.005 * i);
+        glVertex3f(-1.0f, 1.0f, 0.005f * i);
         glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(1.0f, 1.15, 0.005 * i);
-        glColor4f(0, 0, 1, 0.00); // ???
+        glVertex3f(1.0f, 1.15f, 0.005f * i);
+        glColor4f(0.0f, 0.0f, 1.0f, 0.00); // ???
         glTexCoord2f(1.0f, 1.0f);
-        glVertex3f(1.0f, 0.75, 0.005 * i);
+        glVertex3f(1.0f, 0.75f, 0.005f * i);
         glTexCoord2f(0.0f, 1.0f);
-        glVertex3f(-1.0f, 0.75f, 0.005 * i);
+        glVertex3f(-1.0f, 0.75f, 0.005f * i);
     }
     glEnd();
+    glDisable( GL_TEXTURE_2D );
     glEndList();
 
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
-
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
     // set position for powerup icons
     constexpr float iconHeight = 0.035;
     constexpr float iconWidth = 0.035;
@@ -146,10 +131,7 @@ titleScreenClass::titleScreenClass(effectManager *m, texture tp[], menuClass *me
             powerUp[idx].posy = startY - (leading + iconHeight) * row;
         }
     }
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
+
     readDescriptions(powerUp);
 
     // Set the initial position and velocity of the runner
@@ -164,15 +146,13 @@ titleScreenClass::titleScreenClass(effectManager *m, texture tp[], menuClass *me
     hilightTime = 0;
 }
 
-void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
+void TitleScreen::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
     if (*frameAge >= *maxFrameAge) {
         soundMan.play();
-
+        glLoadIdentity();
         if (var.clearScreen) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
-
-
 
         // icons and text
         ticksSinceLastSpawn += globalTicksSinceLastDraw;
@@ -282,12 +262,10 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
             }
         }
 
-        glPushMatrix();
         glTranslatef(0.0, -0.05, 0.0);
         glRotatef(20, 1, 0, 0);
         glRotatef(rot, 0, 1, 0);
         glCallList(glTitleList);
-        glPopMatrix();
 
         SDL_GL_SwapWindow(display.sdlWindow);
 
@@ -297,8 +275,7 @@ void titleScreenClass::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
     }
 }
 
-
-void titleScreenClass::readDescriptions(powerupDescriptionClass po[]) {
+void TitleScreen::readDescriptions(powerupDescriptionClass po[]) {
     ifstream f;
 
     f.open(themeManager.getThemeFilePath("/powerupdescriptions.txt", setting.gfxTheme).data());
@@ -321,6 +298,6 @@ void titleScreenClass::readDescriptions(powerupDescriptionClass po[]) {
         }
         f.close();
     } else {
-        SDL_Log("Could not open powerupdescriptions");
+        SDL_Log("Could not open powerup descriptions");
     }
 }

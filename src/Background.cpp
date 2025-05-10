@@ -28,7 +28,7 @@ Background::~Background() {
 }
 
 bool Background::updateBgIfNeeded(TextureManager &texMgr) {
-    const int bgNumber = static_cast<int>((player.level * 25.0f) / 50.0f) + 1;
+    const int bgNumber = static_cast<int>(player.level * 25.0f / 50.0f) + 1;
     bool result;
 
     if (bgNumber > 25) {
@@ -62,6 +62,7 @@ void Background::draw() const {
 }
 
 void Background::drawQuad() const {
+    glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex.prop.texture);
     glBegin(GL_QUADS);
