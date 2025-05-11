@@ -2617,6 +2617,7 @@ int main(int argc, char *argv[]) {
                         }
                     } else var.menuItemHovered = 0;
                 } else {
+                    // Move the paddle
                     control.movePaddle(paddle.pos_x + event.motion.xrel * display.glunits_per_xpixel);
                 }
             } else if (event.type == SDL_MOUSEBUTTONDOWN) {

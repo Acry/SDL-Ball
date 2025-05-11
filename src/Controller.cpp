@@ -61,10 +61,13 @@ Controller::~Controller() {
 void Controller::movePaddle(GLfloat px) {
     if (!var.paused) {
         paddle->pos_x = px;
-        if (paddle->pos_x > 1.66 - paddle->width - 0.06) {
-            paddle->pos_x = 1.66 - paddle->width - 0.06;
-        } else if (paddle->pos_x < -1.66 + paddle->width + 0.06) {
-            paddle->pos_x = -1.66 + paddle->width + 0.06;
+        // Rechte Spielfeldbegrenzung
+        if (paddle->pos_x > PLAYFIELD_RIGHT_BORDER - paddle->width) {
+            paddle->pos_x = PLAYFIELD_RIGHT_BORDER - paddle->width;
+        }
+        // Linke Spielfeldbegrenzung
+        else if (paddle->pos_x < -PLAYFIELD_LEFT_BORDER + paddle->width) {
+            paddle->pos_x = -PLAYFIELD_LEFT_BORDER + paddle->width;
         }
     }
 }

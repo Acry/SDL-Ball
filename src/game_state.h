@@ -19,9 +19,9 @@
 // -1 <----+----> +1
 //         |
 //        -1
-#define PLAYFIELD_WIDTH = 1.0f - (PILLAR_WIDTH * 2.0f);
-#define PLAYFIELD_LEFT_BORDER = 1.0f + PILLAR_WIDTH;
-#define PLAYFIELD_RIGHT_BORDER = 1.0f - PILLAR_WIDTH;
+#define PLAYFIELD_WIDTH 1.0f - (PILLAR_WIDTH * 2.0f)
+#define PLAYFIELD_LEFT_BORDER 1.0f + PILLAR_WIDTH
+#define PLAYFIELD_RIGHT_BORDER 1.0f - PILLAR_WIDTH
 
 // MENU SIZES -> TODO: Move to Menu.h
 #define MENU_HALF_WIDTH 0.35f
