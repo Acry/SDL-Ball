@@ -54,7 +54,7 @@ void SoundManager::add(int i, GLfloat x) {
 
     int p = 0;
     if (setting.stereo) {
-        p = (255.0 / 3.2) * (x + 1.6);
+        p = (255.0 / 3.2) * (x + 1.0);
     }
 
     sampleQueuedItem qt;
