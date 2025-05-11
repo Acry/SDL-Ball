@@ -62,9 +62,6 @@ float globalMilliTicksSinceLastDraw;
 typedef GLfloat texPos[8];
 
 
-
-
-
 float random_float(float total, float negative);
 
 // 2D Line Segment Intersection
@@ -232,13 +229,14 @@ public:
         if (pos_x < PLAYFIELD_LEFT_BORDER && xvel < 0.0) {
             soundManager.add(SND_BALL_HIT_BORDER, pos_x);
             xvel *= -1;
-        } else if (pos_x + width  > PLAYFIELD_RIGHT_BORDER && xvel > 0.0) {
+        } else if (pos_x + width > PLAYFIELD_RIGHT_BORDER && xvel > 0.0) {
             soundManager.add(SND_BALL_HIT_BORDER, pos_x);
             xvel *= -1;
         } else if (pos_y + height > 1.0f && yvel > 0.0) {
             soundManager.add(SND_BALL_HIT_BORDER, pos_x);
             yvel *= -1;
-        } else if (pos_y - height < -1.0f) { // paddle y
+        } else if (pos_y - height < -1.0f) {
+            // paddle y
             active = false;
         }
 
@@ -327,7 +325,6 @@ public:
             glVertex3f(bxb, byb, 0.0);
             glEnd();
             glDisable(GL_TEXTURE_2D);
-
         }
 
         if (!glued && player.powerup[PO_AIMHELP]) {
@@ -542,11 +539,15 @@ public:
         }
     }
 };
+
 class EffectManager;
+
 void makeExplosive(brick &b);
+
 // nasty fix to a problem
 int nbrick[23][26];
 int updated_nbrick[23][26];
+
 class brick : public GameObject {
 public:
     int score; //Hvor meget gir den
@@ -777,7 +778,9 @@ public:
         }
     }
 };
+
 void collision_ball_brick(brick &br, ball &ba, position &p, EffectManager &fxMan);
+
 // Menu.h wip
 #include "Menu.cpp"
 // todo #include "loadlevel_new.cpp" -> levelManager
@@ -1043,8 +1046,8 @@ public:
         pos_y = 0.0;
         xvel = 0.0;
         yvel = 0.0;
-        width = 0.055f/1.5f;
-        height = 0.055f/1.5f;
+        width = 0.055f / 1.25f;
+        height = 0.055f / 1.25f;
     }
 
     void move() {
@@ -1472,33 +1475,56 @@ public:
             }
         }
     }
+
     void spawnPowerup(const char powerup, const position a, const position b) {
         switch (powerup) {
-            case '1': spawn(a, b, PO_GROWPADDLE); break;
-            case '2': spawn(a, b, PO_SHRINKPADDLE); break;
-            case '3': spawn(a, b, PO_DIE); break;
-            case '4': spawn(a, b, PO_GLUE); break;
-            case '5': spawn(a, b, PO_MULTIBALL); break;
-            case '6': spawn(a, b, PO_THRU); break;
-            case '7': spawn(a, b, PO_DROP); break;
-            case '8': spawn(a, b, PO_DETONATE); break;
-            case '9': spawn(a, b, PO_EXPLOSIVE_GROW); break;
-            case 'A': spawn(a, b, PO_EASYBRICK); break;
-            case 'B': spawn(a, b, PO_EXPLOSIVE); break;
-            case 'C': spawn(a, b, PO_NEXTLEVEL); break;
-            case 'D': spawn(a, b, PO_AIMHELP); break;
-            case 'E': spawn(a, b, PO_COIN); break;
-            case 'F': spawn(a, b, PO_BIGBALL); break;
-            case 'G': spawn(a, b, PO_NORMALBALL); break;
-            case 'H': spawn(a, b, PO_SMALLBALL); break;
-            case 'I': spawn(a, b, PO_AIM); break;
-            case 'O': spawn(a, b, PO_LIFE); break;
-            case 'P': spawn(a, b, PO_GUN); break;
-            case 'R': spawn(a, b, PO_LASER); break;
+            case '1': spawn(a, b, PO_GROWPADDLE);
+                break;
+            case '2': spawn(a, b, PO_SHRINKPADDLE);
+                break;
+            case '3': spawn(a, b, PO_DIE);
+                break;
+            case '4': spawn(a, b, PO_GLUE);
+                break;
+            case '5': spawn(a, b, PO_MULTIBALL);
+                break;
+            case '6': spawn(a, b, PO_THRU);
+                break;
+            case '7': spawn(a, b, PO_DROP);
+                break;
+            case '8': spawn(a, b, PO_DETONATE);
+                break;
+            case '9': spawn(a, b, PO_EXPLOSIVE_GROW);
+                break;
+            case 'A': spawn(a, b, PO_EASYBRICK);
+                break;
+            case 'B': spawn(a, b, PO_EXPLOSIVE);
+                break;
+            case 'C': spawn(a, b, PO_NEXTLEVEL);
+                break;
+            case 'D': spawn(a, b, PO_AIMHELP);
+                break;
+            case 'E': spawn(a, b, PO_COIN);
+                break;
+            case 'F': spawn(a, b, PO_BIGBALL);
+                break;
+            case 'G': spawn(a, b, PO_NORMALBALL);
+                break;
+            case 'H': spawn(a, b, PO_SMALLBALL);
+                break;
+            case 'I': spawn(a, b, PO_AIM);
+                break;
+            case 'O': spawn(a, b, PO_LIFE);
+                break;
+            case 'P': spawn(a, b, PO_GUN);
+                break;
+            case 'R': spawn(a, b, PO_LASER);
+                break;
             default: break;
         }
     }
 };
+
 PowerupManager powerupManager;
 
 Texture *texExplosiveBrick; //NOTE:Ugly
@@ -1635,7 +1661,7 @@ void brick::hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, 
     if (type != '3' || player.powerup[PO_THRU])
         hitsLeft--;
 
-    //We don't want to play a sound if this brick is not an explosive, and was hit by an explosion
+    // We don't want to play a sound if this brick is not an explosive, and was hit by an explosion
     if (ballHitMe || type == 'B') {
         if (type == '3') //cement
         {
@@ -2011,7 +2037,7 @@ public:
             shopItemSelected = canAfford - 1;
         }
 
-        const GLfloat shopListStartX = -(0.11f * canAfford / 2.0f);
+        const GLfloat shopListStartX = -(0.11f * canAfford / 1.0f);
         if (gVar.shopNextItem) {
             gVar.shopNextItem = false;
             shopItemSelected++;
@@ -2045,7 +2071,7 @@ public:
             }
         }
         glLoadIdentity();
-        glTranslatef(shopListStartX, 1.0f, 0.0f);
+        glTranslatef(shopListStartX, 0.9f, 0.0f);
         for (i = 0; i < canAfford; i++) {
             if (i == shopItemSelected) {
                 if (shopItemBlocked[i]) {
@@ -2146,6 +2172,7 @@ void easyBrick(brick bricks[]) {
 // braucht effectmanager
 #include "TitleScreen.cpp"
 #include "HighScore.cpp"
+
 int main(int argc, char *argv[]) {
     (void) argc;
     (void) argv;
