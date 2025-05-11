@@ -14,24 +14,25 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "SaveFileManager.h"
-#include "colors.h"
-#include "config.h"
+#include "Background.h"
 #include "ConfigFileManager.h"
 #include "Display.hpp"
 #include "GameObject.h"
 #include "MovingObject.h"
+#include "Paddle.h"
+#include "SaveFileManager.h"
+#include "Score.h"
 #include "SettingsManager.h"
 #include "SoundManager.h"
-#include "TtfLegacyGl.h"
-#include "ThemeManager.h"
-#include "Texture.h"
-#include "texture_properties.h"
-#include "Score.h"
-#include "Background.h"
-#include "TextureManager.h"
 #include "Speedometer.h"
-#include "Paddle.h"
+#include "Texture.h"
+#include "TextureManager.h"
+#include "ThemeManager.h"
+#include "TtfLegacyGl.h"
+#include "colors.h"
+#include "config.h"
+#include "texture_properties.h"
+#include "Tracer.h"
 #define DEBUG_DRAW_BALL_QUAD 0
 #define DEBUG_SHOW_MOUSE_COORDINATES 0
 class brick;
@@ -44,14 +45,6 @@ ThemeManager themeManager(configFileManager);
 Display display;
 SoundManager soundManager;
 
-// Timing
-int globalTicks;
-float globalMilliTicks;
-Uint32 nonpausingGlobalTicks;
-float nonpausingGlobalMilliTicks;
-int globalTicksSinceLastDraw;
-float globalMilliTicksSinceLastDraw;
-
 // Option 1: Struct mit benannten Koordinaten
 // struct TexCoords {
 //     GLfloat s1, t1;  // Texturkoordinaten Vertex 1
@@ -60,7 +53,6 @@ float globalMilliTicksSinceLastDraw;
 //     GLfloat s4, t4;  // Texturkoordinaten Vertex 4
 // };
 typedef GLfloat texPos[8];
-
 
 float random_float(float total, float negative);
 
@@ -81,111 +73,6 @@ int LinesCross(float x0, float y0, float x1, float y1, float x2, float y2, float
     return 0;
 }
 
-// Leaves a trail behind the ball
-class tracer {
-    GLfloat x[100], y[100]; // Position
-    GLfloat r[100], g[100], b[100]; // Farbe
-    GLfloat a[100]; // Alpha wird stärker reduziert je weiter vom Ball
-    GLfloat s[100]; // Größe wird kleiner je weiter vom Ball
-    GLfloat cr, cg, cb; // Aktuelle Farben
-    bool active[100];
-    int color;
-    GLfloat lastX, lastY; // Letzte Position
-
-public:
-    GLfloat height, width;
-    Texture *tex;
-    int len;
-
-    tracer() {
-        len = 100;
-        lastX = lastY = 0;
-        cr = 1;
-        cg = cb = 0;
-        height = width = 0.01;
-        for (bool &i: active) i = false;
-    }
-
-    void draw() {
-        for (int i = 0; i < len; i++) {
-            if (active[i]) {
-                // Stärkere Alpha-Reduktion für ältere Partikel
-                a[i] -= (4.0f + i * 0.1f) * globalMilliTicksSinceLastDraw;
-
-                // Partikel werden dünner mit der Zeit
-                s[i] -= 2.0f * globalMilliTicksSinceLastDraw;
-                if (s[i] < 0.2f) s[i] = 0.2f;
-
-                if (a[i] < 0.0f) {
-                    active[i] = false;
-                    continue;
-                }
-
-                tex->play();
-                glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, tex->textureProperties.texture);
-                glLoadIdentity();
-                glTranslatef(x[i], y[i], 0.0);
-
-                // Alpha zusätzlich basierend auf Index reduzieren
-                float indexBasedAlpha = a[i] * (1.0f - static_cast<float>(i) / len);
-                glColor4f(r[i], g[i], b[i], indexBasedAlpha);
-
-                glBegin(GL_QUADS);
-                glTexCoord2f(tex->texturePosition[0], tex->texturePosition[1]);
-                glVertex3f(-width * s[i], height * s[i], 0.00);
-                glTexCoord2f(tex->texturePosition[2], tex->texturePosition[3]);
-                glVertex3f(width * s[i], height * s[i], 0.00);
-                glTexCoord2f(tex->texturePosition[4], tex->texturePosition[5]);
-                glVertex3f(width * s[i], -height * s[i], 0.00);
-                glTexCoord2f(tex->texturePosition[6], tex->texturePosition[7]);
-                glVertex3f(-width * s[i], -height * s[i], 0.00);
-                glEnd();
-                glDisable(GL_TEXTURE_2D);
-            }
-        }
-    }
-
-    void colorRotate(const bool explosive, const GLfloat c[]) {
-        color++;
-        if (color > 5)
-            color = 0;
-
-        if (!explosive) {
-            cr = c[0];
-            cg = c[1];
-            cb = c[2];
-        } else {
-            cr = 1.0;
-            cg = 0.6;
-            cb = 0.0;
-        }
-    }
-
-    void update(const GLfloat nx, const GLfloat ny) {
-        // If long enough away
-        const GLfloat dist = sqrt(pow(nx - lastX, 2) + pow(ny - lastY, 2));
-        if (dist > 0.01) {
-            lastX = nx;
-            lastY = ny;
-            //find a non-active trail-part
-            for (int i = 0; i < len; i++) {
-                if (!active[i]) {
-                    active[i] = true;
-                    a[i] = 1.0; //tweak me
-                    x[i] = nx;
-                    y[i] = ny;
-                    s[i] = 1.0;
-                    r[i] = cr;
-                    g[i] = cg;
-                    b[i] = cb;
-                    break;
-                }
-            }
-        }
-    }
-};
-
 class ball : public MovingObject {
     GLfloat rad;
     bool growing, shrinking;
@@ -196,7 +83,7 @@ class ball : public MovingObject {
     }
 
 public:
-    tracer tail;
+    Tracer tail;
     bool explosive; //Makes brick explosive (to get a explosion effect) and explode it
     bool glued; //Sidder vi fast på padden for øjeblikket?
     GLfloat gluedX;

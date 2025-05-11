@@ -1,5 +1,6 @@
 // src/game_state.h
 #pragma once
+#include <SDL_stdinc.h>
 #include <string>
 #include <epoxy/gl.h>
 
@@ -58,6 +59,14 @@
 #define PO_EASYBRICK 18
 #define PO_NEXTLEVEL 19
 #define PO_AIMHELP 20
+
+// Timing variables
+extern int globalTicks;
+extern float globalMilliTicks;
+extern Uint32 nonpausingGlobalTicks;
+extern float nonpausingGlobalMilliTicks;
+extern int globalTicksSinceLastDraw;
+extern float globalMilliTicksSinceLastDraw;
 
 struct gameVars {
     bool shopNextItem, shopPrevItem, shopBuyItem; // When set to 1 shop goes next or prev
