@@ -43,7 +43,7 @@ ThemeManager themeManager(configFileManager);
 Display display;
 SoundManager soundManager;
 TextureManager textureManager;
-class effectManager;
+class EffectManager;
 
 // Timing
 int globalTicks;
@@ -127,9 +127,9 @@ public:
         return false;
     }
 
-    void hit(effectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe);
+    void hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe);
 
-    void draw(brick bricks[], effectManager &fxMan) {
+    void draw(brick bricks[], EffectManager &fxMan) {
         if (isdyingnormally) {
             fade -= fadespeed * globalMilliTicksSinceLastDraw;
             opacity = fade;
@@ -385,7 +385,7 @@ public:
         }
     }
 
-    void coldet(brick &b, effectManager &fxMan) {
+    void coldet(brick &b, EffectManager &fxMan) {
         position v;
         v.x = 0;
         v.y = bullets[0].xvel;
@@ -439,7 +439,7 @@ public:
     }
 };
 
-void brick::hit(effectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe) {
+void brick::hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe) {
     position p, s;
 
     if (type != '3' || player.powerup[PO_THRU])
@@ -1025,7 +1025,7 @@ public:
     }
 };
 
-void collision_ball_brick(brick &br, ball &ba, position &p, effectManager &fxMan);
+void collision_ball_brick(brick &br, ball &ba, position &p, EffectManager &fxMan);
 
 class BallManager {
     // verwaltet mehrere Bälle
@@ -1161,7 +1161,7 @@ public:
         }
     }
 
-    void checkBallCollision(brick &bri, effectManager &fxMan) {
+    void checkBallCollision(brick &bri, EffectManager &fxMan) {
         position p;
         for (auto &i: b) {
             if (i.active) {
@@ -1191,7 +1191,7 @@ public:
         }
     }
 
-    int checkPaddleCollision(const Paddle &paddle, effectManager &fxMan) {
+    int checkPaddleCollision(const Paddle &paddle, EffectManager &fxMan) {
         int hits = 0;
         position p;
         for (auto &i: b) {
@@ -1297,7 +1297,7 @@ public:
     }
 
 
-    bool coldet(Paddle &p, effectManager &fxMan, BallManager &bMan) {
+    bool coldet(Paddle &p, EffectManager &fxMan, BallManager &bMan) {
         bool col = false;
         if (pos_x + width > 1.0f && xvel > 0.0) {
             col = true;
@@ -1501,7 +1501,7 @@ public:
         return false;
     }
 
-    void die(effectManager &fxMan) {
+    void die(EffectManager &fxMan) {
         active = false;
         if (setting.eyeCandy) {
             position p;
@@ -1577,7 +1577,7 @@ public:
         }
     }
 
-    void die(effectManager &fxMan) {
+    void die(EffectManager &fxMan) {
         for (i = 0; i < MAXPOWERUPS; i++) {
             if (p[i].active) {
                 p[i].die(fxMan);
@@ -1687,7 +1687,7 @@ public:
         }
     }
 
-    int coldet(Paddle &paddle, effectManager &fxMan, BallManager &bMan) {
+    int coldet(Paddle &paddle, EffectManager &fxMan, BallManager &bMan) {
         int hits = 0;
         for (i = 0; i < MAXPOWERUPS; i++) {
             if (p[i].active) {
@@ -1839,7 +1839,7 @@ void createPlayfieldBorderList(GLuint *dl, const Texture &tex) {
     glEndList();
 }
 
-void collision_ball_brick(brick &br, ball &ba, position &p, effectManager &fxMan) {
+void collision_ball_brick(brick &br, ball &ba, position &p, EffectManager &fxMan) {
     //measure the distance from last pos to each possible impact, the shortest should be the right one
 
     //vi tager y først da der er mindst brikker
@@ -2154,7 +2154,7 @@ public:
     }
 };
 
-void detonateExplosives(brick bricks[], effectManager &fxMan) {
+void detonateExplosives(brick bricks[], EffectManager &fxMan) {
     for (int i = 0; i < 598; i++) {
         if (bricks[i].active && bricks[i].type == 'B') {
             position v;
@@ -2354,7 +2354,7 @@ int main(int argc, char *argv[]) {
     paddle.texture = texPaddleBase;
     paddle.layerTex = texPaddleLayers;
 
-    effectManager fxMan;
+    EffectManager fxMan;
     fxMan.set(FX_VAR_TEXTURE, texParticle);
     fxMan.set(FX_VAR_GRAVITY, 0.6f);
 

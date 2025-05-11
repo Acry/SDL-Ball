@@ -403,14 +403,14 @@ public:
     }
 };
 
-class effectManager {
+class EffectManager {
     effect_vars vars; //denne kopieres over i den næste effekt der bliver spawned
     int effectId; //ever rising number of a spawned effect.
 
 public:
     list<effect_class> effects;
 
-    effectManager() {
+    EffectManager() {
         effects.clear();
         effectId = 0;
     }

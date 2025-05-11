@@ -57,7 +57,7 @@ void powerupDescriptionClass::draw() const {
 
 class TitleScreen {
     TtfLegacyGl& text;  // Als Referenz
-    effectManager *fxMan;
+    EffectManager *fxMan;
     int ticksSinceLastSpawn;
     TextureManager texMgr;
     Texture texTitle;
@@ -78,12 +78,12 @@ class TitleScreen {
     static void readDescriptions(powerupDescriptionClass po[]);
 
 public:
-    TitleScreen(effectManager *m, Texture tp[], Menu *me);
+    TitleScreen(EffectManager *m, Texture tp[], Menu *me);
 
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };
 
-TitleScreen::TitleScreen(effectManager *m, Texture tp[], Menu *me): text(TtfLegacyGl::getInstance())
+TitleScreen::TitleScreen(EffectManager *m, Texture tp[], Menu *me): text(TtfLegacyGl::getInstance())
 {
     menu = me;
     numHighScores = 7;
