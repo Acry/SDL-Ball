@@ -54,7 +54,7 @@ void resumeGame() {
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
     var.paused = false;
-    var.menu = 0;
+    var.menuShown = 0;
 }
 
 void set_fixed_difficulty() {

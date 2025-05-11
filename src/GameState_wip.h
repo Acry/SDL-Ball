@@ -48,7 +48,7 @@ private:
 
             case GameState::PLAYING:
                 var.titleScreenShow = false;
-                var.menu = 0;
+                var.menuShown = 0;
                 resumeGame();
                 break;
 
@@ -57,7 +57,7 @@ private:
                 break;
 
             case GameState::MENU:
-                var.menu = 1;
+                var.menuShown = 1;
                 pauseGame();
                 break;
 
@@ -76,7 +76,7 @@ private:
                 break;
 
             case GameState::CALIBRATING:
-                var.menu = 10;
+                var.menuShown = 10;
                 break;
         }
     }

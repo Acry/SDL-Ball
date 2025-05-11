@@ -35,7 +35,7 @@ public:
                 var.showHighScores = 0;
                 initNewGame();
                 menu.refreshHighScoreList();
-                var.menu = 7;
+                var.menuShown = 7;
                 return;
             }
 

@@ -270,14 +270,14 @@ public:
         glLoadIdentity();
         // Menu-background
         glCallList(dl);
-        if (var.menu == 1) {
+        if (var.menuShown == 1) {
 
             // Quit SDL-Ball
             // ORDER: BOTTOM UP
-            float start_bottom = -0.62f;
+            constexpr float start_bottom = -0.62f;
             glTranslatef(0.0, start_bottom, 0.0f);
             glColor4f(GL_WHITE);
-            if (var.menuItem == 1)
+            if (var.menuItemHovered == 1)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -289,7 +289,7 @@ public:
             // Settings
             glColor4f(GL_WHITE);
             glTranslatef(0.0, +MENU_SPACING, 0.0f);
-            if (var.menuItem == 2)
+            if (var.menuItemHovered == 2)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -300,7 +300,7 @@ public:
             // Highscores
             glColor4f(GL_WHITE);
             glTranslatef(0.0, +MENU_SPACING, 0.0f);
-            if (var.menuItem == 3)
+            if (var.menuItemHovered == 3)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -313,7 +313,7 @@ public:
             glTranslatef(0.0, +MENU_SPACING, 0.0f);
             if (player.level > 0) // && !var.startedPlaying)
             {
-                if (var.menuItem == 4)
+                if (var.menuItemHovered == 4)
                     glCallList(dl + 2);
                 else
                     glCallList(dl + 1);
@@ -322,7 +322,7 @@ public:
                 text.write("Save Game", FONT_MENU, true, 1.0, 0.0, start_bottom+MENU_SPACING*3);
                 glColor4f(GL_WHITE);
             } else {
-                if (var.menuItem == 4) {
+                if (var.menuItemHovered == 4) {
                     glCallList(dl + 2);
                     glColor4f(0.5, 0.5, 0.5, 1);
                     text.write("Not in Level 1", FONT_MENU, true, 1.0, 0.0, start_bottom+MENU_SPACING*3);
@@ -337,7 +337,7 @@ public:
             // Load
             glColor4f(GL_WHITE);
             glTranslatef(0.0, MENU_SPACING, 0.0f);
-            if (var.menuItem == 5)
+            if (var.menuItemHovered == 5)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -348,7 +348,7 @@ public:
             // Continue
             glColor4f(GL_WHITE);
             glTranslatef(0.0, MENU_SPACING, 0.0f);
-            if (var.menuItem == 6)
+            if (var.menuItemHovered == 6)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -360,7 +360,7 @@ public:
             // New game
             glColor4f(GL_WHITE);
             glTranslatef(0.0, MENU_SPACING, 0.0f);
-            if (var.menuItem == 7)
+            if (var.menuItemHovered == 7)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 3);
@@ -370,39 +370,39 @@ public:
             glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
-                switch (var.menuItem) {
+                switch (var.menuItemHovered) {
                     case 1: //quit
-                        var.menu = 6;
+                        var.menuShown = 6;
                         break;
                     case 2: //settings
-                        var.menu = 2;
+                        var.menuShown = 2;
                         break;
                     case 3: //highscores
-                        var.menu = 7;
+                        var.menuShown = 7;
                         break;
                     case 4: //Save Game
                         if (player.level > 0) // && !var.startedPlaying)
-                            var.menu = 9;
+                            var.menuShown = 9;
                         break;
                     case 5: //Load game
-                        var.menu = 8;
+                        var.menuShown = 8;
                         break;
                     case 6: //resume
                         resumeGame();
                         break;
                     case 7: //new game
-                        var.menu = 5;
+                        var.menuShown = 5;
                     default: ;
                 }
                 var.menuPressed = 0;
             }
             var.menuNumItems = 7;
-        } else if (var.menu == 2) {
+        } else if (var.menuShown == 2) {
             //Settings
 
             // Back
             glTranslatef(0.0, 0.22, 0.0f);
-            if (var.menuItem == 1)
+            if (var.menuItemHovered == 1)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -423,7 +423,7 @@ public:
 
             // Video
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 6)
+            if (var.menuItemHovered == 6)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -434,7 +434,7 @@ public:
 
             // Sound
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 5)
+            if (var.menuItemHovered == 5)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -445,7 +445,7 @@ public:
             // Calibrate
             glTranslatef(0.0, -0.22, 0.0f);
             if (joystickAttached) {
-                if (var.menuItem == 4)
+                if (var.menuItemHovered == 4)
                     glCallList(dl + 2);
                 else
                     glCallList(dl + 1);
@@ -456,7 +456,7 @@ public:
 
             glTranslatef(0.0, -0.22, 0.0f);
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 2)
+            if (var.menuItemHovered == 2)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -465,31 +465,31 @@ public:
             glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
-                switch (var.menuItem) {
+                switch (var.menuItemHovered) {
                     case 1:
-                        var.menu = 1;
+                        var.menuShown = 1;
                         break;
                     case 6:
-                        var.menu = 3;
+                        var.menuShown = 3;
                         break;
                     case 5:
-                        var.menu = 4;
+                        var.menuShown = 4;
                         break;
                     case 4:
                         if (joystickAttached) {
                             var.menuJoyCalStage = 0;
-                            var.menu = 10;
+                            var.menuShown = 10;
                         }
                         break;
                     case 2:
-                        var.menu = 12;
+                        var.menuShown = 12;
                         break;
                     default: ;
                 }
                 var.menuPressed = 0;
             }
             var.menuNumItems = 6;
-        } else if (var.menu == 3) {
+        } else if (var.menuShown == 3) {
 
             // Video options
             glLoadIdentity();
@@ -501,7 +501,7 @@ public:
 
             // Toggle full
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 6)
+            if (var.menuItemHovered == 6)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -514,7 +514,7 @@ public:
 
             // Eyecandy
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 5)
+            if (var.menuItemHovered == 5)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -527,7 +527,7 @@ public:
 
             // 1600
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 4)
+            if (var.menuItemHovered == 4)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -537,7 +537,7 @@ public:
 
             // 1024
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 3)
+            if (var.menuItemHovered == 3)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -547,7 +547,7 @@ public:
 
             // background
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 2)
+            if (var.menuItemHovered == 2)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -560,7 +560,7 @@ public:
 
             // Back
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 1)
+            if (var.menuItemHovered == 1)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -569,9 +569,9 @@ public:
             glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
-                switch (var.menuItem) {
+                switch (var.menuItemHovered) {
                     case 1:
-                        var.menu = 2;
+                        var.menuShown = 2;
                         break;
                     case 2:
                         if (!setting.showBg)
@@ -612,7 +612,7 @@ public:
                 var.menuPressed = false;
             }
             var.menuNumItems = 6;
-        } else if (var.menu == 4) {
+        } else if (var.menuShown == 4) {
             //Audio
             glLoadIdentity();
             glTranslatef(0.0, 0.54, 0.0f);
@@ -622,7 +622,7 @@ public:
 
             // Sound on/off
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 6)
+            if (var.menuItemHovered == 6)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -635,7 +635,7 @@ public:
 
             // Stereo
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 5) {
+            if (var.menuItemHovered == 5) {
                 glCallList(dl + 2);
             } else {
                 glCallList(dl + 1);
@@ -650,7 +650,7 @@ public:
 
             // Back
             glTranslatef(0.0, -0.88, 0.0f);
-            if (var.menuItem == 1) {
+            if (var.menuItemHovered == 1) {
                 glCallList(dl + 2);
             } else {
                 glCallList(dl + 1);
@@ -660,9 +660,9 @@ public:
             glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
-                switch (var.menuItem) {
+                switch (var.menuItemHovered) {
                     case 1:
-                        var.menu = 2;
+                        var.menuShown = 2;
                         break;
                     case 5:
                         if (setting.stereo)
@@ -686,7 +686,7 @@ public:
             }
 
             var.menuNumItems = 7;
-        } else if (var.menu == 5) {
+        } else if (var.menuShown == 5) {
             // New game?
             glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);
@@ -699,7 +699,7 @@ public:
 
             // Easy
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 6)
+            if (var.menuItemHovered == 6)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -712,7 +712,7 @@ public:
 
             // Normal
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 5)
+            if (var.menuItemHovered == 5)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -726,7 +726,7 @@ public:
 
             // Hard
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 4)
+            if (var.menuItemHovered == 4)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -739,7 +739,7 @@ public:
 
             // Back
             glTranslatef(0.0, -0.66, 0.0f);
-            if (var.menuItem == 1)
+            if (var.menuItemHovered == 1)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -752,9 +752,9 @@ public:
             //       glCallList(dl+3);
 
             if (var.menuPressed) {
-                switch (var.menuItem) {
+                switch (var.menuItemHovered) {
                     case 1:
-                        var.menu = 1;
+                        var.menuShown = 1;
                         break;
                     case 4:
                         player.difficulty = HARD;
@@ -780,7 +780,7 @@ public:
             }
 
             var.menuNumItems = 7;
-        } else if (var.menu == 6) {
+        } else if (var.menuShown == 6) {
 
             // Exit
             glColor4f(GL_WHITE);
@@ -792,7 +792,7 @@ public:
 
             glTranslatef(0.0, 0.02f, 0.0f);
             glColor4f(GL_WHITE);
-            if (var.menuItem == 5)
+            if (var.menuItemHovered == 5)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -804,7 +804,7 @@ public:
 
             glTranslatef(0.0, -0.15, 0.0f);
             glColor4f(GL_WHITE);
-            if (var.menuItem == 4)
+            if (var.menuItemHovered == 4)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -814,9 +814,9 @@ public:
             glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
-                switch (var.menuItem) {
+                switch (var.menuItemHovered) {
                     case 4: //no
-                        var.menu = 1;
+                        var.menuShown = 1;
                         break;
                     case 5: //Yes
                         var.quit = 1;
@@ -826,11 +826,11 @@ public:
                 var.menuPressed = 0;
             }
             var.menuNumItems = 5;
-        } else if (var.menu == 7) // highscores
+        } else if (var.menuShown == 7) // highscores
         {
             // Highscores
             glTranslatef(0.0, 0.54, 0.0f);
-            if (var.menuItem == 7)
+            if (var.menuItemHovered == 7)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 3);
@@ -869,18 +869,18 @@ public:
 
 
             if (var.menuPressed) {
-                switch (var.menuItem) {
+                switch (var.menuItemHovered) {
                     case 7:
-                        var.menu = 1;
+                        var.menuShown = 1;
                         break;
                     default: ;
                 }
                 var.menuPressed = false;
             }
-        } else if (var.menu == 8) {
+        } else if (var.menuShown == 8) {
             // Load game
             glTranslatef(0.0, 0.54, 0.0f);
-            if (var.menuItem == 8)
+            if (var.menuItemHovered == 8)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 3);
@@ -889,7 +889,7 @@ public:
 
             for (int i = 0; i < 6; i++) {
                 glTranslatef(0.0, -0.22, 0.0f);
-                if (var.menuItem == 6 - i)
+                if (var.menuItemHovered == 6 - i)
                     glCallList(dl + 2);
                 else
                     glCallList(dl + 1);
@@ -899,16 +899,16 @@ public:
             }
 
             if (var.menuPressed) {
-                if (var.menuItem == 7) {
-                    var.menu = 1;
-                } else if (var.menuItem != 0) {
-                    saveManager.loadGame(var.menuItem * -1 + 6, SOLPlayer);
-                    var.menu = 0;
+                if (var.menuItemHovered == 7) {
+                    var.menuShown = 1;
+                } else if (var.menuItemHovered != 0) {
+                    saveManager.loadGame(var.menuItemHovered * -1 + 6, SOLPlayer);
+                    var.menuShown = 0;
                     resumeGame();
                 }
                 var.menuPressed = 0;
             }
-        } else if (var.menu == 9) {
+        } else if (var.menuShown == 9) {
             // Save game
             // Back
 
@@ -924,7 +924,7 @@ public:
 
             glTranslatef(0.0, 0.54, 0.0f);
 
-            if (var.menuItem == 8)
+            if (var.menuItemHovered == 8)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 3);
@@ -933,7 +933,7 @@ public:
 
             for (int i = 0; i < 6; i++) {
                 glTranslatef(0.0, -0.22, 0.0f);
-                if (var.menuItem == 6 - i)
+                if (var.menuItemHovered == 6 - i)
                     glCallList(dl + 2);
                 else
                     glCallList(dl + 1);
@@ -943,16 +943,16 @@ public:
             }
 
             if (var.menuPressed) {
-                if (var.menuItem == 7) {
-                    var.menu = 1;
-                } else if (var.menuItem != 0) {
+                if (var.menuItemHovered == 7) {
+                    var.menuShown = 1;
+                } else if (var.menuItemHovered != 0) {
                     var.enterSaveGameName = true;
-                    saveGameSlot = (var.menuItem * -1 + 6);
+                    saveGameSlot = (var.menuItemHovered * -1 + 6);
                     saveGameName[saveGameSlot] = "";
                 }
                 var.menuPressed = false;
             }
-        } else if (var.menu == 10) {
+        } else if (var.menuShown == 10) {
             // Joystick options
             glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);
@@ -961,7 +961,7 @@ public:
 
 
             glTranslatef(0.0, -0.22, 0.0f);
-            if (var.menuItem == 6)
+            if (var.menuItemHovered == 6)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -978,7 +978,7 @@ public:
 
             glTranslatef(0.0, -0.22, 0.0f);
             if (!setting.joyIsDigital) {
-                if (var.menuItem == 5)
+                if (var.menuItemHovered == 5)
                     glCallList(dl + 2);
                 else
                     glCallList(dl + 1);
@@ -1004,7 +1004,7 @@ public:
             glTranslatef(0.0, -0.22, 0.0f);
             glTranslatef(0.0, -0.22, 0.0f);
 
-            if (var.menuItem == 1)
+            if (var.menuItemHovered == 1)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -1013,9 +1013,9 @@ public:
             glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
-                switch (var.menuItem) {
+                switch (var.menuItemHovered) {
                     case 1:
-                        var.menu = 2;
+                        var.menuShown = 2;
                         break;
                     case 2:
                         break;
@@ -1045,7 +1045,7 @@ public:
             }
             var.menuNumItems = 6;
         }
-        else if (var.menu == 12) //Theme selector (Main screen)
+        else if (var.menuShown == 12) //Theme selector (Main screen)
         {
             glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);
@@ -1064,7 +1064,7 @@ public:
                 if (i == 5)
                     break;
                 glTranslatef(0.0, -0.22, 0.0f);
-                if (var.menuItem == 6 - i)
+                if (var.menuItemHovered == 6 - i)
                     glCallList(dl + 2);
                 else if (it->name.compare(setting.gfxTheme) == 0)
                     glCallList(dl + 3);
@@ -1080,7 +1080,7 @@ public:
                 glTranslatef(0.0, -0.22, 0.0f);
             }
 
-            if (var.menuItem == 1)
+            if (var.menuItemHovered == 1)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
@@ -1091,15 +1091,15 @@ public:
 
         if (var.menuPressed) {
             int i = 0;
-            switch (var.menuItem) {
+            switch (var.menuItemHovered) {
                 case 1:
-                    var.menu = 2;
+                    var.menuShown = 2;
                     break;
                 default: ;
             }
 
             for (i = 0; i < static_cast<int>(themeInf.size()) && i < 5; i++) {
-                if (6 - i == var.menuItem) {
+                if (6 - i == var.menuItemHovered) {
                     setting.gfxTheme = themeInf.at(i).name;
                     setting.sndTheme = themeInf.at(i).name;
                     setting.lvlTheme = themeInf.at(i).name;

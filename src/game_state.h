@@ -24,7 +24,7 @@
 #define PLAYFIELD_RIGHT_BORDER = 1.0f - PILLAR_WIDTH;
 
 // MENU SIZES -> TODO: Move to Menu.h
-#define MENU_HALF_WIDTH 0.425f
+#define MENU_HALF_WIDTH 0.35f
 #define MENU_WIDTH 0.85f
 #define MENU_HALF_HEIGHT 0.07f
 #define MENU_HEIGHT 0.14f
@@ -89,8 +89,8 @@ struct vars {
     bool titleScreenShow;
     int frame;
     bool paused;
-    int menu;
-    int menuItem;
+    int menuShown;
+    int menuItemHovered;
     bool menuPressed;
     int menuNumItems;
     int menuJoyCalStage;

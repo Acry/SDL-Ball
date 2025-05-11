@@ -79,7 +79,7 @@ void Controller::btnPress() {
     position p;
     if (shotTime > 150) {
         shotTime = 0;
-        if (!var.menu && !var.paused) {
+        if (!var.menuShown && !var.paused) {
             bMan->unglue();
             var.startedPlaying = 1;
             if (player.powerup[PO_GUN]) {
