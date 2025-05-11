@@ -45,7 +45,7 @@ void Texture::play() {
     // Update texture coordinates if frame changed
     if (frame != lastFrame || firstFrame) {
         int row = 0;
-        uint f = 0;
+        Uint32 f = 0;
         int col = 0;
         lastFrame = frame;
         firstFrame = false;

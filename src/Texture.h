@@ -1,6 +1,6 @@
 #pragma once
+#include <SDL2/SDL_stdinc.h>
 
-using uint = unsigned int;
 #include "texture_properties.h"
 
 // Texture coordinates array type (8 floats for 4 vertices)
@@ -9,10 +9,10 @@ using texPos = float[8];
 class Texture {
     float age;         // Current frame age
     bool dir;          // Animation direction for bidirectional
-    uint lastFrame;    // Last rendered frame
+    Uint32 lastFrame;    // Last rendered frame
 
 public:
-    uint frame;        // Current animation frame
+    Uint32 frame;        // Current animation frame
     bool playing;      // Animation playing state
     bool firstFrame;   // First frame flag
     texPos texturePosition;        // Current frame texture coordinates

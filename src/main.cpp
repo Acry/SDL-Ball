@@ -32,7 +32,7 @@
 #include "TextureManager.h"
 #include "Speedometer.h"
 #include "Paddle.h"
-#define DEBUG_DRAW_BALL_QUAD 1
+#define DEBUG_DRAW_BALL_QUAD 0
 #define DEBUG_SHOW_MOUSE_COORDINATES 0
 using namespace std;
 
@@ -42,7 +42,7 @@ SaveFileManager saveManager(configFileManager);
 ThemeManager themeManager(configFileManager);
 Display display;
 SoundManager soundManager;
-TextureManager textureManager;
+
 class EffectManager;
 
 // Timing
@@ -53,8 +53,6 @@ float nonpausingGlobalMilliTicks;
 int globalTicksSinceLastDraw;
 float globalMilliTicksSinceLastDraw;
 
-float random_float(float total, float negative);
-
 // Option 1: Struct mit benannten Koordinaten
 // struct TexCoords {
 //     GLfloat s1, t1;  // Texturkoordinaten Vertex 1
@@ -63,7 +61,6 @@ float random_float(float total, float negative);
 //     GLfloat s4, t4;  // Texturkoordinaten Vertex 4
 // };
 typedef GLfloat texPos[8];
-typedef unsigned int uint;
 
 // Menu.h wip
 #include "Menu.cpp"
@@ -72,7 +69,7 @@ typedef unsigned int uint;
 int nbrick[23][26];
 int updated_nbrick[23][26];
 class brick;
-
+float random_float(float total, float negative);
 void makeExplosive(brick &b);
 
 Texture *texExplosiveBrick; //NOTE:Ugly
@@ -311,7 +308,7 @@ public:
 #include "loadlevel.cpp"
 #include "EffectsTransist.cpp"
 
-void spawnpowerup(char powerup, position a, position b);
+void spawnPowerup(char powerup, position a, position b);
 
 class bulletsClass {
     MovingObject bullets[16];
@@ -488,7 +485,7 @@ void brick::hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, 
 
             gVar.deadTime = 0;
 
-            spawnpowerup(powerup, poSpawnPos, poSpawnVel);
+            spawnPowerup(powerup, poSpawnPos, poSpawnVel);
             powerup = '0';
 
             if (setting.eyeCandy) {
@@ -1718,89 +1715,30 @@ public:
 
 PowerupManager powerupManager;
 
-void spawnpowerup(const char powerup, const position a, const position b) {
-    if (powerup == '1') {
-        powerupManager.spawn(a, b,PO_GROWPADDLE);
-    }
-
-    if (powerup == '2') {
-        powerupManager.spawn(a, b,PO_SHRINKPADDLE);
-    }
-
-    if (powerup == '3') {
-        powerupManager.spawn(a, b,PO_DIE);
-    }
-
-    if (powerup == '4') {
-        powerupManager.spawn(a, b,PO_GLUE);
-    }
-
-    if (powerup == 'A') {
-        powerupManager.spawn(a, b,PO_EASYBRICK);
-    }
-
-    if (powerup == 'B') {
-        powerupManager.spawn(a, b,PO_EXPLOSIVE);
-    }
-
-    if (powerup == 'C') {
-        powerupManager.spawn(a, b,PO_NEXTLEVEL);
-    }
-
-    if (powerup == 'D') {
-        powerupManager.spawn(a, b,PO_AIMHELP);
-    }
-
-    if (powerup == 'E') {
-        powerupManager.spawn(a, b,PO_COIN);
-    }
-
-    if (powerup == '5') {
-        powerupManager.spawn(a, b,PO_MULTIBALL);
-    }
-
-    if (powerup == '6') {
-        powerupManager.spawn(a, b,PO_THRU);
-    }
-
-    if (powerup == '7') {
-        powerupManager.spawn(a, b,PO_DROP);
-    }
-
-    if (powerup == '8') {
-        powerupManager.spawn(a, b,PO_DETONATE);
-    }
-
-    if (powerup == '9') {
-        powerupManager.spawn(a, b,PO_EXPLOSIVE_GROW);
-    }
-
-    if (powerup == 'F') {
-        powerupManager.spawn(a, b,PO_BIGBALL);
-    }
-
-    if (powerup == 'G') {
-        powerupManager.spawn(a, b,PO_NORMALBALL);
-    }
-
-    if (powerup == 'H') {
-        powerupManager.spawn(a, b,PO_SMALLBALL);
-    }
-
-    if (powerup == 'I') {
-        powerupManager.spawn(a, b,PO_AIM);
-    }
-
-    if (powerup == 'P') {
-        powerupManager.spawn(a, b,PO_GUN);
-    }
-
-    if (powerup == 'R') {
-        powerupManager.spawn(a, b,PO_LASER);
-    }
-
-    if (powerup == 'O') {
-        powerupManager.spawn(a, b,PO_LIFE);
+void spawnPowerup(const char powerup, const position a, const position b) {
+    switch (powerup) {
+        case '1': powerupManager.spawn(a, b, PO_GROWPADDLE); break;
+        case '2': powerupManager.spawn(a, b, PO_SHRINKPADDLE); break;
+        case '3': powerupManager.spawn(a, b, PO_DIE); break;
+        case '4': powerupManager.spawn(a, b, PO_GLUE); break;
+        case '5': powerupManager.spawn(a, b, PO_MULTIBALL); break;
+        case '6': powerupManager.spawn(a, b, PO_THRU); break;
+        case '7': powerupManager.spawn(a, b, PO_DROP); break;
+        case '8': powerupManager.spawn(a, b, PO_DETONATE); break;
+        case '9': powerupManager.spawn(a, b, PO_EXPLOSIVE_GROW); break;
+        case 'A': powerupManager.spawn(a, b, PO_EASYBRICK); break;
+        case 'B': powerupManager.spawn(a, b, PO_EXPLOSIVE); break;
+        case 'C': powerupManager.spawn(a, b, PO_NEXTLEVEL); break;
+        case 'D': powerupManager.spawn(a, b, PO_AIMHELP); break;
+        case 'E': powerupManager.spawn(a, b, PO_COIN); break;
+        case 'F': powerupManager.spawn(a, b, PO_BIGBALL); break;
+        case 'G': powerupManager.spawn(a, b, PO_NORMALBALL); break;
+        case 'H': powerupManager.spawn(a, b, PO_SMALLBALL); break;
+        case 'I': powerupManager.spawn(a, b, PO_AIM); break;
+        case 'O': powerupManager.spawn(a, b, PO_LIFE); break;
+        case 'P': powerupManager.spawn(a, b, PO_GUN); break;
+        case 'R': powerupManager.spawn(a, b, PO_LASER); break;
+        default: break;
     }
 }
 
@@ -2259,13 +2197,12 @@ int main(int argc, char *argv[]) {
     Texture texPowerup[MAXPOTEXTURES];
     Texture texBullet;
     Texture texParticle;
-
+    TextureManager textureManager;
     textureManager.readTexProps(themeManager.getThemeFilePath("gfx/paddle/base.txt", setting.gfxTheme), texPaddleBase);
     textureManager.readTexProps(themeManager.getThemeFilePath("gfx/paddle/glue.txt", setting.gfxTheme),
                                 texPaddleLayers[0]);
     textureManager.readTexProps(themeManager.getThemeFilePath("gfx/paddle/gun.txt", setting.gfxTheme),
                                 texPaddleLayers[1]);
-
     textureManager.readTexProps(themeManager.getThemeFilePath("gfx/ball/normal.txt", setting.gfxTheme), texBall[0]);
     textureManager.readTexProps(themeManager.getThemeFilePath("gfx/ball/fireball.txt", setting.gfxTheme), texBall[1]);
     textureManager.readTexProps(themeManager.getThemeFilePath("gfx/ball/tail.txt", setting.gfxTheme), texBall[2]);
@@ -2329,11 +2266,10 @@ int main(int argc, char *argv[]) {
     textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/shrinkbat.txt", setting.gfxTheme),
                                 texPowerup[PO_SHRINKPADDLE]);
     textureManager.readTexProps(themeManager.getThemeFilePath("gfx/powerup/bullet.txt", setting.gfxTheme), texBullet);
-    powerupManager.init(texPowerup);
-
     textureManager.load(themeManager.getThemeFilePath("gfx/particle.png", setting.gfxTheme), texParticle);
 # pragma endregion texture manager
 
+    powerupManager.init(texPowerup);
     GLuint playfieldBorderList;
     createPlayfieldBorderList(&playfieldBorderList, texBorder);
 

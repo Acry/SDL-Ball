@@ -9,7 +9,7 @@ struct texProp {
     GLfloat yoffset; //
     int cols, rows; // hvor mange rækker og kolonner er der i denne textur
     int ticks;
-    uint frames; // This many frames in each se
+    Uint32 frames; // This many frames in each se
     bool bidir; // Går Looper den fra 0 -> X - 0 eller fra 0 -> X -> 0
     bool playing;
 

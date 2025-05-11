@@ -8,33 +8,37 @@
 #include "ThemeManager.h"
 
 extern settings setting;
-extern TextureManager textureManager;
 extern ThemeManager themeManager;
 
-bool TextureManager::load(const std::string& file, Texture& tex) {
-    SDL_Surface* temp = nullptr;
-    GLint maxTexSize;
-    GLuint glFormat = GL_RGBA;
-
-    if (file.substr(file.length() - 3, 3) == "jpg") {
-        glFormat = GL_RGB;
+GLuint getGLFormat(const SDL_Surface* surface) {
+    if (!surface) {
+        return GL_RGBA;  // Fallback
     }
 
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+    switch (surface->format->BytesPerPixel) {
+        case 3:
+            return GL_RGB;
+        case 4:
+            return GL_RGBA;
+        default:
+            return GL_RGBA;
+    }
+}
 
-    temp = IMG_Load(file.data());
-
-    if (temp == nullptr) {
-        SDL_Log("Texture manager:%s :%s", file.c_str(), SDL_GetError());
-        SDL_FreeSurface(temp);
+bool TextureManager::load(const std::string& filename, Texture& tex) {
+    // Texture laden und OpenGL Texture generieren
+    SDL_Surface* tempSurface = IMG_Load(filename.c_str());
+    if(!tempSurface) {
+        SDL_Log("Konnte Textur nicht laden: %s", filename.c_str());
         return false;
     }
-
-    if (temp->w > maxTexSize) {
-        SDL_Log("Texture manager: '%s' texturesize too large.", file.c_str());
-        SDL_FreeSurface(temp);
+    // Prüfen ob Texture zu groß ist
+    if (tempSurface->w > maxTexSize || tempSurface->h > maxTexSize) {
+        SDL_Log("Textur zu groß: %s (%dx%d)", filename.c_str(), tempSurface->w, tempSurface->h);
+        SDL_FreeSurface(tempSurface);
         return false;
     }
+    GLuint glFormat = getGLFormat(tempSurface);
 
     glGenTextures(1, &tex.textureProperties.texture);
     glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
@@ -45,15 +49,25 @@ bool TextureManager::load(const std::string& file, Texture& tex) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, glFormat, temp->w, temp->h, 0, glFormat, GL_UNSIGNED_BYTE, temp->pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, glFormat, tempSurface->w, tempSurface->h, 0, glFormat, GL_UNSIGNED_BYTE, tempSurface->pixels);
 
-    tex.textureProperties.pxw = temp->w;
-    tex.textureProperties.pxh = temp->h;
-    SDL_FreeSurface(temp);
+    tex.textureProperties.pxw = tempSurface->w;
+    tex.textureProperties.pxh = tempSurface->h;
+    SDL_FreeSurface(tempSurface);
 
     return true;
 }
 
+/*
+* bool readTexProps(const std::string& filename, Texture& tex) {
+// Textureigenschaften aus Datei laden
+// ...
+
+// Texture in Liste aufnehmen
+loadedTextures.push_back(&tex);
+return true;
+}
+*/
 void TextureManager::readTexProps(std::string fileName, Texture& tex) {
     char rgba[4][5];
     std::ifstream f;

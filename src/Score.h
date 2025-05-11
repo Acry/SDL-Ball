@@ -6,8 +6,8 @@
 class Score {
     TtfLegacyGl& text;
     unsigned int lastScoreTick;
-    uint tempScore;
-    uint score;
+    Uint32 tempScore;
+    Uint32 score;
     char tempText[255];
 
 public:

@@ -520,16 +520,16 @@ public:
     int isActive(int id) {
         for (list<effect_class>::iterator it = effects.begin(); it != effects.end(); ++it) {
             if (it->vars.effectId == id && it->vars.active) {
-                return (1);
+                return 1;
             }
         }
-        return (0);
+        return 0;
     }
 
     void kill(int id) {
         for (list<effect_class>::iterator it = effects.begin(); it != effects.end(); ++it) {
             if (it->vars.effectId) {
-                it->vars.active = 0;
+                it->vars.active = false;
             }
         }
     }
