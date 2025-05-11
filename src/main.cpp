@@ -1799,142 +1799,39 @@ void createPlayfieldBorderList(GLuint *dl, const Texture &tex) {
 }
 
 void collision_ball_brick(brick &br, ball &ba, position &p, EffectManager &fxMan) {
-    //measure the distance from last pos to each possible impact, the shortest should be the right one
+    // Early exit wenn Brick nicht aktiv
+    if (!br.active || !br.collide) return;
 
-    //vi tager y først da der er mindst brikker
-    if (ba.pos_y < br.pos_y + br.height + ba.height && ba.pos_y > br.pos_y - br.height - ba.height) {
-        //SDL_Log(" y ");
-        if (ba.pos_x > br.pos_x - br.width - ba.width && ba.pos_x < br.pos_x + br.width + ba.width) {
-            int i = 0;
-            int points = 0;
-            GLfloat py = 0;
-            GLfloat px = 0;
-            bool col = false;
-            //SDL_Log(" x ");
-            for (i = 0; i < 32; i++) // 32 punkter præcis
-            {
-                GLfloat x = ba.bsin[i];
-                GLfloat y = ba.bcos[i];
+    // AABB Collision Check (Axis Aligned Bounding Box)
+    bool collision = (ba.pos_x - ba.width < br.pos_x + br.width &&
+                     ba.pos_x + ba.width > br.pos_x - br.width &&
+                     ba.pos_y - ba.height < br.pos_y + br.height &&
+                     ba.pos_y + ba.height > br.pos_y - br.height);
 
-                if (ba.pos_x + x >= br.pos_x - br.width && ba.pos_x + x <= br.pos_x + br.width) {
-                    if (ba.pos_y + y <= br.pos_y + br.height && ba.pos_y + y >= br.pos_y - br.height) {
-                        //Vi har helt sikkert ramt
-                        points++;
-                        px += x;
-                        py += y;
-                        col = true;
-                    } //y
-                } //x
-            } //32 punkters for loop
+    if (!collision) return;
 
-            if (col) {
-                bool dirfound = false;
-                GLfloat dist[4] = {4.0, 4.0, 4.0, 4.0};
-                px /= points;
-                py /= points;
+    // Kollisionsrichtung bestimmen
+    float overlapX = min(ba.pos_x + ba.width - (br.pos_x - br.width),
+                        (br.pos_x + br.width) - (ba.pos_x - ba.width));
+    float overlapY = min(ba.pos_y + ba.height - (br.pos_y - br.height),
+                        (br.pos_y + br.height) - (ba.pos_y - ba.height));
 
-                if (ba.lastX - px <= br.pos_x - br.width && !br.n(0)) //
-                {
-                    dirfound = true;
-                    //    SDL_Log("På venstre");
-                    dist[0] = sqrt(
-                        pow(br.pos_x - br.width - (ba.lastX + px), 2) + pow((ba.pos_y + py) - (ba.lastY + py), 2));
-                }
+    // Position für Powerup-Spawn
+    position spawnPos = {br.pos_x, br.pos_y};
+    position spawnVel = {ba.xvel * 0.5f, ba.yvel * 0.5f};
 
-                if (ba.lastX - px >= br.pos_x + br.width && !br.n(1)) {
-                    dirfound = true;
-                    // SDL_Log("På højre");
-                    dist[1] = sqrt(
-                        pow(br.pos_x + br.width - (ba.lastX + px), 2) + pow((ba.pos_y + py) - (ba.lastY + py), 2));
-                }
+    // Reflektion basierend auf Kollisionsrichtung
+    if (overlapX < overlapY) {
+        ba.xvel *= -1;  // Horizontale Reflektion
+    } else {
+        ba.yvel *= -1;  // Vertikale Reflektion
+    }
 
-                if (ba.lastY - py <= br.pos_y - br.height && !br.n(3)) {
-                    dirfound = true;
-                    // SDL_Log("På bunden");
-                    dist[2] = sqrt(
-                        pow((ba.pos_x + px) - (ba.lastX + px), 2) + pow(br.pos_y - br.height - (ba.lastY + py), 2));
-                }
+    // Brick Hit
+    br.hit(fxMan, spawnPos, spawnVel, true);
 
-                if (ba.lastY - py >= br.pos_y + br.height && !br.n(2)) // &&
-                {
-                    dirfound = true;
-                    // SDL_Log("På toppen");
-                    dist[3] = sqrt(
-                        pow((ba.pos_x + px) - (ba.lastX + px), 2) + pow(br.pos_y + br.height - (ba.lastY + py), 2));
-                }
-
-
-                //Was hit on left
-                if (dist[0] < dist[1] && dist[0] < dist[2] && dist[0] < dist[3]) {
-                    ba.pos_x = br.pos_x - br.width - ba.width;
-                    if (ba.xvel > 0.0 && !player.powerup[PO_THRU])
-                        ba.xvel *= -1;
-                }
-
-                //Was hit on right
-                if (dist[1] < dist[0] && dist[1] < dist[2] && dist[1] < dist[3]) {
-                    ba.pos_x = br.pos_x + br.width + ba.width;
-                    if (ba.xvel < 0 && !player.powerup[PO_THRU])
-                        ba.xvel *= -1;
-                }
-
-                //Was hit on bottom
-                if (dist[2] < dist[0] && dist[2] < dist[1] && dist[2] < dist[3]) {
-                    ba.pos_y = br.pos_y - br.height - ba.height;
-                    if (ba.yvel > 0 && !player.powerup[PO_THRU])
-                        ba.yvel *= -1;
-                }
-
-                //Was hit on top
-                if (dist[3] < dist[0] && dist[3] < dist[1] && dist[3] < dist[2]) {
-                    ba.pos_y = br.pos_y + br.height + ba.height;
-                    if (ba.yvel < 0 && !player.powerup[PO_THRU])
-                        ba.yvel *= -1;
-                }
-
-                //Setup vars for spawning powerups
-                position a, b;
-                a.x = br.pos_x;
-                a.y = br.pos_y;
-
-                //Hastigheden en powerup blier sendt afsted med
-
-                if (player.difficulty == EASY) {
-                    b.x = ba.xvel / 2.0;
-                    b.y = ba.yvel / 2.0;
-                } else if (player.difficulty == NORMAL) {
-                    b.x = ba.xvel / 1.5;
-                    b.y = ba.yvel / 1.5;
-                } else //if(player.difficulty == HARD)
-                {
-                    b.x = ba.xvel / 1.25;
-                    b.y = ba.yvel / 1.25;
-                }
-
-                if (dirfound) {
-                    if (ba.explosive) {
-                        br.type = 'B';
-                    }
-
-                    //Update p, used by caller to find out if we hit anything..
-                    p.x = ba.pos_x + px;
-                    p.y = ba.pos_y + py;
-
-
-                    ba.hit(br.texture.textureProperties.glParColorInfo);
-
-                    if (!player.powerup[PO_THRU] || player.difficulty == HARD) {
-                        ba.setspeed(ba.velocity + runtime_difficulty.hitbrickinc[player.difficulty]);
-                    }
-                } else {
-#ifdef DEBUG_COLLISION_BALL
-                    SDL_Log("Collision detection error: Don't know where the ball hit.");
-#endif
-                }
-                br.hit(fxMan, a, b, true);
-            } //collision
-        } //x boxcol
-    } //y boxcol
+    // Ball Hit Effect
+    ba.hit(br.texture.textureProperties.glParColorInfo);
 }
 
 struct shopItemStruct {
