@@ -1978,7 +1978,7 @@ void collision_ball_brick(brick &br, ball &ba, position &p, effectManager &fxMan
     } //y boxcol
 }
 
-#include "highscores.cpp"
+#include "HighScore.cpp"
 
 struct shopItemStruct {
     int price;

@@ -1,5 +1,6 @@
 // src/game_state.h
 #pragma once
+#include <string>
 #include <epoxy/gl.h>
 
 #define PI 3.14159265
@@ -125,6 +126,12 @@ struct difficultyStruct {
     GLfloat hitpaddleinc[3];
     GLfloat slowdown[3];
     GLfloat speedup[3];
+};
+
+struct score {
+    int points;
+    std::string level;
+    std::string name;
 };
 
 extern difficultyStruct fixed_difficulty;

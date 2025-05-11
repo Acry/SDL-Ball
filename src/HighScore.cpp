@@ -1,4 +1,7 @@
 #include "Texture.h"
+
+// header breaker = score *sortScores
+
 class HighScore {
     string name;
     TextureManager texMgr;
@@ -61,20 +64,15 @@ public:
     }
 
     static bool isHighScore() {
-        int n;
         int high = 0;
-        const score *slist = sortScores(&n);
-        for (int i = 0; i < n; i++) {
-            if (player.score < slist[i].points) {
+        vector<score> scores = sortScores(); // Neue Signatur ohne pointer Parameter
+
+        for (const auto& score : scores) {
+            if (player.score < score.points) {
                 high++;
             }
         }
-        if (n > 0)
-            delete[] slist;
 
-        if (high < 20) {
-            return true;
-        }
-        return false;
+        return high < 20;
     }
 };

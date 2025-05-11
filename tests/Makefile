@@ -1,5 +1,5 @@
-CXX = g++
-CXXFLAGS = -std=gnu++23 -Wall -Wextra -mtune=native $(shell sdl2-config --cflags)
+CXX = clang++
+CXXFLAGS = -std=c++23 -Wall -Wextra -mtune=native $(shell sdl2-config --cflags)
 INCLUDES = -I./include
 
 # Quelldateien

@@ -3,95 +3,46 @@
 #include "game_state.h"
 // #include "Menu.h" todo
 
-
 extern SettingsManager settingsManager;
 extern SaveFileManager saveManager;
 extern player_struct SOLPlayer;
 
-struct score {
-    int points;
-    string level;
-    string name;
-};
-
-score *sortScores(int *rl) {
-    ifstream hsList;
-    int i = 0, t;
-
-    score *final = nullptr, *temp = nullptr;
-    final = new score[1];
-
-    hsList.open(configFileManager.getHighScoreFile().data());
+vector<score> sortScores() {
+    vector<score> scores;
+    ifstream hsList(configFileManager.getHighScoreFile());
 
     if (hsList.is_open()) {
-        int delim[2];
         string line;
-        while (!hsList.eof()) {
-            getline(hsList, line);
+        while (getline(hsList, line)) {
+            if (line.empty()) continue;
 
-            if (!line.empty()) {
-                if (line[0] == '[') {
-                    delim[0] = line.find(']');
-                    delim[1] = line.find('|', delim[0] + 1);
+            score entry;
+            size_t delim[2];
 
-                    final[i].level = line.substr(0, delim[0] + 1);
-                    final[i].level += "  ";
-                    final[i].points = atoi(line.substr(delim[0] + 1, delim[1]).data());
-                    final[i].name = line.substr(delim[1] + 1);
-                } else {
-                    final[i].level.clear();
-                    final[i].points = atoi(line.substr(0, line.find('|')).data());
-                    final[i].name = line.substr(line.find('|') + 1);
-                }
+            if (line[0] == '[') {
+                delim[0] = line.find(']');
+                delim[1] = line.find('|', delim[0] + 1);
 
-                temp = new score[i + 1];
-
-                for (t = 0; t < i + 1; t++) {
-                    temp[t] = final[t];
-                }
-
-                delete[] final;
-                final = new score[i + 2];
-
-                for (t = 0; t < i + 1; t++) {
-                    final[t] = temp[t];
-                }
-                delete[] temp;
-
-                i++;
+                entry.level = line.substr(0, delim[0] + 1) + "  ";
+                entry.points = stoi(line.substr(delim[0] + 1, delim[1] - delim[0] - 1));
+                entry.name = line.substr(delim[1] + 1);
+            } else {
+                delim[0] = line.find('|');
+                entry.points = stoi(line.substr(0, delim[0]));
+                entry.name = line.substr(delim[0] + 1);
             }
+            scores.push_back(entry);
         }
-        hsList.close();
     }
 
-    if (i > 20)
-        *rl = 20;
-    else
-        *rl = i;
+    sort(scores.begin(), scores.end(),
+         [](const score& a, const score& b) { return a.points > b.points; });
 
-    bool done = false;
-    bool swaps = false;
-
-    temp = new score[1];
-    while (!done) {
-        for (int k = 0; k < i; k++) {
-            for (t = 0; t < i; t++) {
-                if (final[k].points > final[t].points) {
-                    swaps = true;
-                    temp[0] = final[t];
-                    final[t] = final[k];
-                    final[k] = temp[0];
-                } else {
-                    swaps = false;
-                }
-            }
-        }
-        if (swaps == 0) {
-            done = true;
-        }
+    if (scores.size() > 20) {
+        scores.resize(20);
     }
-    delete[] temp;
-    return final;
+
+    return scores;
 }
 
 class Menu {
@@ -203,9 +154,8 @@ public:
     }
 
     void refreshHighScoreList() {
-        int lines;
-        score *final = sortScores(&lines);
-        //Fill out remaining highscore slots (if any)
+        constexpr int lines = 0;
+        const vector<score> scores = sortScores();
         for (int t = lines; t < 20; t++) {
             switch (t) {
                 case 0:
@@ -239,14 +189,13 @@ public:
         }
 
         //Highscores list
-        for (int t = 0; t < lines; t++) {
-            sprintf(highScores[t], "%s%i - %s", final[t].level.data(), final[t].points, final[t].name.data());
+        int t = 0;
+        for (const auto& s : scores) {
+            snprintf(highScores[t], sizeof(highScores[t]), "%s%i - %s",
+                     s.level.c_str(), s.points, s.name.c_str());
+            t++;
         }
-
-        if (lines > 0)
-            delete[] final;
     }
-
     // GRRRRRRRR
     void enterSaveGameName(SDL_Event e) {
         if (e.key.keysym.sym != SDLK_RETURN && e.key.keysym.sym != SDLK_ESCAPE) {

@@ -3,7 +3,7 @@ PREFIX?=~/.local
 DATADIR?=$(PREFIX)share/sdl-ball/themes/
 BINDIR?=$(PREFIX)/bin/
 
-CXX=clang++
+CXX = clang++
 
 COMMON_FLAGS := -std=c++23 -Wall -Wextra -mtune=native $(shell sdl2-config --cflags)
 LDFLAGS := -lepoxy -lGLU  $(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf -lSDL2_mixer
@@ -24,7 +24,7 @@ TARGET=sdl-ball
 
 .PHONY: all clean debug release install install-bin install-data remove
 
-all: release  debug
+all: release debug
 
 release: $(BUILD_DIR)$(TARGET)
 
