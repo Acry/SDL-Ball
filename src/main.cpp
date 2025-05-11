@@ -34,6 +34,7 @@
 #include "Paddle.h"
 #define DEBUG_DRAW_BALL_QUAD 0
 #define DEBUG_SHOW_MOUSE_COORDINATES 0
+class brick;
 using namespace std;
 
 ConfigFileManager configFileManager;
@@ -42,8 +43,6 @@ SaveFileManager saveManager(configFileManager);
 ThemeManager themeManager(configFileManager);
 Display display;
 SoundManager soundManager;
-
-class EffectManager;
 
 // Timing
 int globalTicks;
@@ -62,489 +61,11 @@ float globalMilliTicksSinceLastDraw;
 // };
 typedef GLfloat texPos[8];
 
-// Menu.h wip
-#include "Menu.cpp"
 
-// nasty fix to a problem
-int nbrick[23][26];
-int updated_nbrick[23][26];
-class brick;
+
+
+
 float random_float(float total, float negative);
-void makeExplosive(brick &b);
-
-Texture *texExplosiveBrick; //NOTE:Ugly
-class brick : public GameObject {
-public:
-    int score; //Hvor meget gir den
-    bool destroytowin; // Skal den smadres for at man kan vinde?
-    char powerup;
-    char type;
-    GLfloat fade; //hvor meget brik
-    GLfloat fadespeed;
-    GLfloat zoomspeed;
-    GLfloat zoom;
-    bool isdyingnormally;
-    bool isexploding; //springer den i luften
-    int row; //what row is this brick in
-    int bricknum; //brick in this row
-    int hitsLeft; //Hvor mange gange skal denne brik rammes før den dør?
-    bool justBecomeExplosive; //If this brick just becomes an explosive one.
-
-    [[nodiscard]] bool n(const int dir) const {
-        switch (dir) {
-            case 0: //Er der en brik til venstre for dig?
-                if (bricknum > 0) {
-                    if (nbrick[row][bricknum - 1] != -1)
-                        return true;
-                }
-                break;
-            case 1: //Er der en brik til højre for dig?
-                if (bricknum < 25) //26
-                {
-                    if (nbrick[row][bricknum + 1] != -1)
-                        return true;
-                }
-                break;
-            case 2: //Er der en brik Ovenpå dig
-                if (row > 0) {
-                    if (nbrick[row - 1][bricknum] != -1)
-                        return true;
-                }
-                break;
-            case 3: //Er der en brik nedenunder dig
-                if (row < 22) //23
-                {
-                    if (nbrick[row + 1][bricknum] != -1)
-                        return true;
-                }
-                break;
-            default: ;
-        }
-
-        return false;
-    }
-
-    void hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe);
-
-    void draw(brick bricks[], EffectManager &fxMan) {
-        if (isdyingnormally) {
-            fade -= fadespeed * globalMilliTicksSinceLastDraw;
-            opacity = fade;
-            zoom -= zoomspeed * globalMilliTicksSinceLastDraw;
-
-            if (fade < 0.0)
-                active = false;
-        }
-
-        if (isexploding && !var.paused) {
-            fade -= 7.0 * globalMilliTicksSinceLastDraw;
-            opacity = fade;
-            if (fade < 0.0) {
-                active = false;
-
-                position spos, svel;
-                spos.x = pos_x;
-                spos.y = pos_y;
-                if (bricknum > 0) {
-                    if (nbrick[row][bricknum - 1] != -1) {
-                        svel.x = random_float(2, 0) / 3.0;
-                        svel.y = random_float(2, 0) / 3.0;
-                        bricks[nbrick[row][bricknum - 1]].hit(fxMan, spos, svel, false);
-                    }
-                }
-                if (bricknum < 25) {
-                    if (nbrick[row][bricknum + 1] != -1) {
-                        svel.x = random_float(2, 0) / 3.0;
-                        svel.y = random_float(2, 0) / 3.0;
-                        bricks[nbrick[row][bricknum + 1]].hit(fxMan, spos, svel, false);
-                    }
-                }
-                if (row > 0) {
-                    if (nbrick[row - 1][bricknum] != -1) {
-                        svel.x = random_float(2, 0) / 3.0;
-                        svel.y = random_float(2, 0) / 3.0;
-                        bricks[nbrick[row - 1][bricknum]].hit(fxMan, spos, svel, false);
-                    }
-                }
-                if (row < 22) {
-                    if (nbrick[row + 1][bricknum] != -1) {
-                        svel.x = random_float(2.0f, 0.0f) / 3.0f;
-                        svel.y = random_float(2.0f, 0.0f) / 3.0f;
-                        bricks[nbrick[row + 1][bricknum]].hit(fxMan, spos, svel, false);
-                    }
-                }
-                if (row > 0 && bricknum > 0) {
-                    if (nbrick[row - 1][bricknum - 1] != -1) {
-                        svel.x = random_float(2, 0) / 3.0f;
-                        svel.y = random_float(2, 0) / 3.0f;
-                        bricks[nbrick[row - 1][bricknum - 1]].hit(fxMan, spos, svel, false);
-                    }
-                }
-                if (row > 0 && bricknum < 25) {
-                    if (nbrick[row - 1][bricknum + 1] != -1) {
-                        svel.x = random_float(2, 0) / 3.0f;
-                        svel.y = random_float(2, 0) / 3.0f;
-                        bricks[nbrick[row - 1][bricknum + 1]].hit(fxMan, spos, svel, false);
-                    }
-                }
-                if (row < 22 && bricknum > 0) {
-                    if (nbrick[row + 1][bricknum - 1] != -1) {
-                        svel.x = random_float(2, 0) / 3.0f;
-                        svel.y = random_float(2, 0) / 3.0f;
-                        bricks[nbrick[row + 1][bricknum - 1]].hit(fxMan, spos, svel, false);
-                    }
-                }
-                if (row < 22 && bricknum < 25) {
-                    if (nbrick[row + 1][bricknum + 1] != -1) {
-                        svel.x = random_float(2.0f, 0.0f) / 3.0f;
-                        svel.y = random_float(2.0f, 0.0f) / 3.0f;
-                        bricks[nbrick[row + 1][bricknum + 1]].hit(fxMan, spos, svel, false);
-                    }
-                }
-            }
-        }
-        texture.play();
-        glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1],
-                  texture.textureProperties.glTexColorInfo[2], opacity);
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
-        glLoadIdentity();
-        glBegin(GL_QUADS);
-        // Berechne die Ecken des Quads
-        // glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
-        //         +1
-        //         ^
-        //         |
-        // -1 <----+----> +1
-        //         |
-        //        -1
-        const float left = pos_x * zoom;
-        const float right = pos_x + BRICK_WIDTH * zoom;
-        const float top = pos_y * zoom;
-        const float bottom = pos_y + BRICK_HEIGHT * zoom;
-
-        // Zeichne das Quad mit den Texturkoordinaten
-        glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
-        glVertex3f(left, top, 0.0f); // Oben links
-
-        glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
-        glVertex3f(right, top, 0.0f); // Oben rechts
-
-        glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
-        glVertex3f(right, bottom, 0.0f); // Unten rechts
-
-        glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
-        glVertex3f(left, bottom, 0.0f); // Unten links
-        glEnd();
-        glDisable(GL_TEXTURE_2D);
-    }
-
-    void growExplosive(brick bricks[]) const {
-        if (type != 'B' || justBecomeExplosive) {
-            return;
-        }
-        if (bricknum > 0) {
-            if (nbrick[row][bricknum - 1] != -1) {
-                makeExplosive(bricks[nbrick[row][bricknum - 1]]);
-            }
-        }
-        if (bricknum < 25) {
-            if (nbrick[row][bricknum + 1] != -1) {
-                makeExplosive(bricks[nbrick[row][bricknum + 1]]);
-            }
-        }
-        if (row > 0) {
-            if (nbrick[row - 1][bricknum] != -1) {
-                makeExplosive(bricks[nbrick[row - 1][bricknum]]);
-            }
-        }
-        if (row < 22) {
-            if (nbrick[row + 1][bricknum] != -1) {
-                makeExplosive(bricks[nbrick[row + 1][bricknum]]);
-            }
-        }
-        if (row > 0 && bricknum > 0) {
-            if (nbrick[row - 1][bricknum - 1] != -1) {
-                makeExplosive(bricks[nbrick[row - 1][bricknum - 1]]);
-            }
-        }
-        if (row > 0 && bricknum < 25) {
-            if (nbrick[row - 1][bricknum + 1] != -1) {
-                makeExplosive(bricks[nbrick[row - 1][bricknum + 1]]);
-            }
-        }
-        if (row < 22 && bricknum > 0) {
-            if (nbrick[row + 1][bricknum - 1] != -1) {
-                makeExplosive(bricks[nbrick[row + 1][bricknum - 1]]);
-            }
-        }
-        if (row < 22 && bricknum < 25) {
-            if (nbrick[row + 1][bricknum + 1] != -1) {
-                makeExplosive(bricks[nbrick[row + 1][bricknum + 1]]);
-            }
-        }
-    }
-
-    void breakable() {
-        if (type == '3') {
-            score = 300;
-            hitsLeft = 1;
-            type = '1'; //hehe..
-            texture.frame = 2;
-            texture.play();
-        } else if (type == '4') {
-            hitsLeft = 1;
-            texture.frame = 2;
-            texture.play();
-        } else if (type == '9') {
-            hitsLeft = 1;
-            texture.frame = 3;
-            texture.play();
-        }
-    }
-};
-
-// todo #include "loadlevel_new.cpp" -> levelManager
-#include "loadlevel.cpp"
-#include "EffectsTransist.cpp"
-
-void spawnPowerup(char powerup, position a, position b);
-
-class bulletsClass {
-    MovingObject bullets[16];
-
-public:
-    int active;
-
-    bulletsClass(const Texture &texBullet) {
-        for (auto &bullet: bullets) {
-            bullet.active = false;
-            bullet.texture = texBullet;
-            bullet.width = 0.02;
-            bullet.height = 0.02;
-        }
-    }
-
-    void shoot(const position p) {
-        //Find ledig bullet
-        for (auto &bullet: bullets) {
-            if (!bullet.active) {
-                soundManager.add(SND_SHOT, p.x);
-                bullet.active = true;
-                bullet.pos_x = p.x;
-                bullet.pos_y = p.y;
-                bullet.xvel = 0;
-                bullet.yvel = 1.0;
-                break;
-            }
-        }
-    }
-
-    void move() {
-        for (auto &bullet: bullets) {
-            if (bullet.active) {
-                //Flyt
-                bullet.pos_y += bullet.yvel * globalMilliTicks;
-            }
-        }
-    }
-
-    void draw() {
-        glColor4f(GL_WHITE);
-        for (auto &bullet: bullets) {
-            if (bullet.active) {
-                //draw
-
-                bullet.texture.play();
-
-                glLoadIdentity();
-                glTranslatef(bullet.pos_x, bullet.pos_y, 0.0);
-                glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, bullet.texture.textureProperties.texture);
-                glBegin(GL_QUADS);
-                glTexCoord2f(bullet.texture.texturePosition[0], bullet.texture.texturePosition[1]);
-                glVertex3f(-bullet.width, bullet.height, 0.0);
-                glTexCoord2f(bullet.texture.texturePosition[2], bullet.texture.texturePosition[3]);
-                glVertex3f(bullet.width, bullet.height, 0.0);
-                glTexCoord2f(bullet.texture.texturePosition[4], bullet.texture.texturePosition[5]);
-                glVertex3f(bullet.width, -bullet.height, 0.0);
-                glTexCoord2f(bullet.texture.texturePosition[6], bullet.texture.texturePosition[7]);
-                glVertex3f(-bullet.width, -bullet.height, 0.0);
-                glDisable(GL_TEXTURE_2D);
-                glEnd();
-            }
-        }
-    }
-
-    void clear() {
-        for (auto &bullet: bullets) {
-            bullet.active = false;
-        }
-    }
-
-    void coldet(brick &b, EffectManager &fxMan) {
-        position v;
-        v.x = 0;
-        v.y = bullets[0].xvel;
-
-        for (auto &bullet: bullets) {
-            if (bullet.active) {
-                //y
-                if (bullet.pos_y + bullet.height / 10.0 > b.pos_y - b.height && bullet.pos_y + bullet.
-                    height / 10.0 < b.pos_y + b.height) {
-                    bool hit = false;
-                    position p;
-                    p.x = b.pos_x;
-                    p.y = b.pos_y;
-                    //Venstre side:
-                    if (bullet.pos_x > b.pos_x - b.width && bullet.pos_x < b.pos_x + b.width) {
-                        hit = true;
-                    }
-
-                    if (hit) {
-                        b.hit(fxMan, p, v, true);
-
-                        bullet.active = false;
-
-                        p.x = bullet.pos_x;
-                        p.y = bullet.pos_y;
-
-                        if (setting.eyeCandy) {
-                            fxMan.set(FX_VAR_TYPE, FX_SPARKS);
-                            fxMan.set(FX_VAR_COLDET, 1);
-                            fxMan.set(FX_VAR_LIFE, 1300);
-                            fxMan.set(FX_VAR_NUM, 16);
-                            fxMan.set(FX_VAR_SIZE, 0.015f);
-                            fxMan.set(FX_VAR_SPEED, 0.4f);
-                            fxMan.set(FX_VAR_GRAVITY, 1.0f);
-
-                            fxMan.set(FX_VAR_COLOR, 1.0f, 0.7f, 0.0f);
-                            fxMan.spawn(p);
-                            fxMan.set(FX_VAR_COLOR, 1.0f, 0.8f, 0.0f);
-                            fxMan.spawn(p);
-                            fxMan.set(FX_VAR_COLOR, 1.0f, 0.9f, 0.0f);
-                            fxMan.spawn(p);
-                            fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 0.0f);
-                            fxMan.spawn(p);
-                        }
-                    }
-                } else if (bullet.pos_y > 1.0f) {
-                    bullet.active = false;
-                }
-            }
-        }
-    }
-};
-
-void brick::hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe) {
-    position p, s;
-
-    if (type != '3' || player.powerup[PO_THRU])
-        hitsLeft--;
-
-    //We don't want to play a sound if this brick is not an explosive, and was hit by an explosion
-    if (ballHitMe || type == 'B') {
-        if (type == '3') //cement
-        {
-            soundManager.add(SND_CEMENT_BRICK_HIT, pos_x);
-        } else if (type == '4' || type == '9') //glass or invisible
-        {
-            if (hitsLeft == 2) {
-                soundManager.add(SND_INVISIBLE_BRICK_APPEAR, pos_x);
-            } else if (hitsLeft == 1) {
-                soundManager.add(SND_GLASS_BRICK_HIT, pos_x);
-            } else {
-                soundManager.add(SND_GLASS_BRICK_BREAK, pos_x);
-            }
-        } else if (type == 'B') //explosive
-        {
-            soundManager.add(SND_EXPL_BRICK_BREAK, pos_x);
-        } else if (type == 'C') //Doom brick
-        {
-            soundManager.add(SND_DOOM_BRICK_BREAK, pos_x);
-        } else {
-            //All the other bricks
-            soundManager.add(SND_NORM_BRICK_BREAK, pos_x);
-        }
-    }
-
-
-    if (type != '3' || player.powerup[PO_THRU]) {
-        //Brick was hit, dont do anything
-        if (isdyingnormally || isexploding) {
-            return;
-        }
-        player.score += score * player.multiply * var.averageBallSpeed; //Speed bonus
-
-        if (hitsLeft < 1 || type == 'B') //Hvis brikken er explosiv kan den ikke have nogle hits tilbage
-        {
-            collide = false;
-
-            updated_nbrick[row][bricknum] = -1;
-            var.bricksHit = true;
-
-            gVar.deadTime = 0;
-
-            spawnPowerup(powerup, poSpawnPos, poSpawnVel);
-            powerup = '0';
-
-            if (setting.eyeCandy) {
-                p.x = pos_x;
-                p.y = pos_y;
-                s.x = width * 2;
-                s.y = height * 2;
-
-                fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
-                fxMan.set(FX_VAR_COLDET, 1);
-                fxMan.set(FX_VAR_LIFE, 1300);
-                fxMan.set(FX_VAR_NUM, 20);
-                fxMan.set(FX_VAR_SIZE, 0.03f);
-                fxMan.set(FX_VAR_SPEED, 0.6f);
-                fxMan.set(FX_VAR_GRAVITY, 0.7f);
-
-                fxMan.set(FX_VAR_RECTANGLE, s);
-
-                fxMan.set(FX_VAR_COLOR, texture.textureProperties.glParColorInfo[0],
-                          texture.textureProperties.glParColorInfo[1],
-                          texture.textureProperties.glParColorInfo[2]);
-                fxMan.spawn(p);
-            }
-
-            if (type == 'B') {
-                isexploding = true;
-
-                if (setting.eyeCandy) {
-                    p.x = pos_x;
-                    p.y = pos_y;
-                    fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
-                    fxMan.set(FX_VAR_COLDET, 1);
-                    fxMan.set(FX_VAR_LIFE, 1200);
-                    fxMan.set(FX_VAR_NUM, 10);
-                    fxMan.set(FX_VAR_SIZE, 0.08f);
-                    fxMan.set(FX_VAR_SPEED, 0.4f);
-                    fxMan.set(FX_VAR_GRAVITY, -1.3f);
-
-                    fxMan.set(FX_VAR_COLOR, 1.0f, 0.7f, 0.0f);
-                    fxMan.spawn(p);
-                    fxMan.set(FX_VAR_COLOR, 1.0f, 0.8f, 0.0f);
-                    fxMan.spawn(p);
-                    fxMan.set(FX_VAR_COLOR, 1.0f, 0.9f, 0.0f);
-                    fxMan.spawn(p);
-                    fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 0.0f);
-                    fxMan.spawn(p);
-                }
-            } else {
-                isdyingnormally = true;
-            }
-        } else {
-            //No hits left
-            texture.frame++;
-            texture.play();
-        } //Hits left
-    }
-}
-
-glAnnounceTextClass announce;
 
 // 2D Line Segment Intersection
 int LinesCross(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, GLfloat *linx,
@@ -1021,8 +542,249 @@ public:
         }
     }
 };
+class EffectManager;
+void makeExplosive(brick &b);
+// nasty fix to a problem
+int nbrick[23][26];
+int updated_nbrick[23][26];
+class brick : public GameObject {
+public:
+    int score; //Hvor meget gir den
+    bool destroytowin; // Skal den smadres for at man kan vinde?
+    char powerup;
+    char type;
+    GLfloat fade; //hvor meget brik
+    GLfloat fadespeed;
+    GLfloat zoomspeed;
+    GLfloat zoom;
+    bool isdyingnormally;
+    bool isexploding; //springer den i luften
+    int row; //what row is this brick in
+    int bricknum; //brick in this row
+    int hitsLeft; //Hvor mange gange skal denne brik rammes før den dør?
+    bool justBecomeExplosive; //If this brick just becomes an explosive one.
 
+    [[nodiscard]] bool n(const int dir) const {
+        switch (dir) {
+            case 0: //Er der en brik til venstre for dig?
+                if (bricknum > 0) {
+                    if (nbrick[row][bricknum - 1] != -1)
+                        return true;
+                }
+                break;
+            case 1: //Er der en brik til højre for dig?
+                if (bricknum < 25) //26
+                {
+                    if (nbrick[row][bricknum + 1] != -1)
+                        return true;
+                }
+                break;
+            case 2: //Er der en brik Ovenpå dig
+                if (row > 0) {
+                    if (nbrick[row - 1][bricknum] != -1)
+                        return true;
+                }
+                break;
+            case 3: //Er der en brik nedenunder dig
+                if (row < 22) //23
+                {
+                    if (nbrick[row + 1][bricknum] != -1)
+                        return true;
+                }
+                break;
+            default: ;
+        }
+
+        return false;
+    }
+
+    void hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe);
+
+    void draw(brick bricks[], EffectManager &fxMan) {
+        if (isdyingnormally) {
+            fade -= fadespeed * globalMilliTicksSinceLastDraw;
+            opacity = fade;
+            zoom -= zoomspeed * globalMilliTicksSinceLastDraw;
+
+            if (fade < 0.0)
+                active = false;
+        }
+
+        if (isexploding && !var.paused) {
+            fade -= 7.0 * globalMilliTicksSinceLastDraw;
+            opacity = fade;
+            if (fade < 0.0) {
+                active = false;
+
+                position spos, svel;
+                spos.x = pos_x;
+                spos.y = pos_y;
+                if (bricknum > 0) {
+                    if (nbrick[row][bricknum - 1] != -1) {
+                        svel.x = random_float(2, 0) / 3.0;
+                        svel.y = random_float(2, 0) / 3.0;
+                        bricks[nbrick[row][bricknum - 1]].hit(fxMan, spos, svel, false);
+                    }
+                }
+                if (bricknum < 25) {
+                    if (nbrick[row][bricknum + 1] != -1) {
+                        svel.x = random_float(2, 0) / 3.0;
+                        svel.y = random_float(2, 0) / 3.0;
+                        bricks[nbrick[row][bricknum + 1]].hit(fxMan, spos, svel, false);
+                    }
+                }
+                if (row > 0) {
+                    if (nbrick[row - 1][bricknum] != -1) {
+                        svel.x = random_float(2, 0) / 3.0;
+                        svel.y = random_float(2, 0) / 3.0;
+                        bricks[nbrick[row - 1][bricknum]].hit(fxMan, spos, svel, false);
+                    }
+                }
+                if (row < 22) {
+                    if (nbrick[row + 1][bricknum] != -1) {
+                        svel.x = random_float(2.0f, 0.0f) / 3.0f;
+                        svel.y = random_float(2.0f, 0.0f) / 3.0f;
+                        bricks[nbrick[row + 1][bricknum]].hit(fxMan, spos, svel, false);
+                    }
+                }
+                if (row > 0 && bricknum > 0) {
+                    if (nbrick[row - 1][bricknum - 1] != -1) {
+                        svel.x = random_float(2, 0) / 3.0f;
+                        svel.y = random_float(2, 0) / 3.0f;
+                        bricks[nbrick[row - 1][bricknum - 1]].hit(fxMan, spos, svel, false);
+                    }
+                }
+                if (row > 0 && bricknum < 25) {
+                    if (nbrick[row - 1][bricknum + 1] != -1) {
+                        svel.x = random_float(2, 0) / 3.0f;
+                        svel.y = random_float(2, 0) / 3.0f;
+                        bricks[nbrick[row - 1][bricknum + 1]].hit(fxMan, spos, svel, false);
+                    }
+                }
+                if (row < 22 && bricknum > 0) {
+                    if (nbrick[row + 1][bricknum - 1] != -1) {
+                        svel.x = random_float(2, 0) / 3.0f;
+                        svel.y = random_float(2, 0) / 3.0f;
+                        bricks[nbrick[row + 1][bricknum - 1]].hit(fxMan, spos, svel, false);
+                    }
+                }
+                if (row < 22 && bricknum < 25) {
+                    if (nbrick[row + 1][bricknum + 1] != -1) {
+                        svel.x = random_float(2.0f, 0.0f) / 3.0f;
+                        svel.y = random_float(2.0f, 0.0f) / 3.0f;
+                        bricks[nbrick[row + 1][bricknum + 1]].hit(fxMan, spos, svel, false);
+                    }
+                }
+            }
+        }
+        texture.play();
+        glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1],
+                  texture.textureProperties.glTexColorInfo[2], opacity);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
+        glLoadIdentity();
+        glBegin(GL_QUADS);
+        // Berechne die Ecken des Quads
+        // glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+        //         +1
+        //         ^
+        //         |
+        // -1 <----+----> +1
+        //         |
+        //        -1
+        const float left = pos_x * zoom;
+        const float right = pos_x + BRICK_WIDTH * zoom;
+        const float top = pos_y * zoom;
+        const float bottom = pos_y + BRICK_HEIGHT * zoom;
+
+        // Zeichne das Quad mit den Texturkoordinaten
+        glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
+        glVertex3f(left, top, 0.0f); // Oben links
+
+        glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
+        glVertex3f(right, top, 0.0f); // Oben rechts
+
+        glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
+        glVertex3f(right, bottom, 0.0f); // Unten rechts
+
+        glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
+        glVertex3f(left, bottom, 0.0f); // Unten links
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
+    }
+
+    void growExplosive(brick bricks[]) const {
+        if (type != 'B' || justBecomeExplosive) {
+            return;
+        }
+        if (bricknum > 0) {
+            if (nbrick[row][bricknum - 1] != -1) {
+                makeExplosive(bricks[nbrick[row][bricknum - 1]]);
+            }
+        }
+        if (bricknum < 25) {
+            if (nbrick[row][bricknum + 1] != -1) {
+                makeExplosive(bricks[nbrick[row][bricknum + 1]]);
+            }
+        }
+        if (row > 0) {
+            if (nbrick[row - 1][bricknum] != -1) {
+                makeExplosive(bricks[nbrick[row - 1][bricknum]]);
+            }
+        }
+        if (row < 22) {
+            if (nbrick[row + 1][bricknum] != -1) {
+                makeExplosive(bricks[nbrick[row + 1][bricknum]]);
+            }
+        }
+        if (row > 0 && bricknum > 0) {
+            if (nbrick[row - 1][bricknum - 1] != -1) {
+                makeExplosive(bricks[nbrick[row - 1][bricknum - 1]]);
+            }
+        }
+        if (row > 0 && bricknum < 25) {
+            if (nbrick[row - 1][bricknum + 1] != -1) {
+                makeExplosive(bricks[nbrick[row - 1][bricknum + 1]]);
+            }
+        }
+        if (row < 22 && bricknum > 0) {
+            if (nbrick[row + 1][bricknum - 1] != -1) {
+                makeExplosive(bricks[nbrick[row + 1][bricknum - 1]]);
+            }
+        }
+        if (row < 22 && bricknum < 25) {
+            if (nbrick[row + 1][bricknum + 1] != -1) {
+                makeExplosive(bricks[nbrick[row + 1][bricknum + 1]]);
+            }
+        }
+    }
+
+    void breakable() {
+        if (type == '3') {
+            score = 300;
+            hitsLeft = 1;
+            type = '1'; //hehe..
+            texture.frame = 2;
+            texture.play();
+        } else if (type == '4') {
+            hitsLeft = 1;
+            texture.frame = 2;
+            texture.play();
+        } else if (type == '9') {
+            hitsLeft = 1;
+            texture.frame = 3;
+            texture.play();
+        }
+    }
+};
 void collision_ball_brick(brick &br, ball &ba, position &p, EffectManager &fxMan);
+// Menu.h wip
+#include "Menu.cpp"
+// todo #include "loadlevel_new.cpp" -> levelManager
+#include "loadlevel.cpp"
+#include "EffectsTransist.cpp"
+EffectManager fxMan;
+glAnnounceTextClass announce;
 
 class BallManager {
     // verwaltet mehrere Bälle
@@ -1602,7 +1364,6 @@ public:
                     p[i].score = 500;
                 }
 
-
                 if (type == PO_MULTIBALL) {
                     p[i].score = 500;
                 }
@@ -1711,34 +1472,268 @@ public:
             }
         }
     }
+    void spawnPowerup(const char powerup, const position a, const position b) {
+        switch (powerup) {
+            case '1': spawn(a, b, PO_GROWPADDLE); break;
+            case '2': spawn(a, b, PO_SHRINKPADDLE); break;
+            case '3': spawn(a, b, PO_DIE); break;
+            case '4': spawn(a, b, PO_GLUE); break;
+            case '5': spawn(a, b, PO_MULTIBALL); break;
+            case '6': spawn(a, b, PO_THRU); break;
+            case '7': spawn(a, b, PO_DROP); break;
+            case '8': spawn(a, b, PO_DETONATE); break;
+            case '9': spawn(a, b, PO_EXPLOSIVE_GROW); break;
+            case 'A': spawn(a, b, PO_EASYBRICK); break;
+            case 'B': spawn(a, b, PO_EXPLOSIVE); break;
+            case 'C': spawn(a, b, PO_NEXTLEVEL); break;
+            case 'D': spawn(a, b, PO_AIMHELP); break;
+            case 'E': spawn(a, b, PO_COIN); break;
+            case 'F': spawn(a, b, PO_BIGBALL); break;
+            case 'G': spawn(a, b, PO_NORMALBALL); break;
+            case 'H': spawn(a, b, PO_SMALLBALL); break;
+            case 'I': spawn(a, b, PO_AIM); break;
+            case 'O': spawn(a, b, PO_LIFE); break;
+            case 'P': spawn(a, b, PO_GUN); break;
+            case 'R': spawn(a, b, PO_LASER); break;
+            default: break;
+        }
+    }
 };
-
 PowerupManager powerupManager;
 
-void spawnPowerup(const char powerup, const position a, const position b) {
-    switch (powerup) {
-        case '1': powerupManager.spawn(a, b, PO_GROWPADDLE); break;
-        case '2': powerupManager.spawn(a, b, PO_SHRINKPADDLE); break;
-        case '3': powerupManager.spawn(a, b, PO_DIE); break;
-        case '4': powerupManager.spawn(a, b, PO_GLUE); break;
-        case '5': powerupManager.spawn(a, b, PO_MULTIBALL); break;
-        case '6': powerupManager.spawn(a, b, PO_THRU); break;
-        case '7': powerupManager.spawn(a, b, PO_DROP); break;
-        case '8': powerupManager.spawn(a, b, PO_DETONATE); break;
-        case '9': powerupManager.spawn(a, b, PO_EXPLOSIVE_GROW); break;
-        case 'A': powerupManager.spawn(a, b, PO_EASYBRICK); break;
-        case 'B': powerupManager.spawn(a, b, PO_EXPLOSIVE); break;
-        case 'C': powerupManager.spawn(a, b, PO_NEXTLEVEL); break;
-        case 'D': powerupManager.spawn(a, b, PO_AIMHELP); break;
-        case 'E': powerupManager.spawn(a, b, PO_COIN); break;
-        case 'F': powerupManager.spawn(a, b, PO_BIGBALL); break;
-        case 'G': powerupManager.spawn(a, b, PO_NORMALBALL); break;
-        case 'H': powerupManager.spawn(a, b, PO_SMALLBALL); break;
-        case 'I': powerupManager.spawn(a, b, PO_AIM); break;
-        case 'O': powerupManager.spawn(a, b, PO_LIFE); break;
-        case 'P': powerupManager.spawn(a, b, PO_GUN); break;
-        case 'R': powerupManager.spawn(a, b, PO_LASER); break;
-        default: break;
+Texture *texExplosiveBrick; //NOTE:Ugly
+
+class Bullet {
+    MovingObject bullets[16];
+
+public:
+    int active;
+
+    Bullet(const Texture &texBullet) {
+        for (auto &bullet: bullets) {
+            bullet.active = false;
+            bullet.texture = texBullet;
+            bullet.width = 0.02;
+            bullet.height = 0.02;
+        }
+    }
+
+    void shoot(const position p) {
+        //Find ledig bullet
+        for (auto &bullet: bullets) {
+            if (!bullet.active) {
+                soundManager.add(SND_SHOT, p.x);
+                bullet.active = true;
+                bullet.pos_x = p.x;
+                bullet.pos_y = p.y;
+                bullet.xvel = 0;
+                bullet.yvel = 1.0;
+                break;
+            }
+        }
+    }
+
+    void move() {
+        for (auto &bullet: bullets) {
+            if (bullet.active) {
+                //Flyt
+                bullet.pos_y += bullet.yvel * globalMilliTicks;
+            }
+        }
+    }
+
+    void draw() {
+        glColor4f(GL_WHITE);
+        for (auto &bullet: bullets) {
+            if (bullet.active) {
+                //draw
+
+                bullet.texture.play();
+
+                glLoadIdentity();
+                glTranslatef(bullet.pos_x, bullet.pos_y, 0.0);
+                glEnable(GL_TEXTURE_2D);
+                glBindTexture(GL_TEXTURE_2D, bullet.texture.textureProperties.texture);
+                glBegin(GL_QUADS);
+                glTexCoord2f(bullet.texture.texturePosition[0], bullet.texture.texturePosition[1]);
+                glVertex3f(-bullet.width, bullet.height, 0.0);
+                glTexCoord2f(bullet.texture.texturePosition[2], bullet.texture.texturePosition[3]);
+                glVertex3f(bullet.width, bullet.height, 0.0);
+                glTexCoord2f(bullet.texture.texturePosition[4], bullet.texture.texturePosition[5]);
+                glVertex3f(bullet.width, -bullet.height, 0.0);
+                glTexCoord2f(bullet.texture.texturePosition[6], bullet.texture.texturePosition[7]);
+                glVertex3f(-bullet.width, -bullet.height, 0.0);
+                glDisable(GL_TEXTURE_2D);
+                glEnd();
+            }
+        }
+    }
+
+    void clear() {
+        for (auto &bullet: bullets) {
+            bullet.active = false;
+        }
+    }
+
+    void coldet(brick &b, EffectManager &fxMan) {
+        position v;
+        v.x = 0;
+        v.y = bullets[0].xvel;
+
+        for (auto &bullet: bullets) {
+            if (bullet.active) {
+                //y
+                if (bullet.pos_y + bullet.height / 10.0 > b.pos_y - b.height && bullet.pos_y + bullet.
+                    height / 10.0 < b.pos_y + b.height) {
+                    bool hit = false;
+                    position p;
+                    p.x = b.pos_x;
+                    p.y = b.pos_y;
+                    //Venstre side:
+                    if (bullet.pos_x > b.pos_x - b.width && bullet.pos_x < b.pos_x + b.width) {
+                        hit = true;
+                    }
+
+                    if (hit) {
+                        b.hit(fxMan, p, v, true);
+
+                        bullet.active = false;
+
+                        p.x = bullet.pos_x;
+                        p.y = bullet.pos_y;
+
+                        if (setting.eyeCandy) {
+                            fxMan.set(FX_VAR_TYPE, FX_SPARKS);
+                            fxMan.set(FX_VAR_COLDET, 1);
+                            fxMan.set(FX_VAR_LIFE, 1300);
+                            fxMan.set(FX_VAR_NUM, 16);
+                            fxMan.set(FX_VAR_SIZE, 0.015f);
+                            fxMan.set(FX_VAR_SPEED, 0.4f);
+                            fxMan.set(FX_VAR_GRAVITY, 1.0f);
+
+                            fxMan.set(FX_VAR_COLOR, 1.0f, 0.7f, 0.0f);
+                            fxMan.spawn(p);
+                            fxMan.set(FX_VAR_COLOR, 1.0f, 0.8f, 0.0f);
+                            fxMan.spawn(p);
+                            fxMan.set(FX_VAR_COLOR, 1.0f, 0.9f, 0.0f);
+                            fxMan.spawn(p);
+                            fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 0.0f);
+                            fxMan.spawn(p);
+                        }
+                    }
+                } else if (bullet.pos_y > 1.0f) {
+                    bullet.active = false;
+                }
+            }
+        }
+    }
+};
+
+void brick::hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe) {
+    position p, s;
+
+    if (type != '3' || player.powerup[PO_THRU])
+        hitsLeft--;
+
+    //We don't want to play a sound if this brick is not an explosive, and was hit by an explosion
+    if (ballHitMe || type == 'B') {
+        if (type == '3') //cement
+        {
+            soundManager.add(SND_CEMENT_BRICK_HIT, pos_x);
+        } else if (type == '4' || type == '9') //glass or invisible
+        {
+            if (hitsLeft == 2) {
+                soundManager.add(SND_INVISIBLE_BRICK_APPEAR, pos_x);
+            } else if (hitsLeft == 1) {
+                soundManager.add(SND_GLASS_BRICK_HIT, pos_x);
+            } else {
+                soundManager.add(SND_GLASS_BRICK_BREAK, pos_x);
+            }
+        } else if (type == 'B') //explosive
+        {
+            soundManager.add(SND_EXPL_BRICK_BREAK, pos_x);
+        } else if (type == 'C') //Doom brick
+        {
+            soundManager.add(SND_DOOM_BRICK_BREAK, pos_x);
+        } else {
+            //All the other bricks
+            soundManager.add(SND_NORM_BRICK_BREAK, pos_x);
+        }
+    }
+
+
+    if (type != '3' || player.powerup[PO_THRU]) {
+        //Brick was hit, dont do anything
+        if (isdyingnormally || isexploding) {
+            return;
+        }
+        player.score += score * player.multiply * var.averageBallSpeed; //Speed bonus
+
+        if (hitsLeft < 1 || type == 'B') //Hvis brikken er explosiv kan den ikke have nogle hits tilbage
+        {
+            collide = false;
+
+            updated_nbrick[row][bricknum] = -1;
+            var.bricksHit = true;
+
+            gVar.deadTime = 0;
+
+            powerupManager.spawnPowerup(powerup, poSpawnPos, poSpawnVel);
+            powerup = '0';
+
+            if (setting.eyeCandy) {
+                p.x = pos_x;
+                p.y = pos_y;
+                s.x = width * 2;
+                s.y = height * 2;
+
+                fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
+                fxMan.set(FX_VAR_COLDET, 1);
+                fxMan.set(FX_VAR_LIFE, 1300);
+                fxMan.set(FX_VAR_NUM, 20);
+                fxMan.set(FX_VAR_SIZE, 0.03f);
+                fxMan.set(FX_VAR_SPEED, 0.6f);
+                fxMan.set(FX_VAR_GRAVITY, 0.7f);
+
+                fxMan.set(FX_VAR_RECTANGLE, s);
+
+                fxMan.set(FX_VAR_COLOR, texture.textureProperties.glParColorInfo[0],
+                          texture.textureProperties.glParColorInfo[1],
+                          texture.textureProperties.glParColorInfo[2]);
+                fxMan.spawn(p);
+            }
+
+            if (type == 'B') {
+                isexploding = true;
+
+                if (setting.eyeCandy) {
+                    p.x = pos_x;
+                    p.y = pos_y;
+                    fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
+                    fxMan.set(FX_VAR_COLDET, 1);
+                    fxMan.set(FX_VAR_LIFE, 1200);
+                    fxMan.set(FX_VAR_NUM, 10);
+                    fxMan.set(FX_VAR_SIZE, 0.08f);
+                    fxMan.set(FX_VAR_SPEED, 0.4f);
+                    fxMan.set(FX_VAR_GRAVITY, -1.3f);
+
+                    fxMan.set(FX_VAR_COLOR, 1.0f, 0.7f, 0.0f);
+                    fxMan.spawn(p);
+                    fxMan.set(FX_VAR_COLOR, 1.0f, 0.8f, 0.0f);
+                    fxMan.spawn(p);
+                    fxMan.set(FX_VAR_COLOR, 1.0f, 0.9f, 0.0f);
+                    fxMan.spawn(p);
+                    fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 0.0f);
+                    fxMan.spawn(p);
+                }
+            } else {
+                isdyingnormally = true;
+            }
+        } else {
+            //No hits left
+            texture.frame++;
+            texture.play();
+        } //Hits left
     }
 }
 
@@ -1915,8 +1910,6 @@ void collision_ball_brick(brick &br, ball &ba, position &p, EffectManager &fxMan
         } //x boxcol
     } //y boxcol
 }
-
-#include "HighScore.cpp"
 
 struct shopItemStruct {
     int price;
@@ -2145,9 +2138,14 @@ void easyBrick(brick bricks[]) {
     }
 }
 
+// Braucht
+// Paddle *paddle;
+// bulletsClass *bullet;
+// BallManager *bMan;
 #include "Controller.cpp"
+// braucht effectmanager
 #include "TitleScreen.cpp"
-
+#include "HighScore.cpp"
 int main(int argc, char *argv[]) {
     (void) argc;
     (void) argv;
@@ -2290,7 +2288,7 @@ int main(int argc, char *argv[]) {
     paddle.texture = texPaddleBase;
     paddle.layerTex = texPaddleLayers;
 
-    EffectManager fxMan;
+
     fxMan.set(FX_VAR_TEXTURE, texParticle);
     fxMan.set(FX_VAR_GRAVITY, 0.6f);
 
@@ -2300,7 +2298,7 @@ int main(int argc, char *argv[]) {
     // This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
     HighScore hKeeper;
     Background background;
-    bulletsClass bullet(texBullet);
+    Bullet bullet(texBullet);
     Speedometer speedo;
     hudClass hud(texBall[0], texPowerup);
 
