@@ -2664,7 +2664,7 @@ int main(int argc, char *argv[]) {
             position p;
 
             if (gVar.deadTime > 20000) {
-                //give the balls explosive ability, to blow up cement block and get on with the game
+                // give the balls explosive ability, to blow up cement block and get on with the game
                 gVar.deadTime = 0;
                 ballManager.applyPowerup(PO_EXPLOSIVE);
             }
@@ -2689,7 +2689,7 @@ int main(int argc, char *argv[]) {
                         soundManager.add(SND_HIGHSCORE, 0);
                     }
                 } else if (gVar.gameOver && !var.showHighScores) {
-                    //Only ran if there is gameover and no highscore
+                    // Only ran if there is gameover and no highscore
                     if (var.effectnum == -1) {
                         fxMan.set(FX_VAR_TYPE, FX_TRANSIT);
                         fxMan.set(FX_VAR_LIFE, 3000);
@@ -2697,7 +2697,7 @@ int main(int argc, char *argv[]) {
                         p.x = 0.0;
                         p.y = 0.0;
 
-                        //Kør en transition effekt
+                        // Kør en transition effekt
                         var.effectnum = fxMan.spawn(p);
                         announce.write("GameOver!", 1500,FONT_ANNOUNCE_BAD);
                         soundManager.add(SND_GAMEOVER, 0);
@@ -2729,9 +2729,8 @@ int main(int argc, char *argv[]) {
                     p.x = 0.0;
                     p.y = 0.0;
 
-                    //Kør en transition effekt
+                    // Kør en transition effekt
                     var.effectnum = fxMan.spawn(p);
-
                     var.idiotlock = false;
                 } else {
                     if (var.transition_half_done) {
@@ -2770,6 +2769,7 @@ int main(int argc, char *argv[]) {
             if (gVar.newLevel) {
                 var.bricksHit = true;
                 gVar.newLevel = false;
+                // Level-Manager code
                 //set_up_bricks_for_level(player.level, bricks, texLvl);
                 load_level(levelFile, bricks, player.level);
                 init_levels(bricks, texLvl);
