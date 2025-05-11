@@ -128,7 +128,7 @@ public:
     }
 
 
-    void hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballHitMe);
+    void hit(effectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe);
 
     void draw(brick bricks[], effectManager &fxMan) {
         if (isdyingnormally) {
@@ -146,7 +146,7 @@ public:
             if (fade < 0.0) {
                 active = false;
 
-                pos spos, svel;
+                position spos, svel;
                 spos.x = pos_x;
                 spos.y = pos_y;
 
@@ -443,7 +443,7 @@ public:
 
 #include "EffectsTransist.cpp"
 
-void spawnpowerup(char powerup, pos a, pos b);
+void spawnpowerup(char powerup, position a, position b);
 
 class bulletsClass {
     MovingObject bullets[16];
@@ -460,7 +460,7 @@ public:
         }
     }
 
-    void shoot(const pos p) {
+    void shoot(const position p) {
         //Find ledig bullet
         for (auto & bullet : bullets) {
             if (!bullet.active) {
@@ -518,7 +518,7 @@ public:
     }
 
     void coldet(brick &b, effectManager &fxMan) {
-        pos v;
+        position v;
         v.x = 0;
         v.y = bullets[0].xvel;
 
@@ -528,7 +528,7 @@ public:
                 if (bullet.pos_y + bullet.height / 10.0 > b.pos_y - b.height && bullet.pos_y + bullet.
                     height / 10.0 < b.pos_y + b.height) {
                     bool hit = false;
-                    pos p;
+                    position p;
                     p.x = b.pos_x;
                     p.y = b.pos_y;
                     //Venstre side:
@@ -571,8 +571,8 @@ public:
     }
 };
 
-void brick::hit(effectManager &fxMan, pos poSpawnPos, pos poSpawnVel, bool ballHitMe) {
-    pos p, s;
+void brick::hit(effectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe) {
+    position p, s;
 
     if (type != '3' || player.powerup[PO_THRU])
         hitsLeft--;
@@ -1098,7 +1098,7 @@ public:
         }
     }
 
-    static void checkPaddleCollision(ball &b, const paddle_class &p, pos &po) {
+    static void checkPaddleCollision(ball &b, const paddle_class &p, position &po) {
     //Er bolden tæt nok på?
 
     if (b.pos_y < (p.pos_y + p.height) + b.height && b.pos_y > p.pos_y - p.height) {
@@ -1155,7 +1155,7 @@ public:
 }
 };
 
-void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan);
+void collision_ball_brick(brick &br, ball &ba, position &p, effectManager &fxMan);
 
 class BallManager {
 // verwaltet mehrere Bälle
@@ -1207,7 +1207,7 @@ public:
 
         for (i = 0; i < MAXBALLS; i++) {
             if (b[i].active && c != a) {
-                pos op;
+                position op;
                 c++;
                 op.y = b[i].pos_y;
                 op.x = b[i].pos_x;
@@ -1222,7 +1222,7 @@ public:
         }
     }
 
-    void spawn(pos p, bool glued, GLfloat gx, GLfloat speed, GLfloat angle) {
+    void spawn(position p, bool glued, GLfloat gx, GLfloat speed, GLfloat angle) {
         for (auto & i : b) {
             if (!i.active) {
                 activeBalls++;
@@ -1292,7 +1292,7 @@ public:
     }
 
     void checkBallCollision(brick &bri, effectManager &fxMan) {
-        pos p;
+        position p;
         for (auto & i : b) {
             if (i.active) {
                 p.x = 100;
@@ -1323,7 +1323,7 @@ public:
 
     int checkPaddleCollision(const paddle_class &paddle, effectManager &fxMan) {
         int hits = 0;
-        pos p;
+        position p;
         for (auto & i : b) {
             if (i.active) {
                 if (i.glued)
@@ -1470,8 +1470,8 @@ public:
 
         if (xcol && ycol) {
             if (setting.eyeCandy) {
-                pos fxSize;
-                pos fxpos;
+                position fxSize;
+                position fxpos;
                 fxpos.x = pos_x;
                 fxpos.y = pos_y;
                 fxSize.x = width;
@@ -1633,7 +1633,7 @@ public:
     void die(effectManager &fxMan) {
         active = false;
         if (setting.eyeCandy) {
-            pos p;
+            position p;
             p.x = pos_x;
             p.y = pos_y;
             fxMan.set(FX_VAR_TYPE, FX_SPARKS);
@@ -1713,7 +1713,7 @@ public:
         }
     }
 
-    void spawn(pos spawnpos, pos velocity, int type) {
+    void spawn(position spawnpos, position velocity, int type) {
         for (i = 0; i < MAXPOWERUPS; i++) {
             if (!p[i].active) {
                 p[i].gravity = 0.7;
@@ -1846,7 +1846,7 @@ public:
 
 PowerupManager powerupManager;
 
-void spawnpowerup(char powerup, pos a, pos b) {
+void spawnpowerup(char powerup, position a, position b) {
     if (powerup == '1') {
         powerupManager.spawn(a, b,PO_GROWPADDLE);
     }
@@ -1967,7 +1967,7 @@ void createPlayfieldBorderList(GLuint *dl, const Texture &tex) {
     glEndList();
 }
 
-void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
+void collision_ball_brick(brick &br, ball &ba, position &p, effectManager &fxMan) {
     //measure the distance from last pos to each possible impact, the shortest should be the right one
 
     //vi tager y først da der er mindst brikker
@@ -2062,7 +2062,7 @@ void collision_ball_brick(brick &br, ball &ba, pos &p, effectManager &fxMan) {
                 }
 
                 //Setup vars for spawning powerups
-                pos a, b;
+                position a, b;
                 a.x = br.pos_x;
                 a.y = br.pos_y;
 
@@ -2228,7 +2228,7 @@ public:
         } else if (gVar.shopBuyItem) {
             gVar.shopBuyItem = false;
             if (item[shopItemSelected].price <= player.coins && !shopItemBlocked[shopItemSelected]) {
-                pos a, b;
+                position a, b;
                 a.x = shopListStartX + (0.11f * shopItemSelected);
                 a.y = 1.15f;
                 b.x = 0.0f;
@@ -2284,8 +2284,8 @@ public:
 void detonateExplosives(brick bricks[], effectManager &fxMan) {
     for (int i = 0; i < 598; i++) {
         if (bricks[i].active && bricks[i].type == 'B') {
-            pos v;
-            pos p;
+            position v;
+            position p;
             p.x = bricks[i].pos_x;
             p.y = bricks[i].pos_y;
             v.x = 0.0;
@@ -2649,7 +2649,7 @@ int main(int argc, char *argv[]) {
 #pragma region update & rendering
         // Hideous... but simple
         if (!var.titleScreenShow) {
-            pos p;
+            position p;
 
             if (gVar.deadTime > 20000) {
                 //give the balls explosive ability, to blow up cement block and get on with the game

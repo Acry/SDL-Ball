@@ -69,7 +69,7 @@ class TitleScreen {
     int numHighScores; //Number of highscores to show in the intro
     // why is runner not a class?
     // why is runner not a derived class from movingObject?
-    pos runnerPos;
+    position runnerPos;
     Menu *menu; //Here is the highscore text
     int runnerTime;
     float runnerVelX, runnerVelY;
@@ -160,8 +160,8 @@ void TitleScreen::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
         // icons and text
         ticksSinceLastSpawn += globalTicksSinceLastDraw;
         if (ticksSinceLastSpawn > 125) {
-            pos s;
-            pos p;
+            position s;
+            position p;
             s.x = 3.25;
             s.y = 0.525;
             p.x = 0;

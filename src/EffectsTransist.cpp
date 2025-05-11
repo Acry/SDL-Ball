@@ -10,7 +10,7 @@ struct effect_vars {
     GLfloat speed; //Hvor hurtigt bevæger den sig
     GLfloat spread; //Hvor stor er spredningen (i grader)
     GLfloat size; //Skalering af elementerne
-    pos rect; //rectangular size (for particleField)
+    position rect; //rectangular size (for particleField)
     GLfloat gravity; //Hvor stor er tyndgekraften
     int num; //Hvor mange elementer er der i den
     int life; //hvor mange ms lever den?
@@ -66,7 +66,7 @@ public:
     GLfloat ang;
     int life;
     int lifeleft;
-    pos p, v; //position og vel
+    position p, v; //position og vel
     effect_vars vars;
     GLfloat bounce, f; //bounce og friktion
 
@@ -190,14 +190,14 @@ class particleFieldClass {
     void spawnSpark(int sparkNum);
 
 public:
-    pos p;
+    position p;
     effect_vars vars;
 
-    void init(effect_vars varsP, pos p);
+    void init(effect_vars varsP, position p);
 
     void draw();
 
-    void move(pos p);
+    void move(position p);
 
     void coldet(brick &b);
 
@@ -206,7 +206,7 @@ public:
     ~particleFieldClass();
 };
 
-void particleFieldClass::init(effect_vars varsP, pos spawnPos) {
+void particleFieldClass::init(effect_vars varsP, position spawnPos) {
     vars = varsP;
     spawnTimeout = 0;
     vars.active = true;
@@ -274,7 +274,7 @@ void particleFieldClass::pcoldet(paddle_class &b) {
 }
 
 class effect_class {
-    pos spawn_pos;
+    position spawn_pos;
     sparkle *sparks;
 
 public:
@@ -286,7 +286,7 @@ public:
         vars.active = false; //når den bliver oprettet i hukkommelsen er den ikke i brug endnu
     }
 
-    void init(pos p) {
+    void init(position p) {
         int i;
         GLfloat angle = 0.0;
         vars.active = true;
@@ -470,7 +470,7 @@ public:
         }
     }
 
-    void set(int var, struct pos p) {
+    void set(int var, struct position p) {
         switch (var) {
             case FX_VAR_RECTANGLE:
                 vars.rect = p;
@@ -480,7 +480,7 @@ public:
     }
 
     //retunerer effektid så der kan checkes om det er aktivt
-    int spawn(pos p) {
+    int spawn(position p) {
         effectId++;
         effect_class tempEffect;
         vars.effectId = effectId;

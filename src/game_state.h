@@ -95,7 +95,7 @@ struct vars {
     scrollInfoScruct scrollInfo;
 };
 
-struct pos {
+struct position {
     GLfloat x;
     GLfloat y;
 };

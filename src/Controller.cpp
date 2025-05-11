@@ -76,7 +76,7 @@ void Controller::btnPress() {
         return;
     }
 
-    pos p;
+    position p;
     if (shotTime > 150) {
         shotTime = 0;
         if (!var.menu && !var.paused) {
