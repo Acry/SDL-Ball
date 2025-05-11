@@ -1281,8 +1281,8 @@ public:
         pos_y = 0.0;
         xvel = 0.0;
         yvel = 0.0;
-        width = 0.055;
-        height = 0.055;
+        width = 0.055f/1.5f;
+        height = 0.055f/1.5f;
     }
 
     void move() {
