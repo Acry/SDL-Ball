@@ -225,7 +225,6 @@ public:
 
     void move() {
         // Ball Border Collision
-
         if (pos_x < PLAYFIELD_LEFT_BORDER && xvel < 0.0) {
             soundManager.add(SND_BALL_HIT_BORDER, pos_x);
             xvel *= -1;
@@ -612,9 +611,9 @@ public:
         }
 
         if (isexploding && !var.paused) {
-            fade -= 7.0 * globalMilliTicksSinceLastDraw;
+            fade -= 7.0f * globalMilliTicksSinceLastDraw;
             opacity = fade;
-            if (fade < 0.0) {
+            if (fade < 0.0f) {
                 active = false;
 
                 position spos, svel;
@@ -937,15 +936,11 @@ public:
                         //spawn partikler
                         fxMan.set(FX_VAR_TYPE, FX_SPARKS);
                         fxMan.set(FX_VAR_COLDET, 1);
-
                         fxMan.set(FX_VAR_SPEED, 1.0f);
-
                         fxMan.set(FX_VAR_LIFE, 1500);
                         fxMan.set(FX_VAR_NUM, 16);
                         fxMan.set(FX_VAR_SIZE, 0.015f);
-
                         fxMan.set(FX_VAR_COLOR, 1.0, 1.0, 0.8);
-
                         fxMan.spawn(p);
                     }
                 }
@@ -1619,15 +1614,11 @@ public:
                     if (bullet.pos_x > b.pos_x - b.width && bullet.pos_x < b.pos_x + b.width) {
                         hit = true;
                     }
-
                     if (hit) {
                         b.hit(fxMan, p, v, true);
-
                         bullet.active = false;
-
                         p.x = bullet.pos_x;
                         p.y = bullet.pos_y;
-
                         if (setting.eyeCandy) {
                             fxMan.set(FX_VAR_TYPE, FX_SPARKS);
                             fxMan.set(FX_VAR_COLDET, 1);
@@ -1636,7 +1627,6 @@ public:
                             fxMan.set(FX_VAR_SIZE, 0.015f);
                             fxMan.set(FX_VAR_SPEED, 0.4f);
                             fxMan.set(FX_VAR_GRAVITY, 1.0f);
-
                             fxMan.set(FX_VAR_COLOR, 1.0f, 0.7f, 0.0f);
                             fxMan.spawn(p);
                             fxMan.set(FX_VAR_COLOR, 1.0f, 0.8f, 0.0f);
@@ -1710,19 +1700,18 @@ void brick::hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, 
             if (setting.eyeCandy) {
                 p.x = pos_x;
                 p.y = pos_y;
-                s.x = width * 2;
-                s.y = height * 2;
+                s.x = width * 1.2f;  // Von 2.0 auf 1.2 reduziert
+                s.y = height * 1.2f; // Von 2.0 auf 1.2 reduziert
 
                 fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
                 fxMan.set(FX_VAR_COLDET, 1);
-                fxMan.set(FX_VAR_LIFE, 1300);
-                fxMan.set(FX_VAR_NUM, 20);
-                fxMan.set(FX_VAR_SIZE, 0.03f);
-                fxMan.set(FX_VAR_SPEED, 0.6f);
-                fxMan.set(FX_VAR_GRAVITY, 0.7f);
+                fxMan.set(FX_VAR_LIFE, 800);    // Von 1300 auf 800 reduziert
+                fxMan.set(FX_VAR_NUM, 12);      // Von 20 auf 12 reduziert
+                fxMan.set(FX_VAR_SIZE, 0.015f); // Von 0.03 auf 0.015 reduziert
+                fxMan.set(FX_VAR_SPEED, 0.4f);  // Von 0.6 auf 0.4 reduziert
+                fxMan.set(FX_VAR_GRAVITY, 0.5f);// Von 0.7 auf 0.5 reduziert
 
                 fxMan.set(FX_VAR_RECTANGLE, s);
-
                 fxMan.set(FX_VAR_COLOR, texture.textureProperties.glParColorInfo[0],
                           texture.textureProperties.glParColorInfo[1],
                           texture.textureProperties.glParColorInfo[2]);
