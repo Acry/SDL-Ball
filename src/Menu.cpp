@@ -123,7 +123,6 @@ public:
 
         // Menu-Hintergrund
         glNewList(dl, GL_COMPILE);
-        glLoadIdentity();
         glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[0].textureProperties.texture);
         glColor4f(GL_WHITE);
@@ -131,25 +130,27 @@ public:
 
         // top positive
         // top left
+        float half_width = 0.5f;
+        constexpr float half_height = 0.775f;
+
         glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(-0.8f, 0.8f, 0.0f);
+        glVertex3f(-half_width, half_height, 0.0f);
         // top right
         glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(0.8f, 0.8f, 0.0f);
+        glVertex3f(half_width, half_height, 0.0f);
         // bottom right
         glTexCoord2f(1.0f, 1.0f);
-        glVertex3f(0.8f, -0.8f, 0.0f);
+        glVertex3f(half_width, -half_height, 0.0f);
         // bottom left
         glTexCoord2f(0.0f, 1.0f);
-        glVertex3f(-0.8f, -0.8f, 0.0f);
+        glVertex3f(-half_width, -half_height, 0.0f);
         glEnd();
         glDisable( GL_TEXTURE_2D );
         glEndList();
 
         // bläulich
-        float half_width = 0.425f;
+        half_width = 0.425f;
         glNewList(dl + 1, GL_COMPILE);
-        glLoadIdentity();
         glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[1].textureProperties.texture);
         glBegin(GL_QUADS);
@@ -167,7 +168,6 @@ public:
 
         // rötlich
         glNewList(dl + 2, GL_COMPILE);
-        glLoadIdentity();
         glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[2].textureProperties.texture);
         glBegin(GL_QUADS);
@@ -185,7 +185,6 @@ public:
 
         // grünlich
         glNewList(dl + 3, GL_COMPILE);
-        glLoadIdentity();
         glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[3].textureProperties.texture);
         glBegin(GL_QUADS);
