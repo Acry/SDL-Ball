@@ -2001,9 +2001,9 @@ public:
         texBall.play();
         glBegin(GL_QUADS);
         for (i = 0; i < player.lives - 1; i++) {
-            float size = 0.05f;         // Größere Bälle für bessere Sichtbarkeit
-            float space = 0.05f;       // Mehr Abstand zwischen den Bällen
-            float y = 1.0f-space;            // Etwas tiefer von der oberen Kante
+            constexpr float size = 0.05f;               // Größere Bälle für bessere Sichtbarkeit
+            constexpr float space = 0.05f;              // Mehr Abstand zwischen den Bällen
+            constexpr float y = 1.0f-space;            // Etwas tiefer von der oberen Kante
 
             // Bälle werden von rechts nach links gezeichnet
             glTexCoord2f(texBall.texturePosition[0], texBall.texturePosition[1]);
