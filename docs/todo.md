@@ -13,7 +13,6 @@
 
 - use sdl2 highperformance timer
 
-
 ## menu
 
  change difficulty
@@ -26,10 +25,12 @@
 
 - show keys and powerups interchanged
 
-## clock
-
-- way smaller font
 
 ## Theme-Manager
 
 ## Save-Game-Manager
+
+## ball
+
+tracer show red collor and shows up when glued to the paddle
+is tracer speed dependent on the speed of the ball?

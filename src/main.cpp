@@ -31,7 +31,8 @@
 #include "Background.h"
 #include "TextureManager.h"
 #include "Speedometer.h"
-
+#include "Paddle.h"
+#define DEBUG_DRAW_BALL_QUAD 1
 #define DEBUG_SHOW_MOUSE_COORDINATES 0
 using namespace std;
 
@@ -245,31 +246,26 @@ public:
         if (type != 'B' || justBecomeExplosive) {
             return;
         }
-
         if (bricknum > 0) {
             if (nbrick[row][bricknum - 1] != -1) {
                 makeExplosive(bricks[nbrick[row][bricknum - 1]]);
             }
         }
-
         if (bricknum < 25) {
             if (nbrick[row][bricknum + 1] != -1) {
                 makeExplosive(bricks[nbrick[row][bricknum + 1]]);
             }
         }
-
         if (row > 0) {
             if (nbrick[row - 1][bricknum] != -1) {
                 makeExplosive(bricks[nbrick[row - 1][bricknum]]);
             }
         }
-
         if (row < 22) {
             if (nbrick[row + 1][bricknum] != -1) {
                 makeExplosive(bricks[nbrick[row + 1][bricknum]]);
             }
         }
-
         if (row > 0 && bricknum > 0) {
             if (nbrick[row - 1][bricknum - 1] != -1) {
                 makeExplosive(bricks[nbrick[row - 1][bricknum - 1]]);
@@ -280,13 +276,11 @@ public:
                 makeExplosive(bricks[nbrick[row - 1][bricknum + 1]]);
             }
         }
-
         if (row < 22 && bricknum > 0) {
             if (nbrick[row + 1][bricknum - 1] != -1) {
                 makeExplosive(bricks[nbrick[row + 1][bricknum - 1]]);
             }
         }
-
         if (row < 22 && bricknum < 25) {
             if (nbrick[row + 1][bricknum + 1] != -1) {
                 makeExplosive(bricks[nbrick[row + 1][bricknum + 1]]);
@@ -315,126 +309,6 @@ public:
 
 // todo #include "loadlevel_new.cpp" -> levelManager
 #include "loadlevel.cpp"
-
-class paddle_class : public GameObject {
-    GLfloat growspeed;
-    GLfloat destwidth;
-    GLfloat aspect; // Verhältnis, um wie viel die Höhe zur Breite wächst.
-    bool growing;
-
-public:
-    bool dead;
-    Texture *layerTex;
-
-    paddle_class() {
-        init();
-        growing = false;
-        growspeed = 0.05f;
-        aspect = 0.2f;
-    }
-
-    void init() {
-        pos_y = -0.93;
-        width = 0.059;
-        height = 0.018;
-        dead = false;
-    }
-
-    void grow(const GLfloat width) {
-        destwidth = width;
-        growing = true;
-    }
-
-    void draw() {
-        if (!dead) {
-            if (player.powerup[PO_DIE]) {
-                player.powerup[PO_DIE] = false;
-                dead = true;
-                width = 0.0;
-                height = 0.0;
-            }
-
-            if (growing) {
-                const GLfloat ix = growspeed * globalTicksSinceLastDraw;
-
-                width += ix;
-
-                if (width >= destwidth) {
-                    width = destwidth;
-                    height = aspect * destwidth;
-                    growing = false;
-                }
-            }
-            glLoadIdentity();
-            //glPushMatrix();
-            glTranslatef(pos_x, pos_y, 0.0);
-
-            texture.play();
-            glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
-            glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1],
-                      texture.textureProperties.glTexColorInfo[2],
-                      texture.textureProperties.glTexColorInfo[3]);
-            glBegin(GL_QUADS);
-            glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
-            glVertex3f(-width, height, 0.0f);
-            glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
-            glVertex3f(width, height, 0.0f);
-            glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
-            glVertex3f(width, -height, 0.0f);
-            glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
-            glVertex3f(-width, -height, 0.0f);
-            glDisable(GL_TEXTURE_2D);
-            // glPopMatrix();
-
-            // Hvis glue?
-            if (player.powerup[PO_GLUE]) {
-                glLoadIdentity();
-                glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, layerTex[0].textureProperties.texture);
-                glColor4f(layerTex[0].textureProperties.glTexColorInfo[0],
-                          layerTex[0].textureProperties.glTexColorInfo[1],
-                          layerTex[0].textureProperties.glTexColorInfo[2],
-                          layerTex[0].textureProperties.glTexColorInfo[3]);
-                glBegin(GL_QUADS);
-                glTexCoord2f(0.0f, 0.0f);
-                glVertex3f(-width, height, 0.0f);
-                glTexCoord2f(1.0f, 0.0f);
-                glVertex3f(width, height, 0.0f);
-                glTexCoord2f(1.0f, 0.99f);
-                glVertex3f(width, -height, 0.0f);
-                glTexCoord2f(0.0f, 0.99f);
-                glVertex3f(-width, -height, 0.0f);
-                glEnd();
-                glDisable(GL_TEXTURE_2D);
-            }
-
-            //Hvis gun
-            if (player.powerup[PO_GUN]) {
-                layerTex[1].play();
-                glLoadIdentity();
-                glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, layerTex[1].textureProperties.texture);
-                glColor4f(layerTex[1].textureProperties.glTexColorInfo[0],
-                          layerTex[1].textureProperties.glTexColorInfo[1],
-                          layerTex[1].textureProperties.glTexColorInfo[2],
-                          layerTex[1].textureProperties.glTexColorInfo[3]);
-                glBegin(GL_QUADS);
-                glTexCoord2f(layerTex[1].texturePosition[0], layerTex[1].texturePosition[1]);
-                glVertex3f(-width, height * 4, 0.0f);
-                glTexCoord2f(layerTex[1].texturePosition[2], layerTex[1].texturePosition[3]);
-                glVertex3f(width, height * 4, 0.0f);
-                glTexCoord2f(layerTex[1].texturePosition[4], layerTex[1].texturePosition[5] - 0.01f);
-                glVertex3f(width, height, 0.0f);
-                glTexCoord2f(layerTex[1].texturePosition[6], layerTex[1].texturePosition[7] - 0.01f);
-                glVertex3f(-width, height, 0.0f);
-                glEnd();
-                glDisable(GL_TEXTURE_2D);
-            }
-        }
-    }
-};
-
 #include "EffectsTransist.cpp"
 
 void spawnpowerup(char powerup, position a, position b);
@@ -557,7 +431,7 @@ public:
                             fxMan.spawn(p);
                         }
                     }
-                } else if (bullet.pos_y > 1.6) {
+                } else if (bullet.pos_y > 1.0f) {
                     bullet.active = false;
                 }
             }
@@ -809,12 +683,10 @@ class ball : public MovingObject {
 public:
     tracer tail;
     bool explosive; //Makes brick explosive (to get a explosion effect) and explode it
-
     bool glued; //Sidder vi fast på padden for øjeblikket?
     GLfloat gluedX;
     //Variabler med forududregnede værdier
     GLfloat bsin[32], bcos[32];
-
     bool aimdir;
     Texture fireTex;
 
@@ -838,16 +710,17 @@ public:
 
     void move() {
         // Ball Border Collision
-        if (pos_x + width > 1.0f - PILLAR_WIDTH && xvel > 0.0) {
+
+        if (pos_x < PLAYFIELD_LEFT_BORDER && xvel < 0.0) {
             soundManager.add(SND_BALL_HIT_BORDER, pos_x);
             xvel *= -1;
-        } else if (pos_x < -1.0f + PILLAR_WIDTH && xvel < 0.0) {
+        } else if (pos_x + width  > PLAYFIELD_RIGHT_BORDER && xvel > 0.0) {
             soundManager.add(SND_BALL_HIT_BORDER, pos_x);
             xvel *= -1;
-        } else if (pos_y + width > 1.0f && yvel > 0.0) {
+        } else if (pos_y + height > 1.0f && yvel > 0.0) {
             soundManager.add(SND_BALL_HIT_BORDER, pos_x);
             yvel *= -1;
-        } else if (pos_y - width < -1.0f) {
+        } else if (pos_y - height < -1.0f) { // paddle y
             active = false;
         }
 
@@ -863,9 +736,8 @@ public:
             tail.update(pos_x, pos_y);
     }
 
-    void draw(const paddle_class &paddle) {
+    void draw(const Paddle &paddle) {
         GLfloat newsize;
-
         if (setting.eyeCandy)
             tail.draw();
 
@@ -918,7 +790,7 @@ public:
             const GLfloat bxb = cos(rad) * 0.5f;
             const GLfloat byb = sin(rad) * 0.5f;
 
-            glDisable(GL_TEXTURE_2D);
+            glEnable(GL_TEXTURE_2D);
             glLoadIdentity();
             glTranslatef(pos_x, pos_y, 0.0f);
             glLineWidth(1.0);
@@ -936,14 +808,15 @@ public:
             glBegin(GL_POINTS);
             glVertex3f(bxb, byb, 0.0);
             glEnd();
-            glEnable(GL_TEXTURE_2D);
+            glDisable(GL_TEXTURE_2D);
+
         }
 
         if (!glued && player.powerup[PO_AIMHELP]) {
             //Use line intersect to determine if this ball will collide with the paddle
 
             getRad();
-            GLfloat p[4], b[4], o[2]; //Paddle line, ball line, bounceoff endpoint
+            GLfloat p[4], b[4], o[2]; // Paddle line, ball line, bounce off endpoint
             p[0] = paddle.pos_x - paddle.width;
             p[1] = paddle.pos_x + paddle.width;
 
@@ -960,6 +833,7 @@ public:
                 const GLfloat R = bounceOffAngle(paddle.width, paddle.pos_x, cx);
                 o[0] = cx + (cos(R) * 2.0);
                 o[1] = cy + (sin(R) * 2.0);
+                glDisable(GL_TEXTURE_2D); // ???
                 glLineWidth(2.0);
                 glEnable(GL_LINE_SMOOTH);
                 glLoadIdentity();
@@ -987,7 +861,6 @@ public:
             glColor4f(fireTex.textureProperties.glTexColorInfo[0], fireTex.textureProperties.glTexColorInfo[1],
                       fireTex.textureProperties.glTexColorInfo[2],
                       fireTex.textureProperties.glTexColorInfo[3]);
-            glLoadIdentity();
             glBegin(GL_QUADS);
             glTexCoord2f(fireTex.texturePosition[0], fireTex.texturePosition[1]);
             glVertex3f(-width, height, 0.0);
@@ -1006,7 +879,6 @@ public:
             glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1],
                       texture.textureProperties.glTexColorInfo[2],
                       texture.textureProperties.glTexColorInfo[3]);
-            glLoadIdentity();
             glBegin(GL_QUADS);
             glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
             glVertex3f(-width, height, 0.0);
@@ -1020,9 +892,9 @@ public:
             glDisable(GL_TEXTURE_2D);
         }
 
-#ifdef DEBUG_DRAW_BALL_QUAD
+#if DEBUG_DRAW_BALL_QUAD
       glLoadIdentity();
-      glTranslatef(posx, posy, 0.0);
+      glTranslatef(pos_x, pos_y, 0.0);
       glDisable( GL_TEXTURE_2D );
       glColor4f(GL_WHITE);
       glBegin( GL_LINES );
@@ -1096,7 +968,7 @@ public:
         }
     }
 
-    static void checkPaddleCollision(ball &b, const paddle_class &p, position &po) {
+    static void checkPaddleCollision(ball &b, const Paddle &p, position &po) {
         //Er bolden tæt nok på?
 
         if (b.pos_y < (p.pos_y + p.height) + b.height && b.pos_y > p.pos_y - p.height) {
@@ -1281,7 +1153,7 @@ public:
         activeBalls = a;
     }
 
-    void draw(const paddle_class &paddle) {
+    void draw(const Paddle &paddle) {
         for (auto &i: b) {
             if (i.active) {
                 i.draw(paddle);
@@ -1319,7 +1191,7 @@ public:
         }
     }
 
-    int checkPaddleCollision(const paddle_class &paddle, effectManager &fxMan) {
+    int checkPaddleCollision(const Paddle &paddle, effectManager &fxMan) {
         int hits = 0;
         position p;
         for (auto &i: b) {
@@ -1425,18 +1297,18 @@ public:
     }
 
 
-    bool coldet(paddle_class &p, effectManager &fxMan, BallManager &bMan) {
+    bool coldet(Paddle &p, effectManager &fxMan, BallManager &bMan) {
         bool col = false;
-        if (pos_x + width > 1.6 && xvel > 0.0) {
+        if (pos_x + width > 1.0f && xvel > 0.0) {
             col = true;
             xvel *= -1;
-        } else if (pos_x - width < -1.6 && xvel < 0.0) {
+        } else if (pos_x - width < -1.0f && xvel < 0.0) {
             col = true;
             xvel *= -1;
-        } else if (pos_y + width > 1.25 && yvel > 0.0) {
+        } else if (pos_y + width > 1.0f && yvel > 0.0) {
             col = true;
             yvel *= -1;
-        } else if (pos_y - width < -1.24) {
+        } else if (pos_y - width < -1.0f) {
             active = false;
         }
 
@@ -1815,7 +1687,7 @@ public:
         }
     }
 
-    int coldet(paddle_class &paddle, effectManager &fxMan, BallManager &bMan) {
+    int coldet(Paddle &paddle, effectManager &fxMan, BallManager &bMan) {
         int hits = 0;
         for (i = 0; i < MAXPOWERUPS; i++) {
             if (p[i].active) {
@@ -2478,7 +2350,7 @@ int main(int argc, char *argv[]) {
     int i = 0; // bruges i for loop xD
     Score score;
     Menu menu;
-    paddle_class paddle;
+    Paddle paddle;
     paddle.texture = texPaddleBase;
     paddle.layerTex = texPaddleLayers;
 
@@ -2504,8 +2376,8 @@ int main(int argc, char *argv[]) {
     char txt[256];
     Uint32 frameAge = 0; // in milliseconds
 
-    Controller control(&paddle, &bullet, &ballManager);
-    menu.joystickAttached = control.joystickAttached();
+    Controller controller(&paddle, &bullet, &ballManager);
+    menu.joystickAttached = controller.joystickAttached();
     soundManager.add(SND_START, 0);
 
     // Todo show in title
@@ -2514,7 +2386,7 @@ int main(int argc, char *argv[]) {
     initNewGame();
     while (!var.quit) {
         // Events
-        control.get(); //Check for keypresses and joystick events
+        controller.get(); //Check for keypresses and joystick events
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
@@ -2617,8 +2489,7 @@ int main(int argc, char *argv[]) {
                         }
                     } else var.menuItemHovered = 0;
                 } else {
-                    // Move the paddle
-                    control.movePaddle(paddle.pos_x + event.motion.xrel * display.glunits_per_xpixel);
+                    controller.movePaddle(paddle.pos_x + event.motion.xrel * display.glunits_per_xpixel);
                 }
             } else if (event.type == SDL_MOUSEBUTTONDOWN) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
@@ -2627,7 +2498,7 @@ int main(int argc, char *argv[]) {
                         if (var.menuItemHovered > 0)
                             soundManager.add(SND_MENUCLICK, 0);
                     }
-                    control.btnPress();
+                    controller.btnPress();
                 } else if (event.button.button == SDL_BUTTON_RIGHT) {
                     gVar.shopBuyItem = true;
                 } else if (event.button.button == 4) {
@@ -2940,7 +2811,7 @@ int main(int argc, char *argv[]) {
 
                 if (var.menuShown > 0) {
                     if (var.menuShown == 10 || var.menuShown == 11) {
-                        control.calibrate();
+                        controller.calibrate();
                     }
                     menu.doMenu();
                 }

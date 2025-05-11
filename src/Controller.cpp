@@ -1,7 +1,7 @@
 extern SettingsManager settingsManager;
 
 class Controller {
-    paddle_class *paddle;
+    Paddle *paddle;
     bulletsClass *bullet;
     BallManager *bMan;
 #define ITEMSELECTTIME 300 /* Milliseconds before changing item */
@@ -17,7 +17,7 @@ class Controller {
     int calMin, calMax, calLowJitter, calHighJitter;
 
 public:
-    Controller(paddle_class *pc, bulletsClass *bu, BallManager *bm);
+    Controller(Paddle *pc, bulletsClass *bu, BallManager *bm);
 
     ~Controller();
 
@@ -32,7 +32,7 @@ public:
     bool joystickAttached() const;
 };
 
-Controller::Controller(paddle_class *pc, bulletsClass *bu, BallManager *bm) {
+Controller::Controller(Paddle *pc, bulletsClass *bu, BallManager *bm) {
     paddle = pc;
     bullet = bu;
     bMan = bm;
@@ -61,13 +61,11 @@ Controller::~Controller() {
 void Controller::movePaddle(GLfloat px) {
     if (!var.paused) {
         paddle->pos_x = px;
-        // Rechte Spielfeldbegrenzung
-        if (paddle->pos_x > PLAYFIELD_RIGHT_BORDER - paddle->width) {
-            paddle->pos_x = PLAYFIELD_RIGHT_BORDER - paddle->width;
+        if (paddle->pos_x < PLAYFIELD_LEFT_BORDER) {
+            paddle->pos_x = PLAYFIELD_LEFT_BORDER;
         }
-        // Linke Spielfeldbegrenzung
-        else if (paddle->pos_x < -PLAYFIELD_LEFT_BORDER + paddle->width) {
-            paddle->pos_x = -PLAYFIELD_LEFT_BORDER + paddle->width;
+        else if (paddle->pos_x + paddle->width > PLAYFIELD_RIGHT_BORDER ) {
+            paddle->pos_x = PLAYFIELD_RIGHT_BORDER - paddle->width;
         }
     }
 }

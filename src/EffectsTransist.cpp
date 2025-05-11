@@ -150,7 +150,7 @@ public:
         }
     }
 
-    void pcoldet(paddle_class &b) {
+    void pcoldet(Paddle &b) {
         if (p.x > b.pos_x - b.width && p.x < b.pos_x + b.width) {
             if (p.y > b.pos_y - b.height && p.y < b.pos_y + b.height) {
                 //Hvor ramte vi fra?
@@ -201,7 +201,7 @@ public:
 
     void coldet(brick &b);
 
-    void pcoldet(paddle_class &b);
+    void pcoldet(Paddle &b);
 
     ~particleFieldClass();
 };
@@ -266,7 +266,7 @@ void particleFieldClass::coldet(brick &b) {
     }
 }
 
-void particleFieldClass::pcoldet(paddle_class &b) {
+void particleFieldClass::pcoldet(Paddle &b) {
     for (int i = 0; i < vars.num; i++) {
         if (sparks[i].active)
             sparks[i].pcoldet(b);
@@ -390,7 +390,7 @@ public:
         }
     }
 
-    void pcoldet(paddle_class &b) {
+    void pcoldet(Paddle &b) {
         if (vars.type == FX_SPARKS) {
             for (int i = 0; i < vars.num; i++) {
                 if (sparks[i].active) {
@@ -510,7 +510,7 @@ public:
         }
     }
 
-    void pcoldet(paddle_class &b) {
+    void pcoldet(Paddle &b) {
         for (list<effect_class>::iterator it = effects.begin(); it != effects.end(); ++it) {
             if (it->vars.coldet)
                 it->pcoldet(b);
