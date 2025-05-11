@@ -2001,14 +2001,19 @@ public:
         texBall.play();
         glBegin(GL_QUADS);
         for (i = 0; i < player.lives - 1; i++) {
+            float size = 0.05f;         // Größere Bälle für bessere Sichtbarkeit
+            float space = 0.05f;       // Mehr Abstand zwischen den Bällen
+            float y = 1.0f-space;            // Etwas tiefer von der oberen Kante
+
+            // Bälle werden von rechts nach links gezeichnet
             glTexCoord2f(texBall.texturePosition[0], texBall.texturePosition[1]);
-            glVertex3f(1.55 - (0.05 * i), 1.2, 0.0);
+            glVertex3f(0.9f - space * i, y, 0.0);            // Oben rechts
             glTexCoord2f(texBall.texturePosition[2], texBall.texturePosition[3]);
-            glVertex3f(1.5 - (0.05 * i), 1.2, 0.0);
+            glVertex3f(0.9f - size - space * i, y, 0.0);     // Oben links
             glTexCoord2f(texBall.texturePosition[4], texBall.texturePosition[5]);
-            glVertex3f(1.5 - (0.05 * i), 1.15, 0.0);
+            glVertex3f(0.9f - size - space * i, y-size, 0.0);// Unten links
             glTexCoord2f(texBall.texturePosition[6], texBall.texturePosition[7]);
-            glVertex3f(1.55 - (0.05 * i), 1.15, 0.0);
+            glVertex3f(0.9f - space * i, y-size, 0.0);       // Unten rechts
         }
         glEnd();
         glDisable(GL_TEXTURE_2D);
