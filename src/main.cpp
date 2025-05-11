@@ -2486,7 +2486,6 @@ int main(int argc, char *argv[]) {
     hudClass hud(texBall[0], texPowerup);
 
     var.effectnum = -1;
-    GLfloat mouse_x, mouse_y;
     GLfloat normalizedMouseX, normalizedMouseY;
     Uint32 maxFrameAge = 1000 / setting.fps;
     Uint32 lastTick = SDL_GetTicks();
@@ -2584,31 +2583,30 @@ int main(int argc, char *argv[]) {
                 }
             }
             if (event.type == SDL_MOUSEMOTION) {
-                mouse_x = (event.motion.x - display.currentW / 2.0f);
-                mouse_y = (event.motion.y - display.currentH / 2.0f) * -1;
-                normalizedMouseX = ((event.motion.x - display.viewportX) - display.viewportW / 2.0f) * (2.0f / display.viewportW);
-                normalizedMouseY = (((event.motion.y - display.viewportY) - display.viewportH / 2.0f) * -1) * (2.0f / display.viewportH);
+                normalizedMouseX = (event.motion.x - display.currentW / 2.0f);
+                normalizedMouseY = (event.motion.y - display.currentH / 2.0f) * -1;
+                normalizedMouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) * (2.0f / display.viewportW);
+                normalizedMouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 * (2.0f / display.viewportH);
                 normalizedMouseX = std::max(-1.0f, std::min(1.0f, normalizedMouseX));
                 normalizedMouseY = std::max(-1.0f, std::min(1.0f, normalizedMouseY));
 
-
                 if (var.menu) {
-                    if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.78) + (0.07) && mouse_y > (-0.78) - (0.07))
+                    if (normalizedMouseX > -0.5 && normalizedMouseX < 0.5 && normalizedMouseY < (-0.78) + (0.07) && normalizedMouseY > (-0.78) - (0.07))
                         var.menuItem = 1;
-                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.56) + (0.07) && mouse_y > (-0.56) - (
+                    else if (normalizedMouseX > -0.5 && normalizedMouseX < 0.5 && normalizedMouseY < (-0.56) + (0.07) && normalizedMouseY > (-0.56) - (
                                  0.07))
                         var.menuItem = 2;
-                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.34) + (0.07) && mouse_y > (-0.34) - (
+                    else if (normalizedMouseX > -0.5 && normalizedMouseX < 0.5 && normalizedMouseY < (-0.34) + (0.07) && normalizedMouseY > (-0.34) - (
                                  0.07))
                         var.menuItem = 3;
-                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.12) + (0.07) && mouse_y > (-0.12) - (
+                    else if (normalizedMouseX > -0.5 && normalizedMouseX < 0.5 && normalizedMouseY < (-0.12) + (0.07) && normalizedMouseY > (-0.12) - (
                                  0.07))
                         var.menuItem = 4;
-                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (0.1) + (0.07) && mouse_y > (0.1) - (0.07))
+                    else if (normalizedMouseX > -0.5 && normalizedMouseX < 0.5 && normalizedMouseY < (0.1) + (0.07) && normalizedMouseY > (0.1) - (0.07))
                         var.menuItem = 5;
-                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (0.32) + (0.07) && mouse_y > (0.32) - (0.07))
+                    else if (normalizedMouseX > -0.5 && normalizedMouseX < 0.5 && normalizedMouseY < (0.32) + (0.07) && normalizedMouseY > (0.32) - (0.07))
                         var.menuItem = 6;
-                    else if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (0.54) + (0.07) && mouse_y > (0.54) - (0.07))
+                    else if (normalizedMouseX > -0.5 && normalizedMouseX < 0.5 && normalizedMouseY < (0.54) + (0.07) && normalizedMouseY > (0.54) - (0.07))
                         var.menuItem = 7;
                     else
                         var.menuItem = 0;
