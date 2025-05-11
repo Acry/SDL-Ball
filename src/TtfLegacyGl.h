@@ -2,7 +2,7 @@
 
 #include <string>
 #include <epoxy/gl.h>
-
+#include <memory>
 // Jeder Index entspricht einer bestimmten Font-Konfiguration aus der Datei fonts.txt.
 #define FONT_MENU 0
 #define FONT_ANNOUNCE_GOOD 1
@@ -23,20 +23,21 @@ struct glFontInfo_struct {
     glCharInfo_struct ch[255];
 };
 
-class Text {
-    static Text* instance;
-    Text();  // Konstruktor private
+class TtfLegacyGl {
+    // Private constructor for singleton pattern
+    TtfLegacyGl(); // Private constructor
 public:
-    Text(const Text&) = delete;
-    void operator=(const Text&) = delete;
+    // Delete copy constructor and assignment operator
+    TtfLegacyGl(const TtfLegacyGl&) = delete;
+    TtfLegacyGl& operator=(const TtfLegacyGl&) = delete;
 
-    static Text& getInstance() {
-        if (instance == nullptr) {
-            instance = new Text();
-        }
-        return *instance;
+    // Static method to get the singleton instance
+    static TtfLegacyGl& getInstance() {
+        static TtfLegacyGl instance;  // Initialized on first call
+        return instance;
     }
-    ~Text();
+
+    ~TtfLegacyGl();
     GLfloat getHeight(int font) const;
     void write(const std::string &text, int font, bool center, GLfloat scale, GLfloat x, GLfloat y) const;
 

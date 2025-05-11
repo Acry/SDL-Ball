@@ -1,7 +1,7 @@
 #pragma once
 #include "MovingObject.h"
 #include <string>
-#include "Text.h"
+#include "TtfLegacyGl.h"
 
 // Jeder Index entspricht einer bestimmten Font-Konfiguration aus der Datei fonts.txt.
 #define FONT_MENU 0
@@ -18,7 +18,7 @@ public:
     powerupDescriptionClass();
     void draw();
     Texture *tex;
-    Text& text;  // Als Referenz
+    TtfLegacyGl& text;  // Als Referenz
     std::string name;
     std::string description;
 };

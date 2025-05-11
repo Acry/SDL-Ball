@@ -3,9 +3,9 @@ class HighScore {
     string name;
     TextureManager texMgr;
     Texture tex;
-    Text& text;  // Als Referenz
+    TtfLegacyGl& text;  // Als Referenz
 public:
-    HighScore()  : text(Text::getInstance())
+    HighScore()  : text(TtfLegacyGl::getInstance())
     {
         name = "";
         texMgr.load(themeManager.getThemeFilePath("gfx/highscore/entername.png", setting.gfxTheme), tex);

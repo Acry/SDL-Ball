@@ -23,7 +23,7 @@
 #include "MovingObject.h"
 #include "SettingsManager.h"
 #include "SoundManager.h"
-#include "Text.h"
+#include "TtfLegacyGl.h"
 #include "ThemeManager.h"
 #include "Texture.h"
 #include "texture_properties.h"
@@ -32,6 +32,7 @@
 #include "TextureManager.h"
 #include "Speedometer.h"
 
+#define DEBUG_SHOW_MOUSE_COORDINATES 1
 using namespace std;
 
 ConfigFileManager configFileManager;
@@ -41,7 +42,6 @@ ThemeManager themeManager(configFileManager);
 Display display;
 SoundManager soundManager;
 TextureManager textureManager;
-Text* Text::instance = nullptr;
 class effectManager;
 
 
@@ -91,7 +91,7 @@ public:
     int row; //what row is this brick in
     int bricknum; //brick in this row
     int hitsLeft; //Hvor mange gange skal denne brik rammes før den dør?
-    bool justBecomeExplosive; //If this brick just become a explosive one.
+    bool justBecomeExplosive; //If this brick just becomes an explosive one.
 
     [[nodiscard]] bool n(const int dir) const {
         switch (dir) {
@@ -126,7 +126,6 @@ public:
 
         return false;
     }
-
 
     void hit(effectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe);
 
@@ -2096,7 +2095,9 @@ void collision_ball_brick(brick &br, ball &ba, position &p, effectManager &fxMan
                         ba.setspeed(ba.velocity + runtime_difficulty.hitbrickinc[player.difficulty]);
                     }
                 } else {
+#ifdef DEBUG_COLLISION_BALL
                     SDL_Log("Collision detection error: Don't know where the ball hit.");
+#endif
                 }
                 br.hit(fxMan, a, b, true);
             } //collision
@@ -2113,7 +2114,7 @@ struct shopItemStruct {
 
 class hudClass {
     Texture texBall;
-    Text& text;  // Referenz auf das Singleton
+    TtfLegacyGl& text;  // Referenz auf das Singleton
     // For the hud text
     int ticksSinceLastClockCheck;
     time_t nixTime; //Seconds since epoch
@@ -2127,7 +2128,7 @@ class hudClass {
 public:
     hudClass(Texture texB, Texture texPo[]):
         texBall(texB),
-        text(Text::getInstance()),
+        text(TtfLegacyGl::getInstance()),
         ticksSinceLastClockCheck(1001),
         texPowerup(texPo),
         shopItemSelected(0)
@@ -2371,6 +2372,10 @@ int main(int argc, char *argv[]) {
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #endif
 
+#if DEBUG_SHOW_MOUSE_COORDINATES
+#include "DebugMouse.cpp"
+    DebugMouse debugMouse;
+#endif
 #pragma region texture manager
     Texture texPaddleBase;
     Texture texPaddleLayers[2];
@@ -2482,6 +2487,7 @@ int main(int argc, char *argv[]) {
 
     var.effectnum = -1;
     GLfloat mouse_x, mouse_y;
+    GLfloat normalizedMouseX, normalizedMouseY;
     Uint32 maxFrameAge = 1000 / setting.fps;
     Uint32 lastTick = SDL_GetTicks();
     Uint32 nonpausingLastTick = lastTick;
@@ -2578,12 +2584,14 @@ int main(int argc, char *argv[]) {
                 }
             }
             if (event.type == SDL_MOUSEMOTION) {
-                mouse_x = (event.motion.x - display.currentW / 2.0f) * display.glunits_per_xpixel;
-                mouse_y = (event.motion.y - display.currentH / 2.0f) * display.glunits_per_ypixel * -1;
-#ifdef DEBUG_SHOW_MOUSE_COORDINATES
-                SDL_Log("Mouse:%s%s,%s%s", setw(10), mousex, setw(10), mousey);
-                SDL_Log("%s%s,%s%s", setw(8), event.motion.x, setw(8), event.motion.y);
-#endif
+                mouse_x = (event.motion.x - display.currentW / 2.0f);
+                mouse_y = (event.motion.y - display.currentH / 2.0f) * -1;
+                normalizedMouseX = ((event.motion.x - display.viewportX) - display.viewportW / 2.0f) * (2.0f / display.viewportW);
+                normalizedMouseY = (((event.motion.y - display.viewportY) - display.viewportH / 2.0f) * -1) * (2.0f / display.viewportH);
+                normalizedMouseX = std::max(-1.0f, std::min(1.0f, normalizedMouseX));
+                normalizedMouseY = std::max(-1.0f, std::min(1.0f, normalizedMouseY));
+
+
                 if (var.menu) {
                     if (mouse_x > -0.5 && mouse_x < 0.5 && mouse_y < (-0.78) + (0.07) && mouse_y > (-0.78) - (0.07))
                         var.menuItem = 1;
@@ -2933,6 +2941,10 @@ int main(int argc, char *argv[]) {
                 }
 
                 announce.draw();
+#if DEBUG_SHOW_MOUSE_COORDINATES
+#include "DebugMouse.cpp"
+                debugMouse.update(normalizedMouseX, normalizedMouseY);
+#endif
                 SDL_GL_SwapWindow(display.sdlWindow);
                 frameAge = 0;
                 globalTicksSinceLastDraw = 0;

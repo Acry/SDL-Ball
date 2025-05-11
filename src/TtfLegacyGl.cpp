@@ -1,7 +1,7 @@
 #include <epoxy/gl.h>
 #include <SDL2/SDL_ttf.h>
 #include <GL/glu.h>
-#include "Text.h"
+#include "TtfLegacyGl.h"
 
 #include <fstream>
 
@@ -11,11 +11,10 @@
 extern settings setting;
 extern ThemeManager themeManager;
 
-GLfloat Text::getHeight(const int font) const {
-    return fontInfo[font].height;
-}
+// Define static member
+// std::unique_ptr<TtfLegacyGl> TtfLegacyGl::instance = nullptr;
 
-Text::Text(): fontInfo{} {
+TtfLegacyGl::TtfLegacyGl(): fontInfo{} {
     TTF_Init();
 
     // Parse font-description file
@@ -76,7 +75,7 @@ Text::Text(): fontInfo{} {
     }
 }
 
-void Text::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
+void TtfLegacyGl::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
     TTF_Font *ttfFont = nullptr;
     SDL_Surface *c, *t;
     Uint32 rmask, gmask, bmask, amask;
@@ -161,12 +160,13 @@ void Text::genFontTex(const std::string &TTFfontName, const int fontSize, const 
     SDL_FreeSurface(t); //Free text-surface
 }
 
-void Text::write(const std::string &text, const int font, const bool center, const GLfloat scale,
+void TtfLegacyGl::write(const std::string &text, const int font, const bool center, const GLfloat scale,
                         const GLfloat x,
                         const GLfloat y) const {
     unsigned char c;
     GLfloat sX, posX = 0;
-
+    // Disable depth test for UI elements if you want them always on top
+    glDisable(GL_DEPTH_TEST);
     // find out half of the string width to center
     if (center) {
         for (unsigned int i = 0; i < text.length(); i++) {
@@ -178,6 +178,8 @@ void Text::write(const std::string &text, const int font, const bool center, con
     }
     posX += x;
 
+
+    glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
 
@@ -194,22 +196,31 @@ void Text::write(const std::string &text, const int font, const bool center, con
         sX = fontInfo[font].ch[c].width;
         const GLfloat sY = fontInfo[font].height;
         drawPosX += sX;
+        constexpr float zFront = -0.15f;
         glBegin(GL_QUADS);
         glTexCoord2f(fontInfo[font].ch[c].Xa, fontInfo[font].ch[c].Ya);
-        glVertex3f(-sX + drawPosX, sY, 0);
+        glVertex3f(-sX + drawPosX, sY, zFront);
         glTexCoord2f(fontInfo[font].ch[c].Xb, fontInfo[font].ch[c].Ya);
-        glVertex3f(sX + drawPosX, sY, 0);
+        glVertex3f(sX + drawPosX, sY, zFront);
         glTexCoord2f(fontInfo[font].ch[c].Xb, fontInfo[font].ch[c].Yb);
-        glVertex3f(sX + drawPosX, -sY, 0);
+        glVertex3f(sX + drawPosX, -sY, zFront);
         glTexCoord2f(fontInfo[font].ch[c].Xa, fontInfo[font].ch[c].Yb);
-        glVertex3f(-sX + drawPosX, -sY, 0);
+        glVertex3f(-sX + drawPosX, -sY, zFront);
         glEnd();
         drawPosX += sX;
     }
     glDisable(GL_TEXTURE_2D);
+    glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
+
+    // Re-enable depth testing if it was enabled before
+    glEnable(GL_DEPTH_TEST);
 }
 
-Text::~Text() {
+GLfloat TtfLegacyGl::getHeight(const int font) const {
+    return fontInfo[font].height;
+}
+
+TtfLegacyGl::~TtfLegacyGl() {
     TTF_Quit();
 }

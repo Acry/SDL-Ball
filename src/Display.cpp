@@ -120,10 +120,8 @@ void Display::resize(const int width, const int height) {
     glunits_per_xpixel = 2.0f / static_cast<GLfloat>(viewportW);
     glunits_per_ypixel = 2.0f / static_cast<GLfloat>(viewportH);
 
-    // TODO, FIXME
-    // glViewport(0, 0, currentW, currentH);
     glViewport(viewportX, viewportY, viewportW, viewportH);
-    glEnable(GL_SCISSOR_TEST);
+
     glScissor(viewportX, viewportY, viewportW, viewportH);
 
     glMatrixMode(GL_PROJECTION);
@@ -227,6 +225,8 @@ void Display::initGL() {
 
     /* The Type Of Depth Test To Do */
     glDepthFunc(GL_LEQUAL);
+
+    glEnable(GL_SCISSOR_TEST);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

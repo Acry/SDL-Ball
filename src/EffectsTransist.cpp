@@ -1,6 +1,6 @@
 #include <list>
 #include "Texture.h"
-#include "Text.h"
+#include "TtfLegacyGl.h"
 
 struct effect_vars {
     int type; //Hvilken slags effekt er det?
@@ -21,12 +21,12 @@ struct effect_vars {
 class EffectsTransist {
     GLfloat opacity;
 public:
-    Text& text;  // Als Referenz
+    TtfLegacyGl& text;  // Als Referenz
     int age;
     effect_vars vars;
 
     // Konstruktor initialisiert die Referenz
-    EffectsTransist() : text(Text::getInstance()){}
+    EffectsTransist() : text(TtfLegacyGl::getInstance()){}
 
     void init() {
         age = 0;
@@ -542,13 +542,13 @@ class glAnnounceMessageClass {
     bool fadedir;
 
 public:
-    Text& text;  // Referenz statt Instanz
+    TtfLegacyGl& text;  // Referenz statt Instanz
     bool active;
     int life;
     string announcement;
     int font;
 
-    glAnnounceMessageClass() : text(Text::getInstance()) {
+    glAnnounceMessageClass() : text(TtfLegacyGl::getInstance()) {
         active = true;
         age = 0;
         fade = 0;

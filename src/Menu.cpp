@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include "Text.h"
+#include "TtfLegacyGl.h"
 // #include "Menu.h" todo
 
 extern SettingsManager settingsManager;
@@ -93,20 +93,20 @@ score *sortScores(int *rl) {
 }
 
 class Menu {
-    Text& text;  // Referenz auf das Singleton
+    TtfLegacyGl& text;  // Referenz auf das Singleton
     string saveGameName[6]; //The name of saveGames
     int saveGameSlot; //Where player choose to save/load to/from
     Texture tex[5];
     GLuint dl;
 
     bool themeChanged; //If the theme has changed change the banner.
-    vector<themeInfo> tI; //Vector of theme info
+    vector<themeInfo> themeInf; //Vector of theme info
 
 public:
     char highScores[20][255];
     bool joystickAttached; // Is joystick attached?
 
-    Menu() : text(Text::getInstance()) {
+    Menu() : text(TtfLegacyGl::getInstance()) {
         refreshHighScoreList(); //load the highscore file (if exists)
         TextureManager texMgr;
 
@@ -118,7 +118,7 @@ public:
         texMgr.load(themeManager.getThemeFilePath("gfx/menu/but2.png", setting.gfxTheme), tex[3]);
         texMgr.load(themeManager.getThemeFilePath("gfx/menu/highscorebg.png", setting.gfxTheme), tex[4]);
 
-        tI = themeManager.listThemes(); //Read themes and put them in the vector tI
+        themeInf = themeManager.listThemes(); //Read themes and put them in the vector tI
         saveManager.listSaveGames(saveGameName);
 
         // Menu-Hintergrund
@@ -268,17 +268,16 @@ public:
         glLoadIdentity();
         // Menu-background
         glCallList(dl);
-
         if (var.menu == 1) {
 
             // Quit SDL-Ball
+
             glTranslatef(0.0, -0.65f, 0.0f);
             glColor4f(GL_WHITE);
             if (var.menuItem == 1)
                 glCallList(dl + 2);
             else
                 glCallList(dl + 1);
-            glPopMatrix();
 
             glColor4f(GL_BLACK);
             text.write("Quit SDL-Ball", FONT_MENU, true, 1.0, 0.0, -0.65f);
@@ -287,7 +286,7 @@ public:
 
             // Settings
             glColor4f(GL_WHITE);
-            glTranslatef(0.0, -0.65f+offset, 0.0f);
+            glTranslatef(0.0, +offset, 0.0f);
             if (var.menuItem == 2)
                 glCallList(dl + 2);
             else
@@ -298,7 +297,7 @@ public:
 
             // Highscores
             glColor4f(GL_WHITE);
-            glTranslatef(0.0, -0.65f+offset*2, 0.0f);
+            glTranslatef(0.0, +offset, 0.0f);
             if (var.menuItem == 3)
                 glCallList(dl + 2);
             else
@@ -309,14 +308,13 @@ public:
 
             // Save Game
             glColor4f(GL_WHITE);
-            glTranslatef(0.0, -0.65f+offset*3, 0.0f);
+            glTranslatef(0.0, +offset, 0.0f);
             if (player.level > 0) // && !var.startedPlaying)
             {
                 if (var.menuItem == 4)
                     glCallList(dl + 2);
                 else
                     glCallList(dl + 1);
-
 
                 glColor4f(GL_BLACK);
                 text.write("Save Game", FONT_MENU, true, 1.0, 0.0, -0.65f+offset*3);
@@ -331,12 +329,12 @@ public:
                     glColor4f(0.5, 0.5, 0.5, 1);
                     text.write("Save Game", FONT_MENU, true, 1.0, 0.0, -0.65f+offset*3);
                 }
-                glPopMatrix();
+
             }
 
             // Load
             glColor4f(GL_WHITE);
-            glTranslatef(0.0, -0.65f+offset*4, 0.0f);
+            glTranslatef(0.0, offset, 0.0f);
             if (var.menuItem == 5)
                 glCallList(dl + 2);
             else
@@ -347,7 +345,7 @@ public:
 
             // Continue
             glColor4f(GL_WHITE);
-            glTranslatef(0.0, -0.65f+offset*5, 0.0f);
+            glTranslatef(0.0, offset, 0.0f);
             if (var.menuItem == 6)
                 glCallList(dl + 2);
             else
@@ -359,7 +357,7 @@ public:
 
             // New game
             glColor4f(GL_WHITE);
-            glTranslatef(0.0, -0.65f+offset*6, 0.0f);
+            glTranslatef(0.0, offset, 0.0f);
             if (var.menuItem == 7)
                 glCallList(dl + 2);
             else
@@ -368,7 +366,6 @@ public:
             glColor4f(GL_BLACK);
             text.write("New Game", FONT_MENU, true, 1.0, 0.0, -0.65f+offset*6);
             glColor4f(GL_WHITE);
-
 
             if (var.menuPressed) {
                 switch (var.menuItem) {
@@ -1061,7 +1058,7 @@ public:
             glColor4f(GL_WHITE);
 
             int i = 0;
-            for (vector<themeInfo>::iterator it = tI.begin(); it < tI.end(); ++it) {
+            for (vector<themeInfo>::iterator it = themeInf.begin(); it < themeInf.end(); ++it) {
                 if (i == 5)
                     break;
                 glTranslatef(0.0, -0.22, 0.0f);
@@ -1099,11 +1096,11 @@ public:
                 default: ;
             }
 
-            for (i = 0; i < static_cast<int>(tI.size()) && i < 5; i++) {
+            for (i = 0; i < static_cast<int>(themeInf.size()) && i < 5; i++) {
                 if (6 - i == var.menuItem) {
-                    setting.gfxTheme = tI.at(i).name;
-                    setting.sndTheme = tI.at(i).name;
-                    setting.lvlTheme = tI.at(i).name;
+                    setting.gfxTheme = themeInf.at(i).name;
+                    setting.sndTheme = themeInf.at(i).name;
+                    setting.lvlTheme = themeInf.at(i).name;
                     themeChanged = true;
                     settingsManager.settingsChanged();
                 }

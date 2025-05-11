@@ -1,7 +1,7 @@
 #include "Texture.h"
 
 class powerupDescriptionClass : public MovingObject {
-    Text& text;
+    TtfLegacyGl& text;
 public:
     powerupDescriptionClass();
     Texture *tex;
@@ -12,7 +12,7 @@ public:
     string description;
 };
 
-powerupDescriptionClass::powerupDescriptionClass() : text(Text::getInstance()) {
+powerupDescriptionClass::powerupDescriptionClass() : text(TtfLegacyGl::getInstance()) {
     // Icon size
     width = 0.035;
     height = 0.035;
@@ -56,7 +56,7 @@ void powerupDescriptionClass::draw() const {
 }
 
 class TitleScreen {
-    Text& text;  // Als Referenz
+    TtfLegacyGl& text;  // Als Referenz
     effectManager *fxMan;
     int ticksSinceLastSpawn;
     TextureManager texMgr;
@@ -83,7 +83,7 @@ public:
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };
 
-TitleScreen::TitleScreen(effectManager *m, Texture tp[], Menu *me): text(Text::getInstance())
+TitleScreen::TitleScreen(effectManager *m, Texture tp[], Menu *me): text(TtfLegacyGl::getInstance())
 {
     menu = me;
     numHighScores = 7;

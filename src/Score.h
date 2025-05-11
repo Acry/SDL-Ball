@@ -1,17 +1,17 @@
 #pragma once
 
 #include <SDL2/SDL.h>
-#include "Text.h"
+#include "TtfLegacyGl.h"
 
 class Score {
-    Text& text;
+    TtfLegacyGl& text;
     unsigned int lastScoreTick;
     uint tempScore;
     uint score;
     char tempText[255];
 
 public:
-    Score() : text(Text::getInstance()),
+    Score() : text(TtfLegacyGl::getInstance()),
               lastScoreTick(SDL_GetTicks()),
               tempScore(0),
               score(0) {
