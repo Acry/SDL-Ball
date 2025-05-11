@@ -11,8 +11,26 @@
 #define PILLAR_WIDTH 0.065f
 #define BRICK_WIDTH 0.0719f
 #define BRICK_HEIGHT 0.0575f
+// Von -1 bis +1 in NDC, direkt Stein an Stein
+// glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+//         +1
+//         ^
+//         |
+// -1 <----+----> +1
+//         |
+//        -1
+#define PLAYFIELD_WIDTH = 1.0f - (PILLAR_WIDTH * 2.0f);
+#define PLAYFIELD_LEFT_BORDER = 1.0f + PILLAR_WIDTH;
+#define PLAYFIELD_RIGHT_BORDER = 1.0f - PILLAR_WIDTH;
 
-//"Max powerups"
+// MENU SIZES -> TODO: Move to Menu.h
+#define MENU_HALF_WIDTH 0.425f
+#define MENU_WIDTH 0.85f
+#define MENU_HALF_HEIGHT 0.07f
+#define MENU_HEIGHT 0.14f
+#define MENU_SPACING 0.18f
+
+// "Max powerups"
 #define MAXPOTEXTURES 21
 #define MAXBALLS 16
 #define MAXPOWERUPS 64

@@ -32,7 +32,7 @@
 #include "TextureManager.h"
 #include "Speedometer.h"
 
-#define DEBUG_SHOW_MOUSE_COORDINATES 1
+#define DEBUG_SHOW_MOUSE_COORDINATES 0
 using namespace std;
 
 ConfigFileManager configFileManager;
@@ -44,7 +44,6 @@ SoundManager soundManager;
 TextureManager textureManager;
 class effectManager;
 
-
 // Timing
 int globalTicks;
 float globalMilliTicks;
@@ -55,7 +54,7 @@ float globalMilliTicksSinceLastDraw;
 
 float random_float(float total, float negative);
 
-// // Option 1: Struct mit benannten Koordinaten
+// Option 1: Struct mit benannten Koordinaten
 // struct TexCoords {
 //     GLfloat s1, t1;  // Texturkoordinaten Vertex 1
 //     GLfloat s2, t2;  // Texturkoordinaten Vertex 2
@@ -63,10 +62,9 @@ float random_float(float total, float negative);
 //     GLfloat s4, t4;  // Texturkoordinaten Vertex 4
 // };
 typedef GLfloat texPos[8];
-#ifndef uint // WIN32
 typedef unsigned int uint;
-#endif
 
+// Menu.h wip
 #include "Menu.cpp"
 
 // nasty fix to a problem
@@ -148,8 +146,6 @@ public:
                 position spos, svel;
                 spos.x = pos_x;
                 spos.y = pos_y;
-
-
                 if (bricknum > 0) {
                     if (nbrick[row][bricknum - 1] != -1) {
                         svel.x = random_float(2, 0) / 3.0;
@@ -157,8 +153,6 @@ public:
                         bricks[nbrick[row][bricknum - 1]].hit(fxMan, spos, svel, false);
                     }
                 }
-
-
                 if (bricknum < 25) {
                     if (nbrick[row][bricknum + 1] != -1) {
                         svel.x = random_float(2, 0) / 3.0;
@@ -166,7 +160,6 @@ public:
                         bricks[nbrick[row][bricknum + 1]].hit(fxMan, spos, svel, false);
                     }
                 }
-
                 if (row > 0) {
                     if (nbrick[row - 1][bricknum] != -1) {
                         svel.x = random_float(2, 0) / 3.0;
@@ -174,7 +167,6 @@ public:
                         bricks[nbrick[row - 1][bricknum]].hit(fxMan, spos, svel, false);
                     }
                 }
-
                 if (row < 22) {
                     if (nbrick[row + 1][bricknum] != -1) {
                         svel.x = random_float(2.0f, 0.0f) / 3.0f;
@@ -182,7 +174,6 @@ public:
                         bricks[nbrick[row + 1][bricknum]].hit(fxMan, spos, svel, false);
                     }
                 }
-
                 if (row > 0 && bricknum > 0) {
                     if (nbrick[row - 1][bricknum - 1] != -1) {
                         svel.x = random_float(2, 0) / 3.0f;
@@ -197,7 +188,6 @@ public:
                         bricks[nbrick[row - 1][bricknum + 1]].hit(fxMan, spos, svel, false);
                     }
                 }
-
                 if (row < 22 && bricknum > 0) {
                     if (nbrick[row + 1][bricknum - 1] != -1) {
                         svel.x = random_float(2, 0) / 3.0f;
@@ -205,19 +195,16 @@ public:
                         bricks[nbrick[row + 1][bricknum - 1]].hit(fxMan, spos, svel, false);
                     }
                 }
-
                 if (row < 22 && bricknum < 25) {
                     if (nbrick[row + 1][bricknum + 1] != -1) {
-                        svel.x = random_float(2, 0) / 3.0;
-                        svel.y = random_float(2, 0) / 3.0;
+                        svel.x = random_float(2.0f, 0.0f) / 3.0f;
+                        svel.y = random_float(2.0f, 0.0f) / 3.0f;
                         bricks[nbrick[row + 1][bricknum + 1]].hit(fxMan, spos, svel, false);
                     }
                 }
             }
         }
-
         texture.play();
-
         glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1], texture.textureProperties.glTexColorInfo[2], opacity);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
@@ -231,10 +218,10 @@ public:
         // -1 <----+----> +1
         //         |
         //        -1
-        float left = pos_x * zoom;
-        float right = pos_x + BRICK_WIDTH * zoom;
-        float top = pos_y * zoom;
-        float bottom = pos_y + BRICK_HEIGHT * zoom;
+        const float left = pos_x * zoom;
+        const float right = pos_x + BRICK_WIDTH * zoom;
+        const float top = pos_y * zoom;
+        const float bottom = pos_y + BRICK_HEIGHT * zoom;
 
         // Zeichne das Quad mit den Texturkoordinaten
         glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
@@ -324,7 +311,7 @@ public:
     }
 };
 
-//#include "loadlevel_new.cpp"
+// todo #include "loadlevel_new.cpp" -> levelManager
 #include "loadlevel.cpp"
 class paddle_class : public GameObject {
     GLfloat growspeed;
@@ -711,8 +698,6 @@ public:
     GLfloat height, width;
     Texture *tex;
     int len;
-
-    // Constructor bleibt gleich
     tracer() {
         len = 100;
         lastX = lastY = 0;
@@ -1845,7 +1830,7 @@ public:
 
 PowerupManager powerupManager;
 
-void spawnpowerup(char powerup, position a, position b) {
+void spawnpowerup(const char powerup, const position a, const position b) {
     if (powerup == '1') {
         powerupManager.spawn(a, b,PO_GROWPADDLE);
     }
@@ -2456,15 +2441,16 @@ int main(int argc, char *argv[]) {
     createPlayfieldBorderList(&playfieldBorderList, texBorder);
 
     brick bricks[598];
-    string levelfile = themeManager.getThemeFilePath("levels.txt", setting.lvlTheme);
-    // todo: make property of levelManager
+    string levelFile = themeManager.getThemeFilePath("levels.txt", setting.lvlTheme);
+    // todo: make property of levelManager ()
 
+    // part of levelManager wip in loadlevel_new.cpp
     // if (!load_levels()) {;
     //     SDL_Log("Error loading levels-structure");
     //     var.quit = true;
     // }
 
-    int i = 0; //bruges i for loop xD
+    int i = 0; // bruges i for loop xD
     Score score;
     Menu menu;
     paddle_class paddle;
@@ -2765,7 +2751,7 @@ int main(int argc, char *argv[]) {
                 var.bricksHit = true;
                 gVar.newLevel = false;
                 //set_up_bricks_for_level(player.level, bricks, texLvl);
-                load_level(levelfile, bricks, player.level);
+                load_level(levelFile, bricks, player.level);
                 init_levels(bricks, texLvl);
                 gVar.gameOver = false;
                 gVar.newLife = true;

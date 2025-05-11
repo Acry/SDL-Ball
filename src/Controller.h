@@ -1,5 +1,8 @@
 #pragma once
 
+// Do not include game logic
+// InputState currentState; // Struktur für aktuelle Eingaben
+
 #include <SDL2/SDL.h>
 #include <epoxy/gl.h>
 #include "Paddle.h"

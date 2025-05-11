@@ -121,12 +121,19 @@ void Display::resize(const int width, const int height) {
     glunits_per_ypixel = 2.0f / static_cast<GLfloat>(viewportH);
 
     glViewport(viewportX, viewportY, viewportW, viewportH);
-
     glScissor(viewportX, viewportY, viewportW, viewportH);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
+    // Von -1 bis +1 in NDC, direkt Stein an Stein
+    // glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+    //         +1
+    //         ^
+    //         |
+    // -1 <----+----> +1
+    //         |
+    //        -1
     glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
 
     glMatrixMode(GL_MODELVIEW);
