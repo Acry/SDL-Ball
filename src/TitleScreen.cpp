@@ -67,10 +67,8 @@ class TitleScreen {
     bool rotDir;
     powerupDescriptionClass powerUp[MAXPOTEXTURES];
     int numHighScores; //Number of highscores to show in the intro
-    // why is runner not a class?
-    // why is runner not a derived class from movingObject?
     position runnerPos;
-    Menu *menu; //Here is the highscore text
+    Menu *menu; // Here is the highscore text
     int runnerTime;
     float runnerVelX, runnerVelY;
     int hilight;
@@ -92,12 +90,11 @@ TitleScreen::TitleScreen(effectManager *m, Texture tp[], Menu *me): text(Text::g
     texPowerups = tp;
     fxMan = m;
     ticksSinceLastSpawn = 100;
-    // SDL-BALL
+    // animated SDL-BALL
     texMgr.load(themeManager.getThemeFilePath("gfx/title/title.png", setting.gfxTheme), texTitle);
 
     glTitleList = glGenLists(1);
     glNewList(glTitleList, GL_COMPILE);
-
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texTitle.textureProperties.texture);
     glBegin(GL_QUADS);
@@ -193,7 +190,7 @@ void TitleScreen::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
             fxMan->set(FX_VAR_COLDET, 0);
             fxMan->set(FX_VAR_LIFE, 250);
             fxMan->set(FX_VAR_NUM, 2);
-            fxMan->set(FX_VAR_SIZE, 0.09f);
+            fxMan->set(FX_VAR_SIZE, 0.02f);
             fxMan->set(FX_VAR_SPEED, 0.5f);
             fxMan->set(FX_VAR_GRAVITY, -0.4f);
 
@@ -224,7 +221,7 @@ void TitleScreen::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
             runnerTime = 0;
         }
 
-        // hilight highscores
+        // highlight highscores
         hilightTime += globalTicksSinceLastDraw;
         if (hilightTime > 50) {
             if (hilightDir) {
@@ -246,10 +243,10 @@ void TitleScreen::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
 
         for (i = 0; i < numHighScores; i++) {
             if ((hilightDir && i < hilight + 1) || (!hilightDir && i > hilight - 1)) {
-                const float a = 1.0 - 1.0 / static_cast<float>(numHighScores * 2) * std::abs(hilight - i);
+                const float a = 1.0f - 1.0f / static_cast<float>(numHighScores * 2) * std::abs(hilight - i);
                 glColor4f(0.9f, 0.9f, 0.9f, a);
                 // SDL_Log("alpha: %f", a);
-                text.write(menu->highScores[i], FONT_INTROHIGHSCORE, true, 0.5, 0.0, 0.063 * i);
+                text.write(menu->highScores[i], FONT_INTROHIGHSCORE, true, 0.5f, 0.0f, 0.063f * i);
             }
         }
 
