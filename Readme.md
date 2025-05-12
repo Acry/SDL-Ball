@@ -13,6 +13,10 @@ Check out the following commit for the fixed code, while the rest stays the same
 ## Work in Progress
 
 I am currently working on a refactoring of the code to make it more modern and maintainable.
+Current Target is OpenGL 4.6 and SDL3.
+
+See: [get started](docs/get_started.md)
+or
 See: [Todo](docs/Todo.md)
 
 ## Significant changes

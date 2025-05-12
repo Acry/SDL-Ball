@@ -5,7 +5,7 @@
 - current - und die runtime settings
 
 ```text
-MainGame
+Game
 ├── Init
 │   ├── ConfigFileManager - LoadConfig
 │   ├── SDL_Init - Displaymanager, CreateWindow, Create GL Context and State, resize
@@ -14,14 +14,13 @@ MainGame
 │   └── IMG_Init - TextureManager - LoadTextures
 │
 ├── Init GameManager
-│   │   └── Settingsmanager
+│   │   └── Settingsmanager -> Talks to ConfigFileManager, 
 │   └── Init GameObjects
 │       ├── LevelManager
 │       ├── init Player
 │       └── BallManager
-
 │       ThemeManager
-
+│
 ├── GameLoop / GameState
 │   ├── ProcessInput()
 │   │   └── HandleEvents (SDL_Events)

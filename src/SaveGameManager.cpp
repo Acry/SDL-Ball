@@ -1,4 +1,3 @@
-// SaveFileManager.cpp
 #include "SaveGameManager.h"
 #include <fstream>
 #include <cstring>
