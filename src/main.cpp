@@ -14,14 +14,14 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "BackgroundManager.h"
 #include "Ball.h"
-#include "Background.h"
 #include "ConfigFileManager.h"
 #include "Display.hpp"
 #include "GameObject.h"
 #include "MovingObject.h"
 #include "Paddle.h"
-#include "SaveFileManager.h"
+#include "SaveGameManager.h"
 #include "Score.h"
 #include "SettingsManager.h"
 #include "SoundManager.h"
@@ -33,7 +33,6 @@
 #include "colors.h"
 #include "config.h"
 #include "texture_properties.h"
-#include "Tracer.h"
 #define DEBUG_DRAW_BALL_QUAD 0
 #define DEBUG_SHOW_MOUSE_COORDINATES 0
 class brick;
@@ -41,7 +40,7 @@ using namespace std;
 
 ConfigFileManager configFileManager;
 SettingsManager settingsManager(configFileManager);
-SaveFileManager saveManager(configFileManager);
+SaveGameManager saveGameManager(configFileManager);
 ThemeManager themeManager(configFileManager);
 Display display;
 SoundManager soundManager;
@@ -296,9 +295,9 @@ public:
 
 void collision_ball_brick(brick &br, Ball &ba, position &p, EffectManager &fxMan);
 
-// Menu.h wip
+// TODO: Menu.h
 #include "Menu.cpp"
-// todo #include "loadlevel_new.cpp" -> levelManager
+// TODO: #include "loadlevel_new.cpp" -> levelManager
 #include "loadlevel.cpp"
 #include "EffectManager.cpp"
 EffectManager effectMananger;
@@ -1490,7 +1489,7 @@ int main(int argc, char *argv[]) {
 
     TitleScreen titleScreen(&effectMananger, texPowerup, &menu);
     BallManager ballManager(texBall);
-    Background background;
+    BackgroundManager background;
     Bullet bullet(texBullet);
 
     // "hud" (score, borders, lives left, level, speedometer)

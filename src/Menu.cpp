@@ -4,9 +4,10 @@
 // #include "Menu.h" todo
 
 extern SettingsManager settingsManager;
-extern SaveFileManager saveManager;
+extern SaveGameManager saveGameManager;
 extern player_struct SOLPlayer;
 
+// TODO: HighscoreManager
 vector<score> sortScores() {
     vector<score> scores;
     ifstream hsList(configFileManager.getHighScoreFile());
@@ -61,7 +62,7 @@ public:
 
     Menu() : text(TtfLegacyGl::getInstance()) {
         refreshHighScoreList(); //load the highscore file (if exists)
-        TextureManager texMgr;
+        const TextureManager texMgr;
 
         dl = glGenLists(4); //Generate displaylists (+0 = background, +1,2 = but
 
@@ -72,20 +73,16 @@ public:
         texMgr.load(themeManager.getThemeFilePath("gfx/menu/highscorebg.png", setting.gfxTheme), tex[4]);
 
         themeInf = themeManager.listThemes(); //Read themes and put them in the vector tI
-        saveManager.listSaveGames(saveGameName);
+        saveGameManager.listSaveGames(saveGameName);
 
-        // Menu-Hintergrund
+        // Hauptmenu-Rahmen
         glNewList(dl, GL_COMPILE);
         glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[0].textureProperties.texture);
         glColor4f(GL_WHITE);
         glBegin(GL_QUADS);
-
-        // top positive
-        // top left
         constexpr float half_width = 0.5f;
         constexpr float half_height = 0.775f;
-
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(-half_width, half_height, 0.0f);
         // top right
@@ -101,7 +98,7 @@ public:
         glDisable( GL_TEXTURE_2D );
         glEndList();
 
-        // bläulich
+        // Menupunkt - bläulich
         glNewList(dl + 1, GL_COMPILE);
         glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[1].textureProperties.texture);
@@ -118,7 +115,7 @@ public:
         glDisable( GL_TEXTURE_2D );
         glEndList();
 
-        // rötlich
+        // Menupunkt - rötlich
         glNewList(dl + 2, GL_COMPILE);
         glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[2].textureProperties.texture);
@@ -135,7 +132,7 @@ public:
         glDisable( GL_TEXTURE_2D );
         glEndList();
 
-        // grünlich
+        // Menupunkt - grünlich
         glNewList(dl + 3, GL_COMPILE);
         glEnable( GL_TEXTURE_2D );
         glBindTexture(GL_TEXTURE_2D, tex[3].textureProperties.texture);
@@ -153,6 +150,7 @@ public:
         glEndList();
     }
 
+    // TODO: HighscoreManager
     void refreshHighScoreList() {
         constexpr int lines = 0;
         const vector<score> scores = sortScores();
@@ -196,8 +194,8 @@ public:
             t++;
         }
     }
-    // GRRRRRRRR
-    void enterSaveGameName(SDL_Event e) {
+
+    void enterSaveGameName(const SDL_Event &e) {
         if (e.key.keysym.sym != SDLK_RETURN && e.key.keysym.sym != SDLK_ESCAPE) {
             if (e.key.keysym.sym == SDLK_BACKSPACE) {
                 if (!saveGameName[saveGameSlot].empty())
@@ -207,8 +205,7 @@ public:
             }
         } else {
             if (e.key.keysym.sym == SDLK_RETURN) {
-                //player saved
-                saveManager.saveGame(saveGameSlot, saveGameName[saveGameSlot], SOLPlayer);
+                saveGameManager.saveGame(saveGameSlot, saveGameName[saveGameSlot], SOLPlayer);
             }
             var.enterSaveGameName = false;
         }
@@ -851,16 +848,13 @@ public:
                 if (var.menuItemHovered == 7) {
                     var.menuShown = 1;
                 } else if (var.menuItemHovered != 0) {
-                    saveManager.loadGame(var.menuItemHovered * -1 + 6, SOLPlayer);
+                    saveGameManager.loadGame(var.menuItemHovered * -1 + 6, SOLPlayer);
                     var.menuShown = 0;
                     resumeGame();
                 }
-                var.menuPressed = 0;
+                var.menuPressed = false;
             }
         } else if (var.menuShown == 9) {
-            // Save game
-            // Back
-
             if (var.enterSaveGameName) {
                 glLoadIdentity();
                 glTranslatef(0.0, 0.54, 0.0f);
@@ -890,7 +884,6 @@ public:
                 text.write(saveGameName[i], FONT_MENU, true, 1.0, 0.0, -0.005);
                 glColor4f(GL_WHITE);
             }
-
             if (var.menuPressed) {
                 if (var.menuItemHovered == 7) {
                     var.menuShown = 1;
@@ -908,7 +901,6 @@ public:
             glColor4f(GL_WHITE);
             text.write("Calibrate Joystick", FONT_MENU, true, 1.0, 0.0, -0.005);
 
-
             glTranslatef(0.0, -0.22, 0.0f);
             if (var.menuItemHovered == 6)
                 glCallList(dl + 2);
@@ -923,8 +915,6 @@ public:
                 text.write("Analog Joystick", FONT_MENU, 1, 1.0, 0.0, -0.005);
             }
             glColor4f(GL_WHITE);
-
-
             glTranslatef(0.0, -0.22, 0.0f);
             if (!setting.joyIsDigital) {
                 if (var.menuItemHovered == 5)

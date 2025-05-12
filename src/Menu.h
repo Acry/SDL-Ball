@@ -18,6 +18,6 @@ class Menu {
 
     Menu();
     void refreshHighScoreList();
-    void enterSaveGameName(SDL_Event e);
+    void enterSaveGameName(const SDL_Event &e);
     void doMenu();
 };

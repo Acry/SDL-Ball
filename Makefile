@@ -20,13 +20,13 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     ConfigFileManager.cpp \
     SettingsManager.cpp \
     TtfLegacyGl.cpp \
-    SaveFileManager.cpp \
+    SaveGameManager.cpp \
     SoundManager.cpp \
     ThemeManager.cpp \
     Texture.cpp \
     game_state.cpp \
     Score.cpp \
-    Background.cpp \
+    BackgroundManager.cpp \
     TextureManager.cpp \
     Speedometer.cpp \
     Paddle.cpp \

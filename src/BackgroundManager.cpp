@@ -1,4 +1,4 @@
-#include "Background.h"
+#include "BackgroundManager.h"
 
 #include <SDL2/SDL.h>
 #include <string>
@@ -12,7 +12,7 @@
 extern ThemeManager themeManager;
 extern settings setting;
 
-Background::Background() : displayList(0), currentBgNumber(-1) {
+BackgroundManager::BackgroundManager() : backgroundDisplayList(0), currentBgNumber(-1) {
     for (int i = 0; i < 4; i++) {
         r[i] = 0.9f;
         g[i] = 0.9f;
@@ -21,13 +21,13 @@ Background::Background() : displayList(0), currentBgNumber(-1) {
     a = 0.95f;
 }
 
-Background::~Background() {
-    if (displayList != 0) {
-        glDeleteLists(displayList, 1);
+BackgroundManager::~BackgroundManager() {
+    if (backgroundDisplayList != 0) {
+        glDeleteLists(backgroundDisplayList, 1);
     }
 }
 
-bool Background::updateBgIfNeeded(TextureManager &texMgr) {
+bool BackgroundManager::updateBgIfNeeded(const TextureManager &texMgr) {
     const int bgNumber = static_cast<int>(player.level * 25.0f / 50.0f) + 1;
     bool result;
 
@@ -39,29 +39,29 @@ bool Background::updateBgIfNeeded(TextureManager &texMgr) {
     }
 
     if (result) {
-        if (displayList != 0) glDeleteLists(displayList, 1);
-        displayList = glGenLists(1);
-        glNewList(displayList, GL_COMPILE);
+        if (backgroundDisplayList != 0) glDeleteLists(backgroundDisplayList, 1);
+        backgroundDisplayList = glGenLists(1);
+        glNewList(backgroundDisplayList, GL_COMPILE);
         drawQuad();
         glEndList();
     }
     return result;
 }
 
-void Background::init(TextureManager &texMgr) {
+void BackgroundManager::init(const TextureManager &texMgr) {
     if (!updateBgIfNeeded(texMgr)) {
         setting.showBg = false;
         SDL_Log("Background loading failed.");
     }
 }
 
-void Background::draw() const {
-    if (displayList != 0) {
-        glCallList(displayList);
+void BackgroundManager::draw() const {
+    if (backgroundDisplayList != 0) {
+        glCallList(backgroundDisplayList);
     }
 }
 
-void Background::drawQuad() const {
+void BackgroundManager::drawQuad() const {
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);

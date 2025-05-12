@@ -1,14 +1,14 @@
 // SaveFileManager.cpp
-#include "SaveFileManager.h"
+#include "SaveGameManager.h"
 #include <fstream>
 #include <cstring>
 #include <SDL2/SDL_log.h>
 
 #include "config.h"
 
-SaveFileManager::SaveFileManager(ConfigFileManager &cfg) : configFileManager(cfg) {}
+SaveGameManager::SaveGameManager(ConfigFileManager &cfg) : configFileManager(cfg) {}
 
-void SaveFileManager::saveGame(const int slot, const std::string &name, const player_struct &player) const {
+void SaveGameManager::saveGame(const int slot, const std::string &name, const player_struct &player) const {
     std::fstream file;
     savedGame game;
     std::strncpy(game.name, name.c_str(), sizeof(game.name));
@@ -21,7 +21,7 @@ void SaveFileManager::saveGame(const int slot, const std::string &name, const pl
     file.close();
 }
 
-bool SaveFileManager::loadGame(const int slot, player_struct &player) const {
+bool SaveGameManager::loadGame(const int slot, player_struct &player) const {
     std::fstream file;
     savedGame game;
     file.open(configFileManager.getSaveGameFile().c_str(), std::ios::in | std::ios::binary);
@@ -39,7 +39,7 @@ bool SaveFileManager::loadGame(const int slot, player_struct &player) const {
     return false;
 }
 
-void SaveFileManager::clearSaveGames() const {
+void SaveGameManager::clearSaveGames() const {
     std::fstream file;
     file.open(configFileManager.getSaveGameFile().c_str(), std::ios::out | std::ios::in | std::ios::binary);
     if (!file.is_open()) {
@@ -54,7 +54,7 @@ void SaveFileManager::clearSaveGames() const {
         saveGame(i, "Empty Slot", player_struct{});
 }
 
-int SaveFileManager::listSaveGames(std::string slotNames[6]) const {
+int SaveGameManager::listSaveGames(std::string slotNames[6]) const {
     std::fstream file;
     savedGame slot[6];
     int i = 0;

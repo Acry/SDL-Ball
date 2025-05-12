@@ -9,10 +9,9 @@ struct savedGame {
     player_struct player;
 };
 
-class SaveFileManager {
+class SaveGameManager {
 public:
-    explicit SaveFileManager(ConfigFileManager &cfg);
-
+    explicit SaveGameManager(ConfigFileManager &cfg);
     void saveGame(int slot, const std::string &name, const player_struct &player) const;
     bool loadGame(int slot, player_struct &player) const;
     void clearSaveGames() const;
