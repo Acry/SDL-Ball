@@ -18,8 +18,6 @@
 #define NORMAL 1
 #define HARD   2
 
-#define DEFAULT_DIFFICULTY    EASY
-
 // Dateipfade und Verzeichnisse
 #define CONFIG_FILE        "settings.cfg"
 #define SAVEGAME_FILE      "savegame.sav"
@@ -69,9 +67,9 @@
 #define SND_NORM_BRICK_BREAKE 24
 
 // Default Control Settings
-#define DEFAULT_KEY_LEFT       276
-#define DEFAULT_KEY_RIGHT      275
-#define DEFAULT_KEY_SHOOT      273
+#define DEFAULT_KEY_LEFT       SDLK_LEFT
+#define DEFAULT_KEY_RIGHT      SDLK_RIGHT
+#define DEFAULT_KEY_SHOOT      SDLK_UP
 #define DEFAULT_KEY_NEXT_PO    SDLK_v
 #define DEFAULT_KEY_BUY_PO     SDLK_b
 #define DEFAULT_KEY_PREV_PO    SDLK_n
@@ -105,7 +103,6 @@
 #define FX_PARTICLEFIELD 3
 
 #define FX_VAR_TYPE 1
-
 #define FX_VAR_NUM 0
 #define FX_VAR_SPEED 2
 #define FX_VAR_SPREAD 3
