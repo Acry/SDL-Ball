@@ -11,7 +11,6 @@ class TextureManager {
     int maxTexSize;
 public:
     TextureManager() {
-        // Max Texture Size vom OpenGL System abfragen
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
     }
 
@@ -22,7 +21,6 @@ public:
             delete tex;
         }
     }
-    bool load(const std::string& file, Texture& tex);
-    void readTexProps(std::string fileName, Texture& tex);
+    bool load(const std::string& file, Texture& tex) const;
+    void readTexProps(std::string fileName, Texture& tex) const;
 };
-

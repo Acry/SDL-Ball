@@ -25,20 +25,20 @@ GLuint getGLFormat(const SDL_Surface* surface) {
     }
 }
 
-bool TextureManager::load(const std::string& filename, Texture& tex) {
+bool TextureManager::load(const std::string& file, Texture& tex) const {
     // Texture laden und OpenGL Texture generieren
-    SDL_Surface* tempSurface = IMG_Load(filename.c_str());
+    SDL_Surface* tempSurface = IMG_Load(file.c_str());
     if(!tempSurface) {
-        SDL_Log("Konnte Textur nicht laden: %s", filename.c_str());
+        SDL_Log("Konnte Textur nicht laden: %s", file.c_str());
         return false;
     }
     // Prüfen ob Texture zu groß ist
     if (tempSurface->w > maxTexSize || tempSurface->h > maxTexSize) {
-        SDL_Log("Textur zu groß: %s (%dx%d)", filename.c_str(), tempSurface->w, tempSurface->h);
+        SDL_Log("Textur zu groß: %s (%dx%d)", file.c_str(), tempSurface->w, tempSurface->h);
         SDL_FreeSurface(tempSurface);
         return false;
     }
-    GLuint glFormat = getGLFormat(tempSurface);
+    const GLuint glFormat = getGLFormat(tempSurface);
 
     glGenTextures(1, &tex.textureProperties.texture);
     glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
@@ -68,7 +68,7 @@ loadedTextures.push_back(&tex);
 return true;
 }
 */
-void TextureManager::readTexProps(std::string fileName, Texture& tex) {
+void TextureManager::readTexProps(std::string fileName, Texture& tex) const {
     char rgba[4][5];
     std::ifstream f;
     std::string set, val;
