@@ -1,5 +1,7 @@
 # todo
 
+## Keyboard control
+
 ## Settings
 
 - titleScreenShow
@@ -7,12 +9,11 @@
 ## classes
 
 - ScreenshotManager
-- SaveGameManager
 
 ## update
 
 - use sdl2 highperformance timer
-
+see: [Timing](Timing.md)
 ## menu
 
  change difficulty
@@ -25,12 +26,7 @@
 
 - show keys and powerups interchanged
 
-
-## Theme-Manager
-
-## Save-Game-Manager
-
-## ball
+## ball-rendering
 
 tracer show red collor and shows up when glued to the paddle
 is tracer speed dependent on the speed of the ball?

@@ -1,6 +1,49 @@
 # New structure
 
+- default aus config.h - compileTime settings
+- loaded - gespeicherte Settings des Spielers
+- current - und die runtime settings
+
+```text
+MainGame
+├── Init
+│   ├── ConfigFileManager - LoadConfig
+│   ├── SDL_Init - Displaymanager, CreateWindow, Create GL Context and State, resize
+│   ├── TTF_Init - TtfLegacyGl
+│   ├── Mix_Init - SoundManager - LoadSounds
+│   └── IMG_Init - TextureManager - LoadTextures
+│
+├── Init GameManager
+│   │   └── Settingsmanager
+│   └── Init GameObjects
+│       ├── LevelManager
+│       ├── init Player
+│       └── BallManager
+
+│       ThemeManager
+
+├── GameLoop / GameState
+│   ├── ProcessInput()
+│   │   └── HandleEvents (SDL_Events)
+│   ├── Update()
+│   │   ├── m_player.Update()
+│   │   ├── m_ball.Update()
+│   │   │   ├── Collision Detection
+│   │   │   └── Position Update
+│   │   └── m_bonus.Update()
+│   └── Draw()
+│       ├── RenderLevel
+│       ├── RenderBricks
+│       ├── RenderPlayer
+│       └── RenderBall
+```
+
+[Managers](Managers.md)
+
+## old
+
 Texturen sind grundlegende Ressourcen des Rendering-Systems -> core
+
 ```text
 src/
 ├── core/                      # Kern-Funktionalität

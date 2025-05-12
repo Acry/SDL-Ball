@@ -1,3 +1,5 @@
+# Notes on OpenGL
+
 ## Display Lists again
 
 Understand the Role of Display Lists in Your Codebase
@@ -24,11 +26,14 @@ Dependencies on fixed-function pipeline features (e.g., glBegin, glLight).
 To avoid breaking the codebase, adopt an incremental refactoring strategy using the OpenGL compatibility profile (as you noted, supported in 3.1 compatibility). This allows legacy display lists to coexist with modern OpenGL code during the transition. Here’s a step-by-step plan:
 Step 1: Set Up a Modern OpenGL Context
 Use Compatibility Profile Initially: Continue using a 3.1 (or higher) compatibility profile to ensure glNewList and other legacy functions work. For example, with SDL:
-c
-￼
+
+```c++
+
 SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+```
+
 Plan for Core Profile Later: Once display lists are fully replaced, you can switch to a core profile (e.g., 3.3 or 4.5) to remove legacy dependencies.
 
 Abstract Rendering Code
@@ -51,6 +56,7 @@ public:
 ```
 
 Gradually Add Modern Implementations: Extend the abstraction to support modern OpenGL:
+
 ```c++
 class VBOObject : public RenderObject {
     GLuint vao, vbo;
@@ -85,6 +91,7 @@ Introduce Shaders for Fixed-Function Replacement
 Display lists often include fixed-function state (e.g., glMaterial, glLight). Replace these with shaders.
 
 Minimal Shader Example (for vertex positions and basic color)
+
 ```glsl
 // Vertex Shader
 #version 330 core

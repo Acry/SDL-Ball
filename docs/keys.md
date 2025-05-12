@@ -1,4 +1,4 @@
-
+# Keys
 
 Pause
 SDLK_p
@@ -11,7 +11,7 @@ Screenshot
 SDLK_s
 
 Clearscreen
-SDLK_u
+SDLK_u ?
 
 Clock
 SDLK_c

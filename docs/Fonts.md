@@ -27,5 +27,4 @@ introhighscoresize=40
 introdescriptionfile=font/subgamefont.ttf
 introdescriptionsize=20
 
-
 glText = new glTextClass; // instantiate the class now that settings have been read.

@@ -1,18 +1,18 @@
 # Timing
 
-frameAge:
+`frameAge`:
 Misst wie "alt" der aktuelle Frame ist in Millisekunden
 Wird nach jedem Draw auf 0 zurückgesetzt
-Wird verwendet um die FPS-Begrenzung zu steuern (maxFrameAge)
+Wird verwendet um die FPS-Begrenzung zu steuern (`maxFrameAge`)
 
 Globale Timer:
-globalTicks = SDL_GetTicks() - lastTick;        // Vergangene Zeit seit letztem Tick in ms
-globalMilliTicks = globalTicks / 1000.0;        // Vergangene Zeit in Sekunden
+`globalTicks` = SDL_GetTicks() - lastTick;        // Vergangene Zeit seit letztem Tick in ms
+`globalMilliTicks` = globalTicks / 1000.0;        // Vergangene Zeit in Sekunden
 
-globalTicksSinceLastDraw = 0;        // Zeit seit letztem Frame-Draw in ms 
-globalMilliTicksSinceLastDraw = 0;   // Zeit seit letztem Frame-Draw in Sekunden
+`globalTicksSinceLastDraw` = 0;        // Zeit seit letztem Frame-Draw in ms 
+`globalMilliTicksSinceLastDraw` = 0;   // Zeit seit letztem Frame-Draw in Sekunden
 
-maxFrameAge = (1000 / setting.fps);  // Maximale Frame-Zeit in ms
+`maxFrameAge` = (1000 / setting.fps);  // Maximale Frame-Zeit in ms
 // Beispiel: Bei 60 FPS = 1000/60 ≈ 16.67ms pro Frame
 
 Pause-Handling:
@@ -25,8 +25,9 @@ Bewegungsberechnung
 Animation-Timing
 Spielphysik
 
-
 ___
+
+```c++
         // timing
         nonpausingGlobalTicks = SDL_GetTicks() - nonpausingLastTick;
         frameAge += nonpausingGlobalTicks;
@@ -41,7 +42,9 @@ ___
             globalTicks = globalMilliTicks = 0;
         }
         lastTick = SDL_GetTicks();
-# IST
+```
+
+## IST
 in main wird
 ```c++
 
@@ -68,7 +71,7 @@ in main am Ende der Loop ein statisches usleep(1000);
 
 ___
 
-# Option 1 - Fixed Timestep
+## Option 1 - Fixed Timestep
 
 ```c++
 void gameLoop() {
@@ -94,4 +97,3 @@ void gameLoop() {
     }
 }
 ```
-

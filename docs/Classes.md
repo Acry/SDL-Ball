@@ -2,6 +2,9 @@
 
 Basierend auf dem Code in main.cpp gibt es 12 Klassen:
 
+![classes](class-diagram.png)
+
+```text
 ballManager
 
 powerupManager
