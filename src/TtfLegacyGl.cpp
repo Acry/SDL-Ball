@@ -11,9 +11,6 @@
 extern settings setting;
 extern ThemeManager themeManager;
 
-// Define static member
-// std::unique_ptr<TtfLegacyGl> TtfLegacyGl::instance = nullptr;
-
 TtfLegacyGl::TtfLegacyGl(): fontInfo{} {
     TTF_Init();
 
@@ -167,6 +164,7 @@ void TtfLegacyGl::write(const std::string &text, const int font, const bool cent
     GLfloat sX, posX = 0;
     // Disable depth test for UI elements if you want them always on top
     glDisable(GL_DEPTH_TEST);
+
     // find out half of the string width to center
     if (center) {
         for (unsigned int i = 0; i < text.length(); i++) {
@@ -177,7 +175,6 @@ void TtfLegacyGl::write(const std::string &text, const int font, const bool cent
         posX *= -1;
     }
     posX += x;
-
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -213,7 +210,6 @@ void TtfLegacyGl::write(const std::string &text, const int font, const bool cent
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 
-    // Re-enable depth testing if it was enabled before
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -222,5 +218,10 @@ GLfloat TtfLegacyGl::getHeight(const int font) const {
 }
 
 TtfLegacyGl::~TtfLegacyGl() {
+    for (int i = 0; i < FONT_NUM; i++) {
+        if (fontInfo[i].tex) {
+            glDeleteTextures(1, &fontInfo[i].tex);
+        }
+    }
     TTF_Quit();
 }
