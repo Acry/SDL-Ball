@@ -72,7 +72,7 @@ src/
 │   └── bullet_manager.hpp/.cpp
 │
 ├── ui/                       # Benutzeroberfläche
-│   ├── menu.hpp/.cpp         # Menü-System                     x
+│   ├── menu.hpp/.cpp         # Menü-System                     
 │   ├── hud.hpp/.cpp          # Head-up Display
 │   ├── title.hpp/.cpp        # Titelbildschirm                 x
 │   ├── text.hpp/.cpp         # Textausgabe                     x

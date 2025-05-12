@@ -12,8 +12,12 @@ Check out the following commit for the fixed code, while the rest stays the same
 
 ## Work in Progress
 
+Many comments are in german, that's a todo.
+I am going to modernize the code in my spare time for educational purposes.
+I spend a week on refactoring so far, and I am not done yet. Not every checkout builds.
 I am currently working on a refactoring of the code to make it more modern and maintainable.
 Current Target is OpenGL 4.6 and SDL3.
+Probably I have time on weekends to work on it. Feel free to commit pull requests.
 
 See: [get started](docs/get_started.md)
 or
@@ -21,10 +25,8 @@ See: [Todo](docs/Todo.md)
 
 ## Significant changes
 
-I am going to modernize the code in my spare time for educational purposes.
-
 - Projection change to 2D-Orthographic
-- OpenGL 3.1 compatibility profile
+- Using OpenGL 3.1 compatibility profile See: [Projection](docs/Refactoring/Projection.md)
 - no Windows support (macOS should be easy to add)
 - no WiiMote support
 - sound always enabled
