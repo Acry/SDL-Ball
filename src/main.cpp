@@ -301,10 +301,11 @@ void collision_ball_brick(brick &br, Ball &ba, position &p, EffectManager &fxMan
 // todo #include "loadlevel_new.cpp" -> levelManager
 #include "loadlevel.cpp"
 #include "EffectsTransist.cpp"
-EffectManager fxMan;
+EffectManager effectMananger;
 glAnnounceTextClass announce;
 
-#include "BallManager.cpp""
+#include "BallManager.cpp"
+
 // Powerups
 class PowerupClass : public MovingObject {
 public:
@@ -1105,7 +1106,7 @@ struct shopItemStruct {
     int type;
 };
 
-class hudClass {
+class Hud {
     Texture texBall;
     TtfLegacyGl &text; // Referenz auf das Singleton
     // For the hud text
@@ -1119,7 +1120,7 @@ class hudClass {
     bool shopItemBlocked[NUMITEMSFORSALE]; //One can only buy each powerup one time each life/level
 
 public:
-    hudClass(Texture texB, Texture texPo[]): texBall(texB),
+    Hud(Texture texB, Texture texPo[]): texBall(texB),
                                              text(TtfLegacyGl::getInstance()),
                                              ticksSinceLastClockCheck(1001),
                                              texPowerup(texPo),
@@ -1339,6 +1340,7 @@ void easyBrick(brick bricks[]) {
 #include "Controller.cpp"
 // braucht effectmanager
 #include "TitleScreen.cpp"
+
 #include "HighScore.cpp"
 
 int main(int argc, char *argv[]) {
@@ -1483,18 +1485,18 @@ int main(int argc, char *argv[]) {
     paddle.texture = texPaddleBase;
     paddle.layerTex = texPaddleLayers;
 
-    fxMan.set(FX_VAR_TEXTURE, texParticle);
-    fxMan.set(FX_VAR_GRAVITY, 0.6f);
+    effectMananger.set(FX_VAR_TEXTURE, texParticle);
+    effectMananger.set(FX_VAR_GRAVITY, 0.6f);
 
-    TitleScreen titleScreen(&fxMan, texPowerup, &menu);
+    TitleScreen titleScreen(&effectMananger, texPowerup, &menu);
     BallManager ballManager(texBall);
-
-    // This is GOING to be containing the "hud" (score, borders, lives left, level, speedometer)
-    HighScore hKeeper;
     Background background;
     Bullet bullet(texBullet);
+
+    // "hud" (score, borders, lives left, level, speedometer)
+    HighScore hKeeper;
     Speedometer speedo;
-    hudClass hud(texBall[0], texPowerup);
+    Hud hud(texBall[0], texPowerup);
 
     var.effectnum = -1;
     GLfloat normalizedMouseX, normalizedMouseY;
@@ -1513,7 +1515,7 @@ int main(int argc, char *argv[]) {
     SDL_Event event;
     initNewGame();
     while (!var.quit) {
-        // Events
+#pragma region events
         controller.get(); //Check for keypresses and joystick events
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -1636,6 +1638,7 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
+#pragma endregion events
 
 #pragma region timing
         // Timing
@@ -1678,7 +1681,7 @@ int main(int argc, char *argv[]) {
                     gVar.newLife = true;
                     if (!paddle.dead)
                         player.explodePaddle = true;
-                    powerupManager.die(fxMan);
+                    powerupManager.die(effectMananger);
                 } else if (!gVar.gameOver) {
                     gVar.gameOver = true;
                     pauseGame();
@@ -1691,20 +1694,20 @@ int main(int argc, char *argv[]) {
                 } else if (gVar.gameOver && !var.showHighScores) {
                     // Only ran if there is gameover and no highscore
                     if (var.effectnum == -1) {
-                        fxMan.set(FX_VAR_TYPE, FX_TRANSIT);
-                        fxMan.set(FX_VAR_LIFE, 3000);
-                        fxMan.set(FX_VAR_COLOR, 0.0, 0.0, 0.0);
+                        effectMananger.set(FX_VAR_TYPE, FX_TRANSIT);
+                        effectMananger.set(FX_VAR_LIFE, 3000);
+                        effectMananger.set(FX_VAR_COLOR, 0.0, 0.0, 0.0);
                         p.x = 0.0;
                         p.y = 0.0;
 
                         // Kør en transition effekt
-                        var.effectnum = fxMan.spawn(p);
+                        var.effectnum = effectMananger.spawn(p);
                         announce.write("GameOver!", 1500,FONT_ANNOUNCE_BAD);
                         soundManager.add(SND_GAMEOVER, 0);
                     } else {
                         if (var.transition_half_done) {
                             var.titleScreenShow = true;
-                            fxMan.kill(var.effectnum);
+                            effectMananger.kill(var.effectnum);
                             var.effectnum = -1;
                             initNewGame();
                             resumeGame();
@@ -1723,14 +1726,14 @@ int main(int argc, char *argv[]) {
                         announce.write(txt, 2000, FONT_ANNOUNCE_GOOD);
                     }
 
-                    fxMan.set(FX_VAR_TYPE, FX_TRANSIT);
-                    fxMan.set(FX_VAR_LIFE, 1600);
-                    fxMan.set(FX_VAR_COLOR, 0.0, 0.0, 0.0);
+                    effectMananger.set(FX_VAR_TYPE, FX_TRANSIT);
+                    effectMananger.set(FX_VAR_LIFE, 1600);
+                    effectMananger.set(FX_VAR_COLOR, 0.0, 0.0, 0.0);
                     p.x = 0.0;
                     p.y = 0.0;
 
                     // Kør en transition effekt
-                    var.effectnum = fxMan.spawn(p);
+                    var.effectnum = effectMananger.spawn(p);
                     var.idiotlock = false;
                 } else {
                     if (var.transition_half_done) {
@@ -1757,7 +1760,7 @@ int main(int argc, char *argv[]) {
                         }
                     }
 
-                    if (!fxMan.isActive(var.effectnum)) {
+                    if (!effectMananger.isActive(var.effectnum)) {
                         var.effectnum = -1; //nulstil så den er klar igen
                         gVar.nextlevel = false;
                         var.paused = false;
@@ -1830,23 +1833,23 @@ int main(int argc, char *argv[]) {
                     }
 
                     if (bricks[i].collide) {
-                        ballManager.checkBallCollision(bricks[i], fxMan);
+                        ballManager.checkBallCollision(bricks[i], effectMananger);
                         //bullets
                         if (player.powerup[PO_GUN]) {
-                            bullet.coldet(bricks[i], fxMan);
+                            bullet.coldet(bricks[i], effectMananger);
                         }
                         //check kollision på effekterne
                         if (setting.particleCollide && setting.eyeCandy && frameAge >= maxFrameAge)
-                            fxMan.coldet(bricks[i]);
+                            effectMananger.coldet(bricks[i]);
                     }
                     if (frameAge >= maxFrameAge) {
-                        bricks[i].draw(bricks, fxMan);
+                        bricks[i].draw(bricks, effectMananger);
                     }
                 } //aktiv brik
             } // for loop
 
             // Collision between paddle and balls
-            if (ballManager.checkPaddleCollision(paddle, fxMan)) {
+            if (ballManager.checkPaddleCollision(paddle, effectMananger)) {
                 if (player.powerup[PO_DROP]) {
                     updateBrickPositions(bricks);
                 }
@@ -1854,13 +1857,13 @@ int main(int argc, char *argv[]) {
             ballManager.move();
 
             if (setting.particleCollide && setting.eyeCandy && frameAge >= maxFrameAge)
-                fxMan.pcoldet(paddle);
+                effectMananger.pcoldet(paddle);
 
             powerupManager.move();
-            if (powerupManager.coldet(paddle, fxMan, ballManager)) {
+            if (powerupManager.coldet(paddle, effectMananger, ballManager)) {
                 if (player.powerup[PO_DETONATE]) {
                     player.powerup[PO_DETONATE] = false;
-                    detonateExplosives(bricks, fxMan);
+                    detonateExplosives(bricks, effectMananger);
                 }
 
                 if (player.powerup[PO_EASYBRICK]) {
@@ -1887,39 +1890,39 @@ int main(int argc, char *argv[]) {
                     player.explodePaddle = false;
                     soundManager.add(SND_DIE, 0);
                     if (setting.eyeCandy) {
-                        fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
+                        effectMananger.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
 
                         p.x = paddle.width * 2;
                         p.y = paddle.height * 2;
-                        fxMan.set(FX_VAR_RECTANGLE, p);
+                        effectMananger.set(FX_VAR_RECTANGLE, p);
 
                         p.x = paddle.pos_x;
                         p.y = paddle.pos_y;
 
-                        fxMan.set(FX_VAR_LIFE, 2000);
-                        fxMan.set(FX_VAR_NUM, 20);
-                        fxMan.set(FX_VAR_SIZE, 0.025f);
-                        fxMan.set(FX_VAR_SPEED, 0.35f);
-                        fxMan.set(FX_VAR_GRAVITY, -0.7f);
-                        fxMan.set(FX_VAR_COLOR, 1.0f, 0.7f, 0.0f);
-                        fxMan.spawn(p);
-                        fxMan.set(FX_VAR_COLOR, 1.0f, 0.8f, 0.0f);
-                        fxMan.spawn(p);
-                        fxMan.set(FX_VAR_COLOR, 1.0f, 0.9f, 0.0f);
-                        fxMan.spawn(p);
-                        fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 0.0f);
-                        fxMan.spawn(p);
+                        effectMananger.set(FX_VAR_LIFE, 2000);
+                        effectMananger.set(FX_VAR_NUM, 20);
+                        effectMananger.set(FX_VAR_SIZE, 0.025f);
+                        effectMananger.set(FX_VAR_SPEED, 0.35f);
+                        effectMananger.set(FX_VAR_GRAVITY, -0.7f);
+                        effectMananger.set(FX_VAR_COLOR, 1.0f, 0.7f, 0.0f);
+                        effectMananger.spawn(p);
+                        effectMananger.set(FX_VAR_COLOR, 1.0f, 0.8f, 0.0f);
+                        effectMananger.spawn(p);
+                        effectMananger.set(FX_VAR_COLOR, 1.0f, 0.9f, 0.0f);
+                        effectMananger.spawn(p);
+                        effectMananger.set(FX_VAR_COLOR, 1.0f, 1.0f, 0.0f);
+                        effectMananger.spawn(p);
 
-                        fxMan.set(FX_VAR_NUM, 32);
-                        fxMan.set(FX_VAR_SIZE, 0.05f);
-                        fxMan.set(FX_VAR_LIFE, 1500);
-                        fxMan.set(FX_VAR_SPEED, 0.7f);
-                        fxMan.set(FX_VAR_GRAVITY, 0.0f);
+                        effectMananger.set(FX_VAR_NUM, 32);
+                        effectMananger.set(FX_VAR_SIZE, 0.05f);
+                        effectMananger.set(FX_VAR_LIFE, 1500);
+                        effectMananger.set(FX_VAR_SPEED, 0.7f);
+                        effectMananger.set(FX_VAR_GRAVITY, 0.0f);
 
-                        fxMan.set(FX_VAR_COLOR, 0.5f, 0.5f, 0.5f);
-                        fxMan.spawn(p);
-                        fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 1.0f);
-                        fxMan.spawn(p);
+                        effectMananger.set(FX_VAR_COLOR, 0.5f, 0.5f, 0.5f);
+                        effectMananger.spawn(p);
+                        effectMananger.set(FX_VAR_COLOR, 1.0f, 1.0f, 1.0f);
+                        effectMananger.spawn(p);
                     }
                 }
 
@@ -1932,7 +1935,7 @@ int main(int argc, char *argv[]) {
                 score.draw();
                 speedo.draw();
                 hud.draw();
-                fxMan.draw();
+                effectMananger.draw();
 
                 if (var.showHighScores)
                     hKeeper.draw();
