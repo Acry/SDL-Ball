@@ -300,7 +300,7 @@ void collision_ball_brick(brick &br, Ball &ba, position &p, EffectManager &fxMan
 #include "Menu.cpp"
 // todo #include "loadlevel_new.cpp" -> levelManager
 #include "loadlevel.cpp"
-#include "EffectsTransist.cpp"
+#include "EffectManager.cpp"
 EffectManager effectMananger;
 glAnnounceTextClass announce;
 
