@@ -1,10 +1,9 @@
 #include <epoxy/gl.h>
 #include <SDL2/SDL_ttf.h>
 #include <GL/glu.h>
-#include "TtfLegacyGl.h"
-
 #include <fstream>
 
+#include "TtfLegacyGl.h"
 #include "SettingsManager.h"
 #include "ThemeManager.h"
 
