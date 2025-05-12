@@ -4,6 +4,8 @@
 #include <string>
 #include <epoxy/gl.h>
 
+#define DEFAULT_DIFFICULTY    EASY
+
 #define PI 3.14159265
 #define RAD 6.28318531
 
@@ -78,17 +80,6 @@ struct gameVars {
     int bricksleft; // hvor mange brikker er der tilbage
 };
 
-struct player_struct {
-    int coins;
-    int multiply;
-    bool powerup[MAXPOTEXTURES];
-    bool explodePaddle; //This lock makes the paddle explode, and it won't come back until new life.
-    int level;
-    int lives;
-    int difficulty;
-    int score;
-};
-
 struct scrollInfoScruct {
     bool drop; // 0 right, 1 left, 2 up, 3 down
     unsigned int dropspeed;
@@ -128,27 +119,25 @@ struct position {
     GLfloat y;
 };
 
-struct difficultyStruct {
+struct difficulty {
     GLfloat ballspeed[3];
     GLfloat maxballspeed[3];
     GLfloat hitbrickinc[3];
     GLfloat hitpaddleinc[3];
     GLfloat slowdown[3];
     GLfloat speedup[3];
-};
+    Uint32 coins[3];
+    Uint32 life[3];
+    };
 
-struct score {
+struct highscoreData {
     int points;
     std::string level;
     std::string name;
 };
 
-extern difficultyStruct fixed_difficulty;
-extern difficultyStruct runtime_difficulty;
-extern player_struct SOLPlayer;
 extern vars var;
 extern gameVars gVar;
-extern player_struct player;
 
 void initNewGame();
 

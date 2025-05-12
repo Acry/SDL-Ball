@@ -1353,11 +1353,9 @@ int main(int argc, char *argv[]) {
     if (!settingsManager.init()) {
         SDL_Log("Fehler beim Laden der Einstellungen - verwende Standardwerte");
     }
-
+    Player player(configFileManager);
     setting = settingsManager.getSettings();
-    player.difficulty = setting.startingDifficulty;
-    set_fixed_difficulty();
-    runtime_difficulty = fixed_difficulty;
+
     var.quit = false;
     var.clearScreen = true;
     var.titleScreenShow = true;
@@ -1555,9 +1553,6 @@ int main(int argc, char *argv[]) {
                         var.clearScreen ? var.clearScreen = false : var.clearScreen = true;
                     } else if (event.key.keysym.sym == SDLK_c) {
                         setting.showClock ? setting.showClock = false : setting.showClock = true;
-                        if (!settingsManager.save()) {
-                            SDL_Log("Error saving settings");
-                        }
                     }
                 }
                 //Toggle menu
@@ -1789,7 +1784,6 @@ int main(int argc, char *argv[]) {
                 gVar.newLife = false;
                 paddle.init();
                 p.x = paddle.pos_x;
-
                 p.y = paddle.pos_y + paddle.height + 0.025f;
 
                 ballManager.clear();
@@ -1966,13 +1960,6 @@ int main(int argc, char *argv[]) {
         }
 #pragma endregion update & rendering
         usleep(1000);
-    }
-
-    // todo GUI ask, instead of want to quit, if changes
-    if (settingsManager.hasChanged()) {
-        if (!settingsManager.save()) {
-            SDL_Log("Fehler beim Speichern der Einstellungen");
-        }
     }
     return EXIT_SUCCESS;
 }
