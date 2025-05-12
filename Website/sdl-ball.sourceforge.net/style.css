@@ -1,0 +1,151 @@
+body
+{
+	margin: 0;
+	padding: 0;
+	background: #595977;
+}
+
+.panda
+{
+	width: 800px;
+	text-align: left;
+	position: absolute;
+	top: 0px;
+	left: 11%;
+	margin-left: -70px;
+
+}
+
+.logo
+{
+	background-image: url(img/logo.png);
+	background-repeat: no-repeat;
+
+	position:absolute;
+	top:10;
+	left:5;
+	width: 130px;
+	height:	110px;
+}
+
+.topdiv
+{
+	background-image: url(img/sdl-ball.png);
+	background-repeat: no-repeat;
+
+	position:absolute;
+	top:5;
+	left:118;
+	width: 480px;
+	height:	110px;
+}
+
+.menudiv
+{
+	position:absolute;
+	top:90;
+	left:0;
+	width:200px;
+	height:500px;
+}
+
+.inmenudiv
+{
+	position:absolute;
+	bottom:-66;
+	left:0;
+	padding: 10px;
+	margin: 0px;
+	border-width: 0px;
+	height:36px;
+	width:642px;
+	background: url(img/microsdlball.png) 0 0 no-repeat;
+	background: #FFFFFF;
+}
+
+.maindiv
+{
+	/*height:980px;*/
+	width:651px;
+	background: #FFFFFF;
+	position:absolute;
+	top:100;
+	left:180;
+	padding: 5px;
+	margin: 0pdownloadcell0x;
+	border-width: 0px;
+}
+
+.tr
+{
+	background: url(img/tr.gif) 0 0 no-repeat;
+	position:absolute;
+	top:0;
+	right:0;
+	width:10px;
+	height:10px;
+	padding: 0px;
+	margin: 0px;
+	border-width: 0px;
+}
+
+.tl
+{
+	background: url(img/tl.gif) 0 0 no-repeat;
+	position:absolute;
+	top:0;
+	left:0;
+	width:10px;
+	height:10px;
+	padding: 0px;
+	margin: 0px;
+	border-width: 0px;
+}
+
+.br
+{
+	background: url(img/br.gif) 0 0 no-repeat;
+	position:absolute;
+	bottom:0;
+	right:0;
+	width:10px;
+	height:10px;
+	padding: 0px;
+	margin: 0px;
+	border-width: 0px;
+}
+
+.bl
+{
+	background: url(img/bl.gif) 0 0 no-repeat;
+	position:absolute;
+	bottom:0;
+	left:0;
+	width:10px;
+	height:10px;
+	padding: 0px;
+	margin: 0px;
+	border-width: 0px;
+}
+
+.giveme0
+{
+	width:100%;
+}
+
+.giveme5
+{
+	height:480px;
+	width:50%;
+}
+
+.givemelessthan5
+{
+	width:50%;
+}
+
+.downloadcell0
+{
+	text-align:center;
+	width:70px;
+}

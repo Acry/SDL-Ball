@@ -1,0 +1,188 @@
+<link rel="stylesheet" type="text/css" href="style.css" />
+<div class="panda">
+	<a href="index.html%3Fpage=intro.html">
+		<div class="logo">
+		</div>
+		<div class="topdiv">
+		</div>
+	</a>
+	<div class="menudiv">
+		<table>
+			<tr>
+				<td>
+					<a href="index.html%3Fpage=download.html"><img border="0" src="img/download.png"/></a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<a href="index.html%3Fpage=screenshots.html"><img border="0" src="img/screenshots.png"/></a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<a href="index.html%3Fpage=about.html"><img border="0" src="img/about.png"/></a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				        <a href="index.html%3Fpage=leveleditor.html"><img border="0" src="img/leveleditor.png"></a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				        <a href="index.html%3Fpage=themes.html"><img border="0" src="img/themes.png"></a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				        <a href="index.html%3Fpage=manual.html"><img border="0" src="img/manual.png"></a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				        <a href="index.html%3Fpage=changelog.html"><img border="0" src="img/changelog.png"></a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="maindiv">
+		<div class="bl">
+		</div>
+		<div class="br">
+		</div>
+		<div class="tl">
+		</div>
+		<div class="tr">
+		</div>
+		<table>
+		<tr><td>
+		<p><b>What you can find here</b><br>
+  <ul>
+    <li>What is a theme?</li>
+    <li>How to use a theme</li>
+    <li>How to make a theme</li>
+  </ul>
+</p>
+<p>
+<hr>
+  <b>What is a theme?</b><br>
+  In short, a theme is the visible part of the game.<br>
+  A bit longer: A theme is a set of files that make up the game<br>
+  In SDL-Ball a theme can consist of:
+  <ul>
+    <li>Graphics Files</li>
+    <li>Levels</li>
+    <li>Sounds</li>
+  </ul>
+  A theme do not have to contain a full set of datafiles,<br>
+  for example: If the author do not want to change the sounds,<br>
+  or only a few sounds, then he only needs to include the files<br>
+  that he want to change, the game will use it's own default<br>
+  files for those that are not present in his theme.
+</p>
+<p>
+<hr>
+  <b>How to use a theme</b><br>
+  <ul>
+  <li>Download theme. (<a href="https://sourceforge.net/project/showfiles.php?group_id=225210&package_id=295713&release_id=634221">See download page</a>)</li>
+  <li>Extract to ~/.config/sdl-ball/themes/</li>
+  <li><b>or extract to sdl-ball/themes/</b></li>
+  <li>Start game</li>
+    <ul>
+    <li>Press esc to open menu</li>
+    <li>Click options</li>
+    <li>Click themes</li>
+    <li>Click on the theme you wish to use</li>
+    <li>Now exit the game, and start it again.</li>
+    </ul>
+  <li>???</li>
+  <li>PROFIT</li>
+  </ul>
+  SDL-Ball can mix themes aswell, that means you can use the sound<br>
+  from one theme, the graphics from another, and even the levels<br>
+  from a third!<br>
+  To do this, you must edit the settings.cfg file located in<br>
+  ~/.config/sdl-ball/settings.cfg<br>
+  Here is an example of a valid path to a theme called retro<br>
+  <u>/home/dusted/.config/sdl-ball/themes/retro</u><br>
+  And here is another example of a valid path to a theme called Foo<br>
+  <u>/home/dusted/stuff/games/sdl-ball/themes/retro</u><br>
+</p>
+<p>
+<hr>
+  <b>How to make a theme</b><br>
+  The easiest way to make a theme is to copy "default" in the<br>
+  themes directoey, and rename it to the name of your theme.<br>
+  After doing that, edit the files that you want to change,<br>
+  and delete the ones that you don't want to change.<br>
+  A theme can contain diffrent things:
+  <ul>
+    <li>Graphics</li>
+    <li>Sounds</li>
+    <li>Levels</li>
+    <li>Misc files...</li>
+  </ul>
+  Misc files are all loaded from the currently selected "Graphics" theme, they are<br>
+  <ul>
+    <li>Fonts</li>
+    <li>Powerup Descriptions</li>
+    <li>Powerup spawn-frequency</li>
+  </ul>
+  Please note that it is highly recommended to remove the files that do not need to be<br>
+  modified, in order to allow newer versions to update them.<br>
+  If you save your work in PNG format,<br>
+  you must use RGBA (transperant support)<br>
+  you can use .jpg images aswell.<br>
+  An image should always have a dimension that is a power of two<br>
+  like 16x16, 32x32,64x64,64x32 etc..<br>
+  <br>
+  Done...<br>
+  If you want your theme to appear on the official themes downloads page so other people can<br>
+  enjoy it too, send it to me, and I'll put it there :)<br>
+  <br>
+  Here follows a short explanation of the parameters that you can<br>
+  change in the .txt files that are used to load graphics.<br>
+  Don't worry about them, you don't need to change them to make<br>
+  a theme.<br>
+  But if you wish to make animated images or change a animated image<br>
+  to not being animated, use this.
+  <ul>
+    <li>file= Path to the imagefile, relative to yourTheme/gfx/</li>
+    <li>ticks= Time, in millisecond that each frame in the animation is shown</li>
+    <li>cols= columns of frames in the image (at least 1)</li>
+    <li>rows= rows of frames in the image (at least 1)</li>
+    <li>xoffset= This is 1/cols</li>
+    <li>yoffset= This is 1/rows</li>
+    <li>frames= Number of frames in the image (at least 1)</li>
+    <li>playing= Wether the animation is playing. (if animated = 1 else 0)</li>
+    <li>padding= Wether you have a 1 px padding around the frames (you should)</li>
+    <li>texcolor= In hex, RGBA. FF0000FF is red opaque. Overlay color for texture, set to FFFFFFFF to use the colors from the imagefile</li>
+    <li>parcolor= In hex, RGB. FF00FF is purple. The color of the particles that might come out of this brick/powerup.</li>
+  </ul>
+</p>
+    
+  		</td></tr>
+		</table>
+		<div class="inmenudiv">
+			<a href="index.html%3Fpage=themes.html"><img src="img/microsdlball.png" width="125" height="37" border="0" alt="SDL-BALL powered by" /></a>
+			<a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=225210&amp;type=2" width="125" height="37" border="0" alt="SourceForge.net Logo" /></a>
+			&nbsp;&nbsp;&nbsp;<a href="http://sourceforge.net/donate/index.php?group_id=225210"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /></a>
+			&nbsp;&nbsp;&nbsp;
+			<a href="http://libregamewiki.org"><img src="http://libregamewiki.org/images/5/54/Lgw3.png" border="0" salt="Libregamewiki"/></a>
+			&nbsp;&nbsp;&nbsp;
+			<a href="http://happypenguin.org/show?sdl-ball"><img border="0" height="37" src="http://happypenguin.org/rateomatic?sdl-ball"></a>
+			<div class="bl">
+			</div>
+			<div class="br">
+			</div>
+			<div class="tl">
+			</div>
+			<div class="tr">
+			</div>
+		</div>
+	</div>
+</div>
