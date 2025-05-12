@@ -1,64 +1,62 @@
 // settings_manager.cpp
+
 #include "SettingsManager.h"
 #include <SDL2/SDL.h>
 #include "config.h"
-
-settings setting;
-
-SettingsManager::SettingsManager(ConfigFileManager &cf) : currentSettings(), configFileManager(cf) {
-    hasChanges = false;
-}
+#include "game_state.h"
 
 void SettingsManager::setDefaults() {
-    currentSettings.gfxTheme = DEFAULT_GFX_THEME;
-    currentSettings.sndTheme = DEFAULT_SND_THEME;
-    currentSettings.lvlTheme = DEFAULT_LVL_THEME;
-    currentSettings.eyeCandy = DEFAULT_EYE_CANDY;
-    currentSettings.showBg = DEFAULT_SHOW_BG;
-    currentSettings.particleCollide = DEFAULT_PARTICLE_COLLIDE;
+    defaultSettings.gfxTheme = DEFAULT_GFX_THEME;
+    defaultSettings.sndTheme = DEFAULT_SND_THEME;
+    defaultSettings.lvlTheme = DEFAULT_LVL_THEME;
+    defaultSettings.eyeCandy = DEFAULT_EYE_CANDY;
+    defaultSettings.showBg = DEFAULT_SHOW_BG;
+    defaultSettings.particleCollide = DEFAULT_PARTICLE_COLLIDE;
 
-    currentSettings.sound = DEFAULT_SOUND;
-    currentSettings.stereo = DEFAULT_STEREO;
+    defaultSettings.sound = DEFAULT_SOUND;
+    defaultSettings.stereo = DEFAULT_STEREO;
 
-    currentSettings.keyLeft = DEFAULT_KEY_LEFT;
-    currentSettings.keyRight = DEFAULT_KEY_RIGHT;
-    currentSettings.keyShoot = DEFAULT_KEY_SHOOT;
-    currentSettings.keyNextPo = static_cast<SDL_Keycode>(DEFAULT_KEY_NEXT_PO);
-    currentSettings.keyBuyPo = static_cast<SDL_Keycode>(DEFAULT_KEY_BUY_PO);
-    currentSettings.keyPrevPo = static_cast<SDL_Keycode>(DEFAULT_KEY_PREV_PO);
+    defaultSettings.keyLeft = DEFAULT_KEY_LEFT;
+    defaultSettings.keyRight = DEFAULT_KEY_RIGHT;
+    defaultSettings.keyShoot = DEFAULT_KEY_SHOOT;
+    defaultSettings.keyNextPo = static_cast<SDL_Keycode>(DEFAULT_KEY_NEXT_PO);
+    defaultSettings.keyBuyPo = static_cast<SDL_Keycode>(DEFAULT_KEY_BUY_PO);
+    defaultSettings.keyPrevPo = static_cast<SDL_Keycode>(DEFAULT_KEY_PREV_PO);
 
-    currentSettings.controlAccel = DEFAULT_CONTROL_ACCEL;
-    currentSettings.controlStartSpeed = DEFAULT_CONTROL_START_SPEED;
-    currentSettings.controlMaxSpeed = DEFAULT_CONTROL_MAX_SPEED;
+    defaultSettings.controlAccel = DEFAULT_CONTROL_ACCEL;
+    defaultSettings.controlStartSpeed = DEFAULT_CONTROL_START_SPEED;
+    defaultSettings.controlMaxSpeed = DEFAULT_CONTROL_MAX_SPEED;
 
-    currentSettings.joyEnabled = DEFAULT_JOY_ENABLED;
-    currentSettings.joyIsDigital = DEFAULT_JOY_IS_DIGITAL;
-    currentSettings.joyIsPaddle = DEFAULT_JOY_IS_PADDLE;
-    currentSettings.showClock = DEFAULT_SHOW_CLOCK;
+    defaultSettings.joyEnabled = DEFAULT_JOY_ENABLED;
+    defaultSettings.joyIsDigital = DEFAULT_JOY_IS_DIGITAL;
+    defaultSettings.joyIsPaddle = DEFAULT_JOY_IS_PADDLE;
+    defaultSettings.showClock = DEFAULT_SHOW_CLOCK;
 
-    currentSettings.JoyCalMin = DEFAULT_JOY_CAL_MIN;
-    currentSettings.JoyCalMax = DEFAULT_JOY_CAL_MAX;
-    currentSettings.JoyCalLowJitter = DEFAULT_JOY_CAL_LOW;
-    currentSettings.JoyCalHighJitter = DEFAULT_JOY_CAL_HIGH;
+    defaultSettings.JoyCalMin = DEFAULT_JOY_CAL_MIN;
+    defaultSettings.JoyCalMax = DEFAULT_JOY_CAL_MAX;
+    defaultSettings.JoyCalLowJitter = DEFAULT_JOY_CAL_LOW;
+    defaultSettings.JoyCalHighJitter = DEFAULT_JOY_CAL_HIGH;
 
-    currentSettings.fullscreen = DEFAULT_FULLSCREEN;
-    currentSettings.fps = DEFAULT_FPS;
-    currentSettings.res_x = DEFAULT_RES_X;
-    currentSettings.res_y = DEFAULT_RES_Y;
-    currentSettings.startingDifficulty = DEFAULT_DIFFICULTY;
+    defaultSettings.fullscreen = DEFAULT_FULLSCREEN;
+    defaultSettings.fps = DEFAULT_FPS;
+    defaultSettings.res_x = DEFAULT_RES_X;
+    defaultSettings.res_y = DEFAULT_RES_Y;
+    defaultSettings.startingDifficulty = DEFAULT_DIFFICULTY;
+
+    currentSettings = defaultSettings;
 }
 
 bool SettingsManager::init() {
-    setDefaults(); // Immer zuerst Defaults setzen
-    if (!readFromFile()) {
-        // Wenn Datei nicht existiert oder fehlerhaft,
-        // Default-Werte behalten und neu speichern
-        return writeToFile();
+    if (!loadSettings()) {
+        resetToDefaults();
+        return writeSettings();
     }
-    return validateSettings();
+    validateSettings();
+    resetToLoaded();
+    return true;
 }
 
-bool SettingsManager::readFromFile() {
+bool SettingsManager::loadSettings() {
     std::ifstream file(configFileManager.getSettingsFile());
     if (!file.is_open()) {
         return false;
@@ -73,24 +71,44 @@ bool SettingsManager::readFromFile() {
         value = line.substr(pos + 1);
 
         // Einstellungen einlesen
-        if (key == "gfxtheme") currentSettings.gfxTheme = value;
-        else if (key == "sndtheme") currentSettings.sndTheme = value;
-        else if (key == "lvltheme") currentSettings.lvlTheme = value;
-        else if (key == "eyecandy") currentSettings.eyeCandy = std::stoi(value);
-        else if (key == "display") currentSettings.displayToUse = std::stoi(value);
-        else if (key == "fps") currentSettings.fps = std::stoi(value);
-        else if (key == "res_x") currentSettings.res_x = std::stoi(value);
-        else if (key == "res_y") currentSettings.res_y = std::stoi(value);
-        else if (key == "showclock") currentSettings.showClock = std::stoi(value);
-        else if (key == "fullscreen") currentSettings.fullscreen = std::stoi(value);
-        else if (key == "showbg") currentSettings.showBg = std::stoi(value);
-        else if (key == "sound") currentSettings.sound = std::stoi(value);
-        else if (key == "stereo") currentSettings.stereo = std::stoi(value);
-        else if (key == "particlecollide") currentSettings.particleCollide = std::stoi(value);
-        else if (key == "startingdifficulty")
-            currentSettings.startingDifficulty = std::stoi(value);
-    }
+        if (key == "gfxtheme") loadedSettings.gfxTheme = value;
+        else if (key == "sndtheme") loadedSettings.sndTheme = value;
+        else if (key == "lvltheme") loadedSettings.lvlTheme = value;
+        else if (key == "eyecandy") loadedSettings.eyeCandy = std::stoi(value);
+        else if (key == "display") loadedSettings.displayToUse = std::stoi(value);
+        else if (key == "fps") loadedSettings.fps = std::stoi(value);
+        else if (key == "res_x") loadedSettings.res_x = std::stoi(value);
+        else if (key == "res_y") loadedSettings.res_y = std::stoi(value);
+        else if (key == "showclock") loadedSettings.showClock = std::stoi(value);
+        else if (key == "fullscreen") loadedSettings.fullscreen = std::stoi(value);
+        else if (key == "showbg") loadedSettings.showBg = std::stoi(value);
+        else if (key == "sound") loadedSettings.sound = std::stoi(value);
+        else if (key == "stereo") loadedSettings.stereo = std::stoi(value);
+        else if (key == "particlecollide") loadedSettings.particleCollide = std::stoi(value);
 
+        // Controls
+        else if (key == "keyleft") loadedSettings.keyLeft = static_cast<SDL_Keycode>(std::stoi(value));
+        else if (key == "keyright") loadedSettings.keyRight = static_cast<SDL_Keycode>(std::stoi(value));
+        else if (key == "keyshoot") loadedSettings.keyShoot = static_cast<SDL_Keycode>(std::stoi(value));
+        else if (key == "keynextpo") loadedSettings.keyNextPo = static_cast<SDL_Keycode>(std::stoi(value));
+        else if (key == "keyprevpo") loadedSettings.keyPrevPo = static_cast<SDL_Keycode>(std::stoi(value));
+        else if (key == "keybuypo") loadedSettings.keyBuyPo = static_cast<SDL_Keycode>(std::stoi(value));
+
+        // Control speeds
+        else if (key == "controlaccel") loadedSettings.controlAccel = std::stof(value);
+        else if (key == "controlstartspeed") loadedSettings.controlStartSpeed = std::stof(value);
+        else if (key == "controlmaxspeed") loadedSettings.controlMaxSpeed = std::stof(value);
+
+        // Joystick
+        else if (key == "joyenabled") loadedSettings.joyEnabled = std::stoi(value);
+        else if (key == "joyisdigital") loadedSettings.joyIsDigital = std::stoi(value);
+        else if (key == "joyispaddle") loadedSettings.joyIsPaddle = std::stoi(value);
+        else if (key == "joycalmin") loadedSettings.JoyCalMin = std::stoi(value);
+        else if (key == "joycalmax") loadedSettings.JoyCalMax = std::stoi(value);
+        else if (key == "joycallow") loadedSettings.JoyCalLowJitter = std::stoi(value);
+        else if (key == "joycalhigh") loadedSettings.JoyCalHighJitter = std::stoi(value);
+        else if (key == "startingdifficulty") loadedSettings.startingDifficulty = std::stoi(value);
+    }
     file.close();
     return true;
 }
@@ -98,42 +116,42 @@ bool SettingsManager::readFromFile() {
 bool SettingsManager::validateSettings() {
     // Auflösung validieren
     // Wenn keine Auflösung gesetzt ist, Vollbildmodus aktivieren
-    if (currentSettings.res_x == 0 || currentSettings.res_y == 0) {
-        currentSettings.fullscreen = true;
-        currentSettings.res_x = 0;
-        currentSettings.res_y = 0;
+    if (loadedSettings.res_x == 0 || loadedSettings.res_y == 0) {
+        loadedSettings.fullscreen = true;
+        loadedSettings.res_x = 0;
+        loadedSettings.res_y = 0;
     }
 
     // Auflösung validieren
-    if (currentSettings.fullscreen) {
+    if (loadedSettings.fullscreen) {
         // Im Vollbildmodus keine Auflösungsprüfung nötig,
         // da SDL die native Auflösung verwendet
-        currentSettings.res_x = 0;
-        currentSettings.res_y = 0;
+        loadedSettings.res_x = 0;
+        loadedSettings.res_y = 0;
     } else {
         // Im Fenstermodus muss die Auflösung in vernünftigen Grenzen liegen
-        if (currentSettings.res_x < 320 || currentSettings.res_x > 7680 ||
-            currentSettings.res_y < 240 || currentSettings.res_y > 4320) {
+        if (loadedSettings.res_x < 320 || loadedSettings.res_x > 7680 ||
+            loadedSettings.res_y < 240 || loadedSettings.res_y > 4320) {
             SDL_Log("Ungültige Auflösung: %dx%d",
-                    currentSettings.res_x, currentSettings.res_y);
+                    loadedSettings.res_x, loadedSettings.res_y);
             return false;
         }
     }
 
     // Schwierigkeitsgrad validieren
-    if (currentSettings.startingDifficulty < EASY ||
-        currentSettings.startingDifficulty > HARD) {
+    if (loadedSettings.startingDifficulty < EASY ||
+        loadedSettings.startingDifficulty > HARD) {
         SDL_Log("Ungültiger Schwierigkeitsgrad %d, setze auf %d",
-                currentSettings.startingDifficulty, DEFAULT_DIFFICULTY);
-        currentSettings.startingDifficulty = DEFAULT_DIFFICULTY;
+                loadedSettings.startingDifficulty, DEFAULT_DIFFICULTY);
+        loadedSettings.startingDifficulty = DEFAULT_DIFFICULTY;
     }
 
-    // ... weitere Validierungen
+    // oO ... weitere Validierungen
 
     return true;
 }
 
-bool SettingsManager::writeToFile() const {
+bool SettingsManager::writeSettings() const {
     std::ofstream file(configFileManager.getSettingsFile());
     if (!file.is_open()) {
         return false;
@@ -153,6 +171,7 @@ bool SettingsManager::writeToFile() const {
             << "sound=" << currentSettings.sound << "\n"
             << "stereo=" << currentSettings.stereo << "\n"
             << "particlecollide=" << currentSettings.particleCollide << "\n"
+
             // Controls
             << "keyleft=" << currentSettings.keyLeft << "\n"
             << "keyright=" << currentSettings.keyRight << "\n"
@@ -160,10 +179,12 @@ bool SettingsManager::writeToFile() const {
             << "keynextpo=" << currentSettings.keyNextPo << "\n"
             << "keyprevpo=" << currentSettings.keyPrevPo << "\n"
             << "keybuypo=" << currentSettings.keyBuyPo << "\n"
+
             // Control speeds
             << "controlaccel=" << currentSettings.controlAccel << "\n"
             << "controlstartspeed=" << currentSettings.controlStartSpeed << "\n"
             << "controlmaxspeed=" << currentSettings.controlMaxSpeed << "\n"
+
             // Joystick
             << "joyenabled=" << currentSettings.joyEnabled << "\n"
             << "joyisdigital=" << currentSettings.joyIsDigital << "\n"
@@ -173,24 +194,62 @@ bool SettingsManager::writeToFile() const {
             << "joycallow=" << currentSettings.JoyCalLowJitter << "\n"
             << "joycalhigh=" << currentSettings.JoyCalHighJitter << "\n"
             << "startingdifficulty=" << currentSettings.startingDifficulty << "\n";
-
     file.close();
     return true;
 }
 
-bool SettingsManager::save() {
-    if (!hasChanges) return true;
-    if (writeToFile()) {
-        hasChanges = false;
-        return true;
+void SettingsManager::setFullscreen(const bool value) {
+    if (value != currentSettings.fullscreen) {
+        currentSettings.fullscreen = value;
+        if (value) {
+            currentSettings.res_x = 0;
+            currentSettings.res_y = 0;
+        }
+        else { // TODO: try loaded settings
+            currentSettings.res_x = DEFAULT_RES_X;
+            currentSettings.res_y = DEFAULT_RES_Y;
+        }
     }
-    return false;
 }
 
-const settings &SettingsManager::getSettings() const {
-    return currentSettings;
+SettingsManager::~SettingsManager() {
+    if (hasChanged()) {
+        if (!writeSettings()) {;
+            SDL_Log("Failed to write settings to file");
+        }
+    }
 }
 
-settings &SettingsManager::getSettings() {
-    return currentSettings;
+bool SettingsManager::hasChanged() const {
+    return currentSettings.sndTheme != loadedSettings.sndTheme
+        || currentSettings.gfxTheme != loadedSettings.gfxTheme
+        || currentSettings.lvlTheme != loadedSettings.lvlTheme
+        || currentSettings.displayToUse != loadedSettings.displayToUse
+        || currentSettings.res_x != loadedSettings.res_x
+        || currentSettings.res_y != loadedSettings.res_y
+        || currentSettings.fps != loadedSettings.fps
+        || currentSettings.showClock != loadedSettings.showClock
+        || currentSettings.fullscreen != loadedSettings.fullscreen
+        || currentSettings.showBg != loadedSettings.showBg
+        || currentSettings.sound != loadedSettings.sound
+        || currentSettings.stereo != loadedSettings.stereo
+        || currentSettings.eyeCandy != loadedSettings.eyeCandy
+        || currentSettings.particleCollide != loadedSettings.particleCollide
+        || currentSettings.keyLeft != loadedSettings.keyLeft
+        || currentSettings.keyRight != loadedSettings.keyRight
+        || currentSettings.keyShoot != loadedSettings.keyShoot
+        || currentSettings.keyNextPo != loadedSettings.keyNextPo
+        || currentSettings.keyPrevPo != loadedSettings.keyPrevPo
+        || currentSettings.keyBuyPo != loadedSettings.keyBuyPo
+        || currentSettings.controlAccel != loadedSettings.controlAccel
+        || currentSettings.controlStartSpeed != loadedSettings.controlStartSpeed
+        || currentSettings.controlMaxSpeed != loadedSettings.controlMaxSpeed
+        || currentSettings.joyEnabled != loadedSettings.joyEnabled
+        || currentSettings.joyIsDigital != loadedSettings.joyIsDigital
+        || currentSettings.joyIsPaddle != loadedSettings.joyIsPaddle
+        || currentSettings.JoyCalMin != loadedSettings.JoyCalMin
+        || currentSettings.JoyCalMax != loadedSettings.JoyCalMax
+        || currentSettings.JoyCalHighJitter != loadedSettings.JoyCalHighJitter
+        || currentSettings.JoyCalLowJitter != loadedSettings.JoyCalLowJitter
+        || currentSettings.startingDifficulty != loadedSettings.startingDifficulty;
 }

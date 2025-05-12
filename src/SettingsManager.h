@@ -4,8 +4,13 @@
 #include "ConfigFileManager.h"
 #include <string>
 #include <fstream>
-#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL.h>
 
+// TODO: Die settings Struktur könnte in mehrere logische Gruppen aufgeteilt werden:
+// - Audio
+// - Video
+// - Steuerung
+// - Gameplay
 struct settings {
     std::string sndTheme, gfxTheme, lvlTheme;
     bool cfgRes[2];
@@ -29,34 +34,49 @@ struct settings {
     int startingDifficulty;
 };
 
-extern settings setting;
 class SettingsManager {
-    settings currentSettings;
+    // Private Konstruktor
+    explicit SettingsManager(ConfigFileManager& cf) : configFileManager(cf) {
+        setDefaults();
+        init();
+    }
+
+    settings defaultSettings{};    // Compile-time Defaults aus config.h
+    settings loadedSettings{};     // Aus Datei geladene Settings
+    settings currentSettings{};    // Aktuelle Runtime-Settings
     ConfigFileManager &configFileManager;
 
-    bool hasChanges;
-
     void setDefaults();
-
-    bool readFromFile();
-
-    bool writeToFile() const;
-
+    bool loadSettings();
     bool validateSettings();
+    [[nodiscard]] bool writeSettings() const;
+    [[nodiscard]] bool hasChanged() const;
 
 public:
-    explicit SettingsManager(ConfigFileManager &cf);
+    // Verhindere Kopieren
+    SettingsManager(const SettingsManager&) = delete;
+    SettingsManager& operator=(const SettingsManager&) = delete;
 
-    ~SettingsManager() = default;
+    // Singleton-Zugriff
+    static SettingsManager& getInstance(ConfigFileManager& cf) {
+        static SettingsManager instance(cf);
+        return instance;
+    }
 
     bool init();
+    void resetToDefaults() { currentSettings = defaultSettings; }
+    void resetToLoaded() { currentSettings = loadedSettings; }
 
-    bool save();
+    [[nodiscard]] int getDifficulty() const {
+        return currentSettings.startingDifficulty;
+    }
+    [[nodiscard]] const settings& getSettings() const {
+        return currentSettings;
+    }
+    [[nodiscard]] bool isFullscreen() const {
+        return currentSettings.fullscreen;
+    }
+    void setFullscreen(bool value);
 
-    bool hasChanged() const { return hasChanges; }
-    void settingsChanged() { hasChanges = true; }
-
-    const settings &getSettings() const;
-
-    settings &getSettings();
+    ~SettingsManager();
 };
