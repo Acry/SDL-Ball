@@ -1,5 +1,13 @@
 # todo
 
+solve brick fade issue
+check save game structure -> binary, should be name and level.
+show level during gameplay
+a - advances level
+autoplay
+autosave level on quit
+reload themes/levels/graphics/sounds
+
 ## Keyboard control
 
 ## Settings
