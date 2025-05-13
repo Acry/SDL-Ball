@@ -40,3 +40,31 @@ PauseScene
 SettingsScene
 
 See: [Structure](Structure.md)
+
+## OOP
+
+OOP is and has always been broken by design.
+Classes are factories. which you barely need.
+OOP is an end in itself, totally abstracted to implement the blueprint of the blueprint.
+Encapsulation protects a class of a coder. =)
+
+"Object-oriented programming is an exceptionally bad idea which could only have originated in California."
+-  Edsger W. Dijkstra
+
+That said, happy hacking.
+
+
+P.S.
+
+Functional programming is not about lambdas, it is all about pure functions.
+
+So broadly promote functional style:
+
+- Only use function arguments, do not use global state.
+- Keep 
+- Minimise side effects.
+
+This can be achieved in plain c, no need for magic.
+<https://research.utwente.nl/files/5128727/book.pdf>
+
+Use the constructor for dependency injection, but don't overdo it. 

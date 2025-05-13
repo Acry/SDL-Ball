@@ -22,6 +22,7 @@ Kandidaten die den settingsManager nutzen:
 - BackgroundManager
 - EffectManager
 - LevelManager
+- MenuManager
 
 Weitere 
 See: [Settings](Settings.md)
