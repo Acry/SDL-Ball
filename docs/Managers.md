@@ -5,6 +5,9 @@ Grundsätzlich haben wir 3 Typen von Settings:
 - loaded - gespeicherte Settings des Spielers
 - current - und die runtime settings
 
+**Singletons provide a global access mechanism to an object.**
+**Singletons are a global variable dressed up in some awkward syntax.**
+
 Manager Typen:
 
 [SettingsManager](Manager/SettingsManager.md) spricht mit dem ConfigFileManager, hält defaults und current settings
@@ -45,8 +48,9 @@ public:
 };
 ```
 
-auto& settings = SettingsManager::getInstance();
-auto difficulty = settings.getDifficultySettings();
+NEED TO TEST THIS with config and settings. -> use ConfigFileManager_Tests.cpp
+**auto& settings = SettingsManager::getInstance();**
+**auto difficulty = settings.getDifficultySettings();**
 
 Player player;
 player.init(difficulty);
@@ -196,9 +200,12 @@ See: [Structure](Structure.md)
 ## OOP
 
 OOP is and has always been broken by design.
-Classes are factories. which you barely need.
+Classes are factories. which are barely needed.
 OOP is an end in itself, totally abstracted to implement the blueprint of the blueprint.
-Encapsulation protects a class of a coder. =)
+I dont want that, oh, make it singleton, make it a class, make it a factory, make it a template, make it a lambda, make it a function, make it a macro.
+I want to write code, not classes or templates.
+Yeah, and encapsulation protects a class of a coder. =)
+Inheritenace, Polymorphism - like dependencies: gorilla - banana.
 
 "Object-oriented programming is an exceptionally bad idea which could only have originated in California."
 -  Edsger W. Dijkstra

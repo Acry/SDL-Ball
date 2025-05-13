@@ -1,5 +1,5 @@
 #include "ConfigFileManager.h"
-#include "settings_manager.h"
+#include "SettingsManager.h"
 #include <iostream>
 #include <cassert>
 
