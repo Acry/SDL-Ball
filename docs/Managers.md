@@ -13,6 +13,152 @@ Manager Typen:
 
 MenuManager spricht mit dem SettingsManager, GameManager, ControllerManager
 
+To make the game building, let the settingsManager init the player.
+The current Blocker is gorilla-banana style, I really don't want to construct the player like this:
+
+`const auto& settings = SettingsManager::getInstance(configFileManager);`
+
+SettingsManager::getInstance().init(configFileManager);
+
+const auto& settings = SettingsManager::getInstance();
+
+Wobei ich noch nicht weiß, ob ich will, dass der Player mit dem SettingsManager spricht.
+Basierend auf dem Clean Architecture Prinzip sollte der Player tatsächlich nicht direkt mit dem SettingsManager kommunizieren. Stattdessen sollten die Einstellungen während der Initialisierung injiziert werden:
+
+```c++
+
+
+class Player {
+private:
+    difficultyStruct currentDifficulty;
+
+public:
+    Player() = default;
+    
+    void init(const difficultyStruct& difficulty) {
+        currentDifficulty = difficulty;
+        lives = difficulty.life;
+        coins = difficulty.coins;
+        // weitere Initialisierungen...
+    }
+    // ... rest der Klasse
+};
+```
+
+auto& settings = SettingsManager::getInstance();
+auto difficulty = settings.getDifficultySettings();
+
+Player player;
+player.init(difficulty);
+
+Die sauberste Lösung wäre, dass der GameManager die Spieler-Einstellungen vom SettingsManager holt und diese dann an den Player weiterreicht. Dabei sollte der Player nur die Daten kennen, die er wirklich braucht:
+
+Der GameManager übernimmt dann die Koordination:
+
+```c++
+class GameManager {
+private:
+    Player player;
+    
+public:
+    void initGame() {
+        auto& settings = SettingsManager::getInstance();
+        auto difficulty = settings.getDifficultySettings();
+        player.init(difficulty);
+        // weitere Initialisierungen...
+    }
+};
+```
+
+Das sollte dann wohl der GameInitManager machen? Also eine Komponente die das Game bootsprapped. Dann vielleicht ein GameResetManger der mit dem GameUpdateManager spricht. Ich weiß nicht genau.
+
+```c++
+class GameInitManager {
+private:
+    Player& player;
+    
+public:
+    explicit GameInitManager(Player& p) : player(p) {}
+    
+    void init() {
+        auto& settings = SettingsManager::getInstance();
+        auto difficulty = settings.getDifficultySettings();
+        player.init(difficulty);
+        // weitere Initialisierungen...
+    }
+};
+
+class GameStateManager {
+private:
+    Player& player;
+    
+public:
+    explicit GameStateManager(Player& p) : player(p) {}
+    
+    void reset() {
+        player.reset();
+        // weitere Reset-Logik...
+    }
+};
+
+class GameManager {
+private:
+    Player player;
+    GameInitManager initManager;
+    GameStateManager stateManager;
+    
+public:
+    GameManager() : 
+        player(),
+        initManager(player),
+        stateManager(player) {}
+        
+    void bootGame() {
+        initManager.init();
+    }
+    
+    void resetGame() {
+        stateManager.reset();
+    }
+};
+```
+
+Die Spielobjekte sollten möglichst "dumm" sein und nur ihre grundlegenden Eigenschaften und Verhaltensweisen kennen.
+
+class CollisionManager {
+public:
+    void checkCollisions(Ball& ball, Paddle& paddle, const std::vector<Brick>& bricks);
+};
+
+Der CollisionManager könnte die Kollisionen erkennen und den EffectManager für die visuellen/akustischen Effekte bei Kollisionen benachrichtigen:
+
+class GameStateManager {
+private:
+    Ball ball;
+    Paddle paddle;
+    std::vector<Brick> bricks;
+    EffectManager effectManager;
+    CollisionManager collisionManager;
+
+    void update(float deltaTime) {
+        if (currentState != State::RUNNING) return;
+        
+        ball.update(deltaTime);
+        paddle.update(deltaTime);
+        collisionManager.checkCollisions(ball, paddle, bricks);
+        effectManager.update(deltaTime);
+    }
+
+UI/HUD/MENU
+
+Die klassischen states, mh. Ich sehe die eher als hierrachische spielszenen statt: `enum class State { RUNNING, PAUSED, GAME_OVER }; State currentState`;
+
+SceneManager: switch - PlayScene, GameOverScene, TitleScene, (SettingsScene)
+        changeScene(std::move(pauseScene));
+        menuManager.showPauseMenu();
+
+Pretty much, a top down approach.
+
 ## Current Managers
 
 [BackgroundManager](Manager/BackgroundManager.md) - handles the background, loads the background file and applies it to the game
@@ -23,7 +169,7 @@ MenuManager spricht mit dem SettingsManager, GameManager, ControllerManager
 [DisplayManager](Manager/DisplayManager.md) - handles the display, loads the display file and applies it to the game
 [GameManager](Manager/GameManager.md) - handles the game state, loads the game and manages the game loop
 [HighscoreManager](Manager/HighscoreManager.md) - handles the highscores, loads the highscores and saves them to the file.
-[LevelManager](Manager/LevelManager.md) - loads the LevelOffsets, and gives the new level.
+[LevelManager](Manager/LevelManager.md) - at start loads the LevelOffsets, and gives the new level after the player has finished the level.
 [SaveGameManager](Manager/SaveGameManager.md) - handles the savegame, loads the savegame and saves it to the file
 [SettingsManager](Manager/SettingsManager.md) - handles the settings, loads the settings and saves them to the file
 [SoundManager](Manager/SoundManager.md) - Loading/Cleaning and playing sounds
@@ -34,6 +180,12 @@ MenuManager - handles the menu, loads the menu file and applies it to the game
 ## Scenes
 
 TitleScene
+InstructionsScene
+PlayScene
+PauseScene
+GameOverScene
+LevelDoneScene
+HighscoreScene
 GameScene
 GameOverScene
 PauseScene
