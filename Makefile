@@ -32,6 +32,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     Paddle.cpp \
     Tracer.cpp \
     Ball.cpp) \
+)
 
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 
