@@ -1,17 +1,32 @@
 // GameStateManager.h
 #pragma once
+#include "BackgroundManager.h"
+#include "BallManager.h"
 #include "ConfigFileManager.h"
+#include "Display.hpp"
 #include "Player.h"
+#include "SaveGameManager.h"
 #include "SettingsManager.h"
+#include "SoundManager.h"
+#include "ThemeManager.h"
+#include "TtfLegacyGl.h"
 
 class GameManager {
-    ConfigFileManager configManager;
-    SettingsManager& settings;
-    Display display;
-    InputManager input;
-    Player player;
+    BackgroundManager backgroundManager;
     BallManager ballManager;
     BrickManager brickManager;
+    ConfigFileManager configManager;
+    ControllerManager controllerManager;
+    Display display;
+    InputManager input;
+    // LevelManager levelManager;
+    Player player;
+    SaveGameManager saveGameManager;
+    SettingsManager& settings;
+    SoundManager soundManager;
+    ThemeManager themeManager;
+    TtfLegacyGl textManager;
+
 public:
     GameManager() :
         configManager(),

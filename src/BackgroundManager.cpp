@@ -6,11 +6,9 @@
 #include "Texture.h"
 #include "TextureManager.h"
 #include "ThemeManager.h"
-#include "game_state.h"
 #include "SettingsManager.h"
 
-extern ThemeManager themeManager;
-extern settings setting;
+
 
 BackgroundManager::BackgroundManager() : backgroundDisplayList(0), currentBgNumber(-1) {
     for (int i = 0; i < 4; i++) {

@@ -8,7 +8,6 @@
 #include "SettingsManager.h"
 #include "SoundManager.h"
 
-extern SoundManager soundManager;
 
 Ball::Ball() {
     growing = false;

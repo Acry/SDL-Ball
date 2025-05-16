@@ -1,6 +1,7 @@
 #include <list>
 #include "Texture.h"
 #include "TtfLegacyGl.h"
+#include "EffectManager.h"
 
 struct effect_vars {
     int type; //Hvilken slags effekt er det?

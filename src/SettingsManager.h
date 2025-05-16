@@ -17,7 +17,7 @@ struct settings {
     int displayToUse;
     int res_x;
     int res_y;
-    int fps;
+    mutable int fps;
     bool showClock;
     bool fullscreen;
     bool showBg;

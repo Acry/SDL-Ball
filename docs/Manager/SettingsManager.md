@@ -4,7 +4,7 @@
 - loaded
 - current
 
-Grundsätzlich haben wir 3 Typenvon Settings:
+Grundsätzlich haben wir 3 Typen von Settings:
 
 `default` - aus config.h - compileTime settings
 `loaded` - gespeicherte Settings des Spielers
@@ -13,6 +13,7 @@ Grundsätzlich haben wir 3 Typenvon Settings:
 Hält defaults und current settings.
 
 SettingsManager nutzt ConfigFileManager 
+
 Kandidaten die den settingsManager nutzen:
 - GameManager
 - DisplayManager

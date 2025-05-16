@@ -10,7 +10,7 @@ Grundsätzlich haben wir 3 Typen von Settings:
 
 Manager Typen:
 
-[SettingsManager](Manager/SettingsManager.md) spricht mit dem ConfigFileManager, hält defaults und current settings
+[SettingsManager](Manager/SettingsManager.md) spricht mit dem ConfigFileManager, hält Defaults und current settings
 
 [GameManager](Manager/GameManager.md) - GameState -> BallManager, Paddle, Bricks?
 
@@ -19,18 +19,17 @@ MenuManager spricht mit dem SettingsManager, GameManager, ControllerManager
 To make the game building, let the settingsManager init the player.
 The current Blocker is gorilla-banana style, I really don't want to construct the player like this:
 
-`const auto& settings = SettingsManager::getInstance(configFileManager);`
-
+```c++
+const auto& settings = SettingsManager::getInstance(configFileManager);
 SettingsManager::getInstance().init(configFileManager);
-
 const auto& settings = SettingsManager::getInstance();
+```
 
 Wobei ich noch nicht weiß, ob ich will, dass der Player mit dem SettingsManager spricht.
-Basierend auf dem Clean Architecture Prinzip sollte der Player tatsächlich nicht direkt mit dem SettingsManager kommunizieren. Stattdessen sollten die Einstellungen während der Initialisierung injiziert werden:
+Basierend auf dem Clean Architecture Prinzip sollte der Player tatsächlich nicht direkt mit dem SettingsManager kommunizieren.
+Stattdessen sollten die Einstellungen während der Initialisierung injiziert werden:
 
 ```c++
-
-
 class Player {
 private:
     difficultyStruct currentDifficulty;

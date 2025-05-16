@@ -3,10 +3,7 @@
 #include "Tracer.h"
 #include "Paddle.h"
 #include "SettingsManager.h"
-#include "SoundManager.h"
 #include "Ball.h"
-
-extern SoundManager soundManager;
 
 class BallManager {
     // verwaltet mehrere Bälle
@@ -45,7 +42,7 @@ public:
         var.averageBallSpeed /= activeBalls;
     }
 
-    //klon alle aktive bolde
+    // klon alle aktive bolde
     void multiply() {
         int a = 0, c = 0;
         int i;

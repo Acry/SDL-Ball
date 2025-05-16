@@ -1,6 +1,6 @@
 # Todo
 
-Beside the obvious things like fixing bugs, refactoring and moving on to shaders,
+Besides the obvious things like fixing bugs, refactoring and moving on to shaders,
 there are a lot of things to do.
 
 Here is a list of things that I want to do.
