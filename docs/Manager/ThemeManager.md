@@ -15,8 +15,8 @@ Themes:
 - Levels
 - Backgrounds
 
-Should hav a default theme
-When the is another theme-folder, it can be incrementally loaded and apply only the changes
+Should have a default theme
+When theme is another theme-folder, it can be incrementally loaded and apply only the changes
 
 Backgrounds should be handled separately
 
