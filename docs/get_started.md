@@ -20,8 +20,8 @@ Thank you, Jimmy Christensens for writing this game and sharing it with the worl
 SDL1 - Retro Branch
 `b66514f3b08667dbc4da76e8e0a8de3ea209ba6b`
 
-Commit before Projection change
-`55ac60352f512fa4382e7335f9bca0020d1342c8`
+Stable commit before most change
+`50568daabe2590cc005507648ee434cc989d9b6b`
 
 Last building commit before refactoring of manager classes
 `1c37e8e93355bcb99dc235bcb40cab234229b7ec`
