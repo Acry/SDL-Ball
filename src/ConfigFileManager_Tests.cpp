@@ -17,8 +17,7 @@ void testSettingsFile(const ConfigFileManager &config) {
 }
 
 int main() {
-    ConfigFileManager config("./test");
-    assert(config.init());
+    const ConfigFileManager config("./test");
 
     testConfigPaths(config);
     testSettingsFile(config);

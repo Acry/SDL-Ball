@@ -6,6 +6,7 @@
 #include <utility>
 
 ConfigFileManager::ConfigFileManager(std::string root) : programRoot(std::move(root)) {
+    init();
 }
 
 bool ConfigFileManager::init() {

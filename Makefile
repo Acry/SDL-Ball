@@ -92,10 +92,10 @@ CONFIG_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CONFIG_TEST_SOURCES:
 config-test: $(CONFIG_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(CONFIG_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)config-test
 
-$(BUILD_DIR)config_file_test.o: $(SOURCE_DIR)ConfigFileManager_Tests.cpp
+$(BUILD_DIR)ConfigFileManager_Tests.o: $(SOURCE_DIR)ConfigFileManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
-$(BUILD_DIR)config_file.o: $(SOURCE_DIR)ConfigFileManager.cpp
+$(BUILD_DIR)ConfigFileManager.o: $(SOURCE_DIR)ConfigFileManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
 ###############################################################################
