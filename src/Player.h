@@ -1,19 +1,20 @@
+// Player.h
 #pragma once
 #include "config.h"
 #include <array>
 #include <SDL2/SDL_stdinc.h>
 
-#include "game_state.h"
-
 class Player {
-    std::array<int, 40> powerupTimeLeft;
+private:
+    int difficulty;
+    std::array<int, MAXPOTEXTURES> powerupTimeLeft;
+
 public:
     // Konstruktor/Destruktor
     Player();
     ~Player() = default;
 
     void init();
-    // Spielzustand
     void reset();
     void addLife();
     void removeLife();
@@ -22,6 +23,7 @@ public:
     void initDifficulty(int startingDifficulty);
 
     // Powerup API
+    bool hasPowerup(int type) const;
     void activatePowerup(int type, int duration = 0);
     void clearPowerups();
     void updatePowerups(float deltaTime);
@@ -33,13 +35,8 @@ public:
     Uint32 lastClearedLevel;
     Uint32 lives;
     Uint32 score;
-    // das ist ja wohl beim Tod so und sollte nicht im Spieler sein.
-    bool explodePaddle{false};
-    // Was auch immer
-    bool powerup[MAXPOTEXTURES];
+    bool explodePaddle;
+    std::array<bool, MAXPOTEXTURES> powerup;
     difficultyStruct startingDifficulty;
     difficultyStruct currentDifficulty;
-
-    // Powerup-Array für schnellen Zugriff
-    // bool powerup[40];
-    };
+};

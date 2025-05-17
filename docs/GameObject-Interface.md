@@ -1,30 +1,28 @@
-// GameObject.h
-#pragma once
+# GameObject-Interface
 
-#include <epoxy/gl.h>
-#include "SpriteSheetAnimation.h"
-
+```c++
 class GameObject {
 public:
     // Basisattribute für alle Spielobjekte
-    GLfloat opacity{1.0f};
-    GLfloat pos_x{0.0f}, pos_y{0.0f};
-    GLfloat width{0.0f}, height{0.0f};
-    bool active{true};
-    bool collide{true};
-    bool reflect{false};
+    GLfloat pos_x, pos_y;
+    GLfloat width, height;
+    GLfloat opacity;
+    bool active;
+    bool collide;
+    bool reflect;
     SpriteSheetAnimation texture;
 
-    // Virtuelle Methoden - Interface-Definition
+    // Virtuelle Methoden für Spielobjekt-Lebenszyklus
     virtual ~GameObject() = default;
     virtual void init() = 0;
     virtual void update(float deltaTime) = 0;
     virtual void draw() = 0;
-
-    // Kollisionserkennung (Basismethode für alle Spielobjekte)
+    
+    // Kollisionserkennung
     virtual bool isCollidingWith(const GameObject& other) const;
-
+    
     // Hilfsfunktionen
     bool isActive() const { return active; }
     bool isVisible() const { return opacity > 0.0f; }
 };
+```

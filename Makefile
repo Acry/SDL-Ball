@@ -39,7 +39,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
 $(shell mkdir -p $(BUILD_DIR))
 
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
-TEST_TARGETS := config-test settings-test display-test spritesheet-test
+TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-test
 TARGET=sdl-ball
 GAME_OBJECTS := $(OBJECTS)
 
@@ -148,3 +148,16 @@ SPRITESHEET_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SPRITESHEET_TES
 spritesheet-test: $(SPRITESHEET_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(SPRITESHEET_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)spritesheet-test
 
+###############################################################################
+# Paddle
+PADDLE_TEST_SOURCES := $(SOURCE_DIR)Paddle_Tests.cpp \
+                       $(SOURCE_DIR)Paddle.cpp \
+                       $(SOURCE_DIR)GameObject.cpp \
+                       $(SOURCE_DIR)Display.cpp \
+                       $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                       $(SOURCE_DIR)TextureManager.cpp
+
+PADDLE_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(PADDLE_TEST_SOURCES:.cpp=.o)))
+
+paddle-test: $(PADDLE_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(PADDLE_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)paddle-test

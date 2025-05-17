@@ -1,22 +1,22 @@
 #include "Paddle.h"
 #include <epoxy/gl.h>
-#include "game_state.h"
-
-extern int globalTicksSinceLastDraw;
 
 Paddle::Paddle() {
     init();
-    growing = false;
-    growspeed = 0.05f;
-    aspect = 0.2f;
 }
 
 void Paddle::init() {
+    growing = false;
+    growspeed = 0.05f;
+    aspect = 0.2f;
     pos_y = -0.93f;
     pos_x = 0.0f;
     width = 0.059f;
     height = 0.018f;
     dead = false;
+    // Initialisierung der Layer-Flags
+    hasGlueLayer = false;
+    hasGunLayer = false;
 }
 
 void Paddle::grow(const GLfloat width) {
@@ -24,16 +24,31 @@ void Paddle::grow(const GLfloat width) {
     growing = true;
 }
 
-void Paddle::updateGrowth() {
+void Paddle::updateGrowth(const float deltaTime) {
     if (growing) {
-        const GLfloat ix = growspeed * globalTicksSinceLastDraw;
-        width += ix;
+        const GLfloat growthRate = growspeed * deltaTime;
 
-        if (width >= destwidth) {
-            width = destwidth;
-            height = aspect * destwidth;
+        // Bestimme ob wir wachsen oder schrumpfen müssen
+        if (width < destwidth) {
+            // Wachsen
+            width += growthRate;
+            if (width >= destwidth) {
+                width = destwidth;
+                growing = false;
+            }
+        } else if (width > destwidth) {
+            // Schrumpfen
+            width -= growthRate;
+            if (width <= destwidth) {
+                width = destwidth;
+                growing = false;
+            }
+        } else {
             growing = false;
         }
+
+        // Höhe entsprechend dem Seitenverhältnis anpassen
+        height = aspect * width;
     }
 }
 
@@ -60,10 +75,9 @@ void Paddle::drawBase() {
     glDisable(GL_TEXTURE_2D);
 }
 
-void Paddle::drawGlueLayer() {
-    if (!player.powerup[PO_GLUE]) return;
-
+void Paddle::drawGlueLayer() const {
     glLoadIdentity();
+    glTranslatef(pos_x, pos_y, 0.0);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, layerTex[0].textureProperties.texture);
     glColor4f(layerTex[0].textureProperties.glTexColorInfo[0],
@@ -83,11 +97,10 @@ void Paddle::drawGlueLayer() {
     glDisable(GL_TEXTURE_2D);
 }
 
-void Paddle::drawGunLayer() {
-    if (!player.powerup[PO_GUN]) return;
-
+void Paddle::drawGunLayer() const {
     layerTex[1].play();
     glLoadIdentity();
+    glTranslatef(pos_x, pos_y, 0.0);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, layerTex[1].textureProperties.texture);
     glColor4f(layerTex[1].textureProperties.glTexColorInfo[0],
@@ -110,15 +123,41 @@ void Paddle::drawGunLayer() {
 void Paddle::draw() {
     if (dead) return;
 
-    if (player.powerup[PO_DIE]) {
-        player.powerup[PO_DIE] = false;
-        dead = true;
-        width = height = 0.0;
-        return;
+    drawBase();
+
+    if (hasGlueLayer)
+        drawGlueLayer();
+
+    if (hasGunLayer)
+        drawGunLayer();
+}
+
+void Paddle::setGlueLayer(const bool enabled) {
+    hasGlueLayer = enabled;
+}
+
+void Paddle::setGunLayer(const bool enabled) {
+    hasGunLayer = enabled;
+}
+
+void Paddle::update(float deltaTime) {
+    // Hier Paddle-Logik implementieren
+    updateGrowth(deltaTime);
+}
+
+void Paddle::moveTo(float targetX, float deltaTime) {
+    // Bewegungsgeschwindigkeit basierend auf deltaTime
+    float speed = 2.0f; // Anpassbare Geschwindigkeit
+    float movement = speed * deltaTime;
+
+    // Bewege in Richtung Zielposition
+    if (pos_x < targetX) {
+        pos_x = std::min(pos_x + movement, targetX);
+    } else if (pos_x > targetX) {
+        pos_x = std::max(pos_x - movement, targetX);
     }
 
-    updateGrowth();
-    drawBase();
-    drawGlueLayer();
-    drawGunLayer();
+    // Begrenzung auf den Bildschirmrand
+    if (pos_x < -1.0f + width) pos_x = -1.0f + width;
+    if (pos_x > 1.0f - width) pos_x = 1.0f - width;
 }
