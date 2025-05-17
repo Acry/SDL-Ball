@@ -8,9 +8,12 @@
 #include "SettingsManager.h"
 #include "ThemeManager.h"
 
+// need to get rid of this both
 extern settings setting;
+
 extern ThemeManager themeManager;
 
+// if init return false, settingsManager should set setting.sound to false
 bool SoundManager::init() {
     // Initialize SDL2_mixer with support for common audio formats
     if (Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG) < 0) {

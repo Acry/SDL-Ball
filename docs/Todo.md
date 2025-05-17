@@ -13,10 +13,11 @@ SettingsManager settingsManager(configFileManager);
 - [X] Screenshot_Tests
 - [X] TextureManager_Tests
 - [X] BackgroundManager_Tests
+- [X] TextureAnimation_Tests
 
 - [ ] ThemeManager_Tests (rethink the role of the ThemeManager)
 - [ ] SoundManager_Tests
-- [ ] TextureAnimation_Tests
+
 - [ ] EffectManager_Tests
 - [ ] TitleScreen_Tests
 
@@ -28,6 +29,10 @@ SettingsManager settingsManager(configFileManager);
 - [ ] LevelManager_Tests
 - [ ] LevelEditor_Tests
 - [ ] HighscoreManager_Tests
+- [ ] InputManager_Tests
+- [ ] GameObjectManager_Tests
+- [ ] GameObject_Tests
+- [ ] _Tests
 - [ ] GameManager_Tests
 
 - HUD (Score, Lives, Level, Speedometer, Powerups, Shop)
