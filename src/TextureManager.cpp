@@ -1,14 +1,12 @@
 // TextureManager.cpp
 #include "TextureManager.h"
+
+#include <filesystem>
 #include <fstream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <epoxy/gl.h>
-#include "SettingsManager.h"
-#include "ThemeManager.h"
 
-extern settings setting;
-extern ThemeManager themeManager;
 
 GLuint getGLFormat(const SDL_Surface* surface) {
     if (!surface) {
@@ -25,16 +23,14 @@ GLuint getGLFormat(const SDL_Surface* surface) {
     }
 }
 
-bool TextureManager::load(const std::string& file, Texture& tex) const {
-    // Texture laden und OpenGL Texture generieren
-    SDL_Surface* tempSurface = IMG_Load(file.c_str());
+bool TextureManager::load(const std::filesystem::path &pathName, Texture& tex) const {
+    SDL_Surface* tempSurface = IMG_Load(pathName.c_str());
     if(!tempSurface) {
-        SDL_Log("Konnte Textur nicht laden: %s", file.c_str());
+        SDL_Log("Konnte Textur nicht laden: %s", pathName.c_str());
         return false;
     }
-    // Prüfen ob Texture zu groß ist
     if (tempSurface->w > maxTexSize || tempSurface->h > maxTexSize) {
-        SDL_Log("Textur zu groß: %s (%dx%d)", file.c_str(), tempSurface->w, tempSurface->h);
+        SDL_Log("Textur zu groß: %s (%dx%d)", pathName.c_str(), tempSurface->w, tempSurface->h);
         SDL_FreeSurface(tempSurface);
         return false;
     }
@@ -51,6 +47,9 @@ bool TextureManager::load(const std::string& file, Texture& tex) const {
 
     glTexImage2D(GL_TEXTURE_2D, 0, glFormat, tempSurface->w, tempSurface->h, 0, glFormat, GL_UNSIGNED_BYTE, tempSurface->pixels);
 
+    // Hatten wir hier nicht glu mipmaps?
+    // Ah, nein das ist ja nur für die Fonts
+    // gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, t->w, t->h, GL_RGBA, GL_UNSIGNED_BYTE, t->pixels);
     tex.textureProperties.pxw = tempSurface->w;
     tex.textureProperties.pxh = tempSurface->h;
     SDL_FreeSurface(tempSurface);
@@ -68,11 +67,11 @@ loadedTextures.push_back(&tex);
 return true;
 }
 */
-void TextureManager::readTexProps(std::string fileName, Texture& tex) const {
+void TextureManager::readTexProps(const std::filesystem::path &pathName, Texture& tex) const {
     char rgba[4][5];
     std::ifstream f;
     std::string set, val;
-    f.open(fileName.data());
+    f.open(pathName.c_str());
 
     if (f.is_open()) {
         std::string line;
@@ -118,16 +117,17 @@ void TextureManager::readTexProps(std::string fileName, Texture& tex) const {
                 } else if (set == "file") {
                     tex.textureProperties.fileName = val;
                 } else {
-                    SDL_Log("Error: '%s' invalid setting '%s' with value '%s'", fileName.c_str(), set.c_str(), val.c_str());
+                    SDL_Log("Error: '%s' invalid setting '%s' with value '%s'", pathName.c_str(), set.c_str(), val.c_str());
                 }
             }
         }
 
+        // Ich weiß momentan nicht ob das hier noch gebraucht wird
         if (tex.textureProperties.fileName.length() > 1) {
             std::string name = "gfx/" + tex.textureProperties.fileName;
-            load(themeManager.getThemeFilePath(name, setting.gfxTheme), tex);
+            // load(themeManager.getThemeFilePath(name, setting.gfxTheme), tex);
         }
     } else {
-        SDL_Log("readTexProps: Cannot open '%s'", fileName.c_str());
+        SDL_Log("readTexProps: Cannot open '%s'", pathName.c_str());
     }
 }

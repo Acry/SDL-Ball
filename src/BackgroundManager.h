@@ -1,20 +1,25 @@
 #pragma once
+#include <filesystem>
+
 #include "Texture.h"
 
 class TextureManager;
 class BackgroundManager {
     GLuint backgroundDisplayList;
+    // 4 colors for the background, will be set randomly
+    // für einen Farbverlauf
+    // Das Blending sollte bedingt nötig sein.
     GLfloat r[4], g[4], b[4], a;
-    Texture tex;
-    int currentBgNumber;
+    const TextureManager* textureMgr; // Referenz auf den TextureManager
+    Texture tex; // Textur für den Hintergrund
 
+    // wird für die Display-Liste benötigt
     void drawQuad() const;
 
 public:
-    BackgroundManager();
+    explicit BackgroundManager(const TextureManager &texMgr);
     ~BackgroundManager();
 
-    bool updateBgIfNeeded(const TextureManager &texMgr);
-    void init(const TextureManager &texMgr);
+    bool updateBgIfNeeded(const Uint32 level, const std::filesystem::path &pathName);
     void draw() const;
 };

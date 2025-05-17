@@ -89,3 +89,24 @@ $(BUILD_DIR)config_file.o: $(SOURCE_DIR)ConfigFileManager.cpp
 
 $(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)SettingsManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
+DISPLAY_TEST_SOURCES := $(SOURCE_DIR)BackgroundManager_Tests.cpp \
+                      $(SOURCE_DIR)Display.cpp \
+                      $(SOURCE_DIR)Texture.cpp \
+                      $(SOURCE_DIR)TextureManager.cpp \
+                      $(SOURCE_DIR)BackgroundManager.cpp
+
+display-test: $(DISPLAY_TEST_SOURCES)
+	$(CXX) $(DEBUG_FLAGS) $(DISPLAY_TEST_SOURCES) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)display-test
+
+$(BUILD_DIR)Display.o: $(SOURCE_DIR)Display.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
+$(BUILD_DIR)Texture.o: $(SOURCE_DIR)Texture.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
+$(BUILD_DIR)TextureManager.o: $(SOURCE_DIR)TextureManager.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
+$(BUILD_DIR)BackgroundManager.o: $(SOURCE_DIR)BackgroundManager.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@

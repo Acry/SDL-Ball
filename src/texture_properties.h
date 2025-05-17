@@ -2,6 +2,7 @@
 
 #include <string>
 #include <epoxy/gl.h>
+
 // Texture properties struct
 struct texProp {
     GLuint texture; // Den GLtexture der er loaded

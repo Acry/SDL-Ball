@@ -150,6 +150,7 @@ void TtfLegacyGl::genFontTex(const std::string &TTFfontName, const int fontSize,
     glGenTextures(1, &fontInfo[font].tex); //Generate a gltexture for this font
 
     glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
+    // gluBuild2DMipmapLevels
     gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, t->w, t->h, GL_RGBA, GL_UNSIGNED_BYTE, t->pixels);
 
     TTF_CloseFont(ttfFont); //Free the font

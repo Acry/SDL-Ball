@@ -1,33 +1,26 @@
 #include <iostream>
-#include <epoxy/gl.h>
-#include <SDL2/SDL.h>
+
 #include "Display.hpp"
 #include <memory>
-
 #include "colors.h"
-#include "SettingsManager.h"
 
 using namespace std;
 
-extern settings setting;
-extern ConfigFileManager configFileManager;
-
-bool Display::init() {
+Display::Display(const int display, const int width, const int height, const bool fullscreen) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_Log("Fehler bei SDL Video Init: %s", SDL_GetError());
-        return false;
+        return;
     }
-    // Nutze display aus settings
+    // Versuche Display aus Settings
     numOfDisplays = SDL_GetNumVideoDisplays();
-    if (numOfDisplays > 0 && setting.displayToUse < numOfDisplays) {
-        displayToUse = setting.displayToUse;
-        // todo apply to settings and flag settings changed?
+    if (numOfDisplays > 0 && display < numOfDisplays) {
+        displayToUse = display;
     } else {
         displayToUse = 0;
     }
     unsigned int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
-    if (setting.fullscreen) {
+    if (fullscreen) {
         // Im Vollbildmodus native Auflösung verwenden
         SDL_DisplayMode currentDisplayMode;
         SDL_GetCurrentDisplayMode(displayToUse, &currentDisplayMode);
@@ -36,21 +29,14 @@ bool Display::init() {
         flags |= SDL_WINDOW_FULLSCREEN;
     } else {
         // Im Fenstermodus konfigurierte Auflösung verwenden
-        currentW = setting.res_x > 0 ? setting.res_x : 1280; // Fallback-Wert
-        currentH = setting.res_y > 0 ? setting.res_y : 720; // Fallback-Wert
-    }
-
-    // Nutze die Fullscreen-Einstellung aus settings
-    if (setting.fullscreen) {
-        // flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;  // Für echten Vollbildmodus
-        // Alternativ:
-        flags |= SDL_WINDOW_FULLSCREEN;
+        currentW = width > 0 ? width : 1280; // Fallback-Wert
+        currentH = height > 0 ? height : 720; // Fallback-Wert
     }
 
     if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0)
     {
         printf("\nError: Unable to initialize SDL:%s\n", SDL_GetError());
-        return false;
+        return;
     }
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -68,7 +54,7 @@ bool Display::init() {
 
     if ((sdlWindow == nullptr) || (glcontext == nullptr)) {
         SDL_Log("Error:%s", SDL_GetError());
-        return false;
+        return;
     }
     int maj, min;
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &maj);
@@ -82,7 +68,6 @@ bool Display::init() {
     SDL_Log("Double buffering %s", doubleBuffered ? "aktiviert" : "deaktiviert");
     initGL();
     resize(currentW, currentH);
-    return true;
 }
 
 bool Display::updateForMenu() {
@@ -105,11 +90,11 @@ void Display::resize(const int width, const int height) {
     if (window_ratio >= target_ratio) {
         // Fenster ist breiter als 4:3 -> Höhe begrenzt
         vpH = height;
-        vpW = static_cast<int>(height * target_ratio);
+        vpW = height * target_ratio;
     } else {
         // Fenster ist schmaler als 4:3 -> Breite begrenzt
         vpW = width;
-        vpH = static_cast<int>(width / target_ratio);
+        vpH = width / target_ratio;
     }
 
     viewportX = (width - vpW) / 2;
@@ -140,7 +125,7 @@ void Display::resize(const int width, const int height) {
     glLoadIdentity();
 }
 
-bool Display::screenshot() {
+bool Display::screenshot(const filesystem::path &pathName) const {
     static constexpr size_t MAX_FILENAME = 256;
     static constexpr size_t TGA_HEADER_SIZE = 12;
     static constexpr size_t TGA_INFO_SIZE = 6;
@@ -152,7 +137,7 @@ bool Display::screenshot() {
     // Finde freien Dateinamen
     while (fileIndex < 9999) {
         const int result = snprintf(fileName, MAX_FILENAME, "%s/sdl-ball_%04d.tga",
-                                    configFileManager.getScreenshotDir().data(), fileIndex);
+                                    pathName.c_str(), fileIndex);
 
         if (result < 0 || static_cast<size_t>(result) >= MAX_FILENAME) {
             SDL_Log("Filename too long");
@@ -171,7 +156,7 @@ bool Display::screenshot() {
     }
 
     // Alloziere Pixel Buffer
-    const size_t pixelCount = setting.res_x * setting.res_y * CHANNELS;
+    const size_t pixelCount = currentW * currentH * CHANNELS;
     const auto pixels = std::make_unique<GLubyte[]>(pixelCount);
     if (!pixels) {
         SDL_Log("Memory allocation failed");
@@ -187,7 +172,7 @@ bool Display::screenshot() {
 
     // Lese Framebuffer
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(0, 0, setting.res_x, setting.res_y, GL_BGR, GL_UNSIGNED_BYTE, pixels.get());
+    glReadPixels(0, 0, currentW, currentH, GL_BGR, GL_UNSIGNED_BYTE, pixels.get());
 
     if (glGetError() != GL_NO_ERROR) {
         SDL_Log("Failed reading OpenGL framebuffer.");
@@ -198,10 +183,10 @@ bool Display::screenshot() {
     // Schreibe TGA Header
     const unsigned char tgaHeader[TGA_HEADER_SIZE] = {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     const unsigned char tgaInfo[TGA_INFO_SIZE] = {
-        static_cast<unsigned char>(setting.res_x & 0xFF),
-        static_cast<unsigned char>((setting.res_x >> 8) & 0xFF),
-        static_cast<unsigned char>(setting.res_y & 0xFF),
-        static_cast<unsigned char>((setting.res_y >> 8) & 0xFF),
+        static_cast<unsigned char>(currentW & 0xFF),
+        static_cast<unsigned char>(currentW >> 8 & 0xFF),
+        static_cast<unsigned char>(currentH & 0xFF),
+        static_cast<unsigned char>(currentH >> 8 & 0xFF),
         24, 0
     };
 
@@ -235,6 +220,7 @@ void Display::initGL() {
 
     glEnable(GL_SCISSOR_TEST);
 
+    // Das sollte hier nicht geschehen, erst wenn es genutzt wird.
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }

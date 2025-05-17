@@ -1,10 +1,10 @@
 // TextureManager.h
 #pragma once
+#include <filesystem>
 #include <string>
 #include <vector>
 
 #include "Texture.h"
-
 
 class TextureManager {
     std::vector<Texture*> loadedTextures;
@@ -21,6 +21,6 @@ public:
             delete tex;
         }
     }
-    bool load(const std::string& file, Texture& tex) const;
-    void readTexProps(std::string fileName, Texture& tex) const;
+    bool load(const std::filesystem::path &pathName, Texture& tex) const;
+    void readTexProps(const std::filesystem::path &pathName, Texture& tex) const;
 };
