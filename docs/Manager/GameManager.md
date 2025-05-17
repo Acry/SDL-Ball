@@ -2,6 +2,22 @@
 
 Der SettingsManager sollte hauptsächlich für das Laden, Speichern und Bereitstellen von Einstellungen verantwortlich sein, nicht für die Spielinitialisierung. Die zentrale GameManager-Klasse sollte das Management aller Subsysteme übernehmen.
 
+```c++
+int main() {
+    // Manager initialisieren
+    ConfigFileManager configManager;
+    SettingsManager settingsManager(configManager);
+    ThemeManager themeManager(configManager);
+    
+    // Game Manager erstellen und initialisieren
+    GameManager gameManager(configManager, settingsManager, themeManager);
+    gameManager.initializeGameObjects();
+    
+    // Spielschleife starten
+    // ...
+}
+```
+
 settingsManager.initialize
 themeManager.initialize
 soundManager.initialize
@@ -27,3 +43,4 @@ class GameSystem {
     }
 };
 ```
+

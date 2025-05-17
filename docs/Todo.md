@@ -14,19 +14,26 @@ there are a lot of things to do.
 - [X] BackgroundManager_Tests
 - [X] TextManager_Tests - implicitly tested in TextureAnimation_Tests
 - [X] TextureAnimation_Tests
-
-- [ ] den EffectManager von den Spielobjekten zu entkoppeln
-- [ ] EffectManager_Tests
-- [ ] TitleScreen_Tests
-- [ ] ThemeManager_Tests (rethink the role of the ThemeManager)
+- [X] ThemeManager_Tests (rethink the role of the ThemeManager)
+- [ ] TextManager_Tests
 - [ ] SoundManager_Tests
 - [ ] SavegameManager_Tests
 - [ ] LevelManager_Tests
 - [ ] HighscoreManager_Tests
+
+- [ ] den EffectManager von den Spielobjekten zu entkoppeln
+- [ ] EffectManager_Tests
+
+- [ ] TitleScreen_Tests
+
 - [ ] InputManager_Tests
 - [ ] GameObject_Tests
 - [ ] GameObjectManager_Tests
 - [ ] LevelEditor_Tests
+
+- [ ] MenuManager_Tests
+- [ ] HudManager_Tests
+
 - [ ] Timing_Tests
 - [ ] GameManager_Tests
 
@@ -42,6 +49,8 @@ there are a lot of things to do.
 hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] BallManager_Tests
 - [ ] BrickManager_Tests
+- [ ] Player_Tests
+- [ ] Ball_Tests
 
 - [ ] **Game should be playable again**
 
@@ -110,3 +119,4 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] use shaders
 - [ ] use SDL 3, not sure if i should maintain SDL2 plus Emscripten
 - [ ] Emscripten
+- [ ] ThemeManager zu cmdline um Themes zu validieren

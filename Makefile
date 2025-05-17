@@ -161,3 +161,15 @@ PADDLE_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(PADDLE_TEST_SOURCES:
 
 paddle-test: $(PADDLE_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(PADDLE_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)paddle-test
+
+###############################################################################
+# ThemeManager
+THEME_TEST_SOURCES := $(SOURCE_DIR)ThemeManager_Tests.cpp \
+                      $(SOURCE_DIR)ThemeManager.cpp \
+                      $(SOURCE_DIR)ConfigFileManager.cpp
+
+THEME_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(THEME_TEST_SOURCES:.cpp=.o)))
+
+theme-test: $(THEME_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(THEME_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)theme-test
+

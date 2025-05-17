@@ -5,6 +5,13 @@ Grundsätzlich haben wir 3 Typen von Settings:
 - loaded - gespeicherte Settings des Spielers
 - current - und die runtime settings
 
+```text
+SettingsManager → ThemeManager → TextureManager → GameObjects
+       ↑               ↑             ↑
+       └───────────────┴─────────────┘
+              ConfigFileManager
+```
+
 **Singletons provide a global access mechanism to an object.**
 **Singletons are a global variable dressed up in some awkward syntax.**
 
