@@ -4,6 +4,7 @@
 #include "Paddle.h"
 #include "SettingsManager.h"
 #include "Ball.h"
+#include "MathHelper.h"
 
 class BallManager {
     // verwaltet mehrere Bälle

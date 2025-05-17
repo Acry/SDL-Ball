@@ -7,7 +7,7 @@
 #include "Paddle.h"
 #include "SettingsManager.h"
 #include "SoundManager.h"
-
+#include "MathHelper.h"
 
 Ball::Ball() {
     growing = false;

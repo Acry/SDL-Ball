@@ -15,6 +15,7 @@ BUILD_DIR := build/
 SOURCE_DIR := src/
 
 SOURCES := $(addprefix $(SOURCE_DIR), \
+    MathHelper.cpp \
     Display.cpp \
     main.cpp \
     ConfigFileManager.cpp \

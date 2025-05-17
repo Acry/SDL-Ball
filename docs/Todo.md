@@ -15,6 +15,7 @@ there are a lot of things to do.
 - [X] TextManager_Tests - implicitly tested in TextureAnimation_Tests
 - [X] TextureAnimation_Tests
 
+- [ ] den EffectManager von den Spielobjekten zu entkoppeln
 - [ ] EffectManager_Tests
 - [ ] TitleScreen_Tests
 - [ ] ThemeManager_Tests (rethink the role of the ThemeManager)

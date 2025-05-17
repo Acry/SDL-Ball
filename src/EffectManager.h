@@ -3,6 +3,25 @@
 #include <list>
 #include "SpriteSheetAnimation.h"
 #include "TtfLegacyGl.h"
+#include "MathHelper.h"
+
+#define RAD 6.28318530718 // 2*PI
+
+// Am Anfang der EffectManager.h Datei
+struct global_vars {
+    bool transition_half_done;
+    int effectnum;
+};
+
+// if (var.transition_half_done) {
+//     var.titleScreenShow = true;
+//     effectMananger.kill(var.effectnum);
+//     var.effectnum = -1;
+//     initNewGame();
+//     resumeGame();
+// }
+
+extern global_vars vars;
 
 // Default Effect Settings
 #define FX_SPARKS 0
@@ -21,6 +40,8 @@
 #define FX_VAR_COLOR 8
 #define FX_VAR_TEXTURE 9
 #define FX_VAR_RECTANGLE 10
+
+#define MAXMSG 10
 
 struct effect_vars {
     int type;            // Welche Art von Effekt

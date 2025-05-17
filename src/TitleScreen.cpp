@@ -1,4 +1,5 @@
 #include "SpriteSheetAnimation.h"
+#include "MathHelper.h"
 
 class powerupDescriptionClass : public MovingObject {
     TtfLegacyGl& text;

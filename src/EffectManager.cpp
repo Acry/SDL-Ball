@@ -1,23 +1,8 @@
 #include <list>
-#include "SpriteSheetAnimation.h"
-#include "TtfLegacyGl.h"
 #include "EffectManager.h"
 
-struct effect_vars {
-    int type; //Hvilken slags effekt er det?
-    bool coldet; //er der collision detection på denne?
-    bool active; //Er denne effekt aktiv
-    GLfloat col[3]; //Hvilken farve har effekten?
-    GLfloat speed; //Hvor hurtigt bevæger den sig
-    GLfloat spread; //Hvor stor er spredningen (i grader)
-    GLfloat size; //Skalering af elementerne
-    position rect; //rectangular size (for particleField)
-    GLfloat gravity; //Hvor stor er tyndgekraften
-    int num; //Hvor mange elementer er der i den
-    int life; //hvor mange ms lever den?
-    SpriteSheetAnimation tex; //Texture
-    int effectId; //unique id for this effect
-};
+extern int globalTicksSinceLastDraw;
+extern float globalMilliTicksSinceLastDraw;
 
 class EffectsTransist {
     GLfloat opacity;
@@ -594,8 +579,6 @@ public:
             active = false;
     }
 };
-
-#define MAXMSG 10
 
 class glAnnounceTextClass {
 

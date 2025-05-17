@@ -19,6 +19,7 @@
 #include "ConfigFileManager.h"
 #include "Display.hpp"
 #include "GameObject.h"
+#include "MathHelper.h"
 #include "MovingObject.h"
 #include "Paddle.h"
 #include "SaveGameManager.h"
@@ -33,17 +34,11 @@
 #include "colors.h"
 #include "config.h"
 #include "texture_properties.h"
+
 #define DEBUG_DRAW_BALL_QUAD 0
 #define DEBUG_SHOW_MOUSE_COORDINATES 0 // NDC coordinates -1.0 to 1.0
-class brick;
-using namespace std;
 
-ConfigFileManager configFileManager;
-SettingsManager settingsManager(configFileManager);
-SaveGameManager saveGameManager(configFileManager);
-ThemeManager themeManager(configFileManager);
-Display display;
-SoundManager soundManager;
+using namespace std;
 
 // Option 1: Struct mit benannten Koordinaten
 // struct TexCoords {
@@ -294,16 +289,6 @@ public:
 };
 
 void collision_ball_brick(brick &br, Ball &ba, position &p, EffectManager &fxMan);
-
-// TODO: Menu.h
-#include "Menu.cpp"
-// TODO: #include "loadlevel_new.cpp" -> levelManager
-#include "loadlevel.cpp"
-#include "EffectManager.cpp"
-EffectManager effectMananger;
-glAnnounceTextClass announce;
-
-#include "BallManager.cpp"
 
 // Powerups
 class PowerupClass : public MovingObject {

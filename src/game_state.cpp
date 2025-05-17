@@ -37,13 +37,6 @@ void resumeGame() {
     var.menuShown = 0;
 }
 
-// helper math
-float random_float(const float total, const float negative) {
-    thread_local std::mt19937 rng(std::random_device{}());
-    std::uniform_real_distribution dist(-negative, total - negative);
-    return dist(rng);
-}
-
 // 2D Line Segment Intersection
 int LinesCross(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, GLfloat *linx,
                GLfloat *liny) {
