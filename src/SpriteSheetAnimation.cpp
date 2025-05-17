@@ -1,14 +1,13 @@
 #include "SpriteSheetAnimation.h"
 
+// Need to get rid of this
 extern int globalTicksSinceLastDraw;
 
-SpriteSheetAnimation::SpriteSheetAnimation() :
-    age(10000),
-    dir(false),
-    lastFrame(1000),
-    frame(1),
-    firstFrame(true)
-{
+SpriteSheetAnimation::SpriteSheetAnimation() : age(10000),
+                                               direction(false),
+                                               lastFrame(1000),
+                                               frame(1),
+                                               firstFrame(true) {
 }
 
 void SpriteSheetAnimation::play() {
@@ -19,10 +18,10 @@ void SpriteSheetAnimation::play() {
             age = 0.0f;
 
             // Update frame counter based on direction
-            if (!dir) {
+            if (!direction) {
                 if (frame == textureProperties.frames) {
                     if (textureProperties.bidir) {
-                        dir = true;
+                        direction = true;
                     } else {
                         frame = 1;
                     }
@@ -31,9 +30,9 @@ void SpriteSheetAnimation::play() {
                 }
             }
 
-            if (dir) {
+            if (direction) {
                 if (frame == 1) {
-                    dir = false;
+                    direction = false;
                     frame = 2;
                 } else {
                     frame--;
@@ -60,16 +59,20 @@ void SpriteSheetAnimation::play() {
                     texturePosition[1] = (textureProperties.yoffset * static_cast<float>(row));
 
                     // Top right
-                    texturePosition[2] = (textureProperties.xoffset * static_cast<float>(col)) + textureProperties.xoffset;
+                    texturePosition[2] = (textureProperties.xoffset * static_cast<float>(col)) + textureProperties.
+                                         xoffset;
                     texturePosition[3] = (textureProperties.yoffset * static_cast<float>(row));
 
                     // Bottom right
-                    texturePosition[4] = (textureProperties.xoffset * static_cast<float>(col)) + textureProperties.xoffset;
-                    texturePosition[5] = (textureProperties.yoffset * static_cast<float>(row)) + textureProperties.yoffset;
+                    texturePosition[4] = (textureProperties.xoffset * static_cast<float>(col)) + textureProperties.
+                                         xoffset;
+                    texturePosition[5] = (textureProperties.yoffset * static_cast<float>(row)) + textureProperties.
+                                         yoffset;
 
                     // Bottom left
                     texturePosition[6] = (textureProperties.xoffset * static_cast<float>(col));
-                    texturePosition[7] = (textureProperties.yoffset * static_cast<float>(row)) + textureProperties.yoffset;
+                    texturePosition[7] = (textureProperties.yoffset * static_cast<float>(row)) + textureProperties.
+                                         yoffset;
 
                     // Apply padding if enabled
                     if (textureProperties.padding) {
