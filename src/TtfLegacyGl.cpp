@@ -7,8 +7,6 @@
 #include "SettingsManager.h"
 #include "ThemeManager.h"
 
-extern settings setting;
-extern ThemeManager themeManager;
 
 TtfLegacyGl::TtfLegacyGl(): fontInfo{} {
     TTF_Init();
