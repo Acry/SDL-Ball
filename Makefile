@@ -23,7 +23,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     SaveGameManager.cpp \
     SoundManager.cpp \
     ThemeManager.cpp \
-    Texture.cpp \
+    SpriteSheetAnimation.cpp \
     game_state.cpp \
     Score.cpp \
     BackgroundManager.cpp \
@@ -38,7 +38,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
 $(shell mkdir -p $(BUILD_DIR))
 
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
-TEST_TARGETS := config-test settings-test display-test
+TEST_TARGETS := config-test settings-test display-test spritesheet-test
 TARGET=sdl-ball
 GAME_OBJECTS := $(OBJECTS)
 
@@ -116,7 +116,7 @@ $(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)SettingsManager.cpp
 # DisplayManager
 DISPLAY_TEST_SOURCES := $(SOURCE_DIR)BackgroundManager_Tests.cpp \
                         $(SOURCE_DIR)Display.cpp \
-                        $(SOURCE_DIR)Texture.cpp \
+                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                         $(SOURCE_DIR)TextureManager.cpp \
                         $(SOURCE_DIR)BackgroundManager.cpp
 
@@ -126,7 +126,7 @@ display-test: $(DISPLAY_TEST_SOURCES)
 $(BUILD_DIR)Display.o: $(SOURCE_DIR)Display.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
-$(BUILD_DIR)Texture.o: $(SOURCE_DIR)Texture.cpp
+$(BUILD_DIR)Texture.o: $(SOURCE_DIR)SpriteSheetAnimation.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
 $(BUILD_DIR)TextureManager.o: $(SOURCE_DIR)TextureManager.cpp
@@ -136,4 +136,14 @@ $(BUILD_DIR)BackgroundManager.o: $(SOURCE_DIR)BackgroundManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
 ###############################################################################
-# Texture
+# SpriteSheetAnimation
+SPRITESHEET_TEST_SOURCES := $(SOURCE_DIR)SpriteSheetAnimation_Tests.cpp \
+                            $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                            $(SOURCE_DIR)Display.cpp \
+                            $(SOURCE_DIR)TextureManager.cpp \
+
+SPRITESHEET_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SPRITESHEET_TEST_SOURCES:.cpp=.o)))
+
+spritesheet-test: $(SPRITESHEET_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(SPRITESHEET_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)spritesheet-test
+
