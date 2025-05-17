@@ -8,7 +8,7 @@
 #include "SettingsManager.h"
 #include "ThemeManager.h"
 
-// need to get rid of this both
+// need to get rid of these both
 extern settings setting;
 
 extern ThemeManager themeManager;
