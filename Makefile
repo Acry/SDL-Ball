@@ -31,7 +31,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     Speedometer.cpp \
     Paddle.cpp \
     Tracer.cpp \
-    Ball.cpp) \
+    Ball.cpp \
 )
 
 # Create the build directory if it doesn't exist
@@ -54,6 +54,9 @@ release: $(BUILD_DIR)$(TARGET)
 
 debug: $(GAME_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(GAME_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)$(TARGET)
+
+$(BUILD_DIR)$(TARGET): $(OBJECTS)
+	$(CXX) $(RELEASE_FLAGS) $(OBJECTS) $(LDFLAGS) -o $@
 
 $(BUILD_DIR)%.o: $(SOURCE_DIR)%.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
@@ -81,8 +84,8 @@ remove-config:
 
 ###############################################################################
 # ConfigManager
-CONFIG_TEST_SOURCES := $(SOURCE_DIR)config_file_test.cpp \
-                       $(SOURCE_DIR)config_file.cpp
+CONFIG_TEST_SOURCES := $(SOURCE_DIR)ConfigFileManager_Tests.cpp \
+                       $(SOURCE_DIR)ConfigFileManager.cpp
 
 CONFIG_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CONFIG_TEST_SOURCES:.cpp=.o)))
 
@@ -98,13 +101,13 @@ $(BUILD_DIR)config_file.o: $(SOURCE_DIR)ConfigFileManager.cpp
 ###############################################################################
 # SettingsManager
 SETTINGS_TEST_SOURCES := $(SOURCE_DIR)SettingsManager_Tests.cpp \
-                         $(SOURCE_DIR)config_file.cpp \
-                         $(SOURCE_DIR)settings_manager.cpp
+                         $(SOURCE_DIR)ConfigFileManager.cpp \
+                         $(SOURCE_DIR)SettingsManager.cpp
 
-SETTINGS_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CONFIG_TEST_SOURCES:.cpp=.o)))
+SETTINGS_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SETTINGS_TEST_SOURCES:.cpp=.o)))
 
 settings-test: $(SETTINGS_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(CONFIG_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)settings-test
+	$(CXX) $(DEBUG_FLAGS) $(SETTINGS_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)settings-test
 
 $(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)SettingsManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
