@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 #include "TtfLegacyGl.h"
 #include "game_state.h"
 // #include "Menu.h" todo
@@ -50,7 +50,7 @@ class Menu {
     TtfLegacyGl& text;  // Referenz auf das Singleton
     string saveGameName[6]; //The name of saveGames
     int saveGameSlot; //Where player choose to save/load to/from
-    Texture tex[5];
+    SpriteSheetAnimation tex[5];
     GLuint dl;
 
     bool themeChanged; //If the theme has changed change the banner.

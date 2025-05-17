@@ -20,7 +20,7 @@ public:
     GLfloat gluedX;
     GLfloat bsin[32], bcos[32];
     bool aimdir;
-    Texture fireTex;
+    SpriteSheetAnimation fireTex;
     GLfloat lastX, lastY;
 
     Ball();

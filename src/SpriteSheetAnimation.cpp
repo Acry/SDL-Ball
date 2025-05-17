@@ -1,8 +1,8 @@
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 
 extern int globalTicksSinceLastDraw;
 
-Texture::Texture() :
+SpriteSheetAnimation::SpriteSheetAnimation() :
     age(10000),
     dir(false),
     lastFrame(1000),
@@ -11,7 +11,7 @@ Texture::Texture() :
 {
 }
 
-void Texture::play() {
+void SpriteSheetAnimation::play() {
     if (textureProperties.playing) {
         // Check if frame needs updating
         age += globalTicksSinceLastDraw;

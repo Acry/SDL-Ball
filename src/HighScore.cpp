@@ -1,11 +1,11 @@
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 
 // header breaker = score *sortScores
 
 class HighScore {
     string name;
     TextureManager texMgr;
-    Texture tex;
+    SpriteSheetAnimation tex;
     TtfLegacyGl& text;  // Als Referenz
 public:
     HighScore()  : text(TtfLegacyGl::getInstance())

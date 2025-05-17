@@ -1,6 +1,6 @@
 #pragma once
 #include <epoxy/gl.h>
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 
 class Tracer {
     GLfloat x[100], y[100];      // Position
@@ -14,7 +14,7 @@ class Tracer {
 
 public:
     GLfloat height, width;
-    Texture* tex;
+    SpriteSheetAnimation* tex;
     int len;
 
     Tracer();

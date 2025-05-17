@@ -134,3 +134,6 @@ $(BUILD_DIR)TextureManager.o: $(SOURCE_DIR)TextureManager.cpp
 
 $(BUILD_DIR)BackgroundManager.o: $(SOURCE_DIR)BackgroundManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
+###############################################################################
+# Texture

@@ -6,7 +6,7 @@
 // Texture coordinates array type (8 floats for 4 vertices)
 using texPos = float[8];
 
-class Texture {
+class SpriteSheetAnimation {
     float age;         // Current frame age
     bool dir;          // Animation direction for bidirectional
     Uint32 lastFrame;    // Last rendered frame
@@ -17,6 +17,6 @@ public:
     bool firstFrame;   // First frame flag
     texPos texturePosition;        // Current frame texture coordinates
     texProp textureProperties;      // Texture properties
-    Texture();
+    SpriteSheetAnimation();
     void play();
 };

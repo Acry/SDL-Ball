@@ -1,5 +1,5 @@
 #pragma once
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 #include <SDL2/SDL.h>
 #include <epoxy/gl.h>
 #include "ThemeManager.h"
@@ -13,7 +13,7 @@ struct score {
 class Menu {
     std::string saveGameName[6];
     int saveGameSlot;
-    Texture tex[5];
+    SpriteSheetAnimation tex[5];
     GLuint dl; joystickAttached;
 
     Menu();

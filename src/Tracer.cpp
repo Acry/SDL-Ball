@@ -1,6 +1,6 @@
 #include <epoxy/gl.h>
 #include "Tracer.h"
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 #include "game_state.h"
 
 // Leaves a trail behind the ball

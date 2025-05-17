@@ -1,7 +1,7 @@
 #pragma once
 
 #include <list>
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 #include "TtfLegacyGl.h"
 
 // Default Effect Settings
@@ -34,7 +34,7 @@ struct effect_vars {
     GLfloat gravity;     // Gravitationsstärke
     int num;             // Anzahl der Elemente
     int life;            // Lebensdauer in ms
-    Texture tex;         // Textur
+    SpriteSheetAnimation tex;         // Textur
     int effectId;        // Eindeutige ID für diesen Effekt
 };
 
@@ -119,7 +119,7 @@ public:
     void set(int var, GLfloat val);
     void set(int var, int val);
     void set(int var, GLfloat r, GLfloat g, GLfloat b);
-    void set(int var, Texture tex);
+    void set(int var, SpriteSheetAnimation tex);
     void set(int var, struct position p);
 
     // Effekt erzeugen und verwalten

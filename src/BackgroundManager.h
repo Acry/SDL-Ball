@@ -1,7 +1,7 @@
 #pragma once
 #include <filesystem>
 
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 
 class TextureManager;
 class BackgroundManager {
@@ -11,7 +11,7 @@ class BackgroundManager {
     // Das Blending sollte bedingt nötig sein.
     GLfloat r[4], g[4], b[4], a;
     const TextureManager* textureMgr; // Referenz auf den TextureManager
-    Texture tex; // Textur für den Hintergrund
+    SpriteSheetAnimation tex; // Textur für den Hintergrund
 
     // wird für die Display-Liste benötigt
     void drawQuad() const;

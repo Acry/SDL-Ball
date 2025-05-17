@@ -13,7 +13,7 @@ int main() {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
-    Texture texture;
+    SpriteSheetAnimation texture;
     const TextureManager textureManager;
     BackgroundManager backgroundManager(textureManager);
     const std::filesystem::path pathName = "../themes/default/gfx/bg/";

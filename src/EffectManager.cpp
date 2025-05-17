@@ -1,5 +1,5 @@
 #include <list>
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 #include "TtfLegacyGl.h"
 #include "EffectManager.h"
 
@@ -15,7 +15,7 @@ struct effect_vars {
     GLfloat gravity; //Hvor stor er tyndgekraften
     int num; //Hvor mange elementer er der i den
     int life; //hvor mange ms lever den?
-    Texture tex; //Texture
+    SpriteSheetAnimation tex; //Texture
     int effectId; //unique id for this effect
 };
 
@@ -462,7 +462,7 @@ public:
         }
     }
 
-    void set(int var, Texture tex) {
+    void set(int var, SpriteSheetAnimation tex) {
         switch (var) {
             case FX_VAR_TEXTURE:
                 vars.tex = tex;

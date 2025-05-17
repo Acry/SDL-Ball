@@ -2,7 +2,7 @@
 #pragma once
 
 #include <epoxy/gl.h>
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 
 class GameObject {
 public:
@@ -13,5 +13,5 @@ public:
     bool active;
     bool collide;
     bool reflect;
-    Texture texture;
+    SpriteSheetAnimation texture;
 };

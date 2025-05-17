@@ -26,7 +26,7 @@
 #include "SettingsManager.h"
 #include "SoundManager.h"
 #include "Speedometer.h"
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 #include "TextureManager.h"
 #include "ThemeManager.h"
 #include "TtfLegacyGl.h"
@@ -593,11 +593,11 @@ public:
 class PowerupManager {
     int i;
     PowerupClass p[MAXPOWERUPS];
-    Texture *tex;
+    SpriteSheetAnimation *tex;
 
 public:
-    void init(Texture texPowerup[]) {
-        tex = new Texture[40];
+    void init(SpriteSheetAnimation texPowerup[]) {
+        tex = new SpriteSheetAnimation[40];
         tex = texPowerup;
     }
 
@@ -799,7 +799,7 @@ public:
 
 PowerupManager powerupManager;
 
-Texture *texExplosiveBrick; //NOTE:Ugly
+SpriteSheetAnimation *texExplosiveBrick; //NOTE:Ugly
 
 class Bullet {
     MovingObject bullets[16];
@@ -807,7 +807,7 @@ class Bullet {
 public:
     int active;
 
-    Bullet(const Texture &texBullet) {
+    Bullet(const SpriteSheetAnimation &texBullet) {
         for (auto &bullet: bullets) {
             bullet.active = false;
             bullet.texture = texBullet;
@@ -1029,7 +1029,7 @@ void brick::hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, 
     }
 }
 
-void createPlayfieldBorderList(GLuint *dl, const Texture &tex) {
+void createPlayfieldBorderList(GLuint *dl, const SpriteSheetAnimation &tex) {
     *dl = glGenLists(1);
     glNewList(*dl,GL_COMPILE);
     glLoadIdentity();
@@ -1106,20 +1106,20 @@ struct shopItemStruct {
 };
 
 class Hud {
-    Texture texBall;
+    SpriteSheetAnimation texBall;
     TtfLegacyGl &text; // Referenz auf das Singleton
     // For the hud text
     int ticksSinceLastClockCheck;
     time_t nixTime; //Seconds since epoch
     tm timeStruct; //Time struct
     char clockString[13]; //Clock: 00:00\0
-    Texture *texPowerup; //Pointer to array of powerup textures
+    SpriteSheetAnimation *texPowerup; //Pointer to array of powerup textures
     int shopItemSelected;
     shopItemStruct item[NUMITEMSFORSALE];
     bool shopItemBlocked[NUMITEMSFORSALE]; //One can only buy each powerup one time each life/level
 
 public:
-    Hud(Texture texB, Texture texPo[]): texBall(texB),
+    Hud(SpriteSheetAnimation texB, SpriteSheetAnimation texPo[]): texBall(texB),
                                              text(TtfLegacyGl::getInstance()),
                                              ticksSinceLastClockCheck(1001),
                                              texPowerup(texPo),
@@ -1379,16 +1379,16 @@ int main(int argc, char *argv[]) {
     DebugMouse debugMouse;
 #endif
 #pragma region texture manager
-    Texture texPaddleBase;
-    Texture texPaddleLayers[2];
-    Texture texBall[3];
-    Texture texLvl[13];
+    SpriteSheetAnimation texPaddleBase;
+    SpriteSheetAnimation texPaddleLayers[2];
+    SpriteSheetAnimation texBall[3];
+    SpriteSheetAnimation texLvl[13];
     texExplosiveBrick = &texLvl[0];
 
-    Texture texBorder;
-    Texture texPowerup[MAXPOTEXTURES];
-    Texture texBullet;
-    Texture texParticle;
+    SpriteSheetAnimation texBorder;
+    SpriteSheetAnimation texPowerup[MAXPOTEXTURES];
+    SpriteSheetAnimation texBullet;
+    SpriteSheetAnimation texParticle;
     TextureManager textureManager;
     textureManager.readTexProps(themeManager.getThemeFilePath("gfx/paddle/base.txt", setting.gfxTheme), texPaddleBase);
     textureManager.readTexProps(themeManager.getThemeFilePath("gfx/paddle/glue.txt", setting.gfxTheme),

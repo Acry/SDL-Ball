@@ -1,10 +1,10 @@
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 
 class powerupDescriptionClass : public MovingObject {
     TtfLegacyGl& text;
 public:
     powerupDescriptionClass();
-    Texture *tex;
+    SpriteSheetAnimation *tex;
 
     void draw() const;
 
@@ -60,8 +60,8 @@ class TitleScreen {
     EffectManager *fxMan;
     int ticksSinceLastSpawn;
     TextureManager texMgr;
-    Texture texTitle;
-    Texture *texPowerups;
+    SpriteSheetAnimation texTitle;
+    SpriteSheetAnimation *texPowerups;
     GLuint glTitleList;
     float rot;
     bool rotDir;
@@ -78,12 +78,12 @@ class TitleScreen {
     static void readDescriptions(powerupDescriptionClass po[]);
 
 public:
-    TitleScreen(EffectManager *m, Texture tp[], Menu *me);
+    TitleScreen(EffectManager *m, SpriteSheetAnimation tp[], Menu *me);
 
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };
 
-TitleScreen::TitleScreen(EffectManager *m, Texture tp[], Menu *me): text(TtfLegacyGl::getInstance())
+TitleScreen::TitleScreen(EffectManager *m, SpriteSheetAnimation tp[], Menu *me): text(TtfLegacyGl::getInstance())
 {
     menu = me;
     numHighScores = 7;

@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 
 class Paddle : public GameObject {
     GLfloat growspeed;
@@ -15,7 +15,7 @@ class Paddle : public GameObject {
 
 public:
     bool dead;
-    Texture *layerTex;
+    SpriteSheetAnimation *layerTex;
 
     Paddle();
     void init();

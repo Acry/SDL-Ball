@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "Texture.h"
+#include "SpriteSheetAnimation.h"
 
 class TextureManager {
-    std::vector<Texture*> loadedTextures;
+    std::vector<SpriteSheetAnimation*> loadedTextures;
     int maxTexSize;
 public:
     TextureManager() {
@@ -21,6 +21,6 @@ public:
             delete tex;
         }
     }
-    bool load(const std::filesystem::path &pathName, Texture& tex) const;
-    void readTexProps(const std::filesystem::path &pathName, Texture& tex) const;
+    bool load(const std::filesystem::path &pathName, SpriteSheetAnimation& tex) const;
+    void readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation& tex) const;
 };

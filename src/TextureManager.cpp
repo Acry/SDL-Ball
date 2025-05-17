@@ -23,7 +23,7 @@ GLuint getGLFormat(const SDL_Surface* surface) {
     }
 }
 
-bool TextureManager::load(const std::filesystem::path &pathName, Texture& tex) const {
+bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnimation& tex) const {
     SDL_Surface* tempSurface = IMG_Load(pathName.c_str());
     if(!tempSurface) {
         SDL_Log("Konnte Textur nicht laden: %s", pathName.c_str());
@@ -67,7 +67,7 @@ loadedTextures.push_back(&tex);
 return true;
 }
 */
-void TextureManager::readTexProps(const std::filesystem::path &pathName, Texture& tex) const {
+void TextureManager::readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation& tex) const {
     char rgba[4][5];
     std::ifstream f;
     std::string set, val;

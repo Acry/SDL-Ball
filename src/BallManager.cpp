@@ -10,14 +10,14 @@ class BallManager {
 public:
     int activeBalls;
     Ball b[MAXBALLS];
-    Texture tex[3];
+    SpriteSheetAnimation tex[3];
 
     void initBalls() {
         activeBalls = 0;
         clear();
     }
 
-    BallManager(Texture btex[]) {
+    BallManager(SpriteSheetAnimation btex[]) {
         tex[0] = btex[0];
         tex[1] = btex[1];
         tex[2] = btex[2];

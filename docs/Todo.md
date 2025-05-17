@@ -14,14 +14,15 @@ SettingsManager settingsManager(configFileManager);
 - [X] TextureManager_Tests
 - [X] BackgroundManager_Tests
 
+- [ ] ThemeManager_Tests (rethink the role of the ThemeManager)
+- [ ] SoundManager_Tests
 - [ ] TextureAnimation_Tests
 - [ ] EffectManager_Tests
 - [ ] TitleScreen_Tests
-- [ ] SoundManager_Tests
+
 - [ ] check early game field sizes, should I go exactly 4:3 and then render the pillars outside?
       scissor rectangle needs to be expanded to the playfield plus the pillars
 - [ ] TextManager_Tests (not sure if this component should be merged with ConfigFileManager)
-- [ ] ThemeManager_Tests
 
 - [ ] SavegameManager_Tests
 - [ ] LevelManager_Tests

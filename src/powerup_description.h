@@ -7,7 +7,7 @@ class powerupDescriptionClass : public MovingObject {
 public:
     powerupDescriptionClass();
     void draw();
-    Texture *tex;
+    SpriteSheetAnimation *tex;
     TtfLegacyGl& text;  // Als Referenz
     std::string name;
     std::string description;
