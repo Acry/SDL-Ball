@@ -1,6 +1,6 @@
 # Settings
 
-## more robust and flexible implementation:
+## Key-Value System
 
 Ja, eine bessere Lösung wäre ein flexibleres Key-Value System zu implementieren. Hier ein Vorschlag:
 

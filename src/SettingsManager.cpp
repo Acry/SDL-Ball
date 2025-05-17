@@ -1,9 +1,15 @@
-// settings_manager.cpp
-
 #include "SettingsManager.h"
 #include <SDL2/SDL.h>
 #include "config.h"
 #include "game_state.h"
+
+// SettingsManager settingsManager(configFileManager);
+
+// Konstruktor außerhalb der Klasse definieren
+SettingsManager::SettingsManager(ConfigFileManager &cf) : configFileManager(cf) {
+    setDefaults();
+    init();
+}
 
 void SettingsManager::setDefaults() {
     defaultSettings.gfxTheme = DEFAULT_GFX_THEME;
@@ -86,7 +92,7 @@ bool SettingsManager::loadSettings() {
         else if (key == "stereo") loadedSettings.stereo = std::stoi(value);
         else if (key == "particlecollide") loadedSettings.particleCollide = std::stoi(value);
 
-        // Controls
+            // Controls
         else if (key == "keyleft") loadedSettings.keyLeft = static_cast<SDL_Keycode>(std::stoi(value));
         else if (key == "keyright") loadedSettings.keyRight = static_cast<SDL_Keycode>(std::stoi(value));
         else if (key == "keyshoot") loadedSettings.keyShoot = static_cast<SDL_Keycode>(std::stoi(value));
@@ -94,12 +100,12 @@ bool SettingsManager::loadSettings() {
         else if (key == "keyprevpo") loadedSettings.keyPrevPo = static_cast<SDL_Keycode>(std::stoi(value));
         else if (key == "keybuypo") loadedSettings.keyBuyPo = static_cast<SDL_Keycode>(std::stoi(value));
 
-        // Control speeds
+            // Control speeds
         else if (key == "controlaccel") loadedSettings.controlAccel = std::stof(value);
         else if (key == "controlstartspeed") loadedSettings.controlStartSpeed = std::stof(value);
         else if (key == "controlmaxspeed") loadedSettings.controlMaxSpeed = std::stof(value);
 
-        // Joystick
+            // Joystick
         else if (key == "joyenabled") loadedSettings.joyEnabled = std::stoi(value);
         else if (key == "joyisdigital") loadedSettings.joyIsDigital = std::stoi(value);
         else if (key == "joyispaddle") loadedSettings.joyIsPaddle = std::stoi(value);
@@ -204,8 +210,8 @@ void SettingsManager::setFullscreen(const bool value) {
         if (value) {
             currentSettings.res_x = 0;
             currentSettings.res_y = 0;
-        }
-        else { // TODO: try loaded settings
+        } else {
+            // TODO: try loaded settings
             currentSettings.res_x = DEFAULT_RES_X;
             currentSettings.res_y = DEFAULT_RES_Y;
         }
@@ -214,7 +220,7 @@ void SettingsManager::setFullscreen(const bool value) {
 
 SettingsManager::~SettingsManager() {
     if (hasChanged()) {
-        if (!writeSettings()) {;
+        if (!writeSettings()) {
             SDL_Log("Failed to write settings to file");
         }
     }
@@ -222,34 +228,34 @@ SettingsManager::~SettingsManager() {
 
 bool SettingsManager::hasChanged() const {
     return currentSettings.sndTheme != loadedSettings.sndTheme
-        || currentSettings.gfxTheme != loadedSettings.gfxTheme
-        || currentSettings.lvlTheme != loadedSettings.lvlTheme
-        || currentSettings.displayToUse != loadedSettings.displayToUse
-        || currentSettings.res_x != loadedSettings.res_x
-        || currentSettings.res_y != loadedSettings.res_y
-        || currentSettings.fps != loadedSettings.fps
-        || currentSettings.showClock != loadedSettings.showClock
-        || currentSettings.fullscreen != loadedSettings.fullscreen
-        || currentSettings.showBg != loadedSettings.showBg
-        || currentSettings.sound != loadedSettings.sound
-        || currentSettings.stereo != loadedSettings.stereo
-        || currentSettings.eyeCandy != loadedSettings.eyeCandy
-        || currentSettings.particleCollide != loadedSettings.particleCollide
-        || currentSettings.keyLeft != loadedSettings.keyLeft
-        || currentSettings.keyRight != loadedSettings.keyRight
-        || currentSettings.keyShoot != loadedSettings.keyShoot
-        || currentSettings.keyNextPo != loadedSettings.keyNextPo
-        || currentSettings.keyPrevPo != loadedSettings.keyPrevPo
-        || currentSettings.keyBuyPo != loadedSettings.keyBuyPo
-        || currentSettings.controlAccel != loadedSettings.controlAccel
-        || currentSettings.controlStartSpeed != loadedSettings.controlStartSpeed
-        || currentSettings.controlMaxSpeed != loadedSettings.controlMaxSpeed
-        || currentSettings.joyEnabled != loadedSettings.joyEnabled
-        || currentSettings.joyIsDigital != loadedSettings.joyIsDigital
-        || currentSettings.joyIsPaddle != loadedSettings.joyIsPaddle
-        || currentSettings.JoyCalMin != loadedSettings.JoyCalMin
-        || currentSettings.JoyCalMax != loadedSettings.JoyCalMax
-        || currentSettings.JoyCalHighJitter != loadedSettings.JoyCalHighJitter
-        || currentSettings.JoyCalLowJitter != loadedSettings.JoyCalLowJitter
-        || currentSettings.startingDifficulty != loadedSettings.startingDifficulty;
+           || currentSettings.gfxTheme != loadedSettings.gfxTheme
+           || currentSettings.lvlTheme != loadedSettings.lvlTheme
+           || currentSettings.displayToUse != loadedSettings.displayToUse
+           || currentSettings.res_x != loadedSettings.res_x
+           || currentSettings.res_y != loadedSettings.res_y
+           || currentSettings.fps != loadedSettings.fps
+           || currentSettings.showClock != loadedSettings.showClock
+           || currentSettings.fullscreen != loadedSettings.fullscreen
+           || currentSettings.showBg != loadedSettings.showBg
+           || currentSettings.sound != loadedSettings.sound
+           || currentSettings.stereo != loadedSettings.stereo
+           || currentSettings.eyeCandy != loadedSettings.eyeCandy
+           || currentSettings.particleCollide != loadedSettings.particleCollide
+           || currentSettings.keyLeft != loadedSettings.keyLeft
+           || currentSettings.keyRight != loadedSettings.keyRight
+           || currentSettings.keyShoot != loadedSettings.keyShoot
+           || currentSettings.keyNextPo != loadedSettings.keyNextPo
+           || currentSettings.keyPrevPo != loadedSettings.keyPrevPo
+           || currentSettings.keyBuyPo != loadedSettings.keyBuyPo
+           || currentSettings.controlAccel != loadedSettings.controlAccel
+           || currentSettings.controlStartSpeed != loadedSettings.controlStartSpeed
+           || currentSettings.controlMaxSpeed != loadedSettings.controlMaxSpeed
+           || currentSettings.joyEnabled != loadedSettings.joyEnabled
+           || currentSettings.joyIsDigital != loadedSettings.joyIsDigital
+           || currentSettings.joyIsPaddle != loadedSettings.joyIsPaddle
+           || currentSettings.JoyCalMin != loadedSettings.JoyCalMin
+           || currentSettings.JoyCalMax != loadedSettings.JoyCalMax
+           || currentSettings.JoyCalHighJitter != loadedSettings.JoyCalHighJitter
+           || currentSettings.JoyCalLowJitter != loadedSettings.JoyCalLowJitter
+           || currentSettings.startingDifficulty != loadedSettings.startingDifficulty;
 }

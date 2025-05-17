@@ -34,27 +34,32 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     Ball.cpp) \
 )
 
-OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
-
 # Create the build directory if it doesn't exist
 $(shell mkdir -p $(BUILD_DIR))
 
+OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
+TEST_TARGETS := config-test settings-test display-test
 TARGET=sdl-ball
+GAME_OBJECTS := $(OBJECTS)
 
-.PHONY: all clean debug release install install-bin install-data remove
+.PHONY: all clean-all debug release install install-bin install-data game tests
 
-all: release debug
+all: game tests
+
+game: release debug
+
+tests: $(TEST_TARGETS)
 
 release: $(BUILD_DIR)$(TARGET)
 
-debug: $(OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)$(TARGET)
+debug: $(GAME_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(GAME_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)$(TARGET)
 
 $(BUILD_DIR)%.o: $(SOURCE_DIR)%.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
-.PHONY: clean
-clean:
+.PHONY: clean-all
+clean-all:
 	@rm -rf $(BUILD_DIR) 2>/dev/null || true
 
 install: $(BUILD_DIR)$(TARGET) install-bin install-data
@@ -67,34 +72,50 @@ install-data:
 	mkdir -p $(DESTDIR)$(DATADIR)
 	cp -p -R themes/* $(DESTDIR)$(DATADIR)
 
-remove:
+remove-config:
 	rm -R ~/.config/sdl-ball
 
-# Test targets
+###############################################################################
+# TEST TARGETS
+###############################################################################
+
+###############################################################################
+# ConfigManager
 CONFIG_TEST_SOURCES := $(SOURCE_DIR)config_file_test.cpp \
-                      $(SOURCE_DIR)config_file.cpp \
-                      $(SOURCE_DIR)settings_manager.cpp
+                       $(SOURCE_DIR)config_file.cpp
 
 CONFIG_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CONFIG_TEST_SOURCES:.cpp=.o)))
 
 config-test: $(CONFIG_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(CONFIG_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)config-test
 
-# Spezielle Regel für die Test-Objekte
 $(BUILD_DIR)config_file_test.o: $(SOURCE_DIR)ConfigFileManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
 $(BUILD_DIR)config_file.o: $(SOURCE_DIR)ConfigFileManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
+###############################################################################
+# SettingsManager
+SETTINGS_TEST_SOURCES := $(SOURCE_DIR)SettingsManager_Tests.cpp \
+                         $(SOURCE_DIR)config_file.cpp \
+                         $(SOURCE_DIR)settings_manager.cpp
+
+SETTINGS_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CONFIG_TEST_SOURCES:.cpp=.o)))
+
+settings-test: $(SETTINGS_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(CONFIG_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)settings-test
+
 $(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)SettingsManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
+###############################################################################
+# DisplayManager
 DISPLAY_TEST_SOURCES := $(SOURCE_DIR)BackgroundManager_Tests.cpp \
-                      $(SOURCE_DIR)Display.cpp \
-                      $(SOURCE_DIR)Texture.cpp \
-                      $(SOURCE_DIR)TextureManager.cpp \
-                      $(SOURCE_DIR)BackgroundManager.cpp
+                        $(SOURCE_DIR)Display.cpp \
+                        $(SOURCE_DIR)Texture.cpp \
+                        $(SOURCE_DIR)TextureManager.cpp \
+                        $(SOURCE_DIR)BackgroundManager.cpp
 
 display-test: $(DISPLAY_TEST_SOURCES)
 	$(CXX) $(DEBUG_FLAGS) $(DISPLAY_TEST_SOURCES) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)display-test

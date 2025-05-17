@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../src/loadlevel.cpp"
+#include "../../src/loadlevel.cpp"
 #include <fstream>
 #include <sstream>
 

@@ -10,12 +10,15 @@ Grundsätzlich haben wir 3 Typen von Settings:
 `loaded` - gespeicherte Settings des Spielers
 `current` - und die runtime settings
 
-Hält defaults und current settings.
+Hält loaded, defaults und current settings.
 
 SettingsManager nutzt ConfigFileManager 
 
 Kandidaten die den settingsManager nutzen:
 - GameManager
+
+Momentan vermute ich, dass es das beste wäre, wenn nur der GameManager mit dem SettingsManager redet.
+
 - DisplayManager
 - SoundManager
 - ThemeManager
@@ -26,5 +29,5 @@ Kandidaten die den settingsManager nutzen:
 - MenuManager
 
 Weitere 
-See: [Settings](Settings.md)
-See: [Managers](Managers.md)
+See: [Settings](../Settings.md)
+See: [Managers](../Managers.md)

@@ -31,6 +31,7 @@
 // Den ThemenPfad geben wir ebenfalls von außen rein.
 // Die Anzahl der Hintergründe sollte nicht fix sein.
 // Auflösung und Format spielen keine Rolle, lediglich das AR von 4:3 ist wichtig.
+// 4:3 kann auch einfach der Mitte genommen werden.
 // Die Anzahl der Hintergründe wird gelesen. Sollte es ein Final.jpg wird das berücksichtigt.
 // Also sollten wir den Texture Manager als Abhängigkeit haben.
 BackgroundManager::BackgroundManager(const TextureManager &texMgr) : backgroundDisplayList(0) {

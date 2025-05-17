@@ -35,47 +35,46 @@ struct settings {
 };
 
 class SettingsManager {
-    // Private Konstruktor
-    explicit SettingsManager(ConfigFileManager& cf) : configFileManager(cf) {
-        setDefaults();
-        init();
-    }
-
-    settings defaultSettings{};    // Compile-time Defaults aus config.h
-    settings loadedSettings{};     // Aus Datei geladene Settings
-    settings currentSettings{};    // Aktuelle Runtime-Settings
+    settings defaultSettings{}; // Compile-time Defaults aus config.h
+    settings loadedSettings{}; // Aus Datei geladene Settings
+    settings currentSettings{}; // Aktuelle Runtime-Settings
     ConfigFileManager &configFileManager;
 
     void setDefaults();
+
     bool loadSettings();
+
     bool validateSettings();
+
     [[nodiscard]] bool writeSettings() const;
+
     [[nodiscard]] bool hasChanged() const;
 
 public:
-    // Verhindere Kopieren
-    SettingsManager(const SettingsManager&) = delete;
-    SettingsManager& operator=(const SettingsManager&) = delete;
+    explicit SettingsManager(ConfigFileManager &cf);
 
-    // Singleton-Zugriff
-    static SettingsManager& getInstance(ConfigFileManager& cf) {
-        static SettingsManager instance(cf);
-        return instance;
-    }
+    // Verhindere Kopieren
+    SettingsManager(const SettingsManager &) = delete;
+
+    SettingsManager &operator=(const SettingsManager &) = delete;
 
     bool init();
+
     void resetToDefaults() { currentSettings = defaultSettings; }
     void resetToLoaded() { currentSettings = loadedSettings; }
 
     [[nodiscard]] int getDifficulty() const {
         return currentSettings.startingDifficulty;
     }
-    [[nodiscard]] const settings& getSettings() const {
+
+    [[nodiscard]] const settings &getSettings() const {
         return currentSettings;
     }
+
     [[nodiscard]] bool isFullscreen() const {
         return currentSettings.fullscreen;
     }
+
     void setFullscreen(bool value);
 
     ~SettingsManager();

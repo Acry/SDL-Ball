@@ -2,6 +2,8 @@
 #include <iostream>
 #include <cassert>
 
+#include "SettingsManager.h"
+
 void testConfigPaths(const ConfigFileManager &config) {
     std::cout << "Test Konfigurationspfade:\n"
             << "Root: " << config.getProgramRoot() << "\n"
@@ -18,9 +20,11 @@ void testSettingsFile(const ConfigFileManager &config) {
 
 int main() {
     ConfigFileManager config("./test");
-    assert(config.init());
-
-    testConfigPaths(config);
+    // was macht der Konstruktor?
+    SettingsManager settings(config);
+    // set defaults - .defaultSettings
+    // init: loadSettings, validateSettings, resetToLoaded
+    // testConfigPaths(config);
     testSettingsFile(config);
 
     return EXIT_SUCCESS;
