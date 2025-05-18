@@ -18,7 +18,7 @@ public:
     int len;
 
     Tracer();
-    void draw();
+    void draw(float deltaTime);
     void colorRotate(bool explosive, const GLfloat c[]);
     void update(GLfloat nx, GLfloat ny);
 };

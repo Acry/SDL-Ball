@@ -1,7 +1,6 @@
 #include <epoxy/gl.h>
 #include "Tracer.h"
 #include "SpriteSheetAnimation.h"
-#include "game_state.h"
 
 // Leaves a trail behind the ball
 Tracer::Tracer() {
@@ -12,14 +11,15 @@ Tracer::Tracer() {
     height = width = 0.01;
     for (bool &i: active) i = false;
 }
-void Tracer::draw() {
+
+void Tracer::draw(float deltaTime) {
     for (int i = 0; i < len; i++) {
         if (active[i]) {
             // Stärkere Alpha-Reduktion für ältere Partikel
-            a[i] -= (4.0f + i * 0.1f) * globalMilliTicksSinceLastDraw;
+            a[i] -= (4.0f + i * 0.1f) * deltaTime;
 
             // Partikel werden dünner mit der Zeit
-            s[i] -= 2.0f * globalMilliTicksSinceLastDraw;
+            s[i] -= 2.0f * deltaTime;
             if (s[i] < 0.2f) s[i] = 0.2f;
 
             if (a[i] < 0.0f) {
@@ -27,7 +27,7 @@ void Tracer::draw() {
                 continue;
             }
 
-            tex->play();
+            tex->play(deltaTime);
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, tex->textureProperties.texture);
             glLoadIdentity();

@@ -10,27 +10,39 @@ Ball::Ball(EventManager* eventMgr) : eventManager(eventMgr) {
 }
 
 void Ball::init() {
-    // MovingObject-Eigenschaften
-    width = 0.0f;
-    height = 0.0f;
-    eyeCandy = true;
+    // MovingObject-Eigenschaften mit sinnvollen Standardwerten
+    width = 0.03f;    // Standardgröße statt 0
+    height = 0.03f;   // Standardgröße statt 0
+    eyeCandy = true;  // Tracer-Effekte standardmäßig aktiviert
+    active = true;    // Ball ist standardmäßig aktiv
+
+    // Bewegungseigenschaften
+    velocity = 0.3f;  // Standardgeschwindigkeit
+    xvel = 0.0f;
+    yvel = 0.0f;
+
     // Ball-spezifische Eigenschaften
-    glued = false;
+    glued = true;     // Ball startet am Paddle festgeklebt
     pos_x = 0.0f;
     pos_y = 0.0f;
     aimdir = false;
+    explosive = false;
+    gluedX = 0.0f;
 
     // GrowableObject-Eigenschaften neu initialisieren
     growing = false;
     shrinking = false;
-    growSpeed = 0.1f;
+    growSpeed = 2.0f; // Schnelleres Wachsen/Schrumpfen
     keepAspectRatio = true;
     aspectRatio = 1.0f;
+
+    // Kollisionspunkte initialisieren
+    onSizeChanged();
 }
 
 void Ball::hit(GLfloat c[]) {
     if (eyeCandy)
-        tail.colorRotate(explosive, c);
+        tracer.colorRotate(explosive, c);
 }
 
 void Ball::update(float deltaTime) {
@@ -79,12 +91,12 @@ void Ball::update(float deltaTime) {
     }
 
     if (eyeCandy)
-        tail.update(pos_x, pos_y);
+        tracer.update(pos_x, pos_y);
 }
 
 void Ball::draw(float deltaTime) {
     if (eyeCandy)
-        tail.draw();
+        tracer.draw(deltaTime);
 
     updateGrowth(deltaTime);
 
@@ -161,7 +173,7 @@ GLfloat Ball::getRad() {
     return (rad);
 }
 
-void Ball::setangle(GLfloat o) {
+void Ball::setAngle(GLfloat o) {
     if (o < MIN_BOUNCE_ANGLE) {
         o = MIN_BOUNCE_ANGLE;
     }
@@ -175,7 +187,7 @@ void Ball::setangle(GLfloat o) {
     yvel = velocity * sin(rad);
 }
 
-void Ball::setspeed(GLfloat v) {
+void Ball::setSpeed(GLfloat v) {
     // Konstanten für Konfigurationswerte verwenden
     static constexpr GLfloat DEFAULT_MAX_BALL_SPEED = 0.5f;
 
@@ -204,8 +216,8 @@ void Ball::setSize(GLfloat s) {
 void Ball::onSizeChanged() {
     // Diese Methode wird aufgerufen, wenn die Größe geändert wurde
     // Aktualisiere die Tracer-Größe
-    tail.width = width;
-    tail.height = height;
+    tracer.width = width;
+    tracer.height = height;
 
     // Aktualisiere die Punkte für den Ball (bsin und bcos Arrays)
     constexpr int POINTS = 32;

@@ -39,7 +39,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
 $(shell mkdir -p $(BUILD_DIR))
 
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
-TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-test theme-test text-test
+TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-test theme-test text-test ball-test
 TARGET=sdl-ball
 GAME_OBJECTS := $(OBJECTS)
 
@@ -196,3 +196,25 @@ SOUND_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOUND_TEST_SOURCES:.c
 
 sound-test: $(SOUND_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(SOUND_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_mixer -o $(BUILD_DIR)sound-test
+
+###############################################################################
+# Ball
+BALL_TEST_SOURCES := $(SOURCE_DIR)Ball_Tests.cpp \
+                     $(SOURCE_DIR)Ball.cpp \
+                     $(SOURCE_DIR)Tracer.cpp \
+                     $(SOURCE_DIR)Paddle.cpp \
+                     $(SOURCE_DIR)GameObject.cpp \
+                     $(SOURCE_DIR)GrowableObject.cpp \
+                     $(SOURCE_DIR)Display.cpp \
+                     $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                     $(SOURCE_DIR)TextureManager.cpp \
+                     $(SOURCE_DIR)CollisionManager.cpp
+
+BALL_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BALL_TEST_SOURCES:.cpp=.o)))
+
+ball-test: $(BALL_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(BALL_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)ball-test
+
+$(BUILD_DIR)CollisionManager.o: $(SOURCE_DIR)CollisionManager.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+

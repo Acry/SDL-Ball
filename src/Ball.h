@@ -16,7 +16,7 @@ protected:
     void onSizeChanged() override;
 
 public:
-    Tracer tail;
+    Tracer tracer;
     bool explosive{false};
     bool glued{false};
     GLfloat gluedX{0.0f};
@@ -42,9 +42,9 @@ public:
 
     GLfloat getRad();
 
-    void setangle(GLfloat o);
+    void setAngle(GLfloat o);
 
-    void setspeed(GLfloat v);
+    void setSpeed(GLfloat v);
 
     void setSize(GLfloat s);
 

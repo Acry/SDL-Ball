@@ -52,7 +52,7 @@ bool CollisionManager::checkBallPaddleCollision(Ball& ball, const Paddle& paddle
 
                 // Abprallwinkel berechnen
                 float angle = calculateBounceAngle(paddle.width, paddle.pos_x, ball.pos_x);
-                ball.setangle(angle);
+                ball.setAngle(angle);
 
                 return true;
             }

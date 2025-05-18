@@ -27,7 +27,7 @@ public:
         for (auto &i: b) {
             i.texture = tex[0];
             i.fireTex = tex[1];
-            i.tail.tex = &tex[2];
+            i.tracer.tex = &tex[2];
         }
 
         initBalls();
@@ -90,8 +90,8 @@ public:
                 i.pos_x = p.x;
                 i.pos_y = p.y;
                 i.explosive = false;
-                i.setspeed(speed);
-                i.setangle(angle);
+                i.setSpeed(speed);
+                i.setAngle(angle);
                 i.setSize(0.025);
 
                 //New balls get already applied powerups if not hard
@@ -221,21 +221,21 @@ public:
                 switch (powerup) {
                     case PO_BIGBALL: //big balls
                         i.setSize(0.04);
-                        i.setspeed(runtime_difficulty.ballspeed[player.difficulty]);
+                        i.setSpeed(runtime_difficulty.ballspeed[player.difficulty]);
                         break;
                     case PO_SMALLBALL: //small balls
                         i.setSize(0.015);
                         //speed bolden op
-                        i.setspeed(
+                        i.setSpeed(
                             i.velocity + ((i.velocity / 100.f) * runtime_difficulty.speedup[player.difficulty]));
                         break;
                     case PO_NORMALBALL: // normal balls
                         i.setSize(0.025);
-                        i.setspeed(runtime_difficulty.ballspeed[player.difficulty]);
+                        i.setSpeed(runtime_difficulty.ballspeed[player.difficulty]);
                         break;
                     case PO_EXPLOSIVE: //exploderer brikker
                         i.explosive = true;
-                        i.tail.colorRotate(true, nullptr);
+                        i.tracer.colorRotate(true, nullptr);
                         break;
                     default: ;
                 }
