@@ -11,8 +11,7 @@ class SpriteSheetAnimation {
     Uint32 lastFrame; // Last rendered frame
 
 public:
-    // Öffentliche Methoden
-    void play(); // Animationslogik
+    void play(float deltaTime = 0.0f); // Animationslogik
     Uint32 frame; // Current animation frame
     bool playing; // Animation playing state
     bool firstFrame; // First frame flag

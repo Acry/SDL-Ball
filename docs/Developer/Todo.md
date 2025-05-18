@@ -46,6 +46,7 @@ there are a lot of things to do.
   - [ ] QuitMenu
   - [ ] HighscoreMenu
   - [ ] LevelSelectMenu
+- [ ] MenuManager: keyboard support
 - [ ] MenuManager_Tests
 
 - HUD (Score, Clock, Lives, Level, Speedometer, Powerups consumed (bottom), Shop (top))

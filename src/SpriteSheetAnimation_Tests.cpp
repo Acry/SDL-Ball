@@ -3,8 +3,6 @@
 #include "TextureManager.h"
 #include "Display.hpp"
 
-int globalTicksSinceLastDraw = 0;
-
 int main() {
     Display display(0, 1280, 720, false);
     if (display.sdlWindow == nullptr) {
@@ -50,12 +48,12 @@ int main() {
             }
         }
         // Zeit für Animation aktualisieren
-        Uint32 currentTime = SDL_GetTicks();
-        globalTicksSinceLastDraw = currentTime - lastTime;
+        const Uint32 currentTime = SDL_GetTicks();
+        const float deltaTime = (currentTime - lastTime) / 1000.0f; // in Sekunden
         lastTime = currentTime;
 
         // Animation aktualisieren
-        spriteSheetAnimation.play();
+        spriteSheetAnimation.play(deltaTime);
 
         // Rendern
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

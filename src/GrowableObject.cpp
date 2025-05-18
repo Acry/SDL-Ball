@@ -31,7 +31,6 @@ void GrowableObject::updateGrowth(float deltaTime) {
 
         // Subklassen benachrichtigen
         onSizeChanged();
-
     } else if (shrinking) {
         GLfloat newsize = growSpeed * deltaTime;
         setWidth(getWidth() - newsize);

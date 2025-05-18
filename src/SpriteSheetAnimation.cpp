@@ -1,7 +1,5 @@
 #include "SpriteSheetAnimation.h"
 
-// Need to get rid of this
-extern int globalTicksSinceLastDraw;
 
 SpriteSheetAnimation::SpriteSheetAnimation() : age(10000),
                                                direction(false),
@@ -10,14 +8,14 @@ SpriteSheetAnimation::SpriteSheetAnimation() : age(10000),
                                                firstFrame(true) {
 }
 
-void SpriteSheetAnimation::play() {
+void SpriteSheetAnimation::play(const float deltaTime) {
     if (textureProperties.playing) {
-        // Check if frame needs updating
-        age += globalTicksSinceLastDraw;
+        // Verwende den übergebenen deltaTime-Parameter statt der globalen Variable
+        age += deltaTime * 1000.0f; // Umwandlung in Millisekunden
         if (age >= textureProperties.ticks) {
             age = 0.0f;
 
-            // Update frame counter based on direction
+            // Rest der Methode bleibt unverändert
             if (!direction) {
                 if (frame == textureProperties.frames) {
                     if (textureProperties.bidir) {

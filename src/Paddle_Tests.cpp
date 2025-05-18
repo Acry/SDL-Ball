@@ -44,8 +44,8 @@ int main() {
     }
 
     // Gun-Layer laden
-    const std::filesystem::path gunTexPath = "../themes/default/gfx/powerup/gun.png";
-    const std::filesystem::path gunPropsPath = "../themes/default/gfx/powerup/gun.txt";
+    const std::filesystem::path gunTexPath = "../themes/default/gfx/paddle/gun.png";
+    const std::filesystem::path gunPropsPath = "../themes/default/gfx/paddle/gun.txt";
     if (!textureManager.load(gunTexPath, paddle.layerTex[1])) {
         SDL_Log("Fehler beim Laden der Gun-Textur");
     } else {
@@ -53,7 +53,6 @@ int main() {
     }
     SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
     SDL_SetRelativeMouseMode(SDL_TRUE);
-    // Main Loop
     Uint32 lastTime = SDL_GetTicks();
     bool running = true;
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -78,7 +77,7 @@ int main() {
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     running = false;
                 }
-                float moveStep = 1.5f * deltaTime; // Geschwindigkeitsanpassung
+                float moveStep = 0.09f; // Konstanter, kleiner Wert für Tastatureingabe
                 switch (event.key.keysym.sym) {
                     case SDLK_LEFT:
                         paddle.moveTo(paddle.pos_x - moveStep, deltaTime);
@@ -86,16 +85,16 @@ int main() {
                     case SDLK_RIGHT:
                         paddle.moveTo(paddle.pos_x + moveStep, deltaTime);
                         break;
-                    case SDLK_g:  // Paddle wachsen lassen
+                    case SDLK_g: // Paddle wachsen lassen
                         paddle.grow(paddle.getWidth() * 1.5f);
                         break;
-                    case SDLK_s:  // Paddle verkleinern
+                    case SDLK_s: // Paddle verkleinern
                         paddle.grow(paddle.getWidth() * 0.7f);
                         break;
-                    case SDLK_1:  // Glue aktivieren/deaktivieren
+                    case SDLK_1: // Glue aktivieren/deaktivieren
                         paddle.setGlueLayer(!paddle.hasGlueLayer);
                         break;
-                    case SDLK_2:  // Gun aktivieren/deaktivieren
+                    case SDLK_2: // Gun aktivieren/deaktivieren
                         paddle.setGunLayer(!paddle.hasGunLayer);
                         break;
                     default: ;
@@ -117,7 +116,7 @@ int main() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        paddle.draw();
+        paddle.draw(deltaTime);
 
         SDL_GL_SwapWindow(display.sdlWindow);
         SDL_Delay(16); // ~60fps

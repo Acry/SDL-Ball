@@ -16,8 +16,8 @@ void Paddle::init() {
     // GameObject-Eigenschaften (und GrowableObject)
     pos_y = -0.93f;
     pos_x = 0.0f;
-    width = 0.059f;        // Setzt beide width-Variablen
-    height = 0.018f;       // Setzt beide height-Variablen
+    width = 0.059f; // Setzt beide width-Variablen
+    height = 0.018f; // Setzt beide height-Variablen
 
     // Paddle-spezifische Eigenschaften
     dead = false;
@@ -30,7 +30,6 @@ void Paddle::grow(const GLfloat targetWidth) {
 }
 
 void Paddle::drawBase() {
-    texture.play();
     glLoadIdentity();
     glTranslatef(pos_x, pos_y, 0.0);
     glEnable(GL_TEXTURE_2D);
@@ -97,16 +96,23 @@ void Paddle::drawGunLayer() const {
     glDisable(GL_TEXTURE_2D);
 }
 
-void Paddle::draw() {
+void Paddle::draw(float deltaTime) {
     if (dead) return;
+
+    // Animation mit deltaTime aktualisieren
+    texture.play(deltaTime);
 
     drawBase();
 
-    if (hasGlueLayer)
+    if (hasGlueLayer) {
+        layerTex[0].play(deltaTime);
         drawGlueLayer();
+    }
 
-    if (hasGunLayer)
+    if (hasGunLayer) {
+        layerTex[1].play(deltaTime);
         drawGunLayer();
+    }
 }
 
 void Paddle::setGlueLayer(const bool enabled) {
@@ -117,21 +123,35 @@ void Paddle::setGunLayer(const bool enabled) {
     hasGunLayer = enabled;
 }
 
-void Paddle::update(float deltaTime) {
+void Paddle::update(const float deltaTime) {
     // Hier Paddle-Logik implementieren
     updateGrowth(deltaTime);
 }
 
-void Paddle::moveTo(float targetX, float deltaTime) {
-    // Bewegungsgeschwindigkeit basierend auf deltaTime
-    float speed = 2.0f; // Anpassbare Geschwindigkeit
-    float movement = speed * deltaTime;
+void Paddle::moveTo(const float targetX, const float deltaTime) {
+    // Unterscheidung zwischen direkter Positionierung und geschwindigkeitsbasierter Bewegung
+    const bool isMouseInput = std::abs(targetX - pos_x) > 0.1f;
 
-    // Bewege in Richtung Zielposition
-    if (pos_x < targetX) {
-        pos_x = std::min(pos_x + movement, targetX);
-    } else if (pos_x > targetX) {
-        pos_x = std::max(pos_x - movement, targetX);
+    if (isMouseInput) {
+        // Mauseingabe: Direkte Positionierung mit Dämpfung
+        constexpr float mouseSpeed = 8.0f;
+        pos_x += (targetX - pos_x) * mouseSpeed * deltaTime;
+    } else {
+        // Tastatur/Controller: Konstante Geschwindigkeit
+        constexpr float keyboardSpeed = 20.0f;
+        // Richtung bestimmen (links/rechts)
+        const float direction = (targetX > pos_x) ? 1.0f : -1.0f;
+        // Nur bewegen, wenn Differenz vorhanden
+        if (targetX != pos_x) {
+            // Geschwindigkeitsbasierte Bewegung
+            pos_x += direction * keyboardSpeed * deltaTime;
+
+            // Vermeide Überschießen
+            if ((direction > 0 && pos_x > targetX) ||
+                (direction < 0 && pos_x < targetX)) {
+                pos_x = targetX;
+            }
+        }
     }
 
     // Begrenzung auf den Bildschirmrand
