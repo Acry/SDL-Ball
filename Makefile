@@ -39,7 +39,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
 $(shell mkdir -p $(BUILD_DIR))
 
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
-TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-test
+TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-test theme-test text-test
 TARGET=sdl-ball
 GAME_OBJECTS := $(OBJECTS)
 

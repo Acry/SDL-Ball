@@ -15,8 +15,9 @@ there are a lot of things to do.
 - [X] TextManager_Tests - implicitly tested in TextureAnimation_Tests
 - [X] TextureAnimation_Tests
 - [X] ThemeManager_Tests (rethink the role of the ThemeManager)
-- [ ] TextManager, revert Singleton Implementation
-- [ ] TextManager_Tests
+- [X] TextManager, revert Singleton Implementation
+- [X] TextManager_Tests
+
 - [ ] SoundManager_Tests
 - [ ] SavegameManager_Tests
 - [ ] LevelManager_Tests
@@ -31,11 +32,13 @@ there are a lot of things to do.
 - [ ] GameObject_Tests
 - [ ] GameObjectManager_Tests
 
+- [ ] fix other menus,
+  - [X] MainMenu
+  - [ ] SettingsMenu
+  - [ ] QuitMenu
+  - [ ] HighscoreMenu
+  - [ ] LevelSelectMenu
 - [ ] MenuManager_Tests
-- [ ] HudManager_Tests
-
-- [ ] Timing_Tests
-- [ ] GameManager_Tests
 
 - HUD (Score, Clock, Lives, Level, Speedometer, Powerups consumed (bottom), Shop (top))
   - [ ] Score
@@ -46,11 +49,17 @@ there are a lot of things to do.
   - [ ] Shop (top)
   - [ ] Speedometer
 
+- [ ] HudManager_Tests
+
 hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] BallManager_Tests
 - [ ] BrickManager_Tests
 - [ ] Player_Tests
 - [ ] Ball_Tests
+
+- [ ] Timing_Tests
+- [ ] GameManager erstellen
+- [ ] GameManager_Tests
 
 - [ ] **Game should be playable again**
 
@@ -73,7 +82,7 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] n - next level
 - [ ] m - previous level
 - [ ] f - autoplay
-- [ ] Make game playable withouth datafiles (random levels, no samplers)
+- [ ] Make the game playable without datafiles (random levels, no samplers)
 - [ ] simple GPU-Sounds?
 - [ ] make game playable with keys
 - [ ] fix projection for submenus
@@ -85,6 +94,7 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] modernize game controllers, see: https://examples.libsdl.org/SDL3/input/01-joystick-polling/
 - [ ] Play with pen? https://examples.libsdl.org/SDL3/pen/01-drawing-lines/
 - [ ] use sdl2 highperformance timer, see: [Timing](Refactoring/Timing.md)
+- [ ] credits scene
 
 ### Auxiliary
 
@@ -99,19 +109,18 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] fix messed up values due to [projection change](Refactoring/Projection.md).
 - [ ] write tests
 - [ ] Refactor [Timing](Refactoring/Timing.md)
-- [ ] check save game structure -> binary, whyever. Should be name and level.
-- [ ] show current level no.  during gameplay
+- [ ] show current level no. during gameplay
 
 - [ ] separate Powerup Descriptions from Title, new Scene
 - [ ] open website from title screen
 - [ ] add a new scene for the used keys
-- [ ] add a new scene for more explainations, see Website page=about.html
+- [ ] add a new scene for more explanation, see Website page=about.html
 
 - [ ] autoplay after title for a while
-- [ ] autosave level on quit, asked for continue
+- [ ] autosave level on quit, asked for continuing
 - [ ] hot reload themes/levels/graphics/sounds
 - [ ] polish Leveleditor
-- [ ] using a physics engine at this point might be an overkill.
+- [ ] using a physics engine at this point might be overkill.
 - [ ] add a pause indicator / Pause Scene
 - [ ] rework the shop
 - [ ] https://examples.libsdl.org/SDL3/demo/04-bytepusher/
@@ -119,6 +128,6 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] implement callbacks
 
 - [ ] use shaders
-- [ ] use SDL 3, not sure if i should maintain SDL2 plus Emscripten
+- [ ] use SDL 3, not sure if I should maintain SDL2 plus Emscripten
 - [ ] Emscripten
-- [ ] ThemeManager zu cmdline um Themes zu validieren
+- [ ] ThemeManager zu cmdline, um Themes zu validieren
