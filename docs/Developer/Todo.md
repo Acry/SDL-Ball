@@ -82,6 +82,9 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] check early game field sizes, should I go exactly 4:3 and then render the pillars outside?
   scissor rectangle needs to be expanded to the playfield plus the pillars
 - [ ] solve brick fade issue
+- [ ] Tests: manual tests should reside in the test folder, not in the src folder
+- [ ] add Theme fixtures to tests
+- [ ] add saveGames to tests
 
 ## Additional things
 
