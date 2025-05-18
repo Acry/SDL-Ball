@@ -1,6 +1,5 @@
 #pragma once
 #include <epoxy/gl.h>
-#include "game_state.h"
 #include "MovingObject.h"
 #include "Tracer.h"
 #include "Paddle.h"
@@ -8,41 +7,37 @@
 
 class Ball : public MovingObject, public GrowableObject {
     GLfloat rad;
-    bool growing, shrinking;
-    GLfloat destwidth, growspeed;
     bool eyeCandy;
 
-    static float bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx);
+    static float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx);
 
 protected:
     void onSizeChanged() override;
 
 public:
     Tracer tail;
-    bool explosive;
-    bool glued;
-    GLfloat gluedX;
-    GLfloat bsin[32], bcos[32];
-    bool aimdir;
+    bool explosive{false};
+    bool glued{false};
+    GLfloat gluedX{0.0f};
+    GLfloat bsin[32]{}, bcos[32]{};
+    bool aimdir{false};
     SpriteSheetAnimation fireTex;
-    GLfloat lastX, lastY;
 
     Ball();
 
     // Implementation der virtuellen Getter/Setter aus GrowableObject
-    GLfloat getWidth() const override { return MovingObject::width; }
-    GLfloat getHeight() const override { return MovingObject::height; }
+    [[nodiscard]] GLfloat getWidth() const override { return MovingObject::width; }
+    [[nodiscard]] GLfloat getHeight() const override { return MovingObject::height; }
     void setWidth(GLfloat w) override { MovingObject::width = w; }
     void setHeight(GLfloat h) override { MovingObject::height = h; }
 
     void hit(GLfloat c[]);
-    void move();
-    void draw(const Paddle &paddle);
+    void move(float deltaTime);
+    void draw(const Paddle& paddle, float deltaTime);
     GLfloat getRad();
     void setangle(GLfloat o);
     void setspeed(GLfloat v);
     void setSize(GLfloat s);
 
     void setEyeCandy(bool value) { eyeCandy = value; }
-    static void checkPaddleCollision(Ball &b, const Paddle &p, position &po);
 };

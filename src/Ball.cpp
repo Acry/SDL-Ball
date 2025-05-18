@@ -33,7 +33,7 @@ void Ball::hit(GLfloat c[]) {
         tail.colorRotate(explosive, c);
 }
 
-void Ball::move() {
+void Ball::move(float deltaTime) {
     // Ball Border Collision
     if (pos_x < PLAYFIELD_LEFT_BORDER && xvel < 0.0) {
         soundManager.add(SND_BALL_HIT_BORDER, pos_x);
@@ -49,10 +49,10 @@ void Ball::move() {
         active = false;
     }
 
-    pos_x += xvel * globalMilliTicks;
+    pos_x += xvel * deltaTime;
 
     if (!glued) {
-        pos_y += yvel * globalMilliTicks;
+        pos_y += yvel * deltaTime;
     } else {
         gVar.deadTime = 0;
     }
@@ -61,21 +61,21 @@ void Ball::move() {
         tail.update(pos_x, pos_y);
 }
 
-void Ball::draw(const Paddle &paddle) {
+void Ball::draw(const Paddle &paddle, float deltaTime) {
     if (eyeCandy)
         tail.draw();
 
-    updateGrowth(globalMilliTicksSinceLastDraw);
+    updateGrowth(deltaTime);
 
     if (glued && player.powerup[PO_LASER]) {
         if (player.powerup[PO_AIM]) {
             if (aimdir == 0) {
-                rad -= 1.2f * globalMilliTicksSinceLastDraw;
+                rad -= 1.2f * deltaTime;
 
                 if (rad < BALL_MIN_DEGREE)
                     aimdir = true;
             } else {
-                rad += 1.2f * globalMilliTicksSinceLastDraw;
+                rad += 1.2f * deltaTime;
                 if (rad > BALL_MAX_DEGREE + BALL_MIN_DEGREE)
                     aimdir = false;
             }
@@ -151,7 +151,7 @@ void Ball::draw(const Paddle &paddle) {
     glColor4f(GL_WHITE);
 
     if (explosive) {
-        fireTex.play();
+        fireTex.play(deltaTime);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, fireTex.textureProperties.texture);
         glColor4f(fireTex.textureProperties.glTexColorInfo[0], fireTex.textureProperties.glTexColorInfo[1],
@@ -169,7 +169,7 @@ void Ball::draw(const Paddle &paddle) {
         glEnd();
         glDisable(GL_TEXTURE_2D);
     } else {
-        texture.play();
+        texture.play(deltaTime);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
         glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1],

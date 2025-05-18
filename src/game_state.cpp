@@ -12,7 +12,6 @@ float globalMilliTicks = 0.0f;
 Uint32 nonpausingGlobalTicks = 0;
 float nonpausingGlobalMilliTicks = 0.0f;
 int globalTicksSinceLastDraw = 0;
-float globalMilliTicksSinceLastDraw = 0.0f;
 
 vars var;
 gameVars gVar;

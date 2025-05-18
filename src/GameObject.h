@@ -19,10 +19,15 @@ public:
     virtual ~GameObject() = default;
     virtual void init() = 0;
     virtual void update(float deltaTime) = 0;
-    virtual void draw() = 0;
+    virtual void draw(float deltaTime = 0.0f) = 0;
 
-    // Kollisionserkennung (Basismethode für alle Spielobjekte)
-    virtual bool isCollidingWith(const GameObject& other) const;
+    virtual bool isCollidingWith(const GameObject& other) const {
+        // Einfache AABB-Kollision (kann von Unterklassen überschrieben werden)
+        return (pos_x - width < other.pos_x + other.width &&
+                pos_x + width > other.pos_x - other.width &&
+                pos_y - height < other.pos_y + other.height &&
+                pos_y + height > other.pos_y - other.height);
+    }
 
     // Hilfsfunktionen
     bool isActive() const { return active; }

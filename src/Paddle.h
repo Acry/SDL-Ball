@@ -29,7 +29,6 @@ public:
 
     void moveTo(float targetX, float deltaTime);
 
-    void draw() override { draw(0.0f); } // Implementieren der reinen virtuellen Basismethode
     void draw(float deltaTime); // Spezifische Methode mit deltaTime
     void grow(GLfloat targetWidth);
 
