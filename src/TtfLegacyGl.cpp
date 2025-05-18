@@ -16,7 +16,7 @@ TtfLegacyGl::TtfLegacyGl() : fontInfo{} {
 }
 
 void TtfLegacyGl::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
-    std::string fullFontPath = fontPath + "/" + TTFfontName;
+    std::string fullFontPath = fontThemePath + "/" + TTFfontName;
 
     TTF_Font *ttfFont = nullptr;
     SDL_Surface *c, *t;
@@ -161,7 +161,7 @@ GLfloat TtfLegacyGl::getHeight(const int font) const {
     return fontInfo[font].height;
 }
 
-void TtfLegacyGl::clearFontInfo() {
+void TtfLegacyGl::clearFontTheme() {
     // Bestehende Texturen freigeben, wenn vorhanden
     for (int i = 0; i < FONT_NUM; i++) {
         if (fontInfo[i].tex) {
@@ -172,17 +172,17 @@ void TtfLegacyGl::clearFontInfo() {
 }
 
 TtfLegacyGl::~TtfLegacyGl() {
-    clearFontInfo();
+    clearFontTheme();
     TTF_Quit();
 }
 
 bool TtfLegacyGl::setFontTheme(const std::string &fontFilePath) {
     // Bestehende Ressourcen freigeben
-    clearFontInfo();
+    clearFontTheme();
 
     // Font-Basispfad ermitteln (alles bis zum letzten /)
     std::filesystem::path path(fontFilePath);
-    fontPath = path.parent_path().string();
+    fontThemePath = path.parent_path().string();
 
     // Parse font-description file
     std::ifstream f(fontFilePath);

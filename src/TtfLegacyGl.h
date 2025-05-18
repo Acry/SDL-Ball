@@ -2,7 +2,6 @@
 
 #include <string>
 #include <epoxy/gl.h>
-#include <memory>
 // Jeder Index entspricht einer bestimmten Font-Konfiguration aus der Datei fonts.txt.
 #define FONT_MENU 0
 #define FONT_ANNOUNCE_GOOD 1
@@ -25,7 +24,6 @@ struct glFontInfo_struct {
 
 class TtfLegacyGl {
 public:
-    // Einfacher Konstruktor ohne Theme-Parameter
     TtfLegacyGl();
     ~TtfLegacyGl();
 
@@ -37,8 +35,8 @@ public:
 
 private:
     void genFontTex(const std::string &TTFfontName, int fontSize, int font);
-    void clearFontInfo();
+    void clearFontTheme();
 
     glFontInfo_struct fontInfo[FONT_NUM];
-    std::string fontPath; // Pfad zum Fontverzeichnis
+    std::string fontThemePath;
 };

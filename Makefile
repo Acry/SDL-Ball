@@ -184,3 +184,14 @@ TEXT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXT_TEST_SOURCES:.cpp
 
 text-test: $(TEXT_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(TEXT_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lGLU -lSDL2_ttf -lSDL2_image -o $(BUILD_DIR)text-test
+
+###############################################################################
+# SoundManager
+SOUND_TEST_SOURCES := $(SOURCE_DIR)SoundManager_Tests.cpp \
+                      $(SOURCE_DIR)SoundManager.cpp \
+                      $(SOURCE_DIR)Display.cpp
+
+SOUND_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOUND_TEST_SOURCES:.cpp=.o)))
+
+sound-test: $(SOUND_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(SOUND_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_mixer -o $(BUILD_DIR)sound-test

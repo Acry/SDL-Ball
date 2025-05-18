@@ -1,4 +1,4 @@
-
+# TextManager
 
 fonts.txt
 menufile=subgamefont.ttf

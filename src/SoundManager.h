@@ -1,5 +1,6 @@
 // sound.h
 #pragma once
+#include <string>
 #include <vector>
 #include <SDL2/SDL_mixer.h>
 #include <epoxy/gl.h>
@@ -13,15 +14,24 @@ class SoundManager {
     Mix_Chunk *sample[USED_SOUND_SAMPLES];
     std::vector<sampleQueuedItem> q;
 
-    void loadSample(const char *SampleName, int sampleNum);
+    bool loadSample(const char *SampleName, int sampleNum);
 
+    std::string soundThemePath;
     int currentChannels = 0;
     int breakSoundIndex = 0;
 
 public:
+    SoundManager();
+
     bool init();
+
     void play();
-    void add(int i, GLfloat x);
-    void loadSounds();
+
+    void queueSound(int i, GLfloat x);
+
+    bool setSoundTheme(const std::string &fontFilePath);
+
+    void clearSoundTheme();
+
     ~SoundManager();
 };

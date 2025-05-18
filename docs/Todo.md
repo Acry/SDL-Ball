@@ -17,8 +17,8 @@ there are a lot of things to do.
 - [X] ThemeManager_Tests (rethink the role of the ThemeManager)
 - [X] TextManager, revert Singleton Implementation
 - [X] TextManager_Tests
+- [X] SoundManager_Tests
 
-- [ ] SoundManager_Tests
 - [ ] SavegameManager_Tests
 - [ ] LevelManager_Tests
 - [ ] HighscoreManager_Tests
@@ -67,6 +67,8 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 
 ## Currents things
 
+- [ ] fix DebugMouse.cpp, but text.write should just work.
+- [ ] TextManager genFontTex to bool
 - [ ] check early game field sizes, should I go exactly 4:3 and then render the pillars outside?
   scissor rectangle needs to be expanded to the playfield plus the pillars
 - [ ] solve brick fade issue
