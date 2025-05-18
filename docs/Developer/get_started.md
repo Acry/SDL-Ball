@@ -19,8 +19,8 @@ Thank you, Jimmy Christensens for writing this game and sharing it with the worl
 SDL1 - Retro Branch
 `b66514f3b08667dbc4da76e8e0a8de3ea209ba6b`
 
-Stable commit before most changes
-`50568daabe2590cc005507648ee434cc989d9b6b`
+Stable commit before most changes - you need SDL-Ball and SDL-Ball-Data from a repository.
+`658e263364412b71fa9495389470b126103b4409`
 
 Last building commit before refactoring of manager classes
 `1c37e8e93355bcb99dc235bcb40cab234229b7ec`

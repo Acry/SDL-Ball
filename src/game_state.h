@@ -4,8 +4,6 @@
 #include <string>
 #include <epoxy/gl.h>
 
-
-
 // MENU SIZES -> TODO: Move to Menu.h
 #define MENU_HALF_WIDTH 0.35f
 #define MENU_WIDTH 0.85f

@@ -11,8 +11,8 @@ Ball::Ball(EventManager* eventMgr) : eventManager(eventMgr) {
 
 void Ball::init() {
     // MovingObject-Eigenschaften mit sinnvollen Standardwerten
-    width = 0.03f;    // Standardgröße statt 0
-    height = 0.03f;   // Standardgröße statt 0
+    width = 0.018f;
+    height = 0.018f;
     eyeCandy = true;  // Tracer-Effekte standardmäßig aktiviert
     active = true;    // Ball ist standardmäßig aktiv
 
