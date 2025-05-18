@@ -85,9 +85,6 @@ void Ball::update(float deltaTime) {
 
     if (!glued) {
         pos_y += yvel * deltaTime;
-    } else {
-        // Globale Variable entfernen
-        // gVar.deadTime = 0;
     }
 
     if (eyeCandy)
@@ -230,4 +227,9 @@ void Ball::onSizeChanged() {
         bsin[i] = sin(rad) * width;
         bcos[i] = cos(rad) * width;
     }
+}
+
+void Ball::launchFromPaddle() {
+    glued = false;
+    setAngle(RAD / 4);  // Standard-Winkel von 45°
 }

@@ -14,7 +14,7 @@ class Tracer {
 
 public:
     GLfloat height, width;
-    SpriteSheetAnimation* tex;
+    SpriteSheetAnimation tex;
     int len;
 
     Tracer();

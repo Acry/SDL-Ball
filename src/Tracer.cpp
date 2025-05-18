@@ -2,7 +2,6 @@
 #include "Tracer.h"
 #include "SpriteSheetAnimation.h"
 
-// Leaves a trail behind the ball
 Tracer::Tracer() {
     len = 100;
     lastX = lastY = 0;
@@ -27,9 +26,9 @@ void Tracer::draw(float deltaTime) {
                 continue;
             }
 
-            tex->play(deltaTime);
+            tex.play(deltaTime);
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, tex->textureProperties.texture);
+            glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
             glLoadIdentity();
             glTranslatef(x[i], y[i], 0.0);
 
@@ -38,13 +37,13 @@ void Tracer::draw(float deltaTime) {
             glColor4f(r[i], g[i], b[i], indexBasedAlpha);
 
             glBegin(GL_QUADS);
-            glTexCoord2f(tex->texturePosition[0], tex->texturePosition[1]);
+            glTexCoord2f(tex.texturePosition[0], tex.texturePosition[1]);
             glVertex3f(-width * s[i], height * s[i], 0.00);
-            glTexCoord2f(tex->texturePosition[2], tex->texturePosition[3]);
+            glTexCoord2f(tex.texturePosition[2], tex.texturePosition[3]);
             glVertex3f(width * s[i], height * s[i], 0.00);
-            glTexCoord2f(tex->texturePosition[4], tex->texturePosition[5]);
+            glTexCoord2f(tex.texturePosition[4], tex.texturePosition[5]);
             glVertex3f(width * s[i], -height * s[i], 0.00);
-            glTexCoord2f(tex->texturePosition[6], tex->texturePosition[7]);
+            glTexCoord2f(tex.texturePosition[6], tex.texturePosition[7]);
             glVertex3f(-width * s[i], -height * s[i], 0.00);
             glEnd();
             glDisable(GL_TEXTURE_2D);

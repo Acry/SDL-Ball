@@ -21,13 +21,7 @@ public:
     virtual void update(float deltaTime) = 0;
     virtual void draw(float deltaTime = 0.0f) = 0;
 
-    virtual bool isCollidingWith(const GameObject& other) const {
-        // Einfache AABB-Kollision (kann von Unterklassen überschrieben werden)
-        return (pos_x - width < other.pos_x + other.width &&
-                pos_x + width > other.pos_x - other.width &&
-                pos_y - height < other.pos_y + other.height &&
-                pos_y + height > other.pos_y - other.height);
-    }
+    virtual bool isCollidingWith(const GameObject& other) const;
 
     // Hilfsfunktionen
     bool isActive() const { return active; }

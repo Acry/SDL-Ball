@@ -33,7 +33,7 @@ int main() {
 
     // CollisionManager erstellen
     // CollisionManager collisionManager;
-
+    SpriteSheetAnimation tex;
     // Ball erstellen und initialisieren
     Ball ball(&eventManager);
     ball.setEyeCandy(true);
@@ -55,6 +55,16 @@ int main() {
         SDL_Log("Fehler beim Laden der Feuer-Textur");
     } else {
         textureManager.readTexProps(firePropsPath, ball.fireTex);
+    }
+
+    // Ball-Textur für den Tracer laden
+    const std::filesystem::path tracerTexPath = "../themes/default/gfx/ball/tail.png";
+    const std::filesystem::path tracerPropsPath = "../themes/default/gfx/ball/tail.txt";
+
+    if (!textureManager.load(tracerTexPath, ball.tracer.tex)) {
+        SDL_Log("Fehler beim Laden der Tracer-Textur");
+    } else {
+        textureManager.readTexProps(tracerPropsPath, ball.tracer.tex);
     }
 
     // Ball einrichten
@@ -118,6 +128,14 @@ int main() {
                     display.resize(event.window.data1, event.window.data2);
                 }
             }
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    // Ball vom Paddle lösen wenn geklebt
+                    if (ball.glued) {
+                        ball.launchFromPaddle();
+                    }
+                }
+            }
             if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     running = false;
@@ -160,7 +178,10 @@ int main() {
 
         ball.update(deltaTime);
         paddle.update(deltaTime);
-
+        if (ball.glued) {
+            ball.pos_x = paddle.pos_x + ball.gluedX;
+            ball.pos_y = paddle.pos_y + paddle.height + ball.height;
+        }
         CollisionPoint cp;
         if (ball.active && !ball.glued && CollisionManager::checkBallPaddleCollision(ball, paddle, cp)) {
             // Abprallwinkel wird bereits in checkBallPaddleCollision gesetzt

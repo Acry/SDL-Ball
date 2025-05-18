@@ -24,6 +24,8 @@ public:
     bool aimdir{false};
     SpriteSheetAnimation fireTex;
 
+    void launchFromPaddle();
+
     explicit Ball(EventManager *eventMgr);
 
     void init() override;
