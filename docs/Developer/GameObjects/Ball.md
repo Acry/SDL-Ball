@@ -69,3 +69,46 @@ Bei Ball ist alles in einer monolithischen draw()-Methode
 Abhängigkeiten:
 Ball.draw() benötigt eine Paddle-Referenz als Parameter
 Direkte Abhängigkeit zu PowerUps (player.powerup[PO_LASER])
+
+## Ball Draw vereinfachen
+
+void Ball::draw(float deltaTime) {
+if (eyeCandy)
+tail.draw();
+
+    updateGrowth(deltaTime);
+
+    // Logik für das Zeichnen des glued-Balls sollte in eine separate Klasse oder System verlagert werden
+    // Hier nur den Ball selbst zeichnen
+
+    glLoadIdentity();
+    glTranslatef(pos_x, pos_y, 0.0);
+    glColor4f(GL_WHITE);
+
+    if (explosive) {
+        fireTex.play(deltaTime);
+        // Zeichnen des explosiven Balls...
+    } else {
+        texture.play(deltaTime);
+        // Zeichnen des normalen Balls...
+    }
+}
+
+// In Ball.h hinzufügen:
+void draw() override { draw(0.0f); }
+void draw(float deltaTime) override;
+
+## Entkopplung von Player und RuntimeDifficulty
+Für die setspeed-Methode:
+
+void Ball::setspeed(GLfloat v) {
+// Konstanten verwenden oder als Parameter übergeben
+static constexpr GLfloat DEFAULT_MAX_BALL_SPEED = 0.5f;
+
+    // Verwende übergebene Geschwindigkeit oder begrenze auf maximale Geschwindigkeit
+    velocity = (v > DEFAULT_MAX_BALL_SPEED) ? DEFAULT_MAX_BALL_SPEED : v;
+
+    getRad();
+    xvel = velocity * cos(rad);
+    yvel = velocity * sin(rad);
+}
