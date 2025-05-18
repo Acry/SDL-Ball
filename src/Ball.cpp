@@ -10,10 +10,18 @@
 #include "MathHelper.h"
 
 Ball::Ball() {
+    // GrowableObject-Eigenschaften initialisieren
     growing = false;
-    growspeed = 0.1;
-    width = 0.0;
-    height = 0.0;
+    shrinking = false;
+    growSpeed = 0.1f;
+    keepAspectRatio = true;  // Ball ist immer rund
+    aspectRatio = 1.0f;      // Kreis hat 1:1 Verhältnis
+
+    // MovingObject-Eigenschaften
+    width = 0.0f;
+    height = 0.0f;
+
+    // Ball-spezifische Eigenschaften
     glued = false;
     pos_x = 0.0f;
     pos_y = 0.0f;
@@ -55,38 +63,10 @@ void Ball::move() {
 }
 
 void Ball::draw(const Paddle &paddle) {
-    GLfloat newsize;
     if (setting.eyeCandy)
         tail.draw();
 
-    if (growing) {
-        newsize = growspeed * globalMilliTicksSinceLastDraw;
-        width += newsize;
-        height += newsize;
-
-        if (width >= destwidth) {
-            width = destwidth;
-            height = destwidth;
-
-            growing = false;
-        }
-
-        tail.width = width;
-        tail.height = height;
-    } else if (shrinking) {
-        newsize = growspeed * globalMilliTicksSinceLastDraw;
-        width -= newsize;
-        height -= newsize;
-        if (width <= destwidth) {
-            width = destwidth;
-            height = destwidth;
-
-            shrinking = false;
-        }
-
-        tail.width = width;
-        tail.height = height;
-    }
+    updateGrowth(globalMilliTicksSinceLastDraw);
 
     if (glued && player.powerup[PO_LASER]) {
         if (player.powerup[PO_AIM]) {
@@ -264,25 +244,11 @@ void Ball::setspeed(GLfloat v) {
 }
 
 void Ball::setSize(GLfloat s) {
-    float rad;
+    // Verwende die GrowableObject-Implementierung
+    setGrowTarget(s);
 
-    if (s > width)
-        growing = true;
-    else if (s < width)
-        shrinking = true;
-
-    destwidth = s;
-
-    int i = 0;
-
-    // opdater points
-    for (rad = 0.0; rad < 6.3; rad += 0.2) {
-        if (i < 32) {
-            bsin[i] = sin(rad) * s;
-            bcos[i] = cos(rad) * s;
-        }
-        i++;
-    }
+    // Direkte Aktualisierung der Kollisionspunkte
+    onSizeChanged();
 }
 
 void Ball::checkPaddleCollision(Ball &b, const Paddle &p, position &po) {
@@ -355,3 +321,20 @@ float Ball::bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx) {
 //static float bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx) {
 //    return BALL_MAX_DEGREE / (width * 2.0f) * (posx + width - hitx) + BALL_MIN_DEGREE;
 //}
+
+void Ball::onSizeChanged() {
+    // Diese Methode wird aufgerufen, wenn die Größe geändert wurde
+    // Aktualisiere die Tracer-Größe
+    tail.width = width;
+    tail.height = height;
+
+    // Aktualisiere die Punkte für den Ball (bsin und bcos Arrays)
+    int i = 0;
+    for (float rad = 0.0; rad < 6.3; rad += 0.2) {
+        if (i < 32) {
+            bsin[i] = sin(rad) * width;
+            bcos[i] = cos(rad) * width;
+        }
+        i++;
+    }
+}
