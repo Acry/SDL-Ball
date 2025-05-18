@@ -75,6 +75,9 @@ int main() {
                 }
             }
             if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    running = false;
+                }
                 float moveStep = 1.5f * deltaTime; // Geschwindigkeitsanpassung
                 switch (event.key.keysym.sym) {
                     case SDLK_LEFT:
@@ -84,10 +87,10 @@ int main() {
                         paddle.moveTo(paddle.pos_x + moveStep, deltaTime);
                         break;
                     case SDLK_g:  // Paddle wachsen lassen
-                        paddle.grow(paddle.width * 1.5f);
+                        paddle.grow(paddle.getWidth() * 1.5f);
                         break;
                     case SDLK_s:  // Paddle verkleinern
-                        paddle.grow(paddle.width * 0.7f);
+                        paddle.grow(paddle.getWidth() * 0.7f);
                         break;
                     case SDLK_1:  // Glue aktivieren/deaktivieren
                         paddle.setGlueLayer(!paddle.hasGlueLayer);

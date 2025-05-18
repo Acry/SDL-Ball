@@ -153,6 +153,7 @@ spritesheet-test: $(SPRITESHEET_TEST_OBJECTS)
 PADDLE_TEST_SOURCES := $(SOURCE_DIR)Paddle_Tests.cpp \
                        $(SOURCE_DIR)Paddle.cpp \
                        $(SOURCE_DIR)GameObject.cpp \
+                       $(SOURCE_DIR)GrowableObject.cpp \
                        $(SOURCE_DIR)Display.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                        $(SOURCE_DIR)TextureManager.cpp

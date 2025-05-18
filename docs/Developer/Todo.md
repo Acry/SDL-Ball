@@ -71,6 +71,7 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 
 - [ ] **Game should be playable again**
 
+- [ ] modernize LevelEditor
 - [ ] LevelEditor_Tests
 
 ## Currents things

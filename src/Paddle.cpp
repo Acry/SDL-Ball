@@ -6,50 +6,27 @@ Paddle::Paddle() {
 }
 
 void Paddle::init() {
+    // GrowableObject-Eigenschaften
     growing = false;
-    growspeed = 0.05f;
-    aspect = 0.2f;
+    shrinking = false;
+    growSpeed = 0.05f;
+    aspectRatio = 0.2f;
+    keepAspectRatio = true;
+
+    // GameObject-Eigenschaften (und GrowableObject)
     pos_y = -0.93f;
     pos_x = 0.0f;
-    width = 0.059f;
-    height = 0.018f;
+    width = 0.059f;        // Setzt beide width-Variablen
+    height = 0.018f;       // Setzt beide height-Variablen
+
+    // Paddle-spezifische Eigenschaften
     dead = false;
-    // Initialisierung der Layer-Flags
     hasGlueLayer = false;
     hasGunLayer = false;
 }
 
-void Paddle::grow(const GLfloat width) {
-    destwidth = width;
-    growing = true;
-}
-
-void Paddle::updateGrowth(const float deltaTime) {
-    if (growing) {
-        const GLfloat growthRate = growspeed * deltaTime;
-
-        // Bestimme ob wir wachsen oder schrumpfen müssen
-        if (width < destwidth) {
-            // Wachsen
-            width += growthRate;
-            if (width >= destwidth) {
-                width = destwidth;
-                growing = false;
-            }
-        } else if (width > destwidth) {
-            // Schrumpfen
-            width -= growthRate;
-            if (width <= destwidth) {
-                width = destwidth;
-                growing = false;
-            }
-        } else {
-            growing = false;
-        }
-
-        // Höhe entsprechend dem Seitenverhältnis anpassen
-        height = aspect * width;
-    }
+void Paddle::grow(const GLfloat targetWidth) {
+    setGrowTarget(targetWidth);
 }
 
 void Paddle::drawBase() {
