@@ -1,5 +1,7 @@
 # Jimmy Christensens SDL-Ball
 
+![old logo](images/old-logo.png)
+
 I pulled the Repository via <https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=sdl-ball>.
 With sound enabled, the rendering was broken for me.
 I had to initialize the soundClass before creating the window and opengl-context.
@@ -19,17 +21,19 @@ I am currently working on a refactoring of the code to make it more modern and m
 Current Target is OpenGL 4.6 and SDL3.
 Probably I have time on weekends to work on it. Feel free to commit pull requests.
 
-See: [get started](docs/get_started.md)
+See: [get started](docs/Developer/get_started.md)
 or
-See: [Todo](docs/Todo.md)
+See: [Todo](docs/Developer/Todo.md)
 
 ## Significant changes
 
 - Projection change to 2D-Orthographic
-- Using OpenGL 3.1 compatibility profile See: [Projection](docs/Refactoring/Projection.md)
+- Using OpenGL 3.1 compatibility profile See: [Projection](docs/Developer/Refactoring/Projection.md)
 - no Windows support (macOS should be easy to add)
 - no WiiMote support
 - sound always enabled
 
 The config is now in `.config/SDL-Ball`, not `sdl-ball` anymore.
 You can copy the files from the old folder to the new one, should just work.
+
+![new logo](images/current-logo.png)

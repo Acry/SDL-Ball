@@ -25,3 +25,4 @@ Stable commit before most change
 
 Last building commit before refactoring of manager classes
 `1c37e8e93355bcb99dc235bcb40cab234229b7ec`
+
