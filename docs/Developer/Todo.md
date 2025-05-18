@@ -19,8 +19,16 @@ there are a lot of things to do.
 - [X] TextManager_Tests
 - [X] SoundManager_Tests
 
+- [ ] Decouple SavegameManager
+- [ ] support old savegame format 1
+- [ ] support old savegame format 2
+- [ ] implement current savegame format
 - [ ] SavegameManager_Tests
+
+- [ ] LevelManager, check level formats
 - [ ] LevelManager_Tests
+
+- [ ] LevelManager, check old formats
 - [ ] HighscoreManager_Tests
 
 - [ ] den EffectManager von den Spielobjekten zu entkoppeln
@@ -97,6 +105,7 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] Play with pen? https://examples.libsdl.org/SDL3/pen/01-drawing-lines/
 - [ ] use sdl2 highperformance timer, see: [Timing](Refactoring/Timing.md)
 - [ ] credits scene
+- [ ] save game should save the state of the game, not just the level
 
 ### Auxiliary
 
