@@ -88,8 +88,21 @@ void Ball::update(float deltaTime) {
         pos_y += yvel * deltaTime;
     }
 
-    if (eyeCandy)
-        tracer.update(pos_x, pos_y);
+    if (eyeCandy && (xvel != 0.0f || yvel != 0.0f)) {
+        // Normalisiere den Bewegungsvektor
+        float length = sqrt(xvel * xvel + yvel * yvel);
+        float nx = xvel / length;
+        float ny = yvel / length;
+
+        // Kleinerer Abstand für besseren visuellen Effekt
+        float offset = width * 0.3f;
+
+        // Position am Rand des Balls plus kleiner Offset
+        float tracerX = pos_x - nx * (width + offset);
+        float tracerY = pos_y - ny * (height + offset);
+
+        tracer.update(tracerX, tracerY);
+    }
 }
 
 void Ball::draw(const float deltaTime) {
@@ -181,13 +194,7 @@ void Ball::setAngle(GLfloat o) {
     yvel = velocity * sin(rad);
 }
 
-void Ball::setSpeed(GLfloat v) {
-    // Konstanten für Konfigurationswerte verwenden
-    static constexpr GLfloat DEFAULT_MAX_BALL_SPEED = 0.5f;
-
-    // Globale Variablen entfernen und durch lokale Parameter ersetzen
-    GLfloat maxSpeed = DEFAULT_MAX_BALL_SPEED;
-
+void Ball::setSpeed(GLfloat v, GLfloat maxSpeed) {
     if (v > maxSpeed) {
         velocity = maxSpeed;
     } else {

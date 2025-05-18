@@ -46,7 +46,7 @@ public:
 
     void setAngle(GLfloat o);
 
-    void setSpeed(GLfloat v);
+    void setSpeed(GLfloat v, GLfloat maxSpeed = 1.5f);
 
     void setSize(GLfloat s);
 

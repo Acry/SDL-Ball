@@ -70,6 +70,8 @@ float CollisionManager::calculateBounceAngle(float paddleWidth, float paddleX, f
     if (relativeX > 1.0f) relativeX = 1.0f;
     if (relativeX < -1.0f) relativeX = -1.0f;
 
-    // Berechne den Winkel im zulässigen Bereich
-    return MIN_BOUNCE_ANGLE + (BOUNCE_ANGLE_RANGE * (relativeX + 1.0f) / 2.0f);
+    // Korrigierte Formel für den Winkel:
+    // Links trifft (-1) -> links abprallen (MIN_BOUNCE_ANGLE + BOUNCE_ANGLE_RANGE)
+    // Rechts trifft (+1) -> rechts abprallen (MIN_BOUNCE_ANGLE)
+    return MIN_BOUNCE_ANGLE + (BOUNCE_ANGLE_RANGE * (1.0f - (relativeX + 1.0f) / 2.0f));
 }

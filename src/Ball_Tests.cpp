@@ -122,17 +122,20 @@ int main() {
                     case SDLK_RIGHT:
                         paddle.moveTo(paddle.pos_x + moveStep, deltaTime);
                         break;
-                    case SDLK_1: // Einfach (EASY)
-                        ball.setSpeed(DifficultySettings::BallSpeed::EASY);
-                        SDL_Log("Ballgeschwindigkeit: EASY (%.2f)", DifficultySettings::BallSpeed::EASY);
+                        // Für Taste 1: EASY-Einstellungen
+                    case SDLK_1:
+                        ball.setSpeed(DifficultySettings::BallSpeed::EASY, DifficultySettings::MaxBallSpeed::EASY);
+                        SDL_Log("Ballgeschwindigkeit: EASY (%.2f/%.2f)", ball.velocity, DifficultySettings::MaxBallSpeed::EASY);
                         break;
-                    case SDLK_2: // Normal (NORMAL)
-                        ball.setSpeed(DifficultySettings::BallSpeed::NORMAL);
-                        SDL_Log("Ballgeschwindigkeit: NORMAL (%.2f)", DifficultySettings::BallSpeed::NORMAL);
+                        // Für Taste 2: NORMAL-Einstellungen
+                    case SDLK_2:
+                        ball.setSpeed(DifficultySettings::BallSpeed::NORMAL, DifficultySettings::MaxBallSpeed::NORMAL);
+                        SDL_Log("Ballgeschwindigkeit: NORMAL (%.2f/%.2f)", ball.velocity, DifficultySettings::MaxBallSpeed::NORMAL);
                         break;
-                    case SDLK_3: // Schwer (HARD)
-                        ball.setSpeed(DifficultySettings::BallSpeed::HARD);
-                        SDL_Log("Ballgeschwindigkeit: HARD (%.2f)", DifficultySettings::BallSpeed::HARD);
+                        // Für Taste 3: HARD-Einstellungen
+                    case SDLK_3:
+                        ball.setSpeed(DifficultySettings::BallSpeed::HARD, DifficultySettings::MaxBallSpeed::HARD);
+                        SDL_Log("Ballgeschwindigkeit: HARD (%.2f/%.2f)", ball.velocity, DifficultySettings::MaxBallSpeed::HARD);
                         break;
                     case SDLK_g: // Paddle wachsen lassen
                         ball.grow(ball.getWidth() * 1.5f);
@@ -140,7 +143,14 @@ int main() {
                     case SDLK_s: // Paddle verkleinern
                         ball.grow(ball.getWidth() * 0.7f);
                         break;
-
+                    case SDLK_m: // Maximalgeschwindigkeit testen
+                        // Sehr hohen Wert setzen, der die Maximalgeschwindigkeit überschreiten sollte
+                        ball.setSpeed(DifficultySettings::MaxBallSpeed::HARD, DifficultySettings::MaxBallSpeed::HARD); // Dieser Wert sollte auf die maximale Geschwindigkeit begrenzt werden
+                        SDL_Log("Ballgeschwindigkeit auf Maximum gesetzt: %.2f", ball.velocity);
+                        break;
+                    case SDLK_p: // Aktuelle Geschwindigkeit ausgeben
+                        SDL_Log("Aktuelle Ballgeschwindigkeit: %.2f", ball.velocity);
+                        break;
                     default: ;
                 }
             }
