@@ -250,62 +250,6 @@ void Ball::setSize(GLfloat s) {
     onSizeChanged();
 }
 
-void Ball::checkPaddleCollision(Ball &b, const Paddle &p, position &po) {
-    //Er bolden tæt nok på?
-
-    if (b.pos_y < (p.pos_y + p.height) + b.height && b.pos_y > p.pos_y - p.height) {
-        if (b.pos_x > p.pos_x - (p.width * 2.0) - b.width && b.pos_x < p.pos_x + (p.width * 2.0) + b.width) {
-            GLfloat py = 0;
-            GLfloat px = 0;
-            bool col = false;
-            int points = 0;
-            for (int i = 0; i < 32; i++) {
-                const GLfloat x = b.bsin[i];
-                const GLfloat y = b.bcos[i];
-
-                //Find de punkter der er inden i padden
-                if (b.pos_x + x > p.pos_x - p.width && b.pos_x + x < p.pos_x + p.width) {
-                    if (b.pos_y + y < p.pos_y + p.height && b.pos_y + y > p.pos_y - p.height) {
-                        col = true;
-
-                        px += x;
-                        py += y;
-                        points++;
-                    }
-                }
-            } //For loop
-
-            if (col) {
-                col = false;
-                gVar.deadTime = 0;
-                px /= static_cast<float>(points);
-                py /= static_cast<float>(points);
-
-                px = b.pos_x + px;
-
-                //Ved at reagere herinde fungerer yvel som en switch, så det kun sker een gang ;)
-                if (b.yvel < 0) {
-                    b.pos_y = p.pos_y + p.height + b.height; //løft op over pad
-
-                    //Only decrease speed if the player does not have the go-thru powerup
-                    if (!player.powerup[PO_THRU]) {
-                        b.setspeed(b.velocity + runtime_difficulty.hitpaddleinc[player.difficulty]);
-                    }
-
-                    b.setangle(bounceOffAngle(p.width, p.pos_x, b.pos_x));
-                    if (player.powerup[PO_GLUE]) {
-                        b.gluedX = p.pos_x + p.width - px;
-                        b.glued = true;
-                    }
-
-                    po.x = px;
-                    po.y = py;
-                }
-            }
-        }
-    }
-}
-
 float Ball::bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx) {
     // Berechnet den Abprallwinkel basierend auf der Auftreffposition
     GLfloat relativeX = (hitx - posx) / width;  // Position relativ zur Paddle-Mitte
