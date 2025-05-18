@@ -3,6 +3,7 @@
 #include "TextureManager.h"
 #include "Display.hpp"
 #include "CollisionManager.h"
+#include "difficulty_settings.h"
 
 // Einfacher Mock für EventManager
 class MockEventManager : public EventManager {
@@ -67,13 +68,6 @@ int main() {
         textureManager.readTexProps(tracerPropsPath, ball.tracer.tex);
     }
 
-    // Ball einrichten
-    // ball.setSize(0.03f);     // Größe setzen
-    // ball.pos_x = 0.0f;       // Startposition
-    // ball.pos_y = 0.0f;
-    // ball.setSpeed(0.3f);     // Geschwindigkeit setzen
-    // ball.setAngle(RAD / 4);  // 45° Startwinkel
-
     // Paddle erstellen und initialisieren
     Paddle paddle;
 
@@ -87,26 +81,6 @@ int main() {
     }
     textureManager.readTexProps(propsPath, paddle.texture);
 
-    // Zusätzliche Texturen für die Layer (Glue und Gun)
-    paddle.layerTex = new SpriteSheetAnimation[2];
-
-    // Glue-Layer laden
-    const std::filesystem::path glueTexPath = "../themes/default/gfx/paddle/glue.png";
-    const std::filesystem::path gluePropsPath = "../themes/default/gfx/paddle/glue.txt";
-    if (!textureManager.load(glueTexPath, paddle.layerTex[0])) {
-        SDL_Log("Fehler beim Laden der Glue-Textur");
-    } else {
-        textureManager.readTexProps(gluePropsPath, paddle.layerTex[0]);
-    }
-
-    // Gun-Layer laden
-    const std::filesystem::path gunTexPath = "../themes/default/gfx/paddle/gun.png";
-    const std::filesystem::path gunPropsPath = "../themes/default/gfx/paddle/gun.txt";
-    if (!textureManager.load(gunTexPath, paddle.layerTex[1])) {
-        SDL_Log("Fehler beim Laden der Gun-Textur");
-    } else {
-        textureManager.readTexProps(gunPropsPath, paddle.layerTex[1]);
-    }
     SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
     SDL_SetRelativeMouseMode(SDL_TRUE);
     Uint32 lastTime = SDL_GetTicks();
@@ -148,18 +122,25 @@ int main() {
                     case SDLK_RIGHT:
                         paddle.moveTo(paddle.pos_x + moveStep, deltaTime);
                         break;
+                    case SDLK_1: // Einfach (EASY)
+                        ball.setSpeed(DifficultySettings::BallSpeed::EASY);
+                        SDL_Log("Ballgeschwindigkeit: EASY (%.2f)", DifficultySettings::BallSpeed::EASY);
+                        break;
+                    case SDLK_2: // Normal (NORMAL)
+                        ball.setSpeed(DifficultySettings::BallSpeed::NORMAL);
+                        SDL_Log("Ballgeschwindigkeit: NORMAL (%.2f)", DifficultySettings::BallSpeed::NORMAL);
+                        break;
+                    case SDLK_3: // Schwer (HARD)
+                        ball.setSpeed(DifficultySettings::BallSpeed::HARD);
+                        SDL_Log("Ballgeschwindigkeit: HARD (%.2f)", DifficultySettings::BallSpeed::HARD);
+                        break;
                     case SDLK_g: // Paddle wachsen lassen
-                        paddle.grow(paddle.getWidth() * 1.5f);
+                        ball.grow(ball.getWidth() * 1.5f);
                         break;
                     case SDLK_s: // Paddle verkleinern
-                        paddle.grow(paddle.getWidth() * 0.7f);
+                        ball.grow(ball.getWidth() * 0.7f);
                         break;
-                    case SDLK_1: // Glue aktivieren/deaktivieren
-                        paddle.setGlueLayer(!paddle.hasGlueLayer);
-                        break;
-                    case SDLK_2: // Gun aktivieren/deaktivieren
-                        paddle.setGunLayer(!paddle.hasGunLayer);
-                        break;
+
                     default: ;
                 }
             }
@@ -207,10 +188,5 @@ int main() {
         SDL_GL_SwapWindow(display.sdlWindow);
         SDL_Delay(16); // ~60fps
     }
-
-    // Aufräumen
-    delete[] paddle.layerTex;
-    // delete[] ball.layerTex;
-
     return EXIT_SUCCESS;
 }

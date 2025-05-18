@@ -49,3 +49,7 @@ void GrowableObject::updateGrowth(float deltaTime) {
         onSizeChanged();
     }
 }
+
+void GrowableObject::grow(GLfloat targetWidth) {
+    setGrowTarget(targetWidth);
+}

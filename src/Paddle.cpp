@@ -25,10 +25,6 @@ void Paddle::init() {
     hasGunLayer = false;
 }
 
-void Paddle::grow(const GLfloat targetWidth) {
-    setGrowTarget(targetWidth);
-}
-
 void Paddle::drawBase() {
     glLoadIdentity();
     glTranslatef(pos_x, pos_y, 0.0);
@@ -124,7 +120,6 @@ void Paddle::setGunLayer(const bool enabled) {
 }
 
 void Paddle::update(const float deltaTime) {
-    // Hier Paddle-Logik implementieren
     updateGrowth(deltaTime);
 }
 

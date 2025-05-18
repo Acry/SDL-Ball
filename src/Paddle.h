@@ -30,7 +30,6 @@ public:
     void moveTo(float targetX, float deltaTime);
 
     void draw(float deltaTime) override;
-    void grow(GLfloat targetWidth);
 
     // Implementation der virtuellen Getter/Setter aus GrowableObject
     [[nodiscard]] GLfloat getWidth() const override { return GameObject::width; }

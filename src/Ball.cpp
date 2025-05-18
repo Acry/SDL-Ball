@@ -32,7 +32,7 @@ void Ball::init() {
     // GrowableObject-Eigenschaften neu initialisieren
     growing = false;
     shrinking = false;
-    growSpeed = 2.0f; // Schnelleres Wachsen/Schrumpfen
+    growSpeed = 0.05f;
     keepAspectRatio = true;
     aspectRatio = 1.0f;
 
@@ -46,6 +46,7 @@ void Ball::hit(GLfloat c[]) {
 }
 
 void Ball::update(float deltaTime) {
+    updateGrowth(deltaTime);
     // Ball Border Collision
     if (pos_x < PLAYFIELD_LEFT_BORDER && xvel < 0.0) {
         // Event auslösen statt direktem soundManager-Aufruf
@@ -91,13 +92,9 @@ void Ball::update(float deltaTime) {
         tracer.update(pos_x, pos_y);
 }
 
-void Ball::draw(float deltaTime) {
+void Ball::draw(const float deltaTime) {
     if (eyeCandy)
         tracer.draw(deltaTime);
-
-    updateGrowth(deltaTime);
-
-    // Paddle-spezifischer Code entfernt
     // Funktionalität für Zielhilfe sollte in eine separate Klasse/Manager ausgelagert werden
 
     glLoadIdentity();

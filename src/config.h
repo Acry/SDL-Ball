@@ -79,10 +79,10 @@
 #define DEFAULT_CONTROL_MAX_SPEED   5
 
 // Default Joystick Settings
-#define DEFAULT_JOY_ENABLED    1
-#define DEFAULT_JOY_IS_DIGITAL 1
+#define DEFAULT_JOY_ENABLED    0
+#define DEFAULT_JOY_IS_DIGITAL 0
 #define DEFAULT_JOY_IS_PADDLE  0
-#define DEFAULT_SHOW_CLOCK     0
+#define DEFAULT_SHOW_CLOCK     1
 
 // Default Joystick Calibration
 #define DEFAULT_JOY_CAL_MIN    (-32767)
