@@ -1,4 +1,5 @@
-// EventSystem.cpp
+// EventManager.cpp
 #include "EventManager.h"
 
-EventSystem* EventSystem::instance = nullptr;
+// Die Implementierung ist trivial, da alle Methoden inline in der Header-Datei definiert sind.
+// Diese Datei dient nur als Platzhalter für zukünftige Erweiterungen.

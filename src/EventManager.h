@@ -1,4 +1,4 @@
-// EventSystem.h
+// EventManager.h
 #pragma once
 #include <functional>
 #include <vector>
@@ -9,32 +9,35 @@ enum class GameEvent {
     BallHitBorder,
     BallLost,
     BallHitPaddle,
-    // weitere Events...
+    BrickDestroyed,
+    PowerUpCollected,
+    LevelCompleted,
+    GameOver
+    // Weitere Events können nach Bedarf hinzugefügt werden
 };
 
 struct EventData {
     float posX{0};
     float posY{0};
     int soundID{-1};
+    void* sender{nullptr};
+    void* target{nullptr};
+    int points{0};
     // Weitere Daten nach Bedarf
 };
 
-class EventSystem {
+class EventManager {
 private:
     using EventCallback = std::function<void(const EventData&)>;
     std::unordered_map<GameEvent, std::vector<EventCallback>> listeners;
 
-    // Singleton-Pattern
-    static EventSystem* instance;
-    EventSystem() = default;
-
 public:
-    static EventSystem& getInstance() {
-        if (!instance) {
-            instance = new EventSystem();
-        }
-        return *instance;
-    }
+    EventManager() = default;
+    ~EventManager() = default;
+
+    // Kein Kopieren erlauben
+    EventManager(const EventManager&) = delete;
+    EventManager& operator=(const EventManager&) = delete;
 
     void addListener(GameEvent event, EventCallback callback) {
         listeners[event].push_back(callback);
@@ -47,9 +50,14 @@ public:
             }
         }
     }
-};
 
-// Globale Zugriffsfunktion
-inline EventSystem& eventSystem() {
-    return EventSystem::getInstance();
-}
+    void removeAllListeners(GameEvent event) {
+        if (listeners.find(event) != listeners.end()) {
+            listeners[event].clear();
+        }
+    }
+
+    void clearAllListeners() {
+        listeners.clear();
+    }
+};
