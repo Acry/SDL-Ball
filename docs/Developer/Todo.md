@@ -85,6 +85,7 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] Tests: manual tests should reside in the test folder, not in the src folder
 - [ ] add Theme fixtures to tests
 - [ ] add saveGames to tests
+- [ ] Paddle: use playfield constants from config.h
 
 ## Additional things
 

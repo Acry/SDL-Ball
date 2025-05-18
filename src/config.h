@@ -95,3 +95,26 @@
 #define DEFAULT_FULLSCREEN      0
 #define DEFAULT_RES_X           1920
 #define DEFAULT_RES_Y           1080
+
+#define PI 3.14159265
+#define RAD 6.28318531
+
+#define BOUNCE_ANGLE_RANGE 2.61799388 // // 150 Grad in Radiant
+#define MIN_BOUNCE_ANGLE 0.261799388 // 15 Grad in Radiant
+
+#define DEFAULT_DIFFICULTY    EASY
+
+#define PILLAR_WIDTH 0.065f
+#define BRICK_WIDTH 0.0719f
+#define BRICK_HEIGHT 0.0575f
+// Von -1 bis +1 in NDC, direkt Stein an Stein
+// glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+//         +1
+//         ^
+//         |
+// -1 <----+----> +1
+//         |
+//        -1
+#define PLAYFIELD_WIDTH (2.0f - (PILLAR_WIDTH * 2.0f))
+#define PLAYFIELD_LEFT_BORDER (-1.0f + PILLAR_WIDTH)
+#define PLAYFIELD_RIGHT_BORDER (1.0f - PILLAR_WIDTH)

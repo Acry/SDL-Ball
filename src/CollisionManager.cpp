@@ -1,9 +1,6 @@
 // CollisionManager.cpp
 #include "CollisionManager.h"
-
-#include "game_state.h"
-#include "MathHelper.h"
-#include "SettingsManager.h"
+#include "config.h"
 
 bool CollisionManager::checkCollision(const GameObject& obj1, const GameObject& obj2) {
     // Implementierung der AABB-Kollisionserkennung (Axis-Aligned Bounding Box)
@@ -74,5 +71,5 @@ float CollisionManager::calculateBounceAngle(float paddleWidth, float paddleX, f
     if (relativeX < -1.0f) relativeX = -1.0f;
 
     // Berechne den Winkel im zulässigen Bereich
-    return BALL_MIN_DEGREE + ((BALL_MAX_DEGREE) * (relativeX + 1.0f) / 2.0f);
+    return MIN_BOUNCE_ANGLE + (BOUNCE_ANGLE_RANGE * (relativeX + 1.0f) / 2.0f);
 }

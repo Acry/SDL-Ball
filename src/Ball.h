@@ -12,8 +12,6 @@ class Ball final: public MovingObject, public GrowableObject {
 
     EventManager *eventManager;
 
-    static float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx);
-
 protected:
     void onSizeChanged() override;
 

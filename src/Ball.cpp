@@ -2,7 +2,6 @@
 
 #include "colors.h"
 #include "config.h"
-#include "game_state.h"
 #include "Tracer.h"
 #include "SettingsManager.h"
 
@@ -163,12 +162,12 @@ GLfloat Ball::getRad() {
 }
 
 void Ball::setangle(GLfloat o) {
-    if (o < BALL_MIN_DEGREE) {
-        o = BALL_MIN_DEGREE;
+    if (o < MIN_BOUNCE_ANGLE) {
+        o = MIN_BOUNCE_ANGLE;
     }
 
-    if (o > BALL_MAX_DEGREE + BALL_MIN_DEGREE) {
-        o = BALL_MAX_DEGREE + BALL_MIN_DEGREE;
+    if (o > BOUNCE_ANGLE_RANGE + MIN_BOUNCE_ANGLE) {
+        o = BOUNCE_ANGLE_RANGE + MIN_BOUNCE_ANGLE;
     }
 
     rad = o;
@@ -202,18 +201,6 @@ void Ball::setSize(GLfloat s) {
     onSizeChanged();
 }
 
-float Ball::bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx) {
-    // Berechnet den Abprallwinkel basierend auf der Auftreffposition
-    GLfloat relativeX = (hitx - posx) / width;  // Position relativ zur Paddle-Mitte
-
-    // Begrenze den Winkel auf den erlaubten Bereich
-    if (relativeX > 1.0f) relativeX = 1.0f;
-    if (relativeX < -1.0f) relativeX = -1.0f;
-
-    // Berechne den Winkel zwischen BALL_MIN_DEGREE und BALL_MAX_DEGREE
-    return BALL_MIN_DEGREE + ((BALL_MAX_DEGREE) * (relativeX + 1.0f) / 2.0f);
-}
-
 void Ball::onSizeChanged() {
     // Diese Methode wird aufgerufen, wenn die Größe geändert wurde
     // Aktualisiere die Tracer-Größe
@@ -221,12 +208,14 @@ void Ball::onSizeChanged() {
     tail.height = height;
 
     // Aktualisiere die Punkte für den Ball (bsin und bcos Arrays)
-    int i = 0;
-    for (float rad = 0.0; rad < 6.3; rad += 0.2) {
-        if (i < 32) {
-            bsin[i] = sin(rad) * width;
-            bcos[i] = cos(rad) * width;
-        }
-        i++;
+    constexpr int POINTS = 32;
+    constexpr float TWO_PI = 6.28318531f;  // Verwende die RAD-Konstante
+
+    // Verwende einen Integer-Index für die Schleife
+    for (int i = 0; i < POINTS; ++i) {
+        // Berechne den Winkel basierend auf dem Index
+        float rad = static_cast<float>(i) * TWO_PI / POINTS;
+        bsin[i] = sin(rad) * width;
+        bcos[i] = cos(rad) * width;
     }
 }
