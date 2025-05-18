@@ -10,6 +10,7 @@ class Ball : public MovingObject, public GrowableObject {
     GLfloat rad;
     bool growing, shrinking;
     GLfloat destwidth, growspeed;
+    bool eyeCandy;
 
     static float bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx);
 
@@ -42,5 +43,6 @@ public:
     void setspeed(GLfloat v);
     void setSize(GLfloat s);
 
+    void setEyeCandy(bool value) { eyeCandy = value; }
     static void checkPaddleCollision(Ball &b, const Paddle &p, position &po);
 };

@@ -20,7 +20,7 @@ Ball::Ball() {
     // MovingObject-Eigenschaften
     width = 0.0f;
     height = 0.0f;
-
+    eyeCandy = true;
     // Ball-spezifische Eigenschaften
     glued = false;
     pos_x = 0.0f;
@@ -28,9 +28,8 @@ Ball::Ball() {
     aimdir = false;
 }
 
-
 void Ball::hit(GLfloat c[]) {
-    if (setting.eyeCandy)
+    if (eyeCandy)
         tail.colorRotate(explosive, c);
 }
 
@@ -58,12 +57,12 @@ void Ball::move() {
         gVar.deadTime = 0;
     }
 
-    if (setting.eyeCandy)
+    if (eyeCandy)
         tail.update(pos_x, pos_y);
 }
 
 void Ball::draw(const Paddle &paddle) {
-    if (setting.eyeCandy)
+    if (eyeCandy)
         tail.draw();
 
     updateGrowth(globalMilliTicksSinceLastDraw);
