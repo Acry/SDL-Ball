@@ -2,74 +2,22 @@
 #include <SDL2/SDL_ttf.h>
 #include <GL/glu.h>
 #include <fstream>
+#include <filesystem>
 
 #include "TtfLegacyGl.h"
-#include "SettingsManager.h"
-#include "ThemeManager.h"
 
-
-TtfLegacyGl::TtfLegacyGl(): fontInfo{} {
+TtfLegacyGl::TtfLegacyGl() : fontInfo{} {
     TTF_Init();
 
-    // Parse font-description file
-    std::ifstream f;
-    std::string val;
-
-    f.open(themeManager.getThemeFilePath("/font/fonts.txt", setting.gfxTheme).data());
-    if (f.is_open()) {
-        std::string tempName;
-        std::string set;
-        std::string line;
-        while (std::getline(f, line)) {
-            if (line.find('=') != std::string::npos) {
-                set = line.substr(0, line.find('='));
-                val = line.substr(line.find('=') + 1);
-                if (set == "menufile") {
-                    tempName = val;
-                } else if (
-                    set == "menusize" ||
-                    set == "announcegoodsize" ||
-                    set == "announcebadsize" ||
-                    set == "highscoresize" ||
-                    set == "menuhighscoresize" ||
-                    set == "introhighscoresize" ||
-                    set == "introdescriptionsize"
-                ) {
-                    char *endptr = nullptr;
-                    long size = strtol(val.c_str(), &endptr, 10);
-                    if (*endptr != '\0') {
-                        SDL_Log("Ungültige Zahl in fonts.txt: %s", val.c_str());
-                        continue;
-                    }
-                    int font = -1;
-                    if (set == "menusize") font = FONT_MENU;
-                    else if (set == "announcegoodsize") font = FONT_ANNOUNCE_GOOD;
-                    else if (set == "announcebadsize") font = FONT_ANNOUNCE_BAD;
-                    else if (set == "highscoresize") font = FONT_HIGHSCORE;
-                    else if (set == "menuhighscoresize") font = FONT_MENUHIGHSCORE;
-                    else if (set == "introhighscoresize") font = FONT_INTROHIGHSCORE;
-                    else if (set == "introdescriptionsize") font = FONT_INTRODESCRIPTION;
-                    if (font != -1)
-                        genFontTex(tempName, static_cast<int>(size), font);
-                } else if (
-                    set == "announcegoodfile" ||
-                    set == "announcebadfile" ||
-                    set == "highscorefile" ||
-                    set == "menuhighscorefile" ||
-                    set == "introhighscorefile" ||
-                    set == "introdescriptionfile"
-                ) {
-                    tempName = val;
-                }
-            }
-        }
-        f.close();
-    } else {
-        SDL_Log("Error: could not open font-description file.");
+    // Initialisiere alle Texturen mit 0
+    for (int i = 0; i < FONT_NUM; i++) {
+        fontInfo[i].tex = 0;
     }
 }
 
 void TtfLegacyGl::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
+    std::string fullFontPath = fontPath + "/" + TTFfontName;
+
     TTF_Font *ttfFont = nullptr;
     SDL_Surface *c, *t;
     Uint32 rmask, gmask, bmask, amask;
@@ -89,13 +37,11 @@ void TtfLegacyGl::genFontTex(const std::string &TTFfontName, const int fontSize,
     amask = 0xff000000;
 #endif
 
-    ttfFont = TTF_OpenFont(themeManager.getThemeFilePath(TTFfontName, setting.gfxTheme).data(), fontSize);
-
+    ttfFont = TTF_OpenFont(fullFontPath.c_str(), fontSize);
     if (!ttfFont) {
         SDL_Log("TTF_OpenFont: %s", TTF_GetError());
         // todo: return
     }
-
     t = SDL_CreateRGBSurface(0, 512, 512, 32, rmask, gmask, bmask, amask);
 
     dst.x = 1;
@@ -109,7 +55,7 @@ void TtfLegacyGl::genFontTex(const std::string &TTFfontName, const int fontSize,
         //Render to surface
         c = TTF_RenderText_Blended(ttfFont, tempChar, white);
         SDL_SetSurfaceAlphaMod(c, 0xFF);
-        TTF_SizeUTF8(ttfFont, tempChar, &sX, &sY);
+        TTF_SizeText(ttfFont, tempChar, &sX, &sY);
 
         src.x = 0;
         src.y = 0;
@@ -215,11 +161,84 @@ GLfloat TtfLegacyGl::getHeight(const int font) const {
     return fontInfo[font].height;
 }
 
-TtfLegacyGl::~TtfLegacyGl() {
+void TtfLegacyGl::clearFontInfo() {
+    // Bestehende Texturen freigeben, wenn vorhanden
     for (int i = 0; i < FONT_NUM; i++) {
         if (fontInfo[i].tex) {
             glDeleteTextures(1, &fontInfo[i].tex);
+            fontInfo[i].tex = 0;
         }
     }
+}
+
+TtfLegacyGl::~TtfLegacyGl() {
+    clearFontInfo();
     TTF_Quit();
+}
+
+bool TtfLegacyGl::setFontTheme(const std::string &fontFilePath) {
+    // Bestehende Ressourcen freigeben
+    clearFontInfo();
+
+    // Font-Basispfad ermitteln (alles bis zum letzten /)
+    std::filesystem::path path(fontFilePath);
+    fontPath = path.parent_path().string();
+
+    // Parse font-description file
+    std::ifstream f(fontFilePath);
+    if (!f.is_open()) {
+        SDL_Log("Error: could not open font-description file: %s", fontFilePath.c_str());
+        return false;
+    }
+
+    std::string val;
+    std::string tempName;
+    std::string set;
+    std::string line;
+
+    while (std::getline(f, line)) {
+        if (line.find('=') != std::string::npos) {
+            set = line.substr(0, line.find('='));
+            val = line.substr(line.find('=') + 1);
+            if (set == "menufile") {
+                tempName = val;
+            } else if (
+                set == "menusize" ||
+                set == "announcegoodsize" ||
+                set == "announcebadsize" ||
+                set == "highscoresize" ||
+                set == "menuhighscoresize" ||
+                set == "introhighscoresize" ||
+                set == "introdescriptionsize"
+            ) {
+                char *endptr = nullptr;
+                long size = strtol(val.c_str(), &endptr, 10);
+                if (*endptr != '\0') {
+                    SDL_Log("Ungültige Zahl in fonts.txt: %s", val.c_str());
+                    continue;
+                }
+                int font = -1;
+                if (set == "menusize") font = FONT_MENU;
+                else if (set == "announcegoodsize") font = FONT_ANNOUNCE_GOOD;
+                else if (set == "announcebadsize") font = FONT_ANNOUNCE_BAD;
+                else if (set == "highscoresize") font = FONT_HIGHSCORE;
+                else if (set == "menuhighscoresize") font = FONT_MENUHIGHSCORE;
+                else if (set == "introhighscoresize") font = FONT_INTROHIGHSCORE;
+                else if (set == "introdescriptionsize") font = FONT_INTRODESCRIPTION;
+                if (font != -1)
+                    genFontTex(tempName, static_cast<int>(size), font);
+            } else if (
+                set == "announcegoodfile" ||
+                set == "announcebadfile" ||
+                set == "highscorefile" ||
+                set == "menuhighscorefile" ||
+                set == "introhighscorefile" ||
+                set == "introdescriptionfile"
+            ) {
+                tempName = val;
+            }
+        }
+    }
+    f.close();
+    return true;
 }

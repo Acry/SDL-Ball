@@ -15,6 +15,7 @@ there are a lot of things to do.
 - [X] TextManager_Tests - implicitly tested in TextureAnimation_Tests
 - [X] TextureAnimation_Tests
 - [X] ThemeManager_Tests (rethink the role of the ThemeManager)
+- [ ] TextManager, revert Singleton Implementation
 - [ ] TextManager_Tests
 - [ ] SoundManager_Tests
 - [ ] SavegameManager_Tests
@@ -29,7 +30,6 @@ there are a lot of things to do.
 - [ ] InputManager_Tests
 - [ ] GameObject_Tests
 - [ ] GameObjectManager_Tests
-- [ ] LevelEditor_Tests
 
 - [ ] MenuManager_Tests
 - [ ] HudManager_Tests
@@ -53,6 +53,8 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] Ball_Tests
 
 - [ ] **Game should be playable again**
+
+- [ ] LevelEditor_Tests
 
 ## Currents things
 

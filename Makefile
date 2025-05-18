@@ -173,3 +173,14 @@ THEME_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(THEME_TEST_SOURCES:.c
 theme-test: $(THEME_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(THEME_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)theme-test
 
+###############################################################################
+# TextManager
+TEXT_TEST_SOURCES := $(SOURCE_DIR)TextManager_Tests.cpp \
+                     $(SOURCE_DIR)TtfLegacyGl.cpp \
+                     $(SOURCE_DIR)Display.cpp \
+                     $(SOURCE_DIR)TextureManager.cpp
+
+TEXT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXT_TEST_SOURCES:.cpp=.o)))
+
+text-test: $(TEXT_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(TEXT_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lGLU -lSDL2_ttf -lSDL2_image -o $(BUILD_DIR)text-test

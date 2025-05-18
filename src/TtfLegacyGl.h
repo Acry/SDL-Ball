@@ -24,24 +24,21 @@ struct glFontInfo_struct {
 };
 
 class TtfLegacyGl {
-    // Private constructor for singleton pattern
-    TtfLegacyGl(); // Private constructor
 public:
-    // Delete copy constructor and assignment operator
-    TtfLegacyGl(const TtfLegacyGl&) = delete;
-    TtfLegacyGl& operator=(const TtfLegacyGl&) = delete;
-
-    // Static method to get the singleton instance
-    static TtfLegacyGl& getInstance() {
-        static TtfLegacyGl instance;  // Initialized on first call
-        return instance;
-    }
-
+    // Einfacher Konstruktor ohne Theme-Parameter
+    TtfLegacyGl();
     ~TtfLegacyGl();
+
+    // Methode zum Setzen des Font-Themes (vollständiger Pfad zur fonts.txt)
+    bool setFontTheme(const std::string& fontFilePath);
+
     GLfloat getHeight(int font) const;
     void write(const std::string &text, int font, bool center, GLfloat scale, GLfloat x, GLfloat y) const;
 
 private:
     void genFontTex(const std::string &TTFfontName, int fontSize, int font);
+    void clearFontInfo();
+
     glFontInfo_struct fontInfo[FONT_NUM];
+    std::string fontPath; // Pfad zum Fontverzeichnis
 };
