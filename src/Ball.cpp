@@ -1,22 +1,16 @@
 #include "Ball.h"
 
 #include "colors.h"
+#include "config.h"
 #include "game_state.h"
-#include "MovingObject.h"
 #include "Tracer.h"
-#include "Paddle.h"
 #include "SettingsManager.h"
-#include "SoundManager.h"
-#include "MathHelper.h"
 
-Ball::Ball() {
-    // GrowableObject-Eigenschaften initialisieren
-    growing = false;
-    shrinking = false;
-    growSpeed = 0.1f;
-    keepAspectRatio = true;  // Ball ist immer rund
-    aspectRatio = 1.0f;      // Kreis hat 1:1 Verhältnis
+Ball::Ball(EventManager* eventMgr) : eventManager(eventMgr) {
+ init();
+}
 
+void Ball::init() {
     // MovingObject-Eigenschaften
     width = 0.0f;
     height = 0.0f;
@@ -26,6 +20,13 @@ Ball::Ball() {
     pos_x = 0.0f;
     pos_y = 0.0f;
     aimdir = false;
+
+    // GrowableObject-Eigenschaften neu initialisieren
+    growing = false;
+    shrinking = false;
+    growSpeed = 0.1f;
+    keepAspectRatio = true;
+    aspectRatio = 1.0f;
 }
 
 void Ball::hit(GLfloat c[]) {
@@ -33,19 +34,39 @@ void Ball::hit(GLfloat c[]) {
         tail.colorRotate(explosive, c);
 }
 
-void Ball::move(float deltaTime) {
+void Ball::update(float deltaTime) {
     // Ball Border Collision
     if (pos_x < PLAYFIELD_LEFT_BORDER && xvel < 0.0) {
-        soundManager.add(SND_BALL_HIT_BORDER, pos_x);
+        // Event auslösen statt direktem soundManager-Aufruf
+        EventData data;
+        data.posX = pos_x;
+        data.soundID = SND_BALL_HIT_BORDER;
+        eventManager->emit(GameEvent::BallHitBorder, data);
+
         xvel *= -1;
     } else if (pos_x + width > PLAYFIELD_RIGHT_BORDER && xvel > 0.0) {
-        soundManager.add(SND_BALL_HIT_BORDER, pos_x);
+        // Event auslösen
+        EventData data;
+        data.posX = pos_x;
+        data.soundID = SND_BALL_HIT_BORDER;
+        eventManager->emit(GameEvent::BallHitBorder, data);
+
         xvel *= -1;
     } else if (pos_y + height > 1.0f && yvel > 0.0) {
-        soundManager.add(SND_BALL_HIT_BORDER, pos_x);
+        // Event auslösen
+        EventData data;
+        data.posX = pos_x;
+        data.soundID = SND_BALL_HIT_BORDER;
+        eventManager->emit(GameEvent::BallHitBorder, data);
+
         yvel *= -1;
     } else if (pos_y - height < -1.0f) {
-        // paddle y
+        // Event für verlorenen Ball auslösen
+        EventData data;
+        data.posX = pos_x;
+        data.posY = pos_y;
+        eventManager->emit(GameEvent::BallLost, data);
+
         active = false;
     }
 
@@ -54,97 +75,22 @@ void Ball::move(float deltaTime) {
     if (!glued) {
         pos_y += yvel * deltaTime;
     } else {
-        gVar.deadTime = 0;
+        // Globale Variable entfernen
+        // gVar.deadTime = 0;
     }
 
     if (eyeCandy)
         tail.update(pos_x, pos_y);
 }
 
-void Ball::draw(const Paddle &paddle, float deltaTime) {
+void Ball::draw(float deltaTime) {
     if (eyeCandy)
         tail.draw();
 
     updateGrowth(deltaTime);
 
-    if (glued && player.powerup[PO_LASER]) {
-        if (player.powerup[PO_AIM]) {
-            if (aimdir == 0) {
-                rad -= 1.2f * deltaTime;
-
-                if (rad < BALL_MIN_DEGREE)
-                    aimdir = true;
-            } else {
-                rad += 1.2f * deltaTime;
-                if (rad > BALL_MAX_DEGREE + BALL_MIN_DEGREE)
-                    aimdir = false;
-            }
-            setangle(rad);
-        } else {
-            getRad();
-        }
-
-        const GLfloat bxb = cos(rad) * 0.5f;
-        const GLfloat byb = sin(rad) * 0.5f;
-
-        glEnable(GL_TEXTURE_2D);
-        glLoadIdentity();
-        glTranslatef(pos_x, pos_y, 0.0f);
-        glLineWidth(1.0);
-        glEnable(GL_LINE_SMOOTH);
-        glBegin(GL_LINES);
-        glColor4f(random_float(2, 0), random_float(1, 0), 0.0, 0.0); // ???
-        glVertex3f(0.0, 0.0, 0.0);
-        glColor4f(random_float(2, 0), 0.0, 0.0, 1.0);
-        glVertex3f(bxb, byb, 0.0);
-        glEnd();
-
-        glPointSize(5.0f);
-        glColor4f(GL_FULL_RED);
-        glEnable(GL_POINT_SMOOTH);
-        glBegin(GL_POINTS);
-        glVertex3f(bxb, byb, 0.0);
-        glEnd();
-        glDisable(GL_TEXTURE_2D);
-    }
-
-    if (!glued && player.powerup[PO_AIMHELP]) {
-        //Use line intersect to determine if this ball will collide with the paddle
-
-        getRad();
-        GLfloat p[4], b[4], o[2]; // Paddle line, ball line, bounce off endpoint
-        p[0] = paddle.pos_x - paddle.width;
-        p[1] = paddle.pos_x + paddle.width;
-
-        p[2] = paddle.pos_y + paddle.height + height;
-        p[3] = paddle.pos_y + paddle.height + height;
-
-        b[0] = pos_x;
-        b[1] = pos_x + (cos(rad) * 3.0);
-        b[2] = pos_y;
-        b[3] = pos_y + (sin(rad) * 3.0);
-
-        GLfloat cx, cy;
-        if (LinesCross(p[0], p[2], p[1], p[3], b[0], b[2], b[1], b[3], &cx, &cy)) {
-            const GLfloat R = bounceOffAngle(paddle.width, paddle.pos_x, cx);
-            o[0] = cx + (cos(R) * 2.0);
-            o[1] = cy + (sin(R) * 2.0);
-            glDisable(GL_TEXTURE_2D); // ???
-            glLineWidth(2.0);
-            glEnable(GL_LINE_SMOOTH);
-            glLoadIdentity();
-            glBegin(GL_LINE_STRIP);
-            //Line from ball to paddle
-            glColor4f(1.0, 0.0, 0.0, 0.0); // ???
-            glVertex3f(b[0], b[2], 0.0);
-            glColor4f(1.0, 1.0, 0.0, 1.0);
-            glVertex3f(cx, cy, 0.0);
-            //Bounce off line.
-            glColor4f(1.0, 0.0, 0.0, 0.0); // ???
-            glVertex3f(o[0], o[1], 0.0);
-            glEnd();
-        }
-    }
+    // Paddle-spezifischer Code entfernt
+    // Funktionalität für Zielhilfe sollte in eine separate Klasse/Manager ausgelagert werden
 
     glLoadIdentity();
     glTranslatef(pos_x, pos_y, 0.0);
@@ -189,25 +135,25 @@ void Ball::draw(const Paddle &paddle, float deltaTime) {
     }
 
 #if DEBUG_DRAW_BALL_QUAD
-        glLoadIdentity();
-        glTranslatef(pos_x, pos_y, 0.0);
-        glDisable( GL_TEXTURE_2D );
-        glColor4f(GL_WHITE);
-        glBegin( GL_LINES );
-        glVertex3f( -width, height, 0);
-        glVertex3f( width, height, 0);
+    glLoadIdentity();
+    glTranslatef(pos_x, pos_y, 0.0);
+    glDisable(GL_TEXTURE_2D);
+    glColor4f(GL_WHITE);
+    glBegin(GL_LINES);
+    glVertex3f(-width, height, 0);
+    glVertex3f(width, height, 0);
 
-        glVertex3f( -width, -height, 0);
-        glVertex3f( width, -height,0);
+    glVertex3f(-width, -height, 0);
+    glVertex3f(width, -height, 0);
 
-        glVertex3f( -width, height, 0);
-        glVertex3f( -width, -height, 0);
+    glVertex3f(-width, height, 0);
+    glVertex3f(-width, -height, 0);
 
-        glVertex3f( width, height, 0);
-        glVertex3f( width, -height, 0 );
+    glVertex3f(width, height, 0);
+    glVertex3f(width, -height, 0);
 
-        glEnd();
-        glEnable(GL_TEXTURE_2D);
+    glEnd();
+    glEnable(GL_TEXTURE_2D);
 #endif
 }
 
@@ -231,8 +177,14 @@ void Ball::setangle(GLfloat o) {
 }
 
 void Ball::setspeed(GLfloat v) {
-    if (v > runtime_difficulty.maxballspeed[player.difficulty]) {
-        velocity = runtime_difficulty.maxballspeed[player.difficulty];
+    // Konstanten für Konfigurationswerte verwenden
+    static constexpr GLfloat DEFAULT_MAX_BALL_SPEED = 0.5f;
+
+    // Globale Variablen entfernen und durch lokale Parameter ersetzen
+    GLfloat maxSpeed = DEFAULT_MAX_BALL_SPEED;
+
+    if (v > maxSpeed) {
+        velocity = maxSpeed;
     } else {
         velocity = v;
     }
@@ -261,9 +213,6 @@ float Ball::bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx) {
     // Berechne den Winkel zwischen BALL_MIN_DEGREE und BALL_MAX_DEGREE
     return BALL_MIN_DEGREE + ((BALL_MAX_DEGREE) * (relativeX + 1.0f) / 2.0f);
 }
-//static float bounceOffAngle(const GLfloat width, GLfloat posx, GLfloat hitx) {
-//    return BALL_MAX_DEGREE / (width * 2.0f) * (posx + width - hitx) + BALL_MIN_DEGREE;
-//}
 
 void Ball::onSizeChanged() {
     // Diese Methode wird aufgerufen, wenn die Größe geändert wurde

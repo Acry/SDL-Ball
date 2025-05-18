@@ -1,13 +1,16 @@
 #pragma once
 #include <epoxy/gl.h>
+
+#include "EventManager.h"
 #include "MovingObject.h"
 #include "Tracer.h"
-#include "Paddle.h"
 #include "GrowableObject.h"
 
-class Ball : public MovingObject, public GrowableObject {
+class Ball final: public MovingObject, public GrowableObject {
     GLfloat rad;
     bool eyeCandy;
+
+    EventManager *eventManager;
 
     static float bounceOffAngle(GLfloat width, GLfloat posx, GLfloat hitx);
 
@@ -23,7 +26,9 @@ public:
     bool aimdir{false};
     SpriteSheetAnimation fireTex;
 
-    Ball();
+    explicit Ball(EventManager *eventMgr);
+
+    void init() override;
 
     // Implementation der virtuellen Getter/Setter aus GrowableObject
     [[nodiscard]] GLfloat getWidth() const override { return MovingObject::width; }
@@ -32,11 +37,17 @@ public:
     void setHeight(GLfloat h) override { MovingObject::height = h; }
 
     void hit(GLfloat c[]);
-    void move(float deltaTime);
-    void draw(const Paddle& paddle, float deltaTime);
+
+    void update(float deltaTime) override;
+
+    void draw(float deltaTime) override;
+
     GLfloat getRad();
+
     void setangle(GLfloat o);
+
     void setspeed(GLfloat v);
+
     void setSize(GLfloat s);
 
     void setEyeCandy(bool value) { eyeCandy = value; }

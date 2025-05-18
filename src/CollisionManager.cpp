@@ -1,5 +1,7 @@
 // CollisionManager.cpp
 #include "CollisionManager.h"
+
+#include "game_state.h"
 #include "MathHelper.h"
 #include "SettingsManager.h"
 
