@@ -151,32 +151,3 @@ public:
     int isActive(int id);
     void kill(int id);
 };
-
-// Klasse für animierte Textankündigungen
-class glAnnounceMessageClass {
-    int age;
-    GLfloat zoom, fade;
-    bool fadedir;
-
-public:
-    TextManager& text;
-    bool active;
-    int life;
-    std::string announcement;
-    int font;
-
-    glAnnounceMessageClass();
-    void draw();
-};
-
-// Manager für Textankündigungen
-class glAnnounceTextClass {
-    int len;
-    std::list<glAnnounceMessageClass> announcement;
-    std::list<glAnnounceMessageClass>::iterator iterator;
-
-public:
-    glAnnounceTextClass();
-    void write(const char *message, int ttl, int font);
-    void draw();
-};
