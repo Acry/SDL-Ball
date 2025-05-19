@@ -217,4 +217,3 @@ ball-test: $(BALL_TEST_OBJECTS)
 
 $(BUILD_DIR)CollisionManager.o: $(SOURCE_DIR)CollisionManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
-

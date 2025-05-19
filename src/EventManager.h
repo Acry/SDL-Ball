@@ -3,7 +3,6 @@
 #include <functional>
 #include <vector>
 #include <unordered_map>
-#include <string>
 
 enum class GameEvent {
     BallHitBorder,
@@ -27,13 +26,12 @@ struct EventData {
 };
 
 class EventManager {
-private:
     using EventCallback = std::function<void(const EventData&)>;
     std::unordered_map<GameEvent, std::vector<EventCallback>> listeners;
 
 public:
     EventManager() = default;
-    ~EventManager() = default;
+    virtual ~EventManager() = default;
 
     // Kein Kopieren erlauben
     EventManager(const EventManager&) = delete;
@@ -43,7 +41,7 @@ public:
         listeners[event].push_back(callback);
     }
 
-    void emit(GameEvent event, const EventData& data) {
+    virtual void emit(GameEvent event, const EventData& data) {
         if (listeners.find(event) != listeners.end()) {
             for (const auto& callback : listeners[event]) {
                 callback(data);

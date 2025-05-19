@@ -5,41 +5,41 @@
 #include "CollisionManager.h"
 #include "difficulty_settings.h"
 
-// Einfacher Mock für EventManager
+
 class MockEventManager : public EventManager {
 public:
-    void emit(GameEvent event, const EventData &data) {
-        // Einfach die Events protokollieren
-        const char *eventNames[] = {"BallHitBorder", "BallLost", "BallHitBrick"};
-        SDL_Log("Event ausgelöst: %s an Position (%.2f, %.2f)",
-                eventNames[static_cast<int>(event)], data.posX, data.posY);
+    int eventCount = 0;  // Zählt ausgelöste Events
+
+    void emit(GameEvent event, const EventData &data) override{
+        eventCount++;
+        const char *eventNames[] = {"BallHitBorder", "BallLost", "BallHitPaddle", "BrickDestroyed",
+                                   "PowerUpCollected", "LevelCompleted", "GameOver"};
+
+        SDL_Log("Event ausgelöst: %s (#%d) an Position (%.2f, %.2f)",
+                eventNames[static_cast<int>(event)], eventCount,
+                data.posX, data.posY);
+
+        if (data.soundID >= 0) {
+            SDL_Log("Sound-ID: %d", data.soundID);
+        }
     }
 };
 
 GLfloat normalizedMouseX, normalizedMouseY;
 
 int main() {
-    // Display initialisieren
     Display display(0, 1280, 720, false);
     if (display.sdlWindow == nullptr) {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
 
-    // TextureManager erstellen
-    const TextureManager textureManager;
-
-    // Mock EventManager erstellen
     MockEventManager eventManager;
-
-    // CollisionManager erstellen
-    // CollisionManager collisionManager;
-    SpriteSheetAnimation tex;
-    // Ball erstellen und initialisieren
     Ball ball(&eventManager);
-    ball.setEyeCandy(true);
 
-    // Ball-Textur laden
+    const TextureManager textureManager;
+    SpriteSheetAnimation tex;
+
     const std::filesystem::path ballTexPath = "../themes/default/gfx/ball/normal.png";
     const std::filesystem::path ballPropsPath = "../themes/default/gfx/ball/normal.txt";
 
@@ -151,6 +151,9 @@ int main() {
                     case SDLK_p: // Aktuelle Geschwindigkeit ausgeben
                         SDL_Log("Aktuelle Ballgeschwindigkeit: %.2f", ball.velocity);
                         break;
+                    case SDLK_r: // reset ball
+                        ball.init();
+                        break;
                     default: ;
                 }
             }
@@ -166,8 +169,10 @@ int main() {
                 paddle.moveTo(normalizedMouseX, deltaTime);
             }
         }
+        if (ball.active) {
+            ball.update(deltaTime);
+        }
 
-        ball.update(deltaTime);
         paddle.update(deltaTime);
         if (ball.glued) {
             ball.pos_x = paddle.pos_x + ball.gluedX;
@@ -184,17 +189,12 @@ int main() {
             }
         }
 
-        if (!ball.active) {
-            ball.active = true;
-            ball.pos_x = paddle.pos_x;
-            ball.pos_y = paddle.pos_y + paddle.height + ball.height;
-            ball.glued = true;
-            ball.gluedX = 0.0f;
-        }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         paddle.draw(deltaTime);
-        ball.draw(deltaTime);
+        if (ball.active) {
+            ball.draw(deltaTime);
+        }
         SDL_GL_SwapWindow(display.sdlWindow);
         SDL_Delay(16); // ~60fps
     }

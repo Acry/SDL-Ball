@@ -45,8 +45,9 @@ void Ball::hit(GLfloat c[]) {
         tracer.colorRotate(explosive, c);
 }
 
-void Ball::update(float deltaTime) {
+void Ball::update(const float deltaTime) {
     updateGrowth(deltaTime);
+
     // Ball Border Collision
     if (pos_x < PLAYFIELD_LEFT_BORDER && xvel < 0.0) {
         // Event auslösen statt direktem soundManager-Aufruf

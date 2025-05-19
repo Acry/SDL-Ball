@@ -18,6 +18,8 @@ there are a lot of things to do.
 - [X] TextManager, revert Singleton Implementation
 - [X] TextManager_Tests
 - [X] SoundManager_Tests
+- [X] CollisionManager_Tests
+- [X] EventHandler_Tests
 
 - [ ] Decouple SavegameManager
 - [ ] support old savegame format 1
@@ -25,29 +27,12 @@ there are a lot of things to do.
 - [ ] implement current savegame format
 - [ ] SavegameManager_Tests
 
-- [ ] LevelManager, check level formats
 - [ ] LevelManager_Tests
-
 - [ ] LevelManager, check old formats
 - [ ] HighscoreManager_Tests
-
 - [ ] den EffectManager von den Spielobjekten zu entkoppeln
 - [ ] EffectManager_Tests
-
 - [ ] TitleScreen_Tests
-
-- [ ] InputManager_Tests
-- [ ] GameObject_Tests
-- [ ] GameObjectManager_Tests
-
-- [ ] fix other menus,
-  - [X] MainMenu
-  - [ ] SettingsMenu
-  - [ ] QuitMenu
-  - [ ] HighscoreMenu
-  - [ ] LevelSelectMenu
-- [ ] MenuManager: keyboard support
-- [ ] MenuManager_Tests
 
 - HUD (Score, Clock, Lives, Level, Speedometer, Powerups consumed (bottom), Shop (top))
   - [ ] Score
@@ -57,26 +42,36 @@ there are a lot of things to do.
   - [ ] Powerups consumed (bottom)
   - [ ] Shop (top)
   - [ ] Speedometer
-
 - [ ] HudManager_Tests
 
 hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] BallManager_Tests
 - [ ] BrickManager_Tests
 - [ ] Player_Tests
-- [ ] Ball_Tests
+- [X] Ball_Tests
 
+- [ ] GameObject_Tests
+- [ ] GameObjectManager_Tests
 - [ ] Timing_Tests
 - [ ] GameManager erstellen
 - [ ] GameManager_Tests
 
 - [ ] **Game should be playable again**
-
+- [ ] fix other menus,
+  - [X] MainMenu
+  - [ ] SettingsMenu
+  - [ ] QuitMenu
+  - [ ] HighscoreMenu
+  - [ ] LevelSelectMenu
+- [ ] MenuManager: keyboard support
+- [ ] MenuManager_Tests
+- [ ] InputManager_Tests
 - [ ] modernize LevelEditor
 - [ ] LevelEditor_Tests
 
 ## Currents things
 
+- [ ] move border checks from paddle and ball to collisionManager
 - [ ] fix DebugMouse.cpp, but text.write should just work.
 - [ ] TextManager genFontTex to bool
 - [ ] check early game field sizes, should I go exactly 4:3 and then render the pillars outside?
