@@ -4,7 +4,7 @@
 #include "Display.hpp"
 #include "CollisionManager.h"
 #include "difficulty_settings.h"
-
+#include "PlayfieldBorder.h"
 
 class MockEventManager : public EventManager {
 public:
@@ -80,6 +80,20 @@ int main() {
         return EXIT_FAILURE;
     }
     textureManager.readTexProps(propsPath, paddle.texture);
+
+    // PlayfieldBorder-Textur laden
+    SpriteSheetAnimation texBorder;
+    const std::filesystem::path borderTexPath = "../themes/default/gfx/border.png";
+    const std::filesystem::path borderPropsPath = "../themes/default/gfx/border.txt";
+    if (!textureManager.load(borderTexPath, texBorder)) {
+        SDL_Log("Fehler beim Laden der Border-Textur: %s", borderTexPath.c_str());
+        return EXIT_FAILURE;
+    }
+    textureManager.readTexProps(borderPropsPath, texBorder);
+
+    // PlayfieldBorder-Objekte erzeugen
+    PlayfieldBorder leftPillar(PlayfieldBorder::Side::Left, texBorder);
+    PlayfieldBorder rightPillar(PlayfieldBorder::Side::Right, texBorder);
 
     SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
     SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -193,6 +207,10 @@ int main() {
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Spielfeldränder zeichnen
+        leftPillar.draw(deltaTime);
+        rightPillar.draw(deltaTime);
 
         paddle.draw(deltaTime);
         if (ball.active) {

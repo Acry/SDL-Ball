@@ -208,7 +208,8 @@ BALL_TEST_SOURCES := $(SOURCE_DIR)Ball_Tests.cpp \
                      $(SOURCE_DIR)Display.cpp \
                      $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                      $(SOURCE_DIR)TextureManager.cpp \
-                     $(SOURCE_DIR)CollisionManager.cpp
+                     $(SOURCE_DIR)CollisionManager.cpp \
+                     $(SOURCE_DIR)PlayfieldBorder.cpp
 
 BALL_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BALL_TEST_SOURCES:.cpp=.o)))
 
@@ -217,3 +218,7 @@ ball-test: $(BALL_TEST_OBJECTS)
 
 $(BUILD_DIR)CollisionManager.o: $(SOURCE_DIR)CollisionManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
+$(BUILD_DIR)PlayfieldBorder.o: $(SOURCE_DIR)PlayfieldBorder.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+

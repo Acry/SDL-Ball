@@ -3,17 +3,21 @@
 #include "GameObject.h"
 #include "SpriteSheetAnimation.h"
 
-class PlayfieldBorder : public GameObject {
+
+class PlayfieldBorder final : public GameObject {
 public:
     enum class Side { Left, Right };
 
-    PlayfieldBorder(Side side, const SpriteSheetAnimation& tex, float pillarWidth);
-    void init() override {} // keine Initialisierung nötig
-    void update(float) override {} // keine Bewegung/Logik
+    PlayfieldBorder(Side side, const SpriteSheetAnimation &tex);
+
+    void init() override;
+
+    void update(float) override {
+    }
+
     void draw(float deltaTime) override;
 
 private:
     Side side;
-    float pillarWidth;
+    GLuint dl = 0;
 };
-

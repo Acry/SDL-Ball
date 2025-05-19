@@ -104,9 +104,11 @@
 
 #define DEFAULT_DIFFICULTY    EASY
 
-#define PILLAR_WIDTH 0.065f
+
 #define BRICK_WIDTH 0.0719f
 #define BRICK_HEIGHT 0.0575f
+
+#define PILLAR_WIDTH 0.045f
 // Von -1 bis +1 in NDC, direkt Stein an Stein
 // glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
 //         +1
