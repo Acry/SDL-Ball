@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include <string>
 #include <epoxy/gl.h>
 // Jeder Index entspricht einer bestimmten Font-Konfiguration aus der Datei fonts.txt.
@@ -12,6 +13,9 @@
 #define FONT_INTRODESCRIPTION 6
 #define FONT_NUM 7
 
+
+class TextAnnouncement;
+
 struct glCharInfo_struct {
     GLfloat Xa, Ya, Xb, Yb, width;
 };
@@ -22,16 +26,20 @@ struct glFontInfo_struct {
     glCharInfo_struct ch[255];
 };
 
-class TtfLegacyGl {
+
+class TextManager {
 public:
-    TtfLegacyGl();
-    ~TtfLegacyGl();
+    TextManager();
+    ~TextManager();
 
     // Methode zum Setzen des Font-Themes (vollständiger Pfad zur fonts.txt)
     bool setFontTheme(const std::string& fontFilePath);
 
     GLfloat getHeight(int font) const;
     void write(const std::string &text, int font, bool center, GLfloat scale, GLfloat x, GLfloat y) const;
+    void addAnnouncement(const std::string& message, int lifetime, int font);
+    void updateAnnouncements(float deltaTime);
+    void drawAnnouncements();
 
 private:
     void genFontTex(const std::string &TTFfontName, int fontSize, int font);
@@ -39,4 +47,23 @@ private:
 
     glFontInfo_struct fontInfo[FONT_NUM];
     std::string fontThemePath;
+    std::list<TextAnnouncement> announcements;
+};
+
+class TextAnnouncement {
+    int age;
+    float zoom, fade;
+    bool fadingOut;
+    bool active;
+    std::string message;
+    int font;
+    int lifetime;
+    TextManager* textManager; // Zeiger auf die übergeordnete TextManager-Instanz
+
+public:
+    TextAnnouncement(const std::string& msg, int fontId, int ttl, TextManager* mgr);
+
+    void update(float deltaTime);
+    void draw();
+    bool isActive() const { return active; }
 };

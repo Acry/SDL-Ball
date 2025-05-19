@@ -20,7 +20,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     main.cpp \
     ConfigFileManager.cpp \
     SettingsManager.cpp \
-    TtfLegacyGl.cpp \
+    TextManager.cpp \
     SaveGameManager.cpp \
     SoundManager.cpp \
     ThemeManager.cpp \
@@ -177,7 +177,7 @@ theme-test: $(THEME_TEST_OBJECTS)
 ###############################################################################
 # TextManager
 TEXT_TEST_SOURCES := $(SOURCE_DIR)TextManager_Tests.cpp \
-                     $(SOURCE_DIR)TtfLegacyGl.cpp \
+                     $(SOURCE_DIR)TextManager.cpp \
                      $(SOURCE_DIR)Display.cpp \
                      $(SOURCE_DIR)TextureManager.cpp
 

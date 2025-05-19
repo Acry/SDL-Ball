@@ -11,7 +11,7 @@
 #include "SoundManager.h"
 #include "TextureManager.h"
 #include "ThemeManager.h"
-#include "TtfLegacyGl.h"
+#include "TextManager.h"
 
 class GameManager {
     ConfigFileManager& configManager;

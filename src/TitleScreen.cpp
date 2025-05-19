@@ -2,7 +2,7 @@
 #include "MathHelper.h"
 
 class powerupDescriptionClass : public MovingObject {
-    TtfLegacyGl& text;
+    TextManager& text;
 public:
     powerupDescriptionClass();
     SpriteSheetAnimation *tex;
@@ -13,7 +13,7 @@ public:
     string description;
 };
 
-powerupDescriptionClass::powerupDescriptionClass() : text(TtfLegacyGl::getInstance()) {
+powerupDescriptionClass::powerupDescriptionClass() : text(TextManager::getInstance()) {
     // Icon size
     width = 0.035;
     height = 0.035;
@@ -57,7 +57,7 @@ void powerupDescriptionClass::draw() const {
 }
 
 class TitleScreen {
-    TtfLegacyGl& text;  // Als Referenz
+    TextManager& text;  // Als Referenz
     EffectManager *fxMan;
     int ticksSinceLastSpawn;
     TextureManager texMgr;
@@ -84,7 +84,7 @@ public:
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };
 
-TitleScreen::TitleScreen(EffectManager *m, SpriteSheetAnimation tp[], Menu *me): text(TtfLegacyGl::getInstance())
+TitleScreen::TitleScreen(EffectManager *m, SpriteSheetAnimation tp[], Menu *me): text(TextManager::getInstance())
 {
     menu = me;
     numHighScores = 7;

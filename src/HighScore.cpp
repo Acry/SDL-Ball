@@ -6,9 +6,9 @@ class HighScore {
     string name;
     TextureManager texMgr;
     SpriteSheetAnimation tex;
-    TtfLegacyGl& text;  // Als Referenz
+    TextManager& text;  // Als Referenz
 public:
-    HighScore()  : text(TtfLegacyGl::getInstance())
+    HighScore()  : text(TextManager::getInstance())
     {
         name = "";
         texMgr.load(themeManager.getThemeFilePath("gfx/highscore/entername.png", setting.gfxTheme), tex);

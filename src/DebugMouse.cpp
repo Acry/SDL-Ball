@@ -1,13 +1,13 @@
-#include "TtfLegacyGl.h"
+#include "TextManager.h"
 
 class DebugMouse {
-    TtfLegacyGl& text;
+    TextManager& text;
     char tempText[16]{};
     float mouseX;
     float mouseY;
 
 public:
-    DebugMouse() : text(TtfLegacyGl::getInstance()),
+    DebugMouse() : text(TextManager::getInstance()),
                    mouseX(0.0f),
                    mouseY(0.0f) {
         tempText[0] = '\0';

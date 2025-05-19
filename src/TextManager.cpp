@@ -4,9 +4,9 @@
 #include <fstream>
 #include <filesystem>
 
-#include "TtfLegacyGl.h"
+#include "TextManager.h"
 
-TtfLegacyGl::TtfLegacyGl() : fontInfo{} {
+TextManager::TextManager() : fontInfo{} {
     TTF_Init();
 
     // Initialisiere alle Texturen mit 0
@@ -15,7 +15,7 @@ TtfLegacyGl::TtfLegacyGl() : fontInfo{} {
     }
 }
 
-void TtfLegacyGl::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
+void TextManager::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
     std::string fullFontPath = fontThemePath + "/" + TTFfontName;
 
     TTF_Font *ttfFont = nullptr;
@@ -101,7 +101,7 @@ void TtfLegacyGl::genFontTex(const std::string &TTFfontName, const int fontSize,
     SDL_FreeSurface(t); //Free text-surface
 }
 
-void TtfLegacyGl::write(const std::string &text, const int font, const bool center, const GLfloat scale,
+void TextManager::write(const std::string &text, const int font, const bool center, const GLfloat scale,
                         const GLfloat x,
                         const GLfloat y) const {
     unsigned char c;
@@ -158,11 +158,11 @@ void TtfLegacyGl::write(const std::string &text, const int font, const bool cent
     glEnable(GL_DEPTH_TEST);
 }
 
-GLfloat TtfLegacyGl::getHeight(const int font) const {
+GLfloat TextManager::getHeight(const int font) const {
     return fontInfo[font].height;
 }
 
-void TtfLegacyGl::clearFontTheme() {
+void TextManager::clearFontTheme() {
     // Bestehende Texturen freigeben, wenn vorhanden
     for (int i = 0; i < FONT_NUM; i++) {
         if (fontInfo[i].tex) {
@@ -172,12 +172,12 @@ void TtfLegacyGl::clearFontTheme() {
     }
 }
 
-TtfLegacyGl::~TtfLegacyGl() {
+TextManager::~TextManager() {
     clearFontTheme();
     TTF_Quit();
 }
 
-bool TtfLegacyGl::setFontTheme(const std::string &fontFilePath) {
+bool TextManager::setFontTheme(const std::string &fontFilePath) {
     // Bestehende Ressourcen freigeben
     clearFontTheme();
 
@@ -242,4 +242,101 @@ bool TtfLegacyGl::setFontTheme(const std::string &fontFilePath) {
     }
     f.close();
     return true;
+}
+
+TextAnnouncement::TextAnnouncement(const std::string& msg, int fontId, int ttl, TextManager* mgr)
+    : message(msg), font(fontId), lifetime(ttl), textManager(mgr) {
+    age = 0;
+    zoom = 0.0f;
+    fade = 0.0f;
+    fadingOut = false;
+    active = true;
+}
+
+void TextAnnouncement::update(float deltaTime) {
+    // Zooming-Geschwindigkeit angepasst an orthogonale Projektion
+    zoom += 1.0f * deltaTime;
+
+    // Fade-Effekt steuern
+    if (fadingOut) {
+        fade -= 1.0f * deltaTime;
+    } else {
+        fade += 1.0f * deltaTime;
+    }
+
+    // Fade-Werte begrenzen
+    if (fade > 1.0f) fade = 1.0f;
+    if (fade < 0.0f) fade = 0.0f;
+
+    // Alter in Millisekunden
+    age += deltaTime * 1000.0f;
+
+    // Nach der Hälfte der Lebensdauer mit Fade-Out beginnen
+    if (age > lifetime * 0.5f && !fadingOut) {
+        fadingOut = true;
+    }
+
+    // Nach vollständiger Lebensdauer deaktivieren
+    if (age > lifetime) {
+        active = false;
+    }
+}
+
+void TextAnnouncement::draw() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    // Angepasster Skalierungsfaktor für orthogonale Projektion
+    float baseScale = 0.27f;
+
+    // Mehrere Ebenen mit verschiedenen Farben für den Schatteneffekt
+    float s = zoom * baseScale * 0.85f;
+    glColor4f(1.0f, 0.0f, 0.0f, fade);
+    textManager->write(message, font, true, s, 0.0f, 0.0f);
+
+    s = zoom * baseScale * 0.90f;
+    glColor4f(0.0f, 1.0f, 0.0f, fade);
+    textManager->write(message, font, true, s, 0.0f, 0.0f);
+
+    s = zoom * baseScale * 0.95f;
+    glColor4f(0.0f, 0.0f, 1.0f, fade);
+    textManager->write(message, font, true, s, 0.0f, 0.0f);
+
+    // Haupttext
+    s = zoom * baseScale;
+    glColor4f(1.0f, 1.0f, 1.0f, fade);
+    textManager->write(message, font, true, s, 0.0f, 0.0f);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glDisable(GL_BLEND);
+}
+
+void TextManager::addAnnouncement(const std::string& message, int lifetime, int font) {
+    // this-Zeiger übergeben statt getInstance() aufzurufen
+    announcements.emplace_back(message, font, lifetime, this);
+}
+
+void TextManager::updateAnnouncements(float deltaTime) {
+    // Alle aktiven Announcements aktualisieren
+    for (auto it = announcements.begin(); it != announcements.end(); ) {
+        it->update(deltaTime);
+
+        // Inaktive Announcements aus der Liste entfernen
+        if (!it->isActive()) {
+            it = announcements.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+void TextManager::drawAnnouncements() {
+    // Alle aktiven Announcements zeichnen
+    for (auto& announcement : announcements) {
+        announcement.draw();
+    }
 }

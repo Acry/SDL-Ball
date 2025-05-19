@@ -2,7 +2,7 @@
 
 #include <list>
 #include "SpriteSheetAnimation.h"
-#include "TtfLegacyGl.h"
+#include "TextManager.h"
 #include "MathHelper.h"
 
 #define RAD 6.28318530718 // 2*PI
@@ -63,7 +63,7 @@ struct effect_vars {
 class EffectsTransist {
     GLfloat opacity;
 public:
-    TtfLegacyGl& text;
+    TextManager& text;
     int age;
     effect_vars vars;
 
@@ -159,7 +159,7 @@ class glAnnounceMessageClass {
     bool fadedir;
 
 public:
-    TtfLegacyGl& text;
+    TextManager& text;
     bool active;
     int life;
     std::string announcement;

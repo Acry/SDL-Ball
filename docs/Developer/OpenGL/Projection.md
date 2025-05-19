@@ -18,3 +18,12 @@ Ergibt sich der Skalierungsfaktor:
 Faktor = (tan(45°/2) * 3.0) / 2.0 ≈ 0.27
 
 Die orthogonale Projektion ist für ein 2D-Spiel wie SDL-Ball in der Regel die bessere Wahl.
+
+    // Von -1 bis +1 in NDC, direkt Stein an Stein
+    // glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+    //         +1
+    //         ^
+    //         |
+    // -1 <----+----> +1
+    //         |
+    //        -1

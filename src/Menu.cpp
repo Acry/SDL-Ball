@@ -1,5 +1,5 @@
 #include "SpriteSheetAnimation.h"
-#include "TtfLegacyGl.h"
+#include "TextManager.h"
 #include "game_state.h"
 // #include "Menu.h" todo
 
@@ -47,7 +47,7 @@ vector<score> sortScores() {
 }
 
 class Menu {
-    TtfLegacyGl& text;  // Referenz auf das Singleton
+    TextManager& text;  // Referenz auf das Singleton
     string saveGameName[6]; //The name of saveGames
     int saveGameSlot; //Where player choose to save/load to/from
     SpriteSheetAnimation tex[5];
@@ -60,7 +60,7 @@ public:
     char highScores[20][255];
     bool joystickAttached; // Is joystick attached?
 
-    Menu() : text(TtfLegacyGl::getInstance()) {
+    Menu() : text(TextManager::getInstance()) {
         refreshHighScoreList(); //load the highscore file (if exists)
         const TextureManager texMgr;
 

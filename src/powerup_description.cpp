@@ -3,7 +3,7 @@
 #include "MovingObject.h"
 #include <GL/gl.h>
 
-powerupDescriptionClass::powerupDescriptionClass() : text(TtfLegacyGl::getInstance()) {
+powerupDescriptionClass::powerupDescriptionClass() : text(TextManager::getInstance()) {
     width = 0.035;
     height = 0.035;
 }

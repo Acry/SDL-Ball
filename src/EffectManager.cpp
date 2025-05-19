@@ -7,12 +7,12 @@ extern float globalMilliTicksSinceLastDraw;
 class EffectsTransist {
     GLfloat opacity;
 public:
-    TtfLegacyGl& text;  // Als Referenz
+    TextManager& text;  // Als Referenz
     int age;
     effect_vars vars;
 
     // Konstruktor initialisiert die Referenz
-    EffectsTransist() : text(TtfLegacyGl::getInstance()){}
+    EffectsTransist() : text(TextManager::getInstance()){}
 
     void init() {
         age = 0;
@@ -528,13 +528,13 @@ class glAnnounceMessageClass {
     bool fadedir;
 
 public:
-    TtfLegacyGl& text;  // Referenz statt Instanz
+    TextManager& text;  // Referenz statt Instanz
     bool active;
     int life;
     string announcement;
     int font;
 
-    glAnnounceMessageClass() : text(TtfLegacyGl::getInstance()) {
+    glAnnounceMessageClass() : text(TextManager::getInstance()) {
         active = true;
         age = 0;
         fade = 0;

@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "Display.hpp"
-#include "TtfLegacyGl.h"
+#include "TextManager.h"
 
 struct TextTest {
     std::string text;
@@ -41,7 +41,7 @@ int main() {
 
     // Hier wird direkt eine Instanz des TextManager erstellt
     // Der Pfad muss zum tatsächlichen Speicherort der fonts.txt zeigen
-    TtfLegacyGl textManager;
+    TextManager textManager;
     if (!textManager.setFontTheme("../themes/default/font/fonts.txt")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
@@ -59,8 +59,14 @@ int main() {
     glClearColor(0.05f, 0.06f, 0.2f, 1.0f);
     // Main Loop
     bool running = true;
+    auto lastFrameTime = std::chrono::high_resolution_clock::now();
 
     while (running) {
+        // Zeit seit dem letzten Frame berechnen
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+        lastFrameTime = currentTime;
+
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -70,6 +76,14 @@ int main() {
                 case SDL_KEYDOWN:
                     if (event.key.keysym.sym == SDLK_ESCAPE)
                         running = false;
+                    else if (event.key.keysym.sym == SDLK_1) {
+                        // Taste 1: Gute Nachricht
+                        textManager.addAnnouncement("SEHR GUT!", 3000, FONT_ANNOUNCE_GOOD);
+                    }
+                    else if (event.key.keysym.sym == SDLK_2) {
+                        // Taste 2: Schlechte Nachricht
+                        textManager.addAnnouncement("GAME OVER!", 3000, FONT_ANNOUNCE_BAD);
+                    }
                     break;
                 case SDL_WINDOWEVENT:
                     if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -88,6 +102,10 @@ int main() {
         for (const auto& test : tests) {
             textManager.write(test.text, test.font, test.centered, test.scale, test.x, test.y);
         }
+
+        // Ankündigungen aktualisieren und zeichnen
+        textManager.updateAnnouncements(deltaTime);
+        textManager.drawAnnouncements();
 
         // Zusätzliche Info
         textManager.write("ESC to quit", FONT_MENU, true, 1.0f, 0.0f, -0.95f);

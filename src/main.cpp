@@ -30,7 +30,7 @@
 #include "SpriteSheetAnimation.h"
 #include "TextureManager.h"
 #include "ThemeManager.h"
-#include "TtfLegacyGl.h"
+#include "TextManager.h"
 #include "colors.h"
 #include "config.h"
 #include "texture_properties.h"
@@ -1092,7 +1092,7 @@ struct shopItemStruct {
 
 class Hud {
     SpriteSheetAnimation texBall;
-    TtfLegacyGl &text; // Referenz auf das Singleton
+    TextManager &text; // Referenz auf das Singleton
     // For the hud text
     int ticksSinceLastClockCheck;
     time_t nixTime; //Seconds since epoch
@@ -1105,7 +1105,7 @@ class Hud {
 
 public:
     Hud(SpriteSheetAnimation texB, SpriteSheetAnimation texPo[]): texBall(texB),
-                                             text(TtfLegacyGl::getInstance()),
+                                             text(TextManager::getInstance()),
                                              ticksSinceLastClockCheck(1001),
                                              texPowerup(texPo),
                                              shopItemSelected(0) {

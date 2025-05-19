@@ -1,6 +1,6 @@
 // HUD
 #include "Score.h"
-#include "TtfLegacyGl.h"
+#include "TextManager.h"
 
 void Score::reset() {
     lastScoreTick = SDL_GetTicks();
