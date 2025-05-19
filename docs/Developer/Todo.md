@@ -70,11 +70,12 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] InputManager_Tests
 - [ ] modernize LevelEditor
 - [ ] LevelEditor_Tests
+- [ ] [ShaderManager](Manager/ShaderManager.md)
 
 ## Currents things
 
 - [ ] move border checks from paddle and ball to collisionManager
-- [ ] fix DebugMouse.cpp, but text.write should just work.
+- [ ] fix DebugMouse.cpp, but text::write should just work.
 - [ ] TextManager genFontTex to bool
 - [ ] check early game field sizes, should I go exactly 4:3 and then render the pillars outside?
   scissor rectangle needs to be expanded to the playfield plus the pillars
@@ -88,6 +89,7 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 
 ### Gameplay
 
+- [ ] make BackgroundManager-Shader responsive to events
 - [ ] setting titleScreenShow
 - [ ] implement the tainting of the background, with a reasonable mix (blend) function and settings
 - [ ] a - restart level
