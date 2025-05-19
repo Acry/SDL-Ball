@@ -117,6 +117,7 @@ GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 
 ## Currents things
 
+- [ ] check old code if border texture was used as spritesheet
 - [ ] move border checks from paddle and ball to collisionManager
 - [ ] fix DebugMouse.cpp, but text::write should just work.
 - [ ] TextManager genFontTex to bool

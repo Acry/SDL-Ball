@@ -1,4 +1,5 @@
 #include "Paddle.h"
+#include "config.h"
 #include <epoxy/gl.h>
 
 Paddle::Paddle() {
@@ -14,10 +15,10 @@ void Paddle::init() {
     keepAspectRatio = true;
 
     // GameObject-Eigenschaften (und GrowableObject)
-    pos_y = -0.93f;
+    pos_y = -0.955f;
     pos_x = 0.0f;
-    width = 0.059f; // Setzt beide width-Variablen
-    height = 0.018f; // Setzt beide height-Variablen
+    width = 0.062f;
+    height = 0.016f;
 
     // Paddle-spezifische Eigenschaften
     dead = false;
@@ -158,7 +159,7 @@ void Paddle::moveTo(const float targetX, const float deltaTime) {
         }
     }
 
-    // Begrenzung auf den Bildschirmrand
-    if (pos_x < -1.0f + width) pos_x = -1.0f + width;
-    if (pos_x > 1.0f - width) pos_x = 1.0f - width;
+    // Begrenzung auf den Spielfeldrand
+    if (pos_x < PLAYFIELD_LEFT_BORDER + width) pos_x = PLAYFIELD_LEFT_BORDER + width;
+    if (pos_x > PLAYFIELD_RIGHT_BORDER - width) pos_x = PLAYFIELD_RIGHT_BORDER - width;
 }
