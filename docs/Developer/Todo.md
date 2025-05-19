@@ -1,5 +1,7 @@
 # Todo
 
+- [ ] tracer ist shortly visible after ball reset
+
 Besides the obvious things like fixing bugs, refactoring and moving on to shaders,
 there are a lot of things to do.
 
