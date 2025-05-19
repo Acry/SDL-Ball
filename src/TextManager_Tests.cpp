@@ -78,11 +78,11 @@ int main() {
                         running = false;
                     else if (event.key.keysym.sym == SDLK_1) {
                         // Taste 1: Gute Nachricht
-                        textManager.addAnnouncement("SEHR GUT!", 3000, FONT_ANNOUNCE_GOOD);
+                        textManager.addAnnouncement("Well Done!", 1500, FONT_ANNOUNCE_GOOD);
                     }
                     else if (event.key.keysym.sym == SDLK_2) {
                         // Taste 2: Schlechte Nachricht
-                        textManager.addAnnouncement("GAME OVER!", 3000, FONT_ANNOUNCE_BAD);
+                        textManager.addAnnouncement("GAME OVER!", 2000, FONT_ANNOUNCE_BAD);
                     }
                     break;
                 case SDL_WINDOWEVENT:

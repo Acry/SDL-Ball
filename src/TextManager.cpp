@@ -254,8 +254,7 @@ TextAnnouncement::TextAnnouncement(const std::string& msg, int fontId, int ttl, 
 }
 
 void TextAnnouncement::update(float deltaTime) {
-    // Zooming-Geschwindigkeit angepasst an orthogonale Projektion
-    zoom += 1.0f * deltaTime;
+    zoom += 2.4f * deltaTime;
 
     // Fade-Effekt steuern
     if (fadingOut) {
@@ -289,8 +288,8 @@ void TextAnnouncement::draw() {
     glPushMatrix();
     glLoadIdentity();
 
-    // Angepasster Skalierungsfaktor für orthogonale Projektion
-    float baseScale = 0.27f;
+    // Erhöhter Skalierungsfaktor für bessere Sichtbarkeit
+    float baseScale = 0.8f;
 
     // Mehrere Ebenen mit verschiedenen Farben für den Schatteneffekt
     float s = zoom * baseScale * 0.85f;
