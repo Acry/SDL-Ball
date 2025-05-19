@@ -20,10 +20,8 @@ Mehrere Texturen gleichzeitig in der Fixed-Function-Pipeline (glActiveTexture, g
 Frame Buffer Objects (FBOs):
 Offscreen-Rendering, z.B. für Screenshots, Postprocessing, Shadowmaps.
 
-
 Blending, Stencil, Depth Verbesserungen:
 Mehr Kontrolle und Performance bei Alpha-Blending, Stencil- und Depth-Tests.
-
 
 glDrawRangeElements, glDrawArrays:
 Effizientere Zeichenbefehle für große Geometrien.
