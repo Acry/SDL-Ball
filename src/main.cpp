@@ -1014,41 +1014,6 @@ void brick::hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, 
     }
 }
 
-void createPlayfieldBorderList(GLuint *dl, const SpriteSheetAnimation &tex) {
-    *dl = glGenLists(1);
-    glNewList(*dl,GL_COMPILE);
-    glLoadIdentity();
-    glDisable(GL_BLEND);
-    glColor4f(GL_WHITE);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
-    glBegin(GL_QUADS);
-
-    // linke Säule
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(-1.0f, 1.0f, 0.0f);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(-1.0f + PILLAR_WIDTH, 1.0f, 0.0f);
-    glTexCoord2f(1.0f, -1.0f);
-    glVertex3f(-1.0f + PILLAR_WIDTH, -1.0f, 0.0f);
-    glTexCoord2f(0.0f, -1.0f);
-    glVertex3f(-1.0f, -1.0f, 0.0f);
-
-    // rechte Säule
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(1.0f - PILLAR_WIDTH, 1.0f, 0.0f);
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(1.0f, 1.0f, 0.0f);
-    glTexCoord2f(0.0f, -1.0f);
-    glVertex3f(1.0f, -1.0f, 0.0f);
-    glTexCoord2f(1.0f, -1.0f);
-    glVertex3f(1.0f - PILLAR_WIDTH, -1.0f, 0.0f);
-    glEnd();
-    glEnable(GL_BLEND);
-    glDisable(GL_TEXTURE_2D);
-    glEndList();
-}
-
 void collision_ball_brick(brick &br, Ball &ba, position &p, EffectManager &fxMan) {
     // Early exit wenn Brick nicht aktiv
     if (!br.active || !br.collide) return;
@@ -1447,8 +1412,7 @@ int main(int argc, char *argv[]) {
 # pragma endregion texture manager
 
     powerupManager.init(texPowerup);
-    GLuint playfieldBorderList;
-    createPlayfieldBorderList(&playfieldBorderList, texBorder);
+
 
     brick bricks[598];
     string levelFile = themeManager.getThemeFilePath("levels.txt", setting.lvlTheme);
@@ -1782,7 +1746,6 @@ int main(int argc, char *argv[]) {
                 }
                 if (setting.showBg)
                     background.draw();
-                glCallList(playfieldBorderList);
                 score.update(player.score);
                 if (var.scrollInfo.drop) {
                     if (SDL_GetTicks() - var.scrollInfo.lastTick > var.scrollInfo.dropspeed) {
