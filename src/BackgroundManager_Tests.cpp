@@ -7,7 +7,7 @@
 int globalTicksSinceLastDraw = 0;
 
 int main() {
-    Display display(0, 1280, 720, false);
+    Display display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
         // Fehlerbehandlung falls Initialisierung fehlschlägt
         SDL_Log("Display konnte nicht initialisiert werden");
