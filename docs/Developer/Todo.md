@@ -1,6 +1,6 @@
 # Todo
 
-- [ ] tracer ist shortly visible after ball reset
+- [ ] [Tracer](GameObjects/Tracer.md) ist shortly visible after ball reset
 
 Besides the obvious things like fixing bugs, refactoring and moving on to shaders,
 there are a lot of things to do.
@@ -193,3 +193,5 @@ GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 ### Tests
 
 - [ ] write used keys as help, with TextManager, if graphics are available
+- [ ] move all tests to the test folder
+- [ ] seprate manual tests from automatic tests
