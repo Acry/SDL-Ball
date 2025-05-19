@@ -33,7 +33,7 @@
 #include "TextManager.h"
 #include "colors.h"
 #include "config.h"
-#include "texture_properties.h"
+#include "TextureProperties.h"
 
 #define DEBUG_DRAW_BALL_QUAD 0
 #define DEBUG_SHOW_MOUSE_COORDINATES 0 // NDC coordinates -1.0 to 1.0

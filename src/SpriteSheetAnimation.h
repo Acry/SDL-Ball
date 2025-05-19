@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL2/SDL_stdinc.h>
-#include "texture_properties.h"
+#include "TextureProperties.h"
 
 // Texture coordinates array type (8 floats for 4 vertices)
 using texPos = float[8];
