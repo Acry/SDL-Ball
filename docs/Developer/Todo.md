@@ -109,6 +109,9 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] use sdl2 highperformance timer, see: [Timing](Refactoring/Timing.md)
 - [ ] credits scene
 - [ ] save game should save the state of the game, not just the level
+- [ ] Tracer refactoring (effectManager/eventManager/inheritance/particleSystem/consitent naming, from LevelTheme to instance)
+      Named: Tail, Tracer, BallEffect, BallTracer, BallTail ...
+        public: tracer tail; - andersrum wäre richtig gewesen. Tracer ist eine Form des Ball-Tails
 
 ### Auxiliary
 
@@ -120,7 +123,7 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] use OpenGL debug callbacks
 
 - [ ] fix speedometer
-- [ ] fix messed up values due to [projection change](Refactoring/Projection.md).
+- [ ] fix messed up values due to [projection change](OpenGL/Projection.md).
 - [ ] write tests
 - [ ] Refactor [Timing](Refactoring/Timing.md)
 - [ ] show current level no. during gameplay

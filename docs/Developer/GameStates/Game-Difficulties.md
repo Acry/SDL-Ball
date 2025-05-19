@@ -18,7 +18,7 @@ Es gibt drei verschiedene Schwierigkeitsgrade: `EASY`, `NORMAL` und `HARD`.
 
 Default ist EASY.
 
-Der [SettingsManager](Manager/SettingsManager.md) ist dafür zuständig, die Einstellungen zu laden und zu speichern.
+Der [SettingsManager](../Manager/SettingsManager.md) ist dafür zuständig, die Einstellungen zu laden und zu speichern.
 Er lädt den schieriegkeitsgrad, falls vorhanden, sonst liefert er den defaultwert zurück.
 
 Grundsätzlich haben wir 3 Arten von Werten:

@@ -28,7 +28,7 @@ See: [Todo](docs/Developer/Todo.md)
 ## Significant changes
 
 - Projection change to 2D-Orthographic
-- Using OpenGL 3.1 compatibility profile See: [Projection](docs/Developer/Refactoring/Projection.md)
+- Using OpenGL 3.1 compatibility profile See: [Projection](docs/Developer/OpenGL/Projection.md)
 - no Windows support (macOS should be easy to add)
 - no WiiMote support
 - sound always enabled

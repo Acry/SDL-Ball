@@ -5,17 +5,28 @@ Grundsätzlich haben wir 3 Typen von Settings:
 - loaded - gespeicherte Settings des Spielers
 - current - und die runtime settings
 
+## Init Managers
+
+An dieser Stelle bin ich mir noch nicht ob ich einen InitManager brauche oder möchte.
+
 ```text
-SettingsManager → ThemeManager → TextureManager → GameObjects
+SettingsManager → ThemeManager → TextureManager → GameManager
        ↑               ↑             ↑
        └───────────────┴─────────────┘
               ConfigFileManager
 ```
 
+In `main` liefe dann der initManager und würde die settingsManager und den gameManager initialisieren.
+Dann würde der GameManager den GameLoop starten.
+
+## Singletons
+
 **Singletons provide a global access mechanism to an object.**
 **Singletons are a global variable dressed up in some awkward syntax.**
 
-Manager Typen:
+Von Singletons bin ich gearde nicht mehr überzeugt.
+
+## Manager Types
 
 [SettingsManager](Manager/SettingsManager.md) spricht mit dem ConfigFileManager, hält Defaults und current settings
 
@@ -62,6 +73,8 @@ Player player;
 player.init(difficulty);
 
 Die sauberste Lösung wäre, dass der GameManager die Spieler-Einstellungen vom SettingsManager holt und diese dann an den Player weiterreicht. Dabei sollte der Player nur die Daten kennen, die er wirklich braucht:
+
+## GameManager
 
 Der GameManager übernimmt dann die Koordination:
 
@@ -133,7 +146,11 @@ public:
 };
 ```
 
+## GameObjects
+
 Die Spielobjekte sollten möglichst "dumm" sein und nur ihre grundlegenden Eigenschaften und Verhaltensweisen kennen.
+
+## CollisionManager
 
 class CollisionManager {
 public:
@@ -141,6 +158,8 @@ public:
 };
 
 Der CollisionManager könnte die Kollisionen erkennen und den EffectManager für die visuellen/akustischen Effekte bei Kollisionen benachrichtigen:
+
+## GameManager
 
 class GameStateManager {
 private:
@@ -161,6 +180,8 @@ private:
 
 UI/HUD/MENU
 
+## States and Scenes
+
 Die klassischen states, mh. Ich sehe die eher als hierrachische spielszenen statt: `enum class State { RUNNING, PAUSED, GAME_OVER }; State currentState`;
 
 SceneManager: switch - PlayScene, GameOverScene, TitleScene, (SettingsScene)
@@ -173,9 +194,11 @@ Pretty much, a top down approach.
 
 [BackgroundManager](Manager/BackgroundManager.md) - handles the background, loads the background file and applies it to the game
 [BallManager](Manager/BallManager.md) - handles the balls, loads the ball file and applies it to the game
-[ConfigFileManager](Manager/ConfigFileManager.md) - handles config pathes, evaluates and loads the config file.
+[CollisionManager](Manager/CollisionManager.md) - handles the collisions, loads the collision file and applies it to the game
+[ConfigManager](Manager/ConfigManager.md) - handles config pathes, evaluates and loads the config file.
 [ControllerManager](Manager/ControllerManager.md) - handles the controller, and settings
 [EffectManager](Manager/EffectManager.md) - handles the effects, loads the effect file and applies it to the game
+[EventManager](Manager/EventManager.md) - handles the events, loads the event file and applies it to the game
 [DisplayManager](Manager/DisplayManager.md) - handles the display, loads the display file and applies it to the game
 [GameManager](Manager/GameManager.md) - handles the game state, loads the game and manages the game loop
 [HighscoreManager](Manager/HighscoreManager.md) - handles the highscores, loads the highscores and saves them to the file.
@@ -186,6 +209,8 @@ Pretty much, a top down approach.
 [TextureManager](Manager/TextureManager.md)
 [ThemeManager](Manager/ThemeManager.md) - handles the themes, loads the theme file and applies it to the game
 MenuManager - handles the menu, loads the menu file and applies it to the game
+SceneManager - handles the scenes, loads the scene file and applies it to the game
+[UIManager](Manager/UIManager.md) - handles the UI, loads the UI file and applies it to the game (HUD)
 
 ## Scenes
 
@@ -201,7 +226,7 @@ GameOverScene
 PauseScene
 SettingsScene
 
-See: [Structure](Structure.md)
+See: [Structure](Software-Engineering/Structure.md)
 
 ## OOP
 
@@ -218,6 +243,7 @@ Inheritenace, Polymorphism - like dependencies: gorilla - banana.
 
 That said, happy hacking.
 
+## Functional Programming
 
 P.S.
 

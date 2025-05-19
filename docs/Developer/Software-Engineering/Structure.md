@@ -37,7 +37,7 @@ Game
 │       └── RenderBall
 ```
 
-[Managers](Managers.md)
+[Managers](../Managers.md)
 
 ## old
 

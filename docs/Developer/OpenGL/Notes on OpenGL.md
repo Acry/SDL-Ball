@@ -1,27 +1,6 @@
 # Notes on OpenGL
 
-## Display Lists again
-
-Understand the Role of Display Lists in Your Codebase
-Display lists in legacy OpenGL are used to:
-
-- Store static geometry (vertices, normals, texture coordinates, etc.).
-- Encapsulate state changes (e.g., glMatrixMode, glColor, glMaterial).
-- Optimize rendering by reducing CPU-GPU communication for static content.
-
-In modern OpenGL (3.0+ core profile), display lists are replaced by:
-
-- VBOs: Store vertex data on the GPU.
-- VAOs: Encapsulate vertex attribute configurations.
-- Shaders: Replace fixed-function pipeline state (e.g., lighting, transformations).
-- Uniforms/UBOs: Manage state changes like matrices or material properties.
-
-Before refactoring, analyze your codebase to identify:
-Where display lists are used (e.g., for geometry, UI, or complex scenes).
-The types of commands in display lists (geometry, state changes, or mixed).
-Dependencies on fixed-function pipeline features (e.g., glBegin, glLight).
-
-### Plan an Incremental Transition
+## Plan an Incremental Transition
 
 To avoid breaking the codebase, adopt an incremental refactoring strategy using the OpenGL compatibility profile (as you noted, supported in 3.1 compatibility). This allows legacy display lists to coexist with modern OpenGL code during the transition. Here’s a step-by-step plan:
 Step 1: Set Up a Modern OpenGL Context
@@ -222,3 +201,26 @@ Replace fixed-function state with shaders and uniforms.
 Test rigorously with fallbacks to display lists.
 Optimize and eventually switch to a core profile.
 By leveraging the compatibility profile and an incremental approach, you can refactor safely, ensuring the codebase remains functional while modernizing its rendering pipeline. If you have specific details about your codebase (e.g., types of display lists, rendering patterns), I can tailor this further!
+
+## Legacy OpenGL
+
+### Display Lists again
+
+Understand the Role of Display Lists in Your Codebase
+Display lists in legacy OpenGL are used to:
+
+- Store static geometry (vertices, normals, texture coordinates, etc.).
+- Encapsulate state changes (e.g., glMatrixMode, glColor, glMaterial).
+- Optimize rendering by reducing CPU-GPU communication for static content.
+
+In modern OpenGL (3.0+ core profile), display lists are replaced by:
+
+- VBOs: Store vertex data on the GPU.
+- VAOs: Encapsulate vertex attribute configurations.
+- Shaders: Replace fixed-function pipeline state (e.g., lighting, transformations).
+- Uniforms/UBOs: Manage state changes like matrices or material properties.
+
+Before refactoring, analyze your codebase to identify:
+Where display lists are used (e.g., for geometry, UI, or complex scenes).
+The types of commands in display lists (geometry, state changes, or mixed).
+Dependencies on fixed-function pipeline features (e.g., glBegin, glLight).
