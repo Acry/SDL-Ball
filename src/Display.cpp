@@ -11,7 +11,7 @@ Display::Display(const int display, const int width, const int height, const boo
         SDL_Log("Fehler bei SDL Video Init: %s", SDL_GetError());
         return;
     }
-    // Versuche Display aus Settings
+    // Versuche das Display aus den Settings.
     numOfDisplays = SDL_GetNumVideoDisplays();
     if (numOfDisplays > 0 && display < numOfDisplays) {
         displayToUse = display;
@@ -21,52 +21,26 @@ Display::Display(const int display, const int width, const int height, const boo
     unsigned int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
     if (fullscreen) {
-        // Im Vollbildmodus native Auflösung verwenden
+        // Im Vollbildmodus native Auflösung verwenden.
         SDL_DisplayMode currentDisplayMode;
         SDL_GetCurrentDisplayMode(displayToUse, &currentDisplayMode);
         currentW = currentDisplayMode.w;
         currentH = currentDisplayMode.h;
         flags |= SDL_WINDOW_FULLSCREEN;
     } else {
-        // Im Fenstermodus konfigurierte Auflösung verwenden
+        // Im Fenstermodus konfigurierte Auflösung verwenden.
         currentW = width > 0 ? width : 1280; // Fallback-Wert
         currentH = height > 0 ? height : 720; // Fallback-Wert
     }
 
-    if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0)
-    {
-        printf("\nError: Unable to initialize SDL:%s\n", SDL_GetError());
+    if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
+        SDL_Log("\nError: Unable to initialize SDL:%s\n", SDL_GetError());
         return;
     }
-
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-
-    sdlWindow = SDL_CreateWindow("SDL-Ball",
-                                 SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
-                                 SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
-                                 currentW, currentH,
-                                 flags);
-
-    glcontext = SDL_GL_CreateContext(sdlWindow);
-
-    if ((sdlWindow == nullptr) || (glcontext == nullptr)) {
+    if (!initOpenGL(flags)) {
         SDL_Log("Error:%s", SDL_GetError());
         return;
     }
-    int maj, min;
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &maj);
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &min);
-    SDL_Log("=== Active OpenGL Context ===");
-    SDL_Log("Context Version: %d.%d", maj, min);
-
-
-    int doubleBuffered = 0;
-    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &doubleBuffered);
-    SDL_Log("Double buffering %s", doubleBuffered ? "aktiviert" : "deaktiviert");
-    initGL();
     resize(currentW, currentH);
 }
 
@@ -202,7 +176,42 @@ bool Display::screenshot(const filesystem::path &pathName) const {
     return true;
 }
 
-void Display::initGL() {
+bool Display::initOpenGL(const unsigned int flags) {
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+
+    sdlWindow = SDL_CreateWindow("SDL-Ball",
+                                 SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
+                                 SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
+                                 currentW, currentH,
+                                 flags);
+    if (sdlWindow == nullptr) {
+        SDL_Log("Error:%s", SDL_GetError());
+        SDL_Quit();
+        return false;
+    }
+
+    glcontext = SDL_GL_CreateContext(sdlWindow);
+    if (glcontext == nullptr) {
+        SDL_Log("Error:%s", SDL_GetError());
+        SDL_DestroyWindow(sdlWindow);
+        SDL_Quit();
+        return false;
+    }
+
+    int maj, min;
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &maj);
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &min);
+    SDL_Log("=== Active OpenGL Context ===");
+    SDL_Log("Context Version: %d.%d", maj, min);
+
+
+    int doubleBuffered = 0;
+    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &doubleBuffered);
+    SDL_Log("Double buffering %s", doubleBuffered ? "aktiviert" : "deaktiviert");
+
     /* Enable smooth shading */
     glShadeModel(GL_SMOOTH);
 
@@ -213,16 +222,13 @@ void Display::initGL() {
     glClearDepth(1.0f);
 
     /* Enables Depth Testing */
-    glEnable( GL_DEPTH_TEST );
+    glEnable(GL_DEPTH_TEST);
 
     /* The Type Of Depth Test To Do */
     glDepthFunc(GL_LEQUAL);
 
     glEnable(GL_SCISSOR_TEST);
-
-    // Das sollte hier nicht geschehen, erst wenn es genutzt wird.
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    return true;
 }
 
 Display::~Display() {

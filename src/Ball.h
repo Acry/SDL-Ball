@@ -50,5 +50,6 @@ public:
 
     void setSize(GLfloat s);
 
+    // im moment nur für den Tracer
     void setEyeCandy(bool value) { eyeCandy = value; }
 };

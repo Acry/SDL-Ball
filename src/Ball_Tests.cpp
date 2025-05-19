@@ -137,10 +137,13 @@ int main() {
                         ball.setSpeed(DifficultySettings::BallSpeed::HARD, DifficultySettings::MaxBallSpeed::HARD);
                         SDL_Log("Ballgeschwindigkeit: HARD (%.2f/%.2f)", ball.velocity, DifficultySettings::MaxBallSpeed::HARD);
                         break;
-                    case SDLK_g: // Paddle wachsen lassen
+                    case SDLK_e:
+                        ball.explosive = !ball.explosive;
+                        break;
+                    case SDLK_g:
                         ball.grow(ball.getWidth() * 1.5f);
                         break;
-                    case SDLK_s: // Paddle verkleinern
+                    case SDLK_s:
                         ball.grow(ball.getWidth() * 0.7f);
                         break;
                     case SDLK_m: // Maximalgeschwindigkeit testen

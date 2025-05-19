@@ -26,8 +26,6 @@
 // a=
 // 1;
 
-// Das Level geben wir von aussen rein, der BackgroundManager muss den Play nun wirklich nicht kennen
-
 // Den ThemenPfad geben wir ebenfalls von außen rein.
 // Die Anzahl der Hintergründe sollte nicht fix sein.
 // Auflösung und Format spielen keine Rolle, lediglich das AR von 4:3 ist wichtig.
@@ -46,7 +44,7 @@ BackgroundManager::BackgroundManager(const TextureManager &texMgr) : backgroundD
     }
     a = 0.95f;
 }
-// "gfx/bg/"
+
 bool BackgroundManager::updateBgIfNeeded(const Uint32 level, const std::filesystem::path &pathName) {
     const int bgNumber = level * 25.0f / 50.0f + 1;
     bool result;
@@ -78,6 +76,8 @@ void BackgroundManager::draw() const {
 void BackgroundManager::drawQuad() const {
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
     glBegin(GL_QUADS);
     // glColor4f(r[0], g[0], b[0], a);
@@ -94,6 +94,7 @@ void BackgroundManager::drawQuad() const {
     glVertex3f(-1.0f, -1.0f, 0.0f);
     glEnd();
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 }
 
 BackgroundManager::~BackgroundManager() {

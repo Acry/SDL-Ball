@@ -108,7 +108,8 @@ void TtfLegacyGl::write(const std::string &text, const int font, const bool cent
     GLfloat sX, posX = 0;
     // Disable depth test for UI elements if you want them always on top
     glDisable(GL_DEPTH_TEST);
-
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // find out half of the string width to center
     if (center) {
         for (unsigned int i = 0; i < text.length(); i++) {
@@ -153,7 +154,7 @@ void TtfLegacyGl::write(const std::string &text, const int font, const bool cent
     glDisable(GL_TEXTURE_2D);
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
-
+    glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
 }
 

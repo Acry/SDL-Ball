@@ -28,6 +28,8 @@ void Paddle::init() {
 void Paddle::drawBase() {
     glLoadIdentity();
     glTranslatef(pos_x, pos_y, 0.0);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
     glColor4f(texture.textureProperties.glTexColorInfo[0],
@@ -45,11 +47,14 @@ void Paddle::drawBase() {
     glVertex3f(-width, -height, 0.0f);
     glEnd();
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 }
 
 void Paddle::drawGlueLayer() const {
     glLoadIdentity();
     glTranslatef(pos_x, pos_y, 0.0);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, layerTex[0].textureProperties.texture);
     glColor4f(layerTex[0].textureProperties.glTexColorInfo[0],
@@ -67,12 +72,15 @@ void Paddle::drawGlueLayer() const {
     glVertex3f(-width, -height, 0.0f);
     glEnd();
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 }
 
 void Paddle::drawGunLayer() const {
     layerTex[1].play();
     glLoadIdentity();
     glTranslatef(pos_x, pos_y, 0.0);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, layerTex[1].textureProperties.texture);
     glColor4f(layerTex[1].textureProperties.glTexColorInfo[0],
@@ -90,6 +98,7 @@ void Paddle::drawGunLayer() const {
     glVertex3f(-width, height, 0.0f);
     glEnd();
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 }
 
 void Paddle::draw(float deltaTime) {

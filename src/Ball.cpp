@@ -107,6 +107,8 @@ void Ball::update(const float deltaTime) {
 }
 
 void Ball::draw(const float deltaTime) {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     if (eyeCandy)
         tracer.draw(deltaTime);
     // Funktionalität für Zielhilfe sollte in eine separate Klasse/Manager ausgelagert werden
@@ -114,9 +116,8 @@ void Ball::draw(const float deltaTime) {
     glLoadIdentity();
     glTranslatef(pos_x, pos_y, 0.0);
     glColor4f(GL_WHITE);
-
     if (explosive) {
-        fireTex.play(deltaTime);
+        fireTex.play(deltaTime/5.0f);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, fireTex.textureProperties.texture);
         glColor4f(fireTex.textureProperties.glTexColorInfo[0], fireTex.textureProperties.glTexColorInfo[1],
@@ -133,7 +134,7 @@ void Ball::draw(const float deltaTime) {
         glVertex3f(-width, -height, 0.0);
         glEnd();
         glDisable(GL_TEXTURE_2D);
-    } else {
+    } else { // Normaler Ball hat momentan keine Animation
         texture.play(deltaTime);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
@@ -174,6 +175,7 @@ void Ball::draw(const float deltaTime) {
     glEnd();
     glEnable(GL_TEXTURE_2D);
 #endif
+    glDisable(GL_BLEND);
 }
 
 GLfloat Ball::getRad() {

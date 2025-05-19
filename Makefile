@@ -114,7 +114,7 @@ $(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)SettingsManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
 ###############################################################################
-# DisplayManager
+# DisplayManager, also used for TextureManager and BackgroundManager
 DISPLAY_TEST_SOURCES := $(SOURCE_DIR)BackgroundManager_Tests.cpp \
                         $(SOURCE_DIR)Display.cpp \
                         $(SOURCE_DIR)SpriteSheetAnimation.cpp \

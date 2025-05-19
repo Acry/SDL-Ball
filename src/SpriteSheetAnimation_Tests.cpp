@@ -45,6 +45,9 @@ int main() {
                 if (event.key.keysym.sym == SDLK_t) {
                     // do something
                 }
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    running = false;
+                }
             }
         }
         // Zeit für Animation aktualisieren
@@ -60,6 +63,8 @@ int main() {
 
         // Hier die Textur zeichnen
         glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBindTexture(GL_TEXTURE_2D, spriteSheetAnimation.textureProperties.texture);
 
         glColor4f(
@@ -85,6 +90,7 @@ int main() {
         glEnd();
 
         glDisable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
         SDL_Delay(13);
         SDL_GL_SwapWindow(display.sdlWindow);
     }

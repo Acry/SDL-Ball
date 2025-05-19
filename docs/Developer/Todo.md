@@ -103,6 +103,7 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] normal Ball spritesheet
 - [ ] tracer shows red color and shows up when glued to the paddle, should reset in new level
 - [ ] is tracer speed dependent on the speed of the ball?
+- [ ] Tracer, if Ball explosive, make Tracer more orange and dont use Colors of bricks bounced to.
 - [ ] rework positional sound <https://examples.libsdl.org/SDL3/audio/05-planar-data/>
 - [ ] modernize game controllers, see: https://examples.libsdl.org/SDL3/input/01-joystick-polling/
 - [ ] Play with pen? https://examples.libsdl.org/SDL3/pen/01-drawing-lines/
@@ -148,3 +149,8 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] use SDL 3, not sure if I should maintain SDL2 plus Emscripten
 - [ ] Emscripten
 - [ ] ThemeManager zu cmdline, um Themes zu validieren
+
+
+### Tests
+
+- [ ] write used keys as help, with TextManager, if graphics are available

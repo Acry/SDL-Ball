@@ -6,8 +6,7 @@
 class Display {
     int displayToUse = 0;
     SDL_GLContext glcontext = nullptr;
-
-    static void initGL();
+    [[nodiscard]] bool initOpenGL(unsigned int flags);
 public:
     SDL_Window *sdlWindow = nullptr;
     int currentW;
