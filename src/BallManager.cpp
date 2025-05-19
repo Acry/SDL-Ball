@@ -2,7 +2,6 @@
 #include "MovingObject.h"
 #include "Tracer.h"
 #include "Paddle.h"
-#include "SettingsManager.h"
 #include "Ball.h"
 #include "MathHelper.h"
 
@@ -219,13 +218,14 @@ public:
         for (auto &i: b) {
             if (i.active) {
                 switch (powerup) {
-                    case PO_BIGBALL: //big balls
+                    case PO_BIGBALL: // big balls
                         i.setSize(0.04);
                         i.setSpeed(runtime_difficulty.ballspeed[player.difficulty]);
                         break;
-                    case PO_SMALLBALL: //small balls
+                    case PO_SMALLBALL: // smaller balls
+                        // half size
                         i.setSize(0.015);
-                        //speed bolden op
+                        // speed up ball?
                         i.setSpeed(
                             i.velocity + ((i.velocity / 100.f) * runtime_difficulty.speedup[player.difficulty]));
                         break;
@@ -233,7 +233,7 @@ public:
                         i.setSize(0.025);
                         i.setSpeed(runtime_difficulty.ballspeed[player.difficulty]);
                         break;
-                    case PO_EXPLOSIVE: //exploderer brikker
+                    case PO_EXPLOSIVE: // explosive balls
                         i.explosive = true;
                         i.tracer.colorRotate(true, nullptr);
                         break;
@@ -241,7 +241,6 @@ public:
                 }
             }
         }
-
         getSpeed();
     }
 };

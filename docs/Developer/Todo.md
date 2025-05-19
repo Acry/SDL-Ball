@@ -7,34 +7,55 @@ there are a lot of things to do.
 
 ## Refactoring
 
-- [X] ConfigFileManager_Tests
+- [X] ConfigManager create
+- [X] ConfigManager_Tests
+
+- [X] SettingsManager create
 - [X] SettingsManager, revert Singleton Implementation
 - [X] SettingsManager_Tests
+
 - [X] Display_Manager_Tests
+
 - [X] Screenshot_Tests
-- [X] TextureManager_Tests
+
 - [X] BackgroundManager_Tests
+
+- [X] TextureManager_Tests
 - [X] TextManager_Tests - implicitly tested in TextureAnimation_Tests
-- [X] TextureAnimation_Tests
+
+- [X] SpriteSheetAnimation_Tests
+
 - [X] ThemeManager_Tests (rethink the role of the ThemeManager)
+
 - [X] TextManager, revert Singleton Implementation
 - [X] TextManager_Tests
+
 - [X] SoundManager_Tests
+
+- [X] CollisionManager create
 - [X] CollisionManager_Tests
+
+- [X] EventHandler create
 - [X] EventHandler_Tests
 
-- [ ] Decouple SavegameManager
-- [ ] support old savegame format 1
-- [ ] support old savegame format 2
-- [ ] implement current savegame format
-- [ ] SavegameManager_Tests
-
-- [ ] LevelManager_Tests
-- [ ] LevelManager, check old formats
-- [ ] HighscoreManager_Tests
 - [ ] den EffectManager von den Spielobjekten zu entkoppeln
 - [ ] EffectManager_Tests
-- [ ] TitleScreen_Tests
+
+
+
+- [ ] BallManager rework
+- [ ] BallManager_Tests
+
+- [ ] BrickManager create
+- [ ] BrickManager_Tests
+
+- [ ] PowerupManager create
+- [ ] PowerupManager_Tests
+
+- [ ] GameManager create
+- [ ] GameManager_Tests
+
+- [ ] **Game should be playable again**
 
 - HUD (Score, Clock, Lives, Level, Speedometer, Powerups consumed (bottom), Shop (top))
   - [ ] Score
@@ -46,19 +67,20 @@ there are a lot of things to do.
   - [ ] Speedometer
 - [ ] HudManager_Tests
 
-hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
-- [ ] BallManager_Tests
-- [ ] BrickManager_Tests
-- [ ] Player_Tests
+GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
+
+- [X] Paddle rework
+- [X] Paddle_Tests
+
+- [X] Ball rework
 - [X] Ball_Tests
 
-- [ ] GameObject_Tests
-- [ ] GameObjectManager_Tests
-- [ ] Timing_Tests
-- [ ] GameManager erstellen
-- [ ] GameManager_Tests
+- [ ] Player rework
+- [ ] Player_Tests
 
-- [ ] **Game should be playable again**
+- [ ] Timing rework (WIP)
+- [ ] Timing_Tests
+
 - [ ] fix other menus,
   - [X] MainMenu
   - [ ] SettingsMenu
@@ -71,6 +93,21 @@ hm, GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] modernize LevelEditor
 - [ ] LevelEditor_Tests
 - [ ] [ShaderManager](Manager/ShaderManager.md)
+
+- [ ] SceneManager create
+- [ ] SceneManager_Tests
+- [ ] TitleScreen_Tests
+
+- [ ] Decouple SavegameManager
+- [ ] support old savegame format 1
+- [ ] support old savegame format 2
+- [ ] implement current savegame format
+- [ ] SavegameManager_Tests
+
+- [ ] LevelManager_Tests
+- [ ] LevelManager, check old formats
+
+- [ ] HighscoreManager_Tests
 
 ## Currents things
 
