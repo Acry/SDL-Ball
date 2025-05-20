@@ -26,7 +26,7 @@ there are a lot of things to do.
 - [X] BackgroundManager_Tests
 
 - [X] TextureManager_Tests
-- [X] TextureManager_Tests - implicitly tested in TextureAnimation_Tests
+- [X] TextureManager_Tests - implicitly tested in SpriteSheetAnimation_Tests
 
 - [X] SpriteSheetAnimation, rework
 - [X] SpriteSheetAnimation_Tests
@@ -50,7 +50,7 @@ there are a lot of things to do.
 - [X] EffectManager_Tests
 - [X] EffectManager, start docs
 
-GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
+GameObjects: Balls, Paddle, Bricks, Powerups, Tracer, etc.
 
 - [X] Ball, rework
 - [X] Ball_Tests
@@ -103,10 +103,6 @@ ___
 
 ___
 
-
-
-___
-
 - MenuManager, create
 - [ ] fix other menus,
   - [X] MainMenu
@@ -148,10 +144,8 @@ ___
 - [ ] check early game field sizes, should I go exactly 4:3 and then render the pillars outside?
   scissor rectangle needs to be expanded to the playfield plus the pillars
 - [ ] solve brick fade issue
-- [ ] Tests: manual tests should reside in the test folder, not in the src folder
-- [ ] add Theme fixtures to tests
-- [ ] add saveGames to tests
-- [ ] Paddle: use playfield constants from config.h
+- [X] Paddle: use playfield constants from config.h
+- [ ] Many comments are in German
 
 ## Additional things
 
@@ -167,43 +161,42 @@ ___
 - [ ] f - autoplay
 - [ ] Make the game playable without datafiles (random levels, no samplers)
 - [ ] simple GPU-Sounds?
-- [ ] make game playable with keys
+- [X] make game playable with keys
 - [ ] fix projection for submenus
 - [ ] change difficulty
 - [ ] normal Ball spritesheet
-- [ ] tracer shows red color and shows up when glued to the paddle, should reset in new level
-- [ ] is tracer speed dependent on the speed of the ball?
-- [ ] Tracer, if Ball explosive, make Tracer more orange and dont use Colors of bricks bounced to.
 - [ ] rework positional sound <https://examples.libsdl.org/SDL3/audio/05-planar-data/>
 - [ ] modernize game controllers, see: https://examples.libsdl.org/SDL3/input/01-joystick-polling/
 - [ ] Play with pen? https://examples.libsdl.org/SDL3/pen/01-drawing-lines/
 - [ ] use sdl2 highperformance timer, see: [Timing](Refactoring/Timing.md)
 - [ ] credits scene
 - [ ] save game should save the state of the game, not just the level
+
+#### Tracer
+
+- [ ] tracer shows red color and shows up when glued to the paddle, should reset in new level
+- [ ] is tracer speed dependent on the speed of the ball?
+- [ ] Tracer, if Ball explosive, make Tracer more orange and dont use Colors of bricks bounced to.
 - [ ] Tracer refactoring (effectManager/eventManager/inheritance/particleSystem/consitent naming, from LevelTheme to instance)
-      Named: Tail, Tracer, BallEffect, BallTracer, BallTail ...
-        public: tracer tail; - andersrum wäre richtig gewesen. Tracer ist eine Form des Ball-Tails
+  Named: Tail, Tracer, BallEffect, BallTracer, BallTail ...
+  public: tracer tail; - andersrum wäre richtig gewesen. Tracer ist eine Form des Ball-Tails
 
 ### Auxiliary
 
+- [ ] use OpenGL debug callbacks
 - [X] I broke the screenshot feature, after extraction. Might be a threading issue.
   Not sure, think it was because the method was static
 - [ ] ScreenshotManager with UI?
 - [ ] use player name from config
 - [ ] savegame folder, use textfile instead of binary
-- [ ] use OpenGL debug callbacks
-
 - [ ] fix speedometer
 - [ ] fix messed up values due to [projection change](OpenGL/Projection.md).
-- [ ] write tests
 - [ ] Refactor [Timing](Refactoring/Timing.md)
-- [ ] show current level no. during gameplay
-
+- [ ] show current level no# during gameplay
 - [ ] separate Powerup Descriptions from Title, new Scene
 - [ ] open website from title screen
 - [ ] add a new scene for the used keys
-- [ ] add a new scene for more explanation, see Website page=about.html
-
+- [ ] add a new scene for more explaination, see Website page=about.html
 - [ ] autoplay after title for a while
 - [ ] autosave level on quit, asked for continuing
 - [ ] hot reload themes/levels/graphics/sounds
@@ -213,19 +206,23 @@ ___
 - [ ] rework the shop
 - [ ] https://examples.libsdl.org/SDL3/demo/04-bytepusher/
 
-- [ ] implement callbacks
+- [X] implement callbacks (EventManager)
 
 - [ ] use shaders
 - [ ] use SDL 3, not sure if I should maintain SDL2 plus Emscripten
 - [ ] Emscripten
 - [ ] ThemeManager zu cmdline, um Themes zu validieren
 
-
 ### Tests
 
 - [ ] write used keys as help, with TextManager, if graphics are available
-- [ ] move all tests to the test folder
+- [X] move all tests to the test folder
 - [ ] seprate manual tests from automatic tests
+- [ ] write automatic tests
+- [ ] add Theme fixtures to tests
+- [ ] add saveGames fixtures to tests
+- [ ] add Level fixtures to tests
+- [ ] add Highscore fixtures to tests
 
 ## Bugs
 
