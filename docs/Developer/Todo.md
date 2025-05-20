@@ -117,6 +117,8 @@ ___
 - [ ] SceneManager create
 - [ ] SceneManager_Tests
 
+- [ ] TitleScreen, rework
+      Blocker GameManager, SceneManager, MenuManager
 - [ ] TitleScreen_Tests
 
 - [ ] Decouple SavegameManager
@@ -154,13 +156,17 @@ ___
 - [ ] make BackgroundManager-Shader responsive to events
 - [ ] setting titleScreenShow
 - [ ] implement the tainting of the background, with a reasonable mix (blend) function and settings
+
 - [ ] a - restart level
 - [ ] r - random level
 - [ ] n - next level
 - [ ] m - previous level
 - [ ] f - autoplay
+
 - [ ] Make the game playable without datafiles (random levels, no samplers)
 - [ ] simple GPU-Sounds?
+- [ ] create reandom levels
+
 - [X] make game playable with keys
 - [ ] fix projection for submenus
 - [ ] change difficulty
@@ -171,6 +177,8 @@ ___
 - [ ] use sdl2 highperformance timer, see: [Timing](Refactoring/Timing.md)
 - [ ] credits scene
 - [ ] save game should save the state of the game, not just the level
+- [ ] Fade in Paddle
+- [ ] Fade in Ball
 
 #### Tracer
 
