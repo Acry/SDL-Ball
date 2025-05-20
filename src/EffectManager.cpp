@@ -15,10 +15,10 @@ sparkle::sparkle() {
     active = true;
 }
 
-void sparkle::draw() {
+void sparkle::draw(const float deltaTime) {
     if (lifeleft > 0) {
         // Update lifetime
-        lifeleft -= globalTicksSinceLastDraw;
+        lifeleft -= (int)(deltaTime * 1000.0f);
 
         // Deactivate if out of visible area
         if (p.x > 1.67 || p.y < -1.7 || p.x < -1.67) {
@@ -26,18 +26,18 @@ void sparkle::draw() {
         }
 
         // Update physics (gravity, bounce, friction)
-        v.y -= vars.gravity * globalMilliTicksSinceLastDraw;
-        v.y -= bounce * globalMilliTicksSinceLastDraw;
+        v.y -= vars.gravity * deltaTime;
+        v.y -= bounce * deltaTime;
 
         if (v.x < 0) {
-            v.x += f * globalMilliTicksSinceLastDraw;
+            v.x += f * deltaTime;
         } else {
-            v.x -= f * globalMilliTicksSinceLastDraw;
+            v.x -= f * deltaTime;
         }
 
         // Update position
-        p.x += v.x * globalMilliTicksSinceLastDraw;
-        p.y += v.y * globalMilliTicksSinceLastDraw;
+        p.x += v.x * deltaTime;
+        p.y += v.y * deltaTime;
 
         // Draw the sparkle as a textured quad, fading out over its lifetime
         glColor4f(vars.col[0], vars.col[1], vars.col[2], (1.0f / static_cast<float>(life)) * static_cast<float>(lifeleft));
@@ -75,15 +75,15 @@ void EffectsTransist::init() {
     vars.transition_half_done = 0;
 }
 
-void EffectsTransist::draw() {
-    age += globalTicksSinceLastDraw;
+void EffectsTransist::draw(const float deltaTime) {
+    age += (int)(deltaTime * 1000.0f);
 
     if (age < vars.life / 2.0f) { // First half: fade in
-        opacity += vars.life / 500.0f * globalMilliTicksSinceLastDraw;
+        opacity += vars.life / 500.0f * deltaTime;
     } else {
         vars.transition_half_done = 1;
         // Second half: fade out
-        opacity -= vars.life / 500.0f * globalMilliTicksSinceLastDraw;
+        opacity -= vars.life / 500.0f * deltaTime;
     }
 
     glLoadIdentity();
@@ -135,19 +135,19 @@ void particleFieldClass::spawnSpark(int sparkNum) {
     sparks[sparkNum].active = true;
 }
 
-void particleFieldClass::draw() {
-    spawnTimeout -= globalTicksSinceLastDraw;
+void particleFieldClass::draw(const float deltaTime) {
+    spawnTimeout -= (int)(deltaTime * 1000.0f);
 
     int t = 0;
 
     for (int i = 0; i < vars.num; i++) {
         if (sparks[i].active) {
             t++;
-            sparks[i].draw();
+            sparks[i].draw(deltaTime);
         }
     }
 
-    vars.life -= globalTicksSinceLastDraw;
+    vars.life -= (int)(deltaTime * 1000.0f);
     if (t == 0) {
         vars.active = 0;
     }
@@ -208,27 +208,27 @@ void effect_class::init(position p) {
     }
 }
 
-void effect_class::draw() {
+void effect_class::draw(const float deltaTime) {
     bool stay = false;
-    
+
     switch (vars.type) {
         case FX_SPARKS:
             for (int i = 0; i < vars.num; i++) {
                 if (sparks[i].active) {
-                    sparks[i].draw();
+                    sparks[i].draw(deltaTime);
                     stay = true;
                 }
             }
             break;
 
         case FX_TRANSIT:
-            transit.draw();
+            transit.draw(deltaTime);
             if (transit.age <= vars.life)
                 stay = true;
             break;
 
         case FX_PARTICLEFIELD:
-            pf->draw();
+            pf->draw(deltaTime);
             if (pf->vars.active)
                 stay = true;
             break;
@@ -261,7 +261,7 @@ void effect_class::draw() {
 EffectManager::EffectManager(EventManager* eventMgr) : eventManager(eventMgr) {
     effects.clear();
     effectId = 0;
-    
+
     // Event-Listener registrieren
     registerEventListeners();
 }
@@ -272,12 +272,12 @@ EffectManager::~EffectManager() {
 
 void EffectManager::registerEventListeners() {
     // Event-Handler für Kollisionen registrieren
-    eventManager->addListener(GameEvent::BallHitPaddle, 
+    eventManager->addListener(GameEvent::BallHitPaddle,
         [this](const EventData& data) { this->handleBallPaddleCollision(data); });
-    
+
     eventManager->addListener(GameEvent::BrickDestroyed,
         [this](const EventData& data) { this->handleBrickDestroyed(data); });
-    
+
     eventManager->addListener(GameEvent::PowerUpCollected,
         [this](const EventData& data) { this->handlePowerUpCollected(data); });
 }
@@ -363,9 +363,10 @@ int EffectManager::spawn(position p) {
     return effectId;
 }
 
-void EffectManager::draw() {
+// Draw all effects with deltaTime parameter
+void EffectManager::draw(const float deltaTime) {
     for (auto it = effects.begin(); it != effects.end();) {
-        it->draw();
+        it->draw(deltaTime);
 
         if (!it->vars.active) {
             it = effects.erase(it);
@@ -375,7 +376,7 @@ void EffectManager::draw() {
     }
 }
 
-int EffectManager::isActive(int id) {
+int EffectManager::isActive(const int id) const {
     for (const auto& effect : effects) {
         if (effect.vars.effectId == id && effect.vars.active) {
             return 1;
@@ -402,7 +403,7 @@ void EffectManager::handleBallPaddleCollision(const EventData& data) {
     set(FX_VAR_SPEED, 0.005f);
     set(FX_VAR_SIZE, 0.025f);
     set(FX_VAR_COLOR, 0.7f, 0.7f, 1.0f);
-    
+
     position p = {data.posX, data.posY};
     spawn(p);
 }
@@ -415,7 +416,7 @@ void EffectManager::handleBallBrickCollision(const EventData& data) {
     set(FX_VAR_SPEED, 0.003f);
     set(FX_VAR_SIZE, 0.015f);
     set(FX_VAR_COLOR, 1.0f, 0.7f, 0.3f);
-    
+
     position p = {data.posX, data.posY};
     spawn(p);
 }
@@ -428,7 +429,7 @@ void EffectManager::handleBrickDestroyed(const EventData& data) {
     set(FX_VAR_SPEED, 0.008f);
     set(FX_VAR_SIZE, 0.03f);
     set(FX_VAR_COLOR, 1.0f, 0.5f, 0.2f);
-    
+
     position p = {data.posX, data.posY};
     spawn(p);
 }
@@ -441,7 +442,7 @@ void EffectManager::handlePowerUpCollected(const EventData& data) {
     set(FX_VAR_SPEED, 0.006f);
     set(FX_VAR_SIZE, 0.02f);
     set(FX_VAR_COLOR, 0.3f, 1.0f, 0.3f);
-    
+
     position p = {data.posX, data.posY};
     spawn(p);
 }

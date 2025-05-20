@@ -55,7 +55,7 @@ public:
     GLfloat bounce, f;
 
     sparkle();
-    void draw();
+    void draw(const float deltaTime);
 };
 
 class EffectsTransist {
@@ -66,7 +66,7 @@ public:
 
     EffectsTransist();
     void init();
-    void draw();
+    void draw(const float deltaTime);
 };
 
 class particleFieldClass {
@@ -80,7 +80,7 @@ public:
     effect_vars vars;
 
     void init(effect_vars varsP, position p);
-    void draw();
+    void draw(const float deltaTime);
     void move(position p);
 
     ~particleFieldClass();
@@ -97,7 +97,7 @@ public:
 
     effect_class();
     void init(position p);
-    void draw();
+    void draw(const float deltaTime);
 };
 
 class EffectManager {
@@ -120,7 +120,7 @@ public:
 
     // Effekt-Methoden
     int spawn(position p);
-    void draw();
+    void draw(const float deltaTime);
 
     // Event-Handler für verschiedene Spielereignisse
     void handleBallPaddleCollision(const EventData& data);
@@ -128,7 +128,7 @@ public:
     void handleBrickDestroyed(const EventData& data);
     void handlePowerUpCollected(const EventData& data);
 
-    int isActive(int id);
+    int isActive(int id) const;
     void kill(int id);
 
 private:

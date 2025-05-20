@@ -15,31 +15,36 @@ BUILD_DIR := build/
 SOURCE_DIR := src/
 
 SOURCES := $(addprefix $(SOURCE_DIR), \
-    MathHelper.cpp \
-    Display.cpp \
-    main.cpp \
-    ConfigFileManager.cpp \
-    SettingsManager.cpp \
-    TextManager.cpp \
-    SaveGameManager.cpp \
-    SoundManager.cpp \
-    ThemeManager.cpp \
-    SpriteSheetAnimation.cpp \
-    game_state.cpp \
-    Score.cpp \
     BackgroundManager.cpp \
-    TextureManager.cpp \
-    Speedometer.cpp \
-    Paddle.cpp \
-    Tracer.cpp \
     Ball.cpp \
+    CollisionManager.cpp \
+    ConfigFileManager.cpp \
+    Display.cpp \
+    EffectManager.cpp \
+    EventManager.cpp \
+    GrowableObject.cpp \
+    MathHelper.cpp \
+    Paddle.cpp \
+    PlayfieldBorder.cpp \
+    SaveGameManager.cpp \
+    Score.cpp \
+    SettingsManager.cpp \
+    SoundManager.cpp \
+    Speedometer.cpp \
+    SpriteSheetAnimation.cpp \
+    TextManager.cpp \
+    TextureManager.cpp \
+    ThemeManager.cpp \
+    Tracer.cpp \
+    game_state.cpp \
+    main.cpp \
 )
 
 # Create the build directory if it doesn't exist
 $(shell mkdir -p $(BUILD_DIR))
 
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
-TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-test theme-test text-test sound-test ball-test
+TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-test theme-test text-test sound-test ball-test effect-test
 TARGET=sdl-ball
 GAME_OBJECTS := $(OBJECTS)
 
@@ -81,8 +86,7 @@ remove-config:
 
 ###############################################################################
 # TEST TARGETS
-###############################################################################
-
+# This section contains the test targets for various components of the project.
 ###############################################################################
 # ConfigManager
 CONFIG_TEST_SOURCES := $(SOURCE_DIR)ConfigFileManager_Tests.cpp \
@@ -209,7 +213,8 @@ BALL_TEST_SOURCES := $(SOURCE_DIR)Ball_Tests.cpp \
                      $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                      $(SOURCE_DIR)TextureManager.cpp \
                      $(SOURCE_DIR)CollisionManager.cpp \
-                     $(SOURCE_DIR)PlayfieldBorder.cpp
+                     $(SOURCE_DIR)PlayfieldBorder.cpp \
+                     $(SOURCE_DIR)EventManager.cpp
 
 BALL_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BALL_TEST_SOURCES:.cpp=.o)))
 
@@ -222,17 +227,21 @@ $(BUILD_DIR)CollisionManager.o: $(SOURCE_DIR)CollisionManager.cpp
 $(BUILD_DIR)PlayfieldBorder.o: $(SOURCE_DIR)PlayfieldBorder.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
+$(BUILD_DIR)EventManager.o: $(SOURCE_DIR)EventManager.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 ###############################################################################
 # EffectManager
 EFFECT_TEST_SOURCES := $(SOURCE_DIR)EffectManager_Tests.cpp \
                        $(SOURCE_DIR)EffectManager.cpp \
+                       $(SOURCE_DIR)EventManager.cpp \
                        $(SOURCE_DIR)Display.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                        $(SOURCE_DIR)TextureManager.cpp
 
 EFFECT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECT_TEST_SOURCES:.cpp=.o)))
 
-# eventManager
-# später collisionManager
 effect-test: $(EFFECT_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(EFFECT_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)effect-test
+
+$(BUILD_DIR)EffectManager.o: $(SOURCE_DIR)EffectManager.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
