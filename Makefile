@@ -13,6 +13,7 @@ RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)
 # directories
 BUILD_DIR := build/
 SOURCE_DIR := src/
+MANUAL_TEST_DIR := tests/manual/
 
 SOURCES := $(addprefix $(SOURCE_DIR), \
     BackgroundManager.cpp \
@@ -48,7 +49,7 @@ TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-t
 TARGET=sdl-ball
 GAME_OBJECTS := $(OBJECTS)
 
-.PHONY: all clean-all debug release install install-bin install-data game tests
+.PHONY: all clean-all clean debug release install install-bin install-data game tests clean-tests
 
 all: game tests
 
@@ -66,10 +67,6 @@ $(BUILD_DIR)$(TARGET): $(OBJECTS)
 
 $(BUILD_DIR)%.o: $(SOURCE_DIR)%.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
-
-.PHONY: clean-all
-clean-all:
-	@rm -rf $(BUILD_DIR) 2>/dev/null || true
 
 install: $(BUILD_DIR)$(TARGET) install-bin install-data
 
@@ -89,44 +86,47 @@ remove-config:
 # This section contains the test targets for various components of the project.
 ###############################################################################
 # ConfigManager
-CONFIG_TEST_SOURCES := $(SOURCE_DIR)ConfigFileManager_Tests.cpp \
-                       $(SOURCE_DIR)ConfigFileManager.cpp
+CONFIG_TEST_SOURCES := $(MANUAL_TEST_DIR)ConfigFileManager_Tests.cpp \
+                       $(SOURCE_DIR)ConfigFileManager.cpp \
 
 CONFIG_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CONFIG_TEST_SOURCES:.cpp=.o)))
 
 config-test: $(CONFIG_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(CONFIG_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)config-test
 
-$(BUILD_DIR)ConfigFileManager_Tests.o: $(SOURCE_DIR)ConfigFileManager_Tests.cpp
-	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+$(BUILD_DIR)ConfigFileManager_Tests.o: $(MANUAL_TEST_DIR)ConfigFileManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 $(BUILD_DIR)ConfigFileManager.o: $(SOURCE_DIR)ConfigFileManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
 ###############################################################################
 # SettingsManager
-SETTINGS_TEST_SOURCES := $(SOURCE_DIR)SettingsManager_Tests.cpp \
+SETTINGS_TEST_SOURCES := $(MANUAL_TEST_DIR)SettingsManager_Tests.cpp \
+                         $(SOURCE_DIR)SettingsManager.cpp \
                          $(SOURCE_DIR)ConfigFileManager.cpp \
-                         $(SOURCE_DIR)SettingsManager.cpp
 
 SETTINGS_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SETTINGS_TEST_SOURCES:.cpp=.o)))
 
 settings-test: $(SETTINGS_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(SETTINGS_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)settings-test
 
+$(BUILD_DIR)SettingsManager_Tests.o: $(MANUAL_TEST_DIR)SettingsManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
 $(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)SettingsManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
 ###############################################################################
 # DisplayManager, also used for TextureManager and BackgroundManager
-DISPLAY_TEST_SOURCES := $(SOURCE_DIR)BackgroundManager_Tests.cpp \
+DISPLAY_TEST_SOURCES := $(MANUAL_TEST_DIR)BackgroundManager_Tests.cpp \
                         $(SOURCE_DIR)Display.cpp \
                         $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                         $(SOURCE_DIR)TextureManager.cpp \
                         $(SOURCE_DIR)BackgroundManager.cpp
 
 display-test: $(DISPLAY_TEST_SOURCES)
-	$(CXX) $(DEBUG_FLAGS) $(DISPLAY_TEST_SOURCES) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)display-test
+	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(DISPLAY_TEST_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)display-test
 
 $(BUILD_DIR)Display.o: $(SOURCE_DIR)Display.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
@@ -142,7 +142,7 @@ $(BUILD_DIR)BackgroundManager.o: $(SOURCE_DIR)BackgroundManager.cpp
 
 ###############################################################################
 # SpriteSheetAnimation
-SPRITESHEET_TEST_SOURCES := $(SOURCE_DIR)SpriteSheetAnimation_Tests.cpp \
+SPRITESHEET_TEST_SOURCES := $(MANUAL_TEST_DIR)SpriteSheetAnimation_Tests.cpp \
                             $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                             $(SOURCE_DIR)Display.cpp \
                             $(SOURCE_DIR)TextureManager.cpp \
@@ -150,11 +150,14 @@ SPRITESHEET_TEST_SOURCES := $(SOURCE_DIR)SpriteSheetAnimation_Tests.cpp \
 SPRITESHEET_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SPRITESHEET_TEST_SOURCES:.cpp=.o)))
 
 spritesheet-test: $(SPRITESHEET_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(SPRITESHEET_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)spritesheet-test
+	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(SPRITESHEET_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)spritesheet-test
+
+$(BUILD_DIR)SpriteSheetAnimation_Tests.o: $(MANUAL_TEST_DIR)SpriteSheetAnimation_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
 # Paddle
-PADDLE_TEST_SOURCES := $(SOURCE_DIR)Paddle_Tests.cpp \
+PADDLE_TEST_SOURCES := $(MANUAL_TEST_DIR)Paddle_Tests.cpp \
                        $(SOURCE_DIR)Paddle.cpp \
                        $(SOURCE_DIR)GameObject.cpp \
                        $(SOURCE_DIR)GrowableObject.cpp \
@@ -165,11 +168,14 @@ PADDLE_TEST_SOURCES := $(SOURCE_DIR)Paddle_Tests.cpp \
 PADDLE_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(PADDLE_TEST_SOURCES:.cpp=.o)))
 
 paddle-test: $(PADDLE_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(PADDLE_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)paddle-test
+	$(CXX) $(DEBUG_FLAGS) $(PADDLE_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)paddle-test
+
+$(BUILD_DIR)Paddle_Tests.o: $(MANUAL_TEST_DIR)Paddle_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
 # ThemeManager
-THEME_TEST_SOURCES := $(SOURCE_DIR)ThemeManager_Tests.cpp \
+THEME_TEST_SOURCES := $(MANUAL_TEST_DIR)ThemeManager_Tests.cpp \
                       $(SOURCE_DIR)ThemeManager.cpp \
                       $(SOURCE_DIR)ConfigFileManager.cpp
 
@@ -178,9 +184,12 @@ THEME_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(THEME_TEST_SOURCES:.c
 theme-test: $(THEME_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(THEME_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)theme-test
 
+$(BUILD_DIR)ThemeManager_Tests.o: $(MANUAL_TEST_DIR)ThemeManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
 ###############################################################################
 # TextManager
-TEXT_TEST_SOURCES := $(SOURCE_DIR)TextManager_Tests.cpp \
+TEXT_TEST_SOURCES := $(MANUAL_TEST_DIR)TextManager_Tests.cpp \
                      $(SOURCE_DIR)TextManager.cpp \
                      $(SOURCE_DIR)Display.cpp \
                      $(SOURCE_DIR)TextureManager.cpp
@@ -188,22 +197,28 @@ TEXT_TEST_SOURCES := $(SOURCE_DIR)TextManager_Tests.cpp \
 TEXT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXT_TEST_SOURCES:.cpp=.o)))
 
 text-test: $(TEXT_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(TEXT_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_ttf -lSDL2_image -o $(BUILD_DIR)text-test
+	$(CXX) $(DEBUG_FLAGS) $(TEXT_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)text-test
+
+$(BUILD_DIR)TextManager_Tests.o: $(MANUAL_TEST_DIR)TextManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
 # SoundManager
-SOUND_TEST_SOURCES := $(SOURCE_DIR)SoundManager_Tests.cpp \
+SOUND_TEST_SOURCES := $(MANUAL_TEST_DIR)SoundManager_Tests.cpp \
                       $(SOURCE_DIR)SoundManager.cpp \
                       $(SOURCE_DIR)Display.cpp
 
 SOUND_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOUND_TEST_SOURCES:.cpp=.o)))
 
 sound-test: $(SOUND_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(SOUND_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_mixer -o $(BUILD_DIR)sound-test
+	$(CXX) $(DEBUG_FLAGS) $(SOUND_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)sound-test
+
+$(BUILD_DIR)SoundManager_Tests.o: $(MANUAL_TEST_DIR)SoundManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
 # Ball
-BALL_TEST_SOURCES := $(SOURCE_DIR)Ball_Tests.cpp \
+BALL_TEST_SOURCES := $(MANUAL_TEST_DIR)Ball_Tests.cpp \
                      $(SOURCE_DIR)Ball.cpp \
                      $(SOURCE_DIR)Tracer.cpp \
                      $(SOURCE_DIR)Paddle.cpp \
@@ -219,7 +234,7 @@ BALL_TEST_SOURCES := $(SOURCE_DIR)Ball_Tests.cpp \
 BALL_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BALL_TEST_SOURCES:.cpp=.o)))
 
 ball-test: $(BALL_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(BALL_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)ball-test
+	$(CXX) $(DEBUG_FLAGS) $(BALL_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)ball-test
 
 $(BUILD_DIR)CollisionManager.o: $(SOURCE_DIR)CollisionManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
@@ -229,9 +244,13 @@ $(BUILD_DIR)PlayfieldBorder.o: $(SOURCE_DIR)PlayfieldBorder.cpp
 
 $(BUILD_DIR)EventManager.o: $(SOURCE_DIR)EventManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+
+$(BUILD_DIR)Ball_Tests.o: $(MANUAL_TEST_DIR)Ball_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
 ###############################################################################
 # EffectManager
-EFFECT_TEST_SOURCES := $(SOURCE_DIR)EffectManager_Tests.cpp \
+EFFECT_TEST_SOURCES := $(MANUAL_TEST_DIR)EffectManager_Tests.cpp \
                        $(SOURCE_DIR)EffectManager.cpp \
                        $(SOURCE_DIR)EventManager.cpp \
                        $(SOURCE_DIR)MathHelper.cpp \
@@ -243,7 +262,19 @@ EFFECT_TEST_SOURCES := $(SOURCE_DIR)EffectManager_Tests.cpp \
 EFFECT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECT_TEST_SOURCES:.cpp=.o)))
 
 effect-test: $(EFFECT_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(EFFECT_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -lSDL2_ttf -o $(BUILD_DIR)effect-test
+	$(CXX) $(DEBUG_FLAGS) $(EFFECT_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)effect-test
 
-$(BUILD_DIR)EffectManager.o: $(SOURCE_DIR)EffectManager.cpp
-	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+$(BUILD_DIR)EffectManager_Tests.o: $(MANUAL_TEST_DIR)EffectManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
+# CLEANUP
+clean:
+	rm -rf $(BUILD_DIR)*.o $(BUILD_DIR)*-test $(BUILD_DIR)$(TARGET)
+
+
+clean-tests:
+	rm -rf $(BUILD_DIR)*-test $(BUILD_DIR)*_Tests.o
+
+clean-all:
+	rm -rf $(BUILD_DIR) 2>/dev/null || true
