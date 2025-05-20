@@ -1,8 +1,8 @@
 #include <cstdlib>
 #include "Display.hpp"
 #include "EffectManager.h"
-#include "EventManager.h"
 #include "TextureManager.h"
+#include "SpriteSheetAnimation.h"
 
 int main() {
     Display display(0, 1024, 768, false);
@@ -40,7 +40,7 @@ int main() {
     Uint32 lastTime = SDL_GetTicks();
     Uint32 frameStartTime;
     bool running = true;
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     while (running) {
         // Zeit für Animation und Update aktualisieren
         Uint32 currentTime = SDL_GetTicks();
@@ -76,6 +76,8 @@ int main() {
                 EventData eventData;
                 eventData.posX = mouseX;
                 eventData.posY = mouseY;
+                position p = {0.0f, 0.0f}; // Für Transition
+                position rectSize = {0.2f, 0.2f}; // Für Partikelfeld
 
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:
@@ -107,10 +109,9 @@ int main() {
                     case SDLK_4: // Übergangseffekt
                         SDL_Log("Übergangseffekt (Fade) gestartet");
                         effectManager.set(FX_VAR_TYPE, FX_TRANSIT);
-                        effectManager.set(FX_VAR_LIFE, 1000); // 1 Sekunde Übergang
+                        effectManager.set(FX_VAR_LIFE, 5000);
                         effectManager.set(FX_VAR_COLOR, 0.0f, 0.0f, 0.0f); // Schwarzer Übergang
-                        position p = {0.0f, 0.0f}; // Position irrelevant für Transition
-                        effectManager.spawn(p);
+                        effectManager.spawn(p); // Bereits deklarierte Variable verwenden
                         break;
 
                     case SDLK_5: // Partikelfeld-Effekt
@@ -122,8 +123,7 @@ int main() {
                         effectManager.set(FX_VAR_SIZE, 0.02f);
                         effectManager.set(FX_VAR_COLOR, 0.4f, 0.8f, 1.0f);
                         effectManager.set(FX_VAR_GRAVITY, 0.0005f);
-                        position rectSize = {0.2f, 0.2f};
-                        effectManager.set(FX_VAR_RECTANGLE, rectSize);
+                        effectManager.set(FX_VAR_RECTANGLE, rectSize); // Bereits deklarierte Variable verwenden
                         effectManager.spawn(mousePos);
                         break;
 
@@ -131,6 +131,7 @@ int main() {
                         SDL_Log("Ball-Paddle-Kollisionseffekt über Event an Position (%.2f, %.2f)", mouseX, mouseY);
                         eventManager.emit(GameEvent::BallHitPaddle, eventData);
                         break;
+                    default: ;
                 }
             }
         }
@@ -150,7 +151,6 @@ int main() {
         glVertex3f(mouseX + cursorSize, mouseY - cursorSize, 0.0);
         glVertex3f(mouseX - cursorSize, mouseY - cursorSize, 0.0);
         glEnd();
-
         SDL_GL_SwapWindow(display.sdlWindow);
         int frameTime = SDL_GetTicks() - frameStartTime;
         if (frameTime < targetFrameTime) {

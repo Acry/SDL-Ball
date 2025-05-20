@@ -234,9 +234,10 @@ $(BUILD_DIR)EventManager.o: $(SOURCE_DIR)EventManager.cpp
 EFFECT_TEST_SOURCES := $(SOURCE_DIR)EffectManager_Tests.cpp \
                        $(SOURCE_DIR)EffectManager.cpp \
                        $(SOURCE_DIR)EventManager.cpp \
+                       $(SOURCE_DIR)MathHelper.cpp \
                        $(SOURCE_DIR)Display.cpp \
+                       $(SOURCE_DIR)TextureManager.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                       $(SOURCE_DIR)TextureManager.cpp
 
 EFFECT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECT_TEST_SOURCES:.cpp=.o)))
 

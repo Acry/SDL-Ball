@@ -18,7 +18,7 @@ sparkle::sparkle() {
 void sparkle::draw(const float deltaTime) {
     if (lifeleft > 0) {
         // Update lifetime
-        lifeleft -= (int)(deltaTime * 1000.0f);
+        lifeleft -= (int) (deltaTime * 1000.0f);
 
         // Deactivate if out of visible area
         if (p.x > 1.67 || p.y < -1.7 || p.x < -1.67) {
@@ -40,7 +40,13 @@ void sparkle::draw(const float deltaTime) {
         p.y += v.y * deltaTime;
 
         // Draw the sparkle as a textured quad, fading out over its lifetime
-        glColor4f(vars.col[0], vars.col[1], vars.col[2], (1.0f / static_cast<float>(life)) * static_cast<float>(lifeleft));
+        glColor4f(vars.col[0], vars.col[1], vars.col[2],
+                  (1.0f / static_cast<float>(life)) * static_cast<float>(lifeleft));
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Für normale Transparenz
+        // Oder für additive Blending (leuchtende Effekte):
+        // glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
         const GLfloat curSize = size / static_cast<float>(life) * static_cast<float>(lifeleft);
         glEnable(GL_TEXTURE_2D);
@@ -56,6 +62,7 @@ void sparkle::draw(const float deltaTime) {
         glVertex3f(p.x - curSize, p.y - curSize, 0.0);
         glEnd();
         glDisable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
     } else {
         active = false;
     }
@@ -76,16 +83,18 @@ void EffectsTransist::init() {
 }
 
 void EffectsTransist::draw(const float deltaTime) {
-    age += (int)(deltaTime * 1000.0f);
+    age += (int) (deltaTime * 1000.0f);
 
-    if (age < vars.life / 2.0f) { // First half: fade in
+    if (age < vars.life / 2.0f) {
+        // First half: fade in
         opacity += vars.life / 500.0f * deltaTime;
     } else {
         vars.transition_half_done = 1;
         // Second half: fade out
         opacity -= vars.life / 500.0f * deltaTime;
     }
-
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Für normale Transparenz
     glLoadIdentity();
     glDisable(GL_TEXTURE_2D);
     glColor4f(vars.col[0], vars.col[1], vars.col[2], opacity);
@@ -95,6 +104,7 @@ void EffectsTransist::draw(const float deltaTime) {
     glVertex3f(1.0f, -1.0f, 0.0);
     glVertex3f(-1.0f, -1.0f, 0.0);
     glEnd();
+    glDisable(GL_BLEND);
 }
 
 // The 'particleFieldClass' manages a group of sparkles to create a particle field effect.
@@ -136,7 +146,7 @@ void particleFieldClass::spawnSpark(int sparkNum) {
 }
 
 void particleFieldClass::draw(const float deltaTime) {
-    spawnTimeout -= (int)(deltaTime * 1000.0f);
+    spawnTimeout -= (int) (deltaTime * 1000.0f);
 
     int t = 0;
 
@@ -147,7 +157,7 @@ void particleFieldClass::draw(const float deltaTime) {
         }
     }
 
-    vars.life -= (int)(deltaTime * 1000.0f);
+    vars.life -= (int) (deltaTime * 1000.0f);
     if (t == 0) {
         vars.active = 0;
     }
@@ -182,7 +192,7 @@ void effect_class::init(position p) {
                 sparks[i].size = random_float(vars.size, 0);
                 int life = rand() % vars.life;
                 float angle = (RAD / vars.num - 1) * (random_float(vars.num, 0.0));
-                
+
                 sparks[i].life = life;
                 sparks[i].lifeleft = life;
                 sparks[i].v.x = (vars.speed * random_float(vars.speed * 2.0, 0.0)) * sin(angle);
@@ -258,7 +268,7 @@ void effect_class::draw(const float deltaTime) {
 
 // --- EffectManager Implementierung ---
 
-EffectManager::EffectManager(EventManager* eventMgr) : eventManager(eventMgr) {
+EffectManager::EffectManager(EventManager *eventMgr) : eventManager(eventMgr) {
     effects.clear();
     effectId = 0;
 
@@ -273,13 +283,13 @@ EffectManager::~EffectManager() {
 void EffectManager::registerEventListeners() {
     // Event-Handler für Kollisionen registrieren
     eventManager->addListener(GameEvent::BallHitPaddle,
-        [this](const EventData& data) { this->handleBallPaddleCollision(data); });
+                              [this](const EventData &data) { this->handleBallPaddleCollision(data); });
 
     eventManager->addListener(GameEvent::BrickDestroyed,
-        [this](const EventData& data) { this->handleBrickDestroyed(data); });
+                              [this](const EventData &data) { this->handleBrickDestroyed(data); });
 
     eventManager->addListener(GameEvent::PowerUpCollected,
-        [this](const EventData& data) { this->handlePowerUpCollected(data); });
+                              [this](const EventData &data) { this->handlePowerUpCollected(data); });
 }
 
 void EffectManager::set(int var, GLfloat val) {
@@ -377,7 +387,7 @@ void EffectManager::draw(const float deltaTime) {
 }
 
 int EffectManager::isActive(const int id) const {
-    for (const auto& effect : effects) {
+    for (const auto &effect: effects) {
         if (effect.vars.effectId == id && effect.vars.active) {
             return 1;
         }
@@ -386,7 +396,7 @@ int EffectManager::isActive(const int id) const {
 }
 
 void EffectManager::kill(int id) {
-    for (auto& effect : effects) {
+    for (auto &effect: effects) {
         if (effect.vars.effectId == id) {
             effect.vars.active = false;
         }
@@ -395,7 +405,7 @@ void EffectManager::kill(int id) {
 
 // Event-Handler-Implementierungen
 
-void EffectManager::handleBallPaddleCollision(const EventData& data) {
+void EffectManager::handleBallPaddleCollision(const EventData &data) {
     // Funkeneffekt bei Paddle-Kollision erzeugen
     set(FX_VAR_TYPE, FX_SPARKS);
     set(FX_VAR_NUM, 15);
@@ -408,7 +418,7 @@ void EffectManager::handleBallPaddleCollision(const EventData& data) {
     spawn(p);
 }
 
-void EffectManager::handleBallBrickCollision(const EventData& data) {
+void EffectManager::handleBallBrickCollision(const EventData &data) {
     // Kleinerer Effekt bei Brick-Kollision
     set(FX_VAR_TYPE, FX_SPARKS);
     set(FX_VAR_NUM, 8);
@@ -421,7 +431,7 @@ void EffectManager::handleBallBrickCollision(const EventData& data) {
     spawn(p);
 }
 
-void EffectManager::handleBrickDestroyed(const EventData& data) {
+void EffectManager::handleBrickDestroyed(const EventData &data) {
     // Größerer Explosion-Effekt bei Zerstörung eines Bricks
     set(FX_VAR_TYPE, FX_SPARKS);
     set(FX_VAR_NUM, 25);
@@ -434,7 +444,7 @@ void EffectManager::handleBrickDestroyed(const EventData& data) {
     spawn(p);
 }
 
-void EffectManager::handlePowerUpCollected(const EventData& data) {
+void EffectManager::handlePowerUpCollected(const EventData &data) {
     // Spezialeffekt für PowerUp-Sammlung
     set(FX_VAR_TYPE, FX_PARTICLEFIELD);
     set(FX_VAR_NUM, 40);
