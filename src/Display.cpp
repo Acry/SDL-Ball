@@ -182,6 +182,18 @@ bool Display::initOpenGL(const unsigned int flags) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
+    // Verbesserte Farbtiefe
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+
+    // Tiefenpuffer-Präzision erhöhen
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
     sdlWindow = SDL_CreateWindow("SDL-Ball",
                                  SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
                                  SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
@@ -213,19 +225,24 @@ bool Display::initOpenGL(const unsigned int flags) {
     SDL_Log("Double buffering %s", doubleBuffered ? "aktiviert" : "deaktiviert");
 
     /* Enable smooth shading */
-    glShadeModel(GL_SMOOTH);
+    // glShadeModel(GL_SMOOTH);
 
     /* Set the background black */
     glClearColor(GL_BLACK);
 
-    /* Depth buffer setup */
-    glClearDepth(1.0f);
-
     /* Enables Depth Testing */
     glEnable(GL_DEPTH_TEST);
-
     /* The Type Of Depth Test To Do */
     glDepthFunc(GL_LEQUAL);
+
+    glEnable(GL_MULTISAMPLE);
+
+    /* Anisotropes Filtering aktivieren (für bessere Texturqualität) */
+    float maxAniso = 0.0f;
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+    if (maxAniso > 0.0f) {
+        SDL_Log("Anisotrope Filterung verfügbar: %.1fx", maxAniso);
+    }
 
     glEnable(GL_SCISSOR_TEST);
     return true;
