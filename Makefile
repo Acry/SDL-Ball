@@ -1,4 +1,4 @@
-PREFIX?=~/.local
+gluPREFIX?=~/.local
 
 DATADIR?=$(PREFIX)share/sdl-ball/themes/
 BINDIR?=$(PREFIX)/bin/
@@ -238,11 +238,12 @@ EFFECT_TEST_SOURCES := $(SOURCE_DIR)EffectManager_Tests.cpp \
                        $(SOURCE_DIR)Display.cpp \
                        $(SOURCE_DIR)TextureManager.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                       $(SOURCE_DIR)TextManager.cpp \
 
 EFFECT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECT_TEST_SOURCES:.cpp=.o)))
 
 effect-test: $(EFFECT_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(EFFECT_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)effect-test
+	$(CXX) $(DEBUG_FLAGS) $(EFFECT_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -lSDL2_ttf -lGLU -o $(BUILD_DIR)effect-test
 
 $(BUILD_DIR)EffectManager.o: $(SOURCE_DIR)EffectManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@

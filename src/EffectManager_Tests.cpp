@@ -3,12 +3,17 @@
 #include "EffectManager.h"
 #include "TextureManager.h"
 #include "SpriteSheetAnimation.h"
+#include "TextManager.h"
 
 int main() {
     Display display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
+    }
+    TextManager textManager;
+    if (!textManager.setFontTheme("../themes/default/font/fonts.txt")) {
+        SDL_Log("Fehler beim Laden des Font-Themes");
     }
     EventManager eventManager;
     const TextureManager textureManager;
@@ -26,14 +31,14 @@ int main() {
 
     float mouseX = 0.0f, mouseY = 0.0f;
 
-    SDL_Log("EffectManager-Tests gestartet");
-    SDL_Log("Tastenbelegungen:");
-    SDL_Log("1: Funkeneffekt erzeugen");
-    SDL_Log("2: Brickzerstörungs-Effekt simulieren");
-    SDL_Log("3: PowerUp-Sammel-Effekt simulieren");
-    SDL_Log("4: Übergangseffekt (Transition)");
-    SDL_Log("5: Partikelfeld-Effekt");
-    SDL_Log("ESC: Beenden");
+    std::vector<std::string> instructions = {
+        "1: Funkeneffekt erzeugen",
+        "2: Brickzerstoerungs-Effekt simulieren",
+        "3: PowerUp-Sammel-Effekt simulieren",
+        "4: Uebergangseffekt (Fading)",
+        "5: Partikelfeld-Effekt",
+        "ESC: Beenden"
+    };
 
     Uint32 lastTime = SDL_GetTicks();
     Uint32 frameStartTime;
@@ -143,12 +148,19 @@ int main() {
         glDisable(GL_TEXTURE_2D);
         glColor4f(1.0f, 1.0f, 1.0f, 0.7f);
         glBegin(GL_QUADS);
-        const float cursorSize = 0.02f;
+        constexpr float cursorSize = 0.02f;
         glVertex3f(mouseX - cursorSize, mouseY + cursorSize, 0.0);
         glVertex3f(mouseX + cursorSize, mouseY + cursorSize, 0.0);
         glVertex3f(mouseX + cursorSize, mouseY - cursorSize, 0.0);
         glVertex3f(mouseX - cursorSize, mouseY - cursorSize, 0.0);
         glEnd();
+
+        glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+        float yPos = 0.9f;
+        for (const auto& instruction : instructions) {
+            textManager.write(instruction, FONT_MENU, true, 0.75f, -0.0f, yPos);
+            yPos -= 0.07f;
+        }
         SDL_GL_SwapWindow(display.sdlWindow);
         int frameTime = SDL_GetTicks() - frameStartTime;
         if (frameTime < targetFrameTime) {

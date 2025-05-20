@@ -85,22 +85,17 @@ void Fade::init() {
 void Fade::draw(const float deltaTime) {
     age += (int) (deltaTime * 1000.0f);
 
-    // Berechne den Fortschritt des Übergangs (0.0 bis 1.0)
-    float progress = (float)age / (float)vars.life;
+    float progress = std::min(1.0f, (float)age / (float)vars.life);
 
     if (progress < 0.5f) {
-        // Erste Hälfte: Einblenden (0.0 -> 1.0)
-        opacity = progress * 2.0f;
+        opacity = progress * 2.0f; // 0->1 in erster Hälfte
     } else {
         if (!vars.transition_half_done) {
             vars.transition_half_done = 1;
-            // Event auslösen oder andere Aktionen bei Halbzeit
         }
-        // Zweite Hälfte: Ausblenden (1.0 -> 0.0)
-        opacity = 1.0f - ((progress - 0.5f) * 2.0f);
+        opacity = 1.0f - ((progress - 0.5f) * 2.0f); // 1->0 in zweiter Hälfte
     }
 
-    // Begrenze die Opazität auf gültige Werte
     opacity = std::max(0.0f, std::min(1.0f, opacity));
 
     glEnable(GL_BLEND);
