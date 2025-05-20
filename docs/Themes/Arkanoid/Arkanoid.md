@@ -8,6 +8,8 @@ https://www.spriters-resource.com/arcade/arkanoid/
 
 https://www.youtube.com/watch?v=fA6cfcL7sm8
 
+See mame
+
 I want to create a theme. Will add spritesheets.
 
 ## Sound
