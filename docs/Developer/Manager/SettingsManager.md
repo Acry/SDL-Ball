@@ -29,5 +29,5 @@ Momentan vermute ich, dass es das beste wäre, wenn nur der GameManager mit dem 
 - MenuManager
 
 Weitere 
-See: [Settings](../Settings.md)
+See: [Settings](../misc/Settings.md)
 See: [Managers](../Managers.md)
