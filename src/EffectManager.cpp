@@ -1,6 +1,5 @@
 // EffectManager.cpp
 #include "EffectManager.h"
-
 #include <SDL2/SDL_log.h>
 
 extern int globalTicksSinceLastDraw;
