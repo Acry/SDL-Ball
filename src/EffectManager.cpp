@@ -9,13 +9,13 @@ extern float globalMilliTicksSinceLastDraw;
 // Each sparkle has its own position, velocity, size, color, and lifetime.
 // It simulates simple physics (gravity, friction, bounce) and fades out over time.
 // Used for visual feedback like collisions or explosions.
-sparkle::sparkle() {
+Sparkle::Sparkle() {
     bounce = 0;
     f = 0;
     active = true;
 }
 
-void sparkle::draw(const float deltaTime) {
+void Sparkle::draw(const float deltaTime) {
     if (lifeleft > 0) {
         // Update lifetime
         lifeleft -= (int) (deltaTime * 1000.0f);
@@ -71,30 +71,40 @@ void sparkle::draw(const float deltaTime) {
 // The 'EffectsTransist' class implements a screen transition effect (fade in/out).
 // It draws a colored quad over the screen and animates its opacity for smooth transitions.
 // Used for scene changes or level transitions.
-EffectsTransist::EffectsTransist() {
+Fade::Fade() {
     opacity = 0.0f;
     age = 0;
 }
 
-void EffectsTransist::init() {
+void Fade::init() {
     age = 0;
     opacity = 0.0f;
     vars.transition_half_done = 0;
 }
 
-void EffectsTransist::draw(const float deltaTime) {
+void Fade::draw(const float deltaTime) {
     age += (int) (deltaTime * 1000.0f);
 
-    if (age < vars.life / 2.0f) {
-        // First half: fade in
-        opacity += vars.life / 500.0f * deltaTime;
+    // Berechne den Fortschritt des Übergangs (0.0 bis 1.0)
+    float progress = (float)age / (float)vars.life;
+
+    if (progress < 0.5f) {
+        // Erste Hälfte: Einblenden (0.0 -> 1.0)
+        opacity = progress * 2.0f;
     } else {
-        vars.transition_half_done = 1;
-        // Second half: fade out
-        opacity -= vars.life / 500.0f * deltaTime;
+        if (!vars.transition_half_done) {
+            vars.transition_half_done = 1;
+            // Event auslösen oder andere Aktionen bei Halbzeit
+        }
+        // Zweite Hälfte: Ausblenden (1.0 -> 0.0)
+        opacity = 1.0f - ((progress - 0.5f) * 2.0f);
     }
+
+    // Begrenze die Opazität auf gültige Werte
+    opacity = std::max(0.0f, std::min(1.0f, opacity));
+
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Für normale Transparenz
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glLoadIdentity();
     glDisable(GL_TEXTURE_2D);
     glColor4f(vars.col[0], vars.col[1], vars.col[2], opacity);
@@ -110,11 +120,11 @@ void EffectsTransist::draw(const float deltaTime) {
 // The 'particleFieldClass' manages a group of sparkles to create a particle field effect.
 // It spawns multiple sparkles from a given position, each with random direction and properties.
 // Used for effects like power-up collection or special bursts.
-void particleFieldClass::init(effect_vars varsP, position spawnPos) {
+void Particles::init(effect_vars varsP, position spawnPos) {
     vars = varsP;
     spawnTimeout = 0;
     vars.active = true;
-    sparks = new sparkle[vars.num];
+    sparks = new Sparkle[vars.num];
     p = spawnPos;
 
     for (int i = 0; i < vars.num; i++) {
@@ -124,11 +134,11 @@ void particleFieldClass::init(effect_vars varsP, position spawnPos) {
     }
 }
 
-particleFieldClass::~particleFieldClass() {
+Particles::~Particles() {
     delete[] sparks; // Free memory
 }
 
-void particleFieldClass::spawnSpark(int sparkNum) {
+void Particles::spawnSpark(int sparkNum) {
     // Spawn a single sparkle with random angle, speed, and position offset
     const GLfloat angle = (RAD / vars.num - 1) * (random_float(vars.num, 0.0));
     spawnTimeout = rand() % 10;
@@ -145,7 +155,7 @@ void particleFieldClass::spawnSpark(int sparkNum) {
     sparks[sparkNum].active = true;
 }
 
-void particleFieldClass::draw(const float deltaTime) {
+void Particles::draw(const float deltaTime) {
     spawnTimeout -= (int) (deltaTime * 1000.0f);
 
     int t = 0;
@@ -163,7 +173,7 @@ void particleFieldClass::draw(const float deltaTime) {
     }
 }
 
-void particleFieldClass::move(position newPos) {
+void Particles::move(position newPos) {
     p = newPos;
 }
 
@@ -182,7 +192,7 @@ void effect_class::init(position p) {
     switch (vars.type) {
         case FX_SPARKS:
             // Initialize an array of sparkles for the spark effect
-            sparks = new sparkle[vars.num];
+            sparks = new Sparkle[vars.num];
             if (sparks == nullptr) {
                 SDL_Log("Konnte %d Funken nicht allokieren", vars.num);
                 return;
@@ -210,7 +220,7 @@ void effect_class::init(position p) {
 
         case FX_PARTICLEFIELD:
             pf = nullptr;
-            pf = new particleFieldClass;
+            pf = new Particles;
             pf->init(vars, p);
             break;
         default:

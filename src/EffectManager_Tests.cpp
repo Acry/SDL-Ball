@@ -35,8 +35,6 @@ int main() {
     SDL_Log("5: Partikelfeld-Effekt");
     SDL_Log("ESC: Beenden");
 
-    SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
     Uint32 lastTime = SDL_GetTicks();
     Uint32 frameStartTime;
     bool running = true;

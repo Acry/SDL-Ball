@@ -43,7 +43,7 @@ struct effect_vars {
     int transition_half_done;
 };
 
-class sparkle {
+class Sparkle {
 public:
     bool active;
     GLfloat size;
@@ -54,24 +54,24 @@ public:
     effect_vars vars;
     GLfloat bounce, f;
 
-    sparkle();
+    Sparkle();
     void draw(const float deltaTime);
 };
 
-class EffectsTransist {
+class Fade {
     GLfloat opacity;
 public:
     int age;
     effect_vars vars;
 
-    EffectsTransist();
+    Fade();
     void init();
     void draw(const float deltaTime);
 };
 
-class particleFieldClass {
+class Particles {
     int spawnTimeout;
-    sparkle* sparks;
+    Sparkle* sparks;
 
     void spawnSpark(int sparkNum);
 
@@ -83,16 +83,16 @@ public:
     void draw(const float deltaTime);
     void move(position p);
 
-    ~particleFieldClass();
+    ~Particles();
 };
 
 class effect_class {
     position spawn_pos;
-    sparkle* sparks;
+    Sparkle* sparks;
 
 public:
-    EffectsTransist transit;
-    particleFieldClass* pf;
+    Fade transit;
+    Particles* pf;
     effect_vars vars;
 
     effect_class();
