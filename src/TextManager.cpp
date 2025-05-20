@@ -94,8 +94,11 @@ void TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     glGenTextures(1, &fontInfo[font].tex); //Generate a gltexture for this font
 
     glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
-    // gluBuild2DMipmapLevels
-    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, t->w, t->h, GL_RGBA, GL_UNSIGNED_BYTE, t->pixels);
+    glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, t->w, t->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, t->pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     TTF_CloseFont(ttfFont); //Free the font
     SDL_FreeSurface(t); //Free text-surface

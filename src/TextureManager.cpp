@@ -39,17 +39,18 @@ bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnim
     glGenTextures(1, &tex.textureProperties.texture);
     glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
 
+    // MipMap-Filter für verkleinerte Texturen verwenden
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
+    // Texture-Daten hochladen
     glTexImage2D(GL_TEXTURE_2D, 0, glFormat, tempSurface->w, tempSurface->h, 0, glFormat, GL_UNSIGNED_BYTE, tempSurface->pixels);
 
-    // Hatten wir hier nicht glu mipmaps?
-    // Ah, nein das ist ja nur für die Fonts
-    // gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, t->w, t->h, GL_RGBA, GL_UNSIGNED_BYTE, t->pixels);
+    // Moderne MipMap-Generierung verwenden
+    glGenerateMipmap(GL_TEXTURE_2D);
+
     tex.textureProperties.pxw = tempSurface->w;
     tex.textureProperties.pxh = tempSurface->h;
     SDL_FreeSurface(tempSurface);
