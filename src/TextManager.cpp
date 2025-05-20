@@ -3,6 +3,7 @@
 #include <GL/glu.h>
 #include <fstream>
 #include <filesystem>
+#include <utility>
 
 #include "TextManager.h"
 
@@ -15,7 +16,7 @@ TextManager::TextManager() : fontInfo{} {
     }
 }
 
-void TextManager::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
+bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
     std::string fullFontPath = fontThemePath + "/" + TTFfontName;
 
     TTF_Font *ttfFont = nullptr;
@@ -40,7 +41,7 @@ void TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     ttfFont = TTF_OpenFont(fullFontPath.c_str(), fontSize);
     if (!ttfFont) {
         SDL_Log("TTF_OpenFont: %s", TTF_GetError());
-        // todo: return
+        return false;
     }
     t = SDL_CreateRGBSurface(0, 512, 512, 32, rmask, gmask, bmask, amask);
 
@@ -102,6 +103,7 @@ void TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
 
     TTF_CloseFont(ttfFont); //Free the font
     SDL_FreeSurface(t); //Free text-surface
+    return true;
 }
 
 void TextManager::write(const std::string &text, const int font, const bool center, const GLfloat scale,
@@ -247,8 +249,8 @@ bool TextManager::setFontTheme(const std::string &fontFilePath) {
     return true;
 }
 
-TextAnnouncement::TextAnnouncement(const std::string& msg, int fontId, int ttl, TextManager* mgr)
-    : message(msg), font(fontId), lifetime(ttl), textManager(mgr) {
+TextAnnouncement::TextAnnouncement(std::string msg, int fontId, int ttl, TextManager *mgr)
+    : message(std::move(msg)), font(fontId), lifetime(ttl), textManager(mgr) {
     age = 0;
     zoom = 0.0f;
     fade = 0.0f;
@@ -256,7 +258,7 @@ TextAnnouncement::TextAnnouncement(const std::string& msg, int fontId, int ttl, 
     active = true;
 }
 
-void TextAnnouncement::update(float deltaTime) {
+void TextAnnouncement::update(const float deltaTime) {
     zoom += 2.4f * deltaTime;
 
     // Fade-Effekt steuern
@@ -284,7 +286,7 @@ void TextAnnouncement::update(float deltaTime) {
     }
 }
 
-void TextAnnouncement::draw() {
+void TextAnnouncement::draw() const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glMatrixMode(GL_MODELVIEW);
@@ -317,14 +319,14 @@ void TextAnnouncement::draw() {
     glDisable(GL_BLEND);
 }
 
-void TextManager::addAnnouncement(const std::string& message, int lifetime, int font) {
+void TextManager::addAnnouncement(const std::string &message, int lifetime, int font) {
     // this-Zeiger übergeben statt getInstance() aufzurufen
     announcements.emplace_back(message, font, lifetime, this);
 }
 
-void TextManager::updateAnnouncements(float deltaTime) {
+void TextManager::updateAnnouncements(const float deltaTime) {
     // Alle aktiven Announcements aktualisieren
-    for (auto it = announcements.begin(); it != announcements.end(); ) {
+    for (auto it = announcements.begin(); it != announcements.end();) {
         it->update(deltaTime);
 
         // Inaktive Announcements aus der Liste entfernen
@@ -336,9 +338,9 @@ void TextManager::updateAnnouncements(float deltaTime) {
     }
 }
 
-void TextManager::drawAnnouncements() {
+void TextManager::drawAnnouncements() const {
     // Alle aktiven Announcements zeichnen
-    for (auto& announcement : announcements) {
+    for (const auto &announcement: announcements) {
         announcement.draw();
     }
 }

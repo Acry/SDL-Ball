@@ -5,8 +5,7 @@ there are a lot of things to do.
 
 ## Pipeline
 
-- [ ] EffetManager
-- [ ] EffectManager_Tests
+* GameObjects
 - [ ] BallManager
 - [ ] BrickManager
 - [ ] PowerupManager
@@ -27,10 +26,12 @@ there are a lot of things to do.
 - [X] BackgroundManager_Tests
 
 - [X] TextureManager_Tests
-- [X] TextManager_Tests - implicitly tested in TextureAnimation_Tests
+- [X] TextureManager_Tests - implicitly tested in TextureAnimation_Tests
 
+- [X] SpriteSheetAnimation, rework
 - [X] SpriteSheetAnimation_Tests
 
+- [X] ThemeManager, rework
 - [X] ThemeManager_Tests (rethink the role of the ThemeManager)
 
 - [X] TextManager, revert Singleton Implementation
@@ -44,15 +45,38 @@ there are a lot of things to do.
 - [X] EventHandler create
 - [X] EventHandler_Tests
 
-- [ ] den EffectManager von den Spielobjekten zu entkoppeln
-- [ ] EffectManager_Tests
+- [X] EffectManager, decouple
+- [X] EffetManager, rework
+- [X] EffectManager_Tests
+- [X] EffectManager, start docs
 
+GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 
+- [X] Ball, rework
+- [X] Ball_Tests
 
-- [ ] GameManager create
-- [ ] GameManager_Tests
+- [X] Tracer rework
+- [X] Tracer_Tests -> Ball_Tests
 
-- [ ] **Game should be playable again**
+- [ ] BallManager, rework
+- [ ] BallManager_Tests
+
+- [X] Paddle, rework
+- [X] Paddle_Tests
+
+- [ ] Brick, rework
+- [ ] BrickManager create
+- [ ] BrickManager_Tests
+
+- [ ] Bullet, rework
+  Blockers: Bricks, (decouple -> CollisionManager, EventManager)
+- [ ] Bullet_Tests
+
+- [ ] Powerup, rework
+  Blocker: BallManager
+- [ ] Powerup_Tests
+- [ ] PowerupManager, rework
+- [ ] PowerupManager_Tests
 
 - HUD (Score, Clock, Lives, Level, Speedometer, Powerups consumed (bottom), Shop (top))
   - [ ] Score
@@ -64,36 +88,26 @@ there are a lot of things to do.
   - [ ] Speedometer
 - [ ] HudManager_Tests
 
-GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
-
-- [X] Ball rework
-- [X] Ball_Tests
-- [ ] BallManager rework
-- [ ] BallManager_Tests
-
-- [X] Paddle rework
-- [X] Paddle_Tests
-
-- [ ] Bullet rework
-      Blockers: Bricks, EffectManager (decouple -> CollisionManager, EventManager)
-- [ ] Bullet_Tests
-
-- [ ] Powerup rework
-      Blocker: EffectManager, BallManager
-- [ ] Powerup_Tests
-- [ ] PowerupManager rework
-- [ ] PowerupManager_Tests
-
-- [ ] Brick rework
-- [ ] BrickManager create
-- [ ] BrickManager_Tests
-
 - [ ] Player rework
 - [ ] Player_Tests
 
 - [ ] Timing rework (WIP)
 - [ ] Timing_Tests
 
+___
+
+- [ ] GameManager, create
+- [ ] GameManager_Tests
+
+- [ ] **Game should be playable again**
+
+___
+
+
+
+___
+
+- MenuManager, create
 - [ ] fix other menus,
   - [X] MainMenu
   - [ ] SettingsMenu
@@ -103,12 +117,10 @@ GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 - [ ] MenuManager: keyboard support
 - [ ] MenuManager_Tests
 - [ ] InputManager_Tests
-- [ ] modernize LevelEditor
-- [ ] LevelEditor_Tests
-- [ ] [ShaderManager](Manager/ShaderManager.md)
 
 - [ ] SceneManager create
 - [ ] SceneManager_Tests
+
 - [ ] TitleScreen_Tests
 
 - [ ] Decouple SavegameManager
@@ -122,12 +134,17 @@ GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 
 - [ ] HighscoreManager_Tests
 
+- [ ] modernize LevelEditor
+- [ ] LevelEditor_Tests
+
+- [ ] [ShaderManager](Manager/ShaderManager.md)
+
 ## Currents things
 
 - [ ] check old code if border texture was used as spritesheet
 - [ ] move border checks from paddle and ball to collisionManager
 - [ ] fix DebugMouse.cpp, but text::write should just work.
-- [ ] TextManager genFontTex to bool
+- [X] TextManager genFontTex to bool
 - [ ] check early game field sizes, should I go exactly 4:3 and then render the pillars outside?
   scissor rectangle needs to be expanded to the playfield plus the pillars
 - [ ] solve brick fade issue

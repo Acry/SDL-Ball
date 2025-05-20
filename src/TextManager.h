@@ -26,23 +26,28 @@ struct glFontInfo_struct {
     glCharInfo_struct ch[255];
 };
 
-
 class TextManager {
 public:
     TextManager();
+
     ~TextManager();
 
     // Methode zum Setzen des Font-Themes (vollständiger Pfad zur fonts.txt)
-    bool setFontTheme(const std::string& fontFilePath);
+    bool setFontTheme(const std::string &fontFilePath);
 
     GLfloat getHeight(int font) const;
+
     void write(const std::string &text, int font, bool center, GLfloat scale, GLfloat x, GLfloat y) const;
-    void addAnnouncement(const std::string& message, int lifetime, int font);
+
+    void addAnnouncement(const std::string &message, int lifetime, int font);
+
     void updateAnnouncements(float deltaTime);
-    void drawAnnouncements();
+
+    void drawAnnouncements() const;
 
 private:
-    void genFontTex(const std::string &TTFfontName, int fontSize, int font);
+    bool genFontTex(const std::string &TTFfontName, int fontSize, int font);
+
     void clearFontTheme();
 
     glFontInfo_struct fontInfo[FONT_NUM];
@@ -58,12 +63,14 @@ class TextAnnouncement {
     std::string message;
     int font;
     int lifetime;
-    TextManager* textManager; // Zeiger auf die übergeordnete TextManager-Instanz
+    TextManager *textManager; // Zeiger auf die übergeordnete TextManager-Instanz
 
 public:
-    TextAnnouncement(const std::string& msg, int fontId, int ttl, TextManager* mgr);
+    TextAnnouncement(std::string msg, int fontId, int ttl, TextManager *mgr);
 
     void update(float deltaTime);
-    void draw();
+
+    void draw() const;
+
     bool isActive() const { return active; }
 };
