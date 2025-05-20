@@ -15,8 +15,8 @@ void EventManager::emit(GameEvent event, const EventData& data) {
         // Kopiere die Liste der Callbacks, um Probleme zu vermeiden,
         // falls Callbacks während der Verarbeitung hinzugefügt/entfernt werden
         auto callbacksList = listeners[event];
-        for (const auto& callback : callbacksList) {
-            callback(data);
+        for (const auto& callbackInfo : callbacksList) {
+            callbackInfo.callback(data);
         }
     }
 }
