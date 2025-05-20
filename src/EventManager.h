@@ -3,11 +3,13 @@
 #include <functional>
 #include <vector>
 #include <unordered_map>
+#include <algorithm>
 
 enum class GameEvent {
     BallHitBorder,
     BallLost,
     BallHitPaddle,
+    BallHitBrick,     // Neues Event für Kollision mit Brick
     BrickDestroyed,
     PowerUpCollected,
     LevelCompleted,
@@ -26,8 +28,22 @@ struct EventData {
 };
 
 class EventManager {
+public:
     using EventCallback = std::function<void(const EventData&)>;
-    std::unordered_map<GameEvent, std::vector<EventCallback>> listeners;
+
+    struct CallbackInfo {
+        EventCallback callback;
+        void* owner = nullptr;
+
+        CallbackInfo(EventCallback cb, void* o = nullptr) : callback(cb), owner(o) {}
+
+        void operator()(const EventData& data) const {
+            callback(data);
+        }
+    };
+
+private:
+    std::unordered_map<GameEvent, std::vector<CallbackInfo>> listeners;
 
 public:
     EventManager() = default;
@@ -37,25 +53,14 @@ public:
     EventManager(const EventManager&) = delete;
     EventManager& operator=(const EventManager&) = delete;
 
-    void addListener(GameEvent event, EventCallback callback) {
-        listeners[event].push_back(callback);
-    }
+    // Listener-Management
+    void addListener(GameEvent event, EventCallback callback, void* owner = nullptr);
 
-    virtual void emit(GameEvent event, const EventData& data) {
-        if (listeners.find(event) != listeners.end()) {
-            for (const auto& callback : listeners[event]) {
-                callback(data);
-            }
-        }
-    }
+    virtual void emit(GameEvent event, const EventData& data);
 
-    void removeAllListeners(GameEvent event) {
-        if (listeners.find(event) != listeners.end()) {
-            listeners[event].clear();
-        }
-    }
+    // Entfernt alle Listener eines bestimmten Besitzers für ein Event
+    void removeListener(GameEvent event, void* owner);
 
-    void clearAllListeners() {
-        listeners.clear();
-    }
+    void removeAllListeners(GameEvent event);
+    void clearAllListeners();
 };

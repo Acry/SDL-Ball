@@ -222,3 +222,17 @@ $(BUILD_DIR)CollisionManager.o: $(SOURCE_DIR)CollisionManager.cpp
 $(BUILD_DIR)PlayfieldBorder.o: $(SOURCE_DIR)PlayfieldBorder.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
+###############################################################################
+# EffectManager
+EFFECT_TEST_SOURCES := $(SOURCE_DIR)EffectManager_Tests.cpp \
+                       $(SOURCE_DIR)EffectManager.cpp \
+                       $(SOURCE_DIR)Display.cpp \
+                       $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                       $(SOURCE_DIR)TextureManager.cpp
+
+EFFECT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECT_TEST_SOURCES:.cpp=.o)))
+
+# eventManager
+# später collisionManager
+effect-test: $(EFFECT_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(EFFECT_TEST_OBJECTS) $(shell sdl2-config --libs) -lepoxy -lSDL2_image -o $(BUILD_DIR)effect-test

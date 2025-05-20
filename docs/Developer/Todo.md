@@ -49,15 +49,6 @@ there are a lot of things to do.
 
 
 
-- [ ] BallManager rework
-- [ ] BallManager_Tests
-
-- [ ] BrickManager create
-- [ ] BrickManager_Tests
-
-- [ ] PowerupManager create
-- [ ] PowerupManager_Tests
-
 - [ ] GameManager create
 - [ ] GameManager_Tests
 
@@ -75,11 +66,27 @@ there are a lot of things to do.
 
 GameObjects: Balls, Paddles, Bricks, Powerups, Tracers, etc.
 
+- [X] Ball rework
+- [X] Ball_Tests
+- [ ] BallManager rework
+- [ ] BallManager_Tests
+
 - [X] Paddle rework
 - [X] Paddle_Tests
 
-- [X] Ball rework
-- [X] Ball_Tests
+- [ ] Bullet rework
+      Blockers: Bricks, EffectManager (decouple -> CollisionManager, EventManager)
+- [ ] Bullet_Tests
+
+- [ ] Powerup rework
+      Blocker: EffectManager, BallManager
+- [ ] Powerup_Tests
+- [ ] PowerupManager rework
+- [ ] PowerupManager_Tests
+
+- [ ] Brick rework
+- [ ] BrickManager create
+- [ ] BrickManager_Tests
 
 - [ ] Player rework
 - [ ] Player_Tests

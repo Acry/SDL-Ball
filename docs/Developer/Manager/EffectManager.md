@@ -1,6 +1,11 @@
 # Analyse der EffectManager-Probleme
 
-Der EffectManager hat tatsächlich tiefgreifende Abhängigkeiten zu den Spielobjekten `brick` und `Paddle`, was eine problematische architektonische Kopplung darstellt. Diese Kopplung sollte aufgelöst werden.
+Die aktuelle Implementierung des EffectManagers ist stark mit den Spielobjekten gekoppelt, was eine bessere Modularisierung und Testbarkeit verhindert.
+
+Architekturvorschlag
+Der EffectManager sollte keine direkten Abhängigkeiten zu Spielobjekten (Ball, Brick, Paddle) haben
+Die Effekte sollten über den EventManager ausgelöst werden
+Der CollisionManager sollte Kollisionsereignisse über den EventManager publizieren
 
 ## Hauptprobleme
 

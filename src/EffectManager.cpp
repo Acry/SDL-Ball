@@ -1,196 +1,102 @@
-#include <list>
+// EffectManager.cpp
 #include "EffectManager.h"
+
+#include <SDL2/SDL_log.h>
 
 extern int globalTicksSinceLastDraw;
 extern float globalMilliTicksSinceLastDraw;
 
-class EffectsTransist {
-    GLfloat opacity;
-public:
-    TextManager& text;  // Als Referenz
-    int age;
-    effect_vars vars;
+// --- sparkle Implementierung ---
 
-    // Konstruktor initialisiert die Referenz
-    EffectsTransist() : text(TextManager::getInstance()){}
+sparkle::sparkle() {
+    bounce = 0;
+    f = 0;
+    active = true;
+}
 
-    void init() {
-        age = 0;
-        opacity = 0.0f;
-        var.transition_half_done = false;
-    }
+void sparkle::draw() {
+    if (lifeleft > 0) {
+        // Lebensdauer aktualisieren
+        lifeleft -= globalTicksSinceLastDraw;
 
-    void draw() {
-        age += globalTicksSinceLastDraw;
-
-        if (age < vars.life / 2.0) //første halvdel
-        {
-            //Gør solid
-            opacity += vars.life / 500.0 * globalMilliTicksSinceLastDraw;
-        } else {
-            var.transition_half_done = 1;
-            //Gør trans
-            opacity -= vars.life / 500.0 * globalMilliTicksSinceLastDraw;
-        }
-
-        glLoadIdentity();
-        glDisable(GL_TEXTURE_2D);
-        glColor4f(vars.col[0], vars.col[1], vars.col[2], opacity);
-        glBegin(GL_QUADS);
-        glVertex3f(-1.0f, 1.0f, 0.0);
-        glVertex3f(1.0f, 1.0f, 0.0);
-        glVertex3f(1.0f, -1.0f, 0.0);
-        glVertex3f(-1.0f, -1.0f, 0.0);
-        glEnd();
-    }
-};
-
-class sparkle {
-public:
-    bool active;
-    GLfloat size;
-    GLfloat ang;
-    int life;
-    int lifeleft;
-    position p, v; //position og vel
-    effect_vars vars;
-    GLfloat bounce, f; //bounce og friktion
-
-    sparkle() {
-        bounce = 0;
-        f = 0;
-        active = true;
-    }
-
-    void draw() {
-        if (lifeleft > 0) {
-            //sanitize
-            lifeleft -= globalTicksSinceLastDraw;
-
-            //er vi indenfor skærmen?
-            if (p.x > 1.67 || p.y < -1.7 || p.x < -1.67) {
-                active = false;
-            }
-
-            v.y -= vars.gravity * globalMilliTicksSinceLastDraw;
-            v.y -= bounce * globalMilliTicksSinceLastDraw;
-
-            if (v.x < 0) {
-                v.x += f * globalMilliTicksSinceLastDraw;
-            } else {
-                v.x -= f * globalMilliTicksSinceLastDraw;
-            }
-
-            p.x += v.x * globalMilliTicksSinceLastDraw;
-            p.y += v.y * globalMilliTicksSinceLastDraw;
-
-            glColor4f(vars.col[0], vars.col[1], vars.col[2], (1.0 / static_cast<float>(life)) * static_cast<float>(lifeleft));
-
-            const GLfloat curSize = size / static_cast<float>(life) * static_cast<float>(lifeleft);
-            glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, vars.tex.textureProperties.texture);
-            glBegin(GL_QUADS);
-            glTexCoord2f(0, 0);
-            glVertex3f(p.x - curSize, p.y + curSize, 0.0);
-            glTexCoord2f(0, 1);
-            glVertex3f(p.x + curSize, p.y + curSize, 0.0);
-            glTexCoord2f(1, 1);
-            glVertex3f(p.x + curSize, p.y - curSize, 0.0);
-            glTexCoord2f(1, 0);
-            glVertex3f(p.x - curSize, p.y - curSize, 0.0);
-            glEnd();
-            glDisable(GL_TEXTURE_2D);
-        } else {
+        // Überprüfen, ob wir noch im sichtbaren Bereich sind
+        if (p.x > 1.67 || p.y < -1.7 || p.x < -1.67) {
             active = false;
         }
-    }
 
-    void coldet(brick &b) {
-        if (p.x > b.pos_x - b.width && p.x < b.pos_x + b.width) {
-            if (p.y > b.pos_y - b.height && p.y < b.pos_y + b.height) {
-                //Hvor ramte vi fra?
-                if (p.y < b.pos_y && !b.n(3)) {
-                    //bunden
-                    v.y *= -1;
-                    //p.y = b.posy-b.height-0.01;
-                } else if (p.y > b.pos_y && !b.n(2)) {
-                    //toppen
-                    p.y = b.pos_y + b.height;
-                    if (v.y < 0) {
-                        v.y *= -1;
-                        v.y /= 2.0;
-                        f += 0.01;
-                    }
-                } else if (p.x > b.pos_x && !b.n(1)) {
-                    //p.x = b.posx+b.width;
-                    //højre
-                    if (v.x < 0)
-                        v.x *= -1;
-                } else if (p.x < b.pos_x && !b.n(0)) {
-                    //p.x = b.posx-b.width;
-                    //venstre
-                    if (v.x > 0)
-                        v.x *= -1;
-                }
-            }
+        // Physik aktualisieren
+        v.y -= vars.gravity * globalMilliTicksSinceLastDraw;
+        v.y -= bounce * globalMilliTicksSinceLastDraw;
+
+        if (v.x < 0) {
+            v.x += f * globalMilliTicksSinceLastDraw;
+        } else {
+            v.x -= f * globalMilliTicksSinceLastDraw;
         }
+
+        // Position aktualisieren
+        p.x += v.x * globalMilliTicksSinceLastDraw;
+        p.y += v.y * globalMilliTicksSinceLastDraw;
+
+        // Zeichnen
+        glColor4f(vars.col[0], vars.col[1], vars.col[2], (1.0f / static_cast<float>(life)) * static_cast<float>(lifeleft));
+
+        const GLfloat curSize = size / static_cast<float>(life) * static_cast<float>(lifeleft);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, vars.tex.textureProperties.texture);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 0);
+        glVertex3f(p.x - curSize, p.y + curSize, 0.0);
+        glTexCoord2f(0, 1);
+        glVertex3f(p.x + curSize, p.y + curSize, 0.0);
+        glTexCoord2f(1, 1);
+        glVertex3f(p.x + curSize, p.y - curSize, 0.0);
+        glTexCoord2f(1, 0);
+        glVertex3f(p.x - curSize, p.y - curSize, 0.0);
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
+    } else {
+        active = false;
+    }
+}
+
+// --- EffectsTransist Implementierung ---
+
+EffectsTransist::EffectsTransist() {
+    opacity = 0.0f;
+    age = 0;
+}
+
+void EffectsTransist::init() {
+    age = 0;
+    opacity = 0.0f;
+    vars.transition_half_done = 0;
+}
+
+void EffectsTransist::draw() {
+    age += globalTicksSinceLastDraw;
+
+    if (age < vars.life / 2.0f) { // erste Hälfte
+        // Aufblenden
+        opacity += vars.life / 500.0f * globalMilliTicksSinceLastDraw;
+    } else {
+        vars.transition_half_done = 1;
+        // Ausblenden
+        opacity -= vars.life / 500.0f * globalMilliTicksSinceLastDraw;
     }
 
-    void pcoldet(Paddle &b) {
-        if (p.x > b.pos_x - b.width && p.x < b.pos_x + b.width) {
-            if (p.y > b.pos_y - b.height && p.y < b.pos_y + b.height) {
-                //Hvor ramte vi fra?
-                if (p.y < b.pos_y) {
-                    //bunden
-                    p.y = b.pos_y - b.height;
-                }
+    glLoadIdentity();
+    glDisable(GL_TEXTURE_2D);
+    glColor4f(vars.col[0], vars.col[1], vars.col[2], opacity);
+    glBegin(GL_QUADS);
+    glVertex3f(-1.0f, 1.0f, 0.0);
+    glVertex3f(1.0f, 1.0f, 0.0);
+    glVertex3f(1.0f, -1.0f, 0.0);
+    glVertex3f(-1.0f, -1.0f, 0.0);
+    glEnd();
+}
 
-                if (p.y > b.pos_y) {
-                    //toppen
-                    p.y = b.pos_y + b.height;
-                    if (v.y < 0) {
-                        v.y *= -1;
-                        v.y /= 2.0;
-                        f += 0.01;
-                    }
-                } else if (p.x > b.pos_x) {
-                    p.x = b.pos_x + b.width;
-                    //højre
-                    if (v.x < 0)
-                        v.x *= -1;
-                } else if (p.x < b.pos_x) {
-                    p.x = b.pos_x - b.width;
-                    //venstre
-                    if (v.x > 0)
-                        v.x *= -1;
-                }
-            }
-        }
-    }
-};
-
-class particleFieldClass {
-    int spawnTimeout; //This is used to spawn sparkles at a random time
-    sparkle *sparks;
-
-    void spawnSpark(int sparkNum);
-
-public:
-    position p;
-    effect_vars vars;
-
-    void init(effect_vars varsP, position p);
-
-    void draw();
-
-    void move(position p);
-
-    void coldet(brick &b);
-
-    void pcoldet(Paddle &b);
-
-    ~particleFieldClass();
-};
+// --- particleFieldClass Implementierung ---
 
 void particleFieldClass::init(effect_vars varsP, position spawnPos) {
     vars = varsP;
@@ -201,18 +107,17 @@ void particleFieldClass::init(effect_vars varsP, position spawnPos) {
 
     for (int i = 0; i < vars.num; i++) {
         sparks[i].active = true;
-        sparks[i].vars = vars; //NOTE:remove effect_vars from sparkle class?
+        sparks[i].vars = vars;
         spawnSpark(i);
     }
 }
 
 particleFieldClass::~particleFieldClass() {
-    delete[] sparks; //free the sparks
+    delete[] sparks; // Speicher freigeben
 }
 
 void particleFieldClass::spawnSpark(int sparkNum) {
     const GLfloat angle = (RAD / vars.num - 1) * (random_float(vars.num, 0.0));
-    //FIXME: Make this elegant: Choose a random angle (in radients)
     spawnTimeout = rand() % 10;
     sparks[sparkNum].life = rand() % vars.life;
     sparks[sparkNum].lifeleft = sparks[sparkNum].life;
@@ -245,278 +150,294 @@ void particleFieldClass::draw() {
     }
 }
 
-void particleFieldClass::coldet(brick &b) {
-    for (int i = 0; i < vars.num; i++) {
-        if (sparks[i].active)
-            sparks[i].coldet(b);
+void particleFieldClass::move(position newPos) {
+    p = newPos;
+}
+
+// --- effect_class Implementierung ---
+
+effect_class::effect_class() {
+    vars.active = false; // Nicht aktiv bei Erstellung
+    pf = nullptr;
+    sparks = nullptr;
+}
+
+void effect_class::init(position p) {
+    vars.active = true;
+    spawn_pos = p;
+
+    switch (vars.type) {
+        case FX_SPARKS:
+            sparks = new sparkle[vars.num];
+            if (sparks == nullptr) {
+                SDL_Log("Konnte %d Funken nicht allokieren", vars.num);
+                return;
+            }
+
+            for (int i = 0; i < vars.num; i++) {
+                sparks[i].size = random_float(vars.size, 0);
+                int life = rand() % vars.life;
+                float angle = (RAD / vars.num - 1) * (random_float(vars.num, 0.0));
+                
+                sparks[i].life = life;
+                sparks[i].lifeleft = life;
+                sparks[i].v.x = (vars.speed * random_float(vars.speed * 2.0, 0.0)) * sin(angle);
+                sparks[i].v.y = (vars.speed * random_float(vars.speed * 2.0, 0.0)) * cos(angle);
+
+                sparks[i].vars = vars;
+                sparks[i].p = spawn_pos;
+            }
+            break;
+
+        case FX_TRANSIT:
+            transit.vars = vars;
+            transit.init();
+            break;
+
+        case FX_PARTICLEFIELD:
+            pf = nullptr;
+            pf = new particleFieldClass;
+            pf->init(vars, p);
+            break;
+        default:
+            break;
     }
 }
 
-void particleFieldClass::pcoldet(Paddle &b) {
-    for (int i = 0; i < vars.num; i++) {
-        if (sparks[i].active)
-            sparks[i].pcoldet(b);
+void effect_class::draw() {
+    bool stay = false;
+    
+    switch (vars.type) {
+        case FX_SPARKS:
+            for (int i = 0; i < vars.num; i++) {
+                if (sparks[i].active) {
+                    sparks[i].draw();
+                    stay = true;
+                }
+            }
+            break;
+
+        case FX_TRANSIT:
+            transit.draw();
+            if (transit.age <= vars.life)
+                stay = true;
+            break;
+
+        case FX_PARTICLEFIELD:
+            pf->draw();
+            if (pf->vars.active)
+                stay = true;
+            break;
+        default:
+            break;
+    }
+
+    // Verhindere Flackern bei Übergangseffekten
+    if (vars.effectId != -1 && vars.type != FX_TRANSIT)
+        stay = true;
+
+    if (!stay) {
+        vars.active = false;
+        switch (vars.type) {
+            case FX_SPARKS:
+                delete[] sparks;
+                break;
+
+            case FX_PARTICLEFIELD:
+                delete pf;
+                break;
+            default:
+                break;
+        }
     }
 }
 
-class effect_class {
-    position spawn_pos;
-    sparkle *sparks;
+// --- EffectManager Implementierung ---
 
-public:
-    EffectsTransist transit;
-    particleFieldClass *pf;
-    effect_vars vars;
+EffectManager::EffectManager(EventManager* eventMgr) : eventManager(eventMgr) {
+    effects.clear();
+    effectId = 0;
+    
+    // Event-Listener registrieren
+    registerEventListeners();
+}
 
-    effect_class() {
-        vars.active = false; //når den bliver oprettet i hukkommelsen er den ikke i brug endnu
+EffectManager::~EffectManager() {
+    effects.clear();
+}
+
+void EffectManager::registerEventListeners() {
+    // Event-Handler für Kollisionen registrieren
+    eventManager->addListener(GameEvent::BallHitPaddle, 
+        [this](const EventData& data) { this->handleBallPaddleCollision(data); });
+    
+    eventManager->addListener(GameEvent::BrickDestroyed,
+        [this](const EventData& data) { this->handleBrickDestroyed(data); });
+    
+    eventManager->addListener(GameEvent::PowerUpCollected,
+        [this](const EventData& data) { this->handlePowerUpCollected(data); });
+}
+
+void EffectManager::set(int var, GLfloat val) {
+    switch (var) {
+        case FX_VAR_SPEED:
+            vars.speed = val;
+            break;
+        case FX_VAR_SPREAD:
+            vars.spread = val;
+            break;
+        case FX_VAR_SIZE:
+            vars.size = val;
+            break;
+        case FX_VAR_GRAVITY:
+            vars.gravity = val;
+            break;
+        default:
+            break;
     }
+}
 
-    void init(position p) {
-        int i;
-        GLfloat angle = 0.0;
-        vars.active = true;
-        spawn_pos = p;
-        //SDL_Log("Spawned effect type%s at%s,%s with%sms life", vars.type, p.x, p.y, vars.life);
+void EffectManager::set(int var, int val) {
+    switch (var) {
+        case FX_VAR_NUM:
+            vars.num = val;
+            break;
+        case FX_VAR_LIFE:
+            vars.life = val;
+            break;
+        case FX_VAR_TYPE:
+            vars.type = val;
+            break;
+        case FX_VAR_COLDET:
+            vars.coldet = val;
+            break;
+        default:
+            break;
+    }
+}
 
-        switch (vars.type) {
-            case FX_SPARKS:
-                sparks = new sparkle[vars.num];
-                if (sparks == nullptr) {
-                    SDL_Log("Could not allocate %d sparks", vars.num);
-                    i = vars.num + 10;
-                }
+void EffectManager::set(int var, GLfloat r, GLfloat g, GLfloat b) {
+    switch (var) {
+        case FX_VAR_COLOR:
+            vars.col[0] = r;
+            vars.col[1] = g;
+            vars.col[2] = b;
+            break;
+        default:
+            break;
+    }
+}
 
-                for (i = 0; i < vars.num; i++) {
-                    sparks[i].size = random_float(vars.size, 0);
-                    int life = rand() % vars.life;
-                    angle = (RAD / vars.num - 1) * (random_float(vars.num, 0.0));
-                    //FIXME: Make this elegant: Choose a random angle (in radients)
-                    sparks[i].life = life;
-                    sparks[i].lifeleft = life;
-                    sparks[i].v.x = (vars.speed * random_float(vars.speed * 2.0, 0.0)) * sin(angle);
-                    sparks[i].v.y = (vars.speed * random_float(vars.speed * 2.0, 0.0)) * cos(angle);
+void EffectManager::set(int var, SpriteSheetAnimation tex) {
+    switch (var) {
+        case FX_VAR_TEXTURE:
+            vars.tex = tex;
+            break;
+        default:
+            break;
+    }
+}
 
-                    sparks[i].vars = vars;
+void EffectManager::set(int var, position p) {
+    switch (var) {
+        case FX_VAR_RECTANGLE:
+            vars.rect = p;
+            break;
+        default:
+            break;
+    }
+}
 
-                    sparks[i].p = spawn_pos;
-                }
-                break;
+int EffectManager::spawn(position p) {
+    effectId++;
+    effect_class tempEffect;
+    vars.effectId = effectId;
+    tempEffect.vars = vars;
+    tempEffect.init(p);
+    effects.push_back(tempEffect);
 
-            case FX_TRANSIT:
-                transit.vars = vars;
-                transit.init();
-                break;
+    return effectId;
+}
 
-            case FX_PARTICLEFIELD:
-                pf = nullptr;
-                pf = new particleFieldClass;
-                pf->init(vars, p);
-                break;
-            default: ;
+void EffectManager::draw() {
+    for (auto it = effects.begin(); it != effects.end();) {
+        it->draw();
+
+        if (!it->vars.active) {
+            it = effects.erase(it);
+        } else {
+            ++it;
         }
     }
+}
 
-    void draw() {
-        //find ud af hvor længe der er gået siden sidst
-        int i;
-        bool stay = false;
-        switch (vars.type) {
-            case FX_SPARKS:
-                for (i = 0; i < vars.num; i++) {
-                    if (sparks[i].active) {
-                        sparks[i].draw();
-                        stay = true;
-                    }
-                }
-                break;
-
-            case FX_TRANSIT:
-                transit.draw();
-                if (transit.age <= vars.life)
-                    stay = true;
-                break;
-
-            case FX_PARTICLEFIELD:
-                pf->draw();
-                if (pf->vars.active)
-                    stay = true;
-                break;
-            default: ;
-        }
-
-        //Ugley hack, to prevent transit from flickering when spark effects are deleted.
-        if (var.effectnum != -1 && vars.type != FX_TRANSIT)
-            stay = true;
-
-        if (!stay) {
-            vars.active = false;
-            switch (vars.type) {
-                case FX_SPARKS:
-                    delete[] sparks; //Free sparks again ;)
-                    break;
-
-                case FX_PARTICLEFIELD:
-                    delete pf; //remove the particlefield
-                    break;
-                default: ;
-            }
+int EffectManager::isActive(int id) {
+    for (const auto& effect : effects) {
+        if (effect.vars.effectId == id && effect.vars.active) {
+            return 1;
         }
     }
+    return 0;
+}
 
-    void coldet(brick &b) {
-        if (vars.type == FX_SPARKS) {
-            for (int i = 0; i < vars.num; i++) {
-                if (sparks[i].active) {
-                    sparks[i].coldet(b);
-                }
-            }
-        } else if (vars.type == FX_PARTICLEFIELD) {
-            pf->coldet(b);
+void EffectManager::kill(int id) {
+    for (auto& effect : effects) {
+        if (effect.vars.effectId == id) {
+            effect.vars.active = false;
         }
     }
+}
 
-    void pcoldet(Paddle &b) {
-        if (vars.type == FX_SPARKS) {
-            for (int i = 0; i < vars.num; i++) {
-                if (sparks[i].active) {
-                    sparks[i].pcoldet(b);
-                }
-            }
-        } else if (vars.type == FX_PARTICLEFIELD) {
-            pf->pcoldet(b);
-        }
-    }
-};
+// Event-Handler-Implementierungen
 
-class EffectManager {
-    effect_vars vars; //denne kopieres over i den næste effekt der bliver spawned
-    int effectId; //ever rising number of a spawned effect.
+void EffectManager::handleBallPaddleCollision(const EventData& data) {
+    // Funkeneffekt bei Paddle-Kollision erzeugen
+    set(FX_VAR_TYPE, FX_SPARKS);
+    set(FX_VAR_NUM, 15);
+    set(FX_VAR_LIFE, 300);
+    set(FX_VAR_SPEED, 0.005f);
+    set(FX_VAR_SIZE, 0.025f);
+    set(FX_VAR_COLOR, 0.7f, 0.7f, 1.0f);
+    
+    position p = {data.posX, data.posY};
+    spawn(p);
+}
 
-public:
-    list<effect_class> effects;
+void EffectManager::handleBallBrickCollision(const EventData& data) {
+    // Kleinerer Effekt bei Brick-Kollision
+    set(FX_VAR_TYPE, FX_SPARKS);
+    set(FX_VAR_NUM, 8);
+    set(FX_VAR_LIFE, 200);
+    set(FX_VAR_SPEED, 0.003f);
+    set(FX_VAR_SIZE, 0.015f);
+    set(FX_VAR_COLOR, 1.0f, 0.7f, 0.3f);
+    
+    position p = {data.posX, data.posY};
+    spawn(p);
+}
 
-    EffectManager() {
-        effects.clear();
-        effectId = 0;
-    }
+void EffectManager::handleBrickDestroyed(const EventData& data) {
+    // Größerer Explosion-Effekt bei Zerstörung eines Bricks
+    set(FX_VAR_TYPE, FX_SPARKS);
+    set(FX_VAR_NUM, 25);
+    set(FX_VAR_LIFE, 500);
+    set(FX_VAR_SPEED, 0.008f);
+    set(FX_VAR_SIZE, 0.03f);
+    set(FX_VAR_COLOR, 1.0f, 0.5f, 0.2f);
+    
+    position p = {data.posX, data.posY};
+    spawn(p);
+}
 
-    void set(int var, GLfloat val) {
-        switch (var) {
-            case FX_VAR_SPEED:
-                vars.speed = val;
-                break;
-            case FX_VAR_SPREAD:
-                vars.spread = val;
-                break;
-            case FX_VAR_SIZE:
-                vars.size = val;
-                break;
-            case FX_VAR_GRAVITY:
-                vars.gravity = val;
-            default: ;
-        }
-    }
-
-    void set(const int var, const int val) {
-        switch (var) {
-            case FX_VAR_NUM:
-                vars.num = val;
-                break;
-            case FX_VAR_LIFE:
-                vars.life = val;
-                break;
-            case FX_VAR_TYPE:
-                vars.type = val;
-                break;
-            case FX_VAR_COLDET:
-                vars.coldet = val;
-                break;
-            default: ;
-        }
-    }
-
-    void set(int var, GLfloat r, GLfloat g, GLfloat b) {
-        switch (var) {
-            case FX_VAR_COLOR:
-                vars.col[0] = r;
-                vars.col[1] = g;
-                vars.col[2] = b;
-                break;
-            default: ;
-        }
-    }
-
-    void set(int var, SpriteSheetAnimation tex) {
-        switch (var) {
-            case FX_VAR_TEXTURE:
-                vars.tex = tex;
-                break;
-            default: ;
-        }
-    }
-
-    void set(int var, struct position p) {
-        switch (var) {
-            case FX_VAR_RECTANGLE:
-                vars.rect = p;
-                break;
-            default: ;
-        }
-    }
-
-    //retunerer effektid så der kan checkes om det er aktivt
-    int spawn(position p) {
-        effectId++;
-        effect_class tempEffect;
-        vars.effectId = effectId;
-        tempEffect.vars = vars; //kopier det over som er sat op
-        tempEffect.init(p);
-        effects.push_back(tempEffect);
-
-        return (effectId);
-    }
-
-    void draw() {
-        for (list<effect_class>::iterator it = effects.begin(); it != effects.end(); ++it) {
-            it->draw();
-
-            if (!it->vars.active) {
-                it = effects.erase(it);
-            }
-        }
-    }
-
-    void coldet(brick &b) {
-        if (b.collide && b.active) {
-            for (list<effect_class>::iterator it = effects.begin(); it != effects.end(); ++it) {
-                if (it->vars.coldet)
-                    it->coldet(b);
-            }
-        }
-    }
-
-    void pcoldet(Paddle &b) {
-        for (list<effect_class>::iterator it = effects.begin(); it != effects.end(); ++it) {
-            if (it->vars.coldet)
-                it->pcoldet(b);
-        }
-    }
-
-    int isActive(int id) {
-        for (list<effect_class>::iterator it = effects.begin(); it != effects.end(); ++it) {
-            if (it->vars.effectId == id && it->vars.active) {
-                return 1;
-            }
-        }
-        return 0;
-    }
-
-    void kill(int id) {
-        for (list<effect_class>::iterator it = effects.begin(); it != effects.end(); ++it) {
-            if (it->vars.effectId) {
-                it->vars.active = false;
-            }
-        }
-    }
-};
+void EffectManager::handlePowerUpCollected(const EventData& data) {
+    // Spezialeffekt für PowerUp-Sammlung
+    set(FX_VAR_TYPE, FX_PARTICLEFIELD);
+    set(FX_VAR_NUM, 40);
+    set(FX_VAR_LIFE, 800);
+    set(FX_VAR_SPEED, 0.006f);
+    set(FX_VAR_SIZE, 0.02f);
+    set(FX_VAR_COLOR, 0.3f, 1.0f, 0.3f);
+    
+    position p = {data.posX, data.posY};
+    spawn(p);
+}

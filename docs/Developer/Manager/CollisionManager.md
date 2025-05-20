@@ -1,5 +1,9 @@
 # CollisionManager
 
+1. **Interface für Kollidierbare Objekte erstellen**:
+    - `ICollidable`-Interface definieren
+    - `brick` und `Paddle` so anpassen, dass sie dieses Interface implementieren
+
 ```c++
 #pragma once
 #include "EventManager.h"
