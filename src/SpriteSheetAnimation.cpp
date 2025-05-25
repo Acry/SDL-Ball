@@ -1,6 +1,5 @@
 #include "SpriteSheetAnimation.h"
 
-
 SpriteSheetAnimation::SpriteSheetAnimation() : age(10000),
                                                direction(false),
                                                lastFrame(1000),

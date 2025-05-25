@@ -1,5 +1,6 @@
 #include "EventManager.h"
 #include <SDL2/SDL_log.h>
+#include <algorithm>
 
 void EventManager::addListener(GameEvent event, EventCallback callback, void* owner) {
     listeners[event].emplace_back(callback, owner);

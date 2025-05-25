@@ -1,62 +1,62 @@
+// BallManager.h
 #pragma once
 
+#include "Ball.h"
+#include "EventManager.h"
+#include "TextureManager.h"
+#include "Paddle.h"
+#include "ICollideable.h"
 #include <vector>
 #include <memory>
-
-#include "Ball.h"
-#include "Paddle.h"
-#include "EventManager.h"
-#include "EffectManager.h"
-#include "Brick.h"
-
-// Maximale Anzahl von Bällen im Spiel
-constexpr int MAX_BALLS = 8;
 
 class BallManager {
 private:
     std::vector<std::unique_ptr<Ball>> balls;
-    EventManager* eventManager;
-
-    // Texturen für normale, Feuer- und Tracer-Effekte
     SpriteSheetAnimation normalBallTexture;
     SpriteSheetAnimation fireBallTexture;
     SpriteSheetAnimation tracerTexture;
+    EventManager* eventManager;
 
-    // Durchschnittliche Ballgeschwindigkeit berechnen
+    static constexpr size_t MAX_BALLS = 16;
+
     float calculateAverageBallSpeed() const;
 
 public:
-    // Konstruktor mit EventManager und TextureManager
     explicit BallManager(EventManager* eventMgr);
+    ~BallManager();
 
-    // Texturen laden
     bool loadTextures(const TextureManager& texManager);
 
-    // Ball-Management-Funktionen
+    // Ball-Erstellung und -Verwaltung
     void createInitialBall();
+    void spawnBall(float posX, float posY, bool glued = false,
+                   float gluedX = 0.0f, float speed = 0.3f, float angle = 0.0f);
     void clearAllBalls();
+
+    // Ball-Aktionen
     void multiplyActiveBalls();
     void releaseGluedBalls();
+    void applyPowerup(int powerupType);
 
-    // Spawn neuer Bälle
-    void spawnBall(float posX, float posY, bool glued = false, float gluedX = 0.0f,
-                  float speed = 0.3f, float angle = 0.0f);
-
-    // Update und Render
+    // Update & Draw
     void update(float deltaTime, const Paddle& paddle);
     void draw(float deltaTime);
 
-    // Powerup-Anwendung auf alle aktiven Bälle
-    void applyPowerup(int powerupType);
-
-    // Kollisionsüberprüfung
-    int checkPaddleCollisions(const Paddle& paddle, EffectManager& effectManager);
-    void checkBrickCollisions(Brick& brick, EffectManager& effectManager);
-
-    // Getter
+    // Hilfsmethoden
     size_t getActiveBallCount() const;
     float getAverageBallSpeed() const;
 
-    // Speziell für Tests und Debugging
+    // Zugriff auf Bälle
     Ball* getBallAt(size_t index);
+    std::vector<Ball*> getBalls();
+
+    // Kollisions-Integration
+    std::vector<ICollideable*> getCollideables() const {
+        std::vector<ICollideable*> collideables;
+        collideables.reserve(balls.size());
+        for (const auto& ball : balls) {
+            collideables.push_back(const_cast<Ball*>(ball.get()));
+        }
+        return collideables;
+    }
 };

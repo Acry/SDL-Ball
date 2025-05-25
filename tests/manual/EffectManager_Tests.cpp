@@ -1,3 +1,4 @@
+// EffectManager_Tests.cpp
 #include <cstdlib>
 #include "Display.hpp"
 #include "EffectManager.h"
@@ -32,11 +33,12 @@ int main() {
     float mouseX = 0.0f, mouseY = 0.0f;
 
     std::vector<std::string> instructions = {
-        "1: Funkeneffekt erzeugen",
-        "2: Brickzerstoerungs-Effekt simulieren",
-        "3: PowerUp-Sammel-Effekt simulieren",
-        "4: Uebergangseffekt (Fading)",
-        "5: Partikelfeld-Effekt",
+        "1: Sparks",
+        "2: Destroy bricks",
+        "3: PowerUp",
+        "4: Fading",
+        "5: Partikel field",
+        "6: Ball Tracer",
         "ESC: Beenden"
     };
 
@@ -129,7 +131,45 @@ int main() {
                         effectManager.set(FX_VAR_RECTANGLE, rectSize); // Bereits deklarierte Variable verwenden
                         effectManager.spawn(mousePos);
                         break;
+                    case SDLK_6: // Tracer-Test
+                        SDL_Log("Tracer-Effekt mit simuliertem Ball-Event");
+                    {
+                        // Simuliere Ball-Erstellung mit Event
+                        static bool tracerActive = false;
 
+                        if (!tracerActive) {
+                            // Pseudo-Ball-Objekt erstellen
+                            static void* ballObject = reinterpret_cast<void*>(12345); // Dummy-ID
+
+                            // Ball-Erstellungsereignis simulieren
+                            EventData ballData;
+                            ballData.sender = ballObject;
+                            ballData.posX = mouseX;
+                            ballData.posY = mouseY;
+                            ballData.points = 0; // 0 = normaler Tracer, 1 = explosiver Tracer
+
+                            // Event auslösen, um Tracer zu erstellen
+                            eventManager.emit(GameEvent::BallCreated, ballData);
+
+                            // Bewegungssimulation einschalten
+                            tracerActive = true;
+                            SDL_Log("Tracer aktiviert - bewege die Maus, um den Tracer zu steuern");
+                        } else {
+                            // Bei nochmaligem Drücken deaktivieren
+                            static void* ballObject = reinterpret_cast<void*>(12345); // Gleiche ID wie oben
+
+                            // Ball-Zerstörungsereignis simulieren
+                            EventData ballData;
+                            ballData.sender = ballObject;
+
+                            // Event auslösen, um Tracer zu entfernen
+                            eventManager.emit(GameEvent::BallDestroyed, ballData);
+
+                            tracerActive = false;
+                            SDL_Log("Tracer deaktiviert");
+                        }
+                    }
+                        break;
                     case SDLK_p: // Ball-Paddle-Kollisionseffekt über Event
                         SDL_Log("Ball-Paddle-Kollisionseffekt über Event an Position (%.2f, %.2f)", mouseX, mouseY);
                         eventManager.emit(GameEvent::BallHitPaddle, eventData);

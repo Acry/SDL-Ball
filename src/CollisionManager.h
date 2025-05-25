@@ -1,9 +1,7 @@
 // CollisionManager.h
 #pragma once
 
-#include "GameObject.h"
-#include "Ball.h"
-#include "Paddle.h"
+#include "ICollideable.h"
 
 struct CollisionPoint {
     float x;
@@ -12,16 +10,19 @@ struct CollisionPoint {
 
 class CollisionManager {
 public:
-    // Allgemeine Kollisionserkennung zwischen zwei GameObjects
-    static bool checkCollision(const GameObject& obj1, const GameObject& obj2);
+    // Einfache Kollisionserkennung zwischen zwei ICollideable-Objekten
+    static bool checkCollision(const ICollideable& obj1, const ICollideable& obj2);
 
-    // Spezialisierte Kollisionserkennung mit Details
-    static bool checkBallPaddleCollision(Ball& ball, const Paddle& paddle, CollisionPoint& collisionPoint);
+    // Spezialisierte Kollisionserkennung mit Kollisionspunkt
+    static bool checkCollision(const ICollideable& obj1, const ICollideable& obj2,
+                             float& hitX, float& hitY);
 
-    // Weitere spezialisierte Kollisionsmethoden...
-    static bool checkBallBrickCollision(Ball& ball, GameObject& brick, CollisionPoint& collisionPoint);
+    // Prüfe alle Kollisionen zwischen Objekten und leite Events weiter
+    static void processCollisions(const std::vector<ICollideable*>& objects);
 
-private:
-    // Hilfsfunktionen für Kollisionsberechnungen
-    static float calculateBounceAngle(float paddleWidth, float paddleX, float hitX);
+    static bool checkCollisionWithBorder(
+    const ICollideable& movingObject,
+    const ICollideable& border,
+    float& hitX,
+    float& hitY);
 };

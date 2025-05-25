@@ -156,14 +156,43 @@ $(BUILD_DIR)SpriteSheetAnimation_Tests.o: $(MANUAL_TEST_DIR)SpriteSheetAnimation
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
+# Border-Tests
+
+BORDER_TEST_SOURCES := $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp \
+                       $(MANUAL_TEST_DIR)MockEventManager.cpp \
+                       $(SOURCE_DIR)PlayfieldBorder.cpp \
+                       $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                       $(SOURCE_DIR)Display.cpp \
+                       $(SOURCE_DIR)TextureManager.cpp \
+                       $(SOURCE_DIR)TextManager.cpp \
+                       $(SOURCE_DIR)EventManager.cpp
+
+BORDER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BORDER_TEST_SOURCES:.cpp=.o)))
+
+border-test: $(BORDER_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(BORDER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)border-test
+
+$(BUILD_DIR)PlayfieldBorder_Tests.o: $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+$(BUILD_DIR)MockEventManager.o: $(MANUAL_TEST_DIR)MockEventManager.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
 # Paddle
 PADDLE_TEST_SOURCES := $(MANUAL_TEST_DIR)Paddle_Tests.cpp \
+                       $(MANUAL_TEST_DIR)MockEventManager.cpp \
                        $(SOURCE_DIR)Paddle.cpp \
                        $(SOURCE_DIR)GameObject.cpp \
+                       $(SOURCE_DIR)MovingObject.cpp \
                        $(SOURCE_DIR)GrowableObject.cpp \
                        $(SOURCE_DIR)Display.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                       $(SOURCE_DIR)TextureManager.cpp
+                       $(SOURCE_DIR)TextManager.cpp \
+                       $(SOURCE_DIR)TextureManager.cpp \
+                       $(SOURCE_DIR)CollisionManager.cpp \
+                       $(SOURCE_DIR)PlayfieldBorder.cpp \
+                       $(SOURCE_DIR)EventManager.cpp
 
 PADDLE_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(PADDLE_TEST_SOURCES:.cpp=.o)))
 
@@ -219,13 +248,15 @@ $(BUILD_DIR)SoundManager_Tests.o: $(MANUAL_TEST_DIR)SoundManager_Tests.cpp
 ###############################################################################
 # Ball
 BALL_TEST_SOURCES := $(MANUAL_TEST_DIR)Ball_Tests.cpp \
+                     $(MANUAL_TEST_DIR)MockEventManager.cpp \
                      $(SOURCE_DIR)Ball.cpp \
-                     $(SOURCE_DIR)Tracer.cpp \
                      $(SOURCE_DIR)Paddle.cpp \
                      $(SOURCE_DIR)GameObject.cpp \
+                     $(SOURCE_DIR)MovingObject.cpp \
                      $(SOURCE_DIR)GrowableObject.cpp \
                      $(SOURCE_DIR)Display.cpp \
                      $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                     $(SOURCE_DIR)TextManager.cpp \
                      $(SOURCE_DIR)TextureManager.cpp \
                      $(SOURCE_DIR)CollisionManager.cpp \
                      $(SOURCE_DIR)PlayfieldBorder.cpp \
@@ -257,6 +288,8 @@ EFFECT_TEST_SOURCES := $(MANUAL_TEST_DIR)EffectManager_Tests.cpp \
                        $(SOURCE_DIR)Display.cpp \
                        $(SOURCE_DIR)TextureManager.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                       $(SOURCE_DIR)MovingObject.cpp \
+                       $(SOURCE_DIR)Tracer.cpp \
                        $(SOURCE_DIR)TextManager.cpp \
 
 EFFECT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECT_TEST_SOURCES:.cpp=.o)))

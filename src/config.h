@@ -108,6 +108,8 @@
 #define BRICK_WIDTH 0.0719f
 #define BRICK_HEIGHT 0.0575f
 
+// Breite der Säulen (Pfeiler) am Spielfeldrand
+
 #define PILLAR_WIDTH 0.038f
 // Von -1 bis +1 in NDC, direkt Stein an Stein
 // glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
@@ -120,3 +122,4 @@
 #define PLAYFIELD_WIDTH (2.0f - (PILLAR_WIDTH * 2.0f))
 #define PLAYFIELD_LEFT_BORDER (-1.0f + PILLAR_WIDTH)
 #define PLAYFIELD_RIGHT_BORDER (1.0f - PILLAR_WIDTH)
+#define PLAYFIELD_TOP_BORDER (1.0f)

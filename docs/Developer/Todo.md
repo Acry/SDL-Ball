@@ -9,6 +9,7 @@ there are a lot of things to do.
 - [ ] BallManager
 - [ ] BrickManager
 - [ ] PowerupManager
+- [X] ICollideable
 
 ## Refactoring
 
@@ -179,15 +180,22 @@ ___
 - [ ] save game should save the state of the game, not just the level
 - [ ] Fade in Paddle
 - [ ] Fade in Ball
+- [ ] Animate Paddle texture
+- [ ] Animate Glue layer
+- [ ] [SpriteSheetAnimation](misc/SpriteSheetAnimation.md) einmaliges Abspielen implementieren
 
 #### Tracer
 
+- [ ] Tracer, to EffectManager
 - [ ] tracer shows red color and shows up when glued to the paddle, should reset in new level
 - [ ] is tracer speed dependent on the speed of the ball?
 - [ ] Tracer, if Ball explosive, make Tracer more orange and dont use Colors of bricks bounced to.
-- [ ] Tracer refactoring (effectManager/eventManager/inheritance/particleSystem/consitent naming, from LevelTheme to instance)
+- [ ] Tracer refactoring (effectManager/eventManager/inheritance/particleSystem/consistent naming, from LevelTheme to
+  instance)
   Named: Tail, Tracer, BallEffect, BallTracer, BallTail ...
   public: tracer tail; - andersrum wäre richtig gewesen. Tracer ist eine Form des Ball-Tails
+- [ ] Tracer, inherit from growable
+- [X] Tracer, inherit from MovingObject
 
 ### Auxiliary
 

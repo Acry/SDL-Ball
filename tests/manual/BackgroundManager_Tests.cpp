@@ -9,7 +9,6 @@ int globalTicksSinceLastDraw = 0;
 int main() {
     Display display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
-        // Fehlerbehandlung falls Initialisierung fehlschlägt
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
@@ -34,7 +33,6 @@ int main() {
                     display.resize(event.window.data1, event.window.data2);
                 }
             }
-            // Screenshot-Funktion bei Tastendruck "S"
             if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_s) {
                     // Screenshot erstellen und im Ordner "screenshots" speichern

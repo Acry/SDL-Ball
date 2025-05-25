@@ -1,22 +1,22 @@
 #pragma once
 #include <epoxy/gl.h>
+#include <vector>
 
 #include "EventManager.h"
 #include "MovingObject.h"
-#include "Tracer.h"
 #include "GrowableObject.h"
+#include "ICollideable.h"
 
-class Ball final: public MovingObject, public GrowableObject {
+class Ball final : public MovingObject, public GrowableObject, public ICollideable {
     GLfloat rad;
-    bool eyeCandy;
-
     EventManager *eventManager;
+
+    mutable std::vector<float> collisionPoints;
 
 protected:
     void onSizeChanged() override;
 
 public:
-    Tracer tracer;
     bool explosive{false};
     bool glued{false};
     GLfloat gluedX{0.0f};
@@ -27,6 +27,8 @@ public:
     void launchFromPaddle();
 
     explicit Ball(EventManager *eventMgr);
+
+    ~Ball() override;
 
     void init() override;
 
@@ -42,7 +44,7 @@ public:
 
     void draw(float deltaTime) override;
 
-    GLfloat getRad();
+    GLfloat getAngle();
 
     void setAngle(GLfloat o);
 
@@ -50,6 +52,14 @@ public:
 
     void setSize(GLfloat s);
 
-    // im moment nur für den Tracer
-    void setEyeCandy(bool value) { eyeCandy = value; }
+    // ICollideable Interface
+    float getPosX() const override { return pos_x; }
+    float getPosY() const override { return pos_y; }
+    bool isActive() const override { return GameObject::isActive(); }
+
+    const std::vector<float> *getCollisionPoints() const override;
+
+    void onCollision(ICollideable *other, float hitX, float hitY) override;
+
+    int getCollisionType() const override;
 };

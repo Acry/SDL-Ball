@@ -4,6 +4,8 @@
 #include "SpriteSheetAnimation.h"
 #include "MathHelper.h"
 #include "EventManager.h"
+#include "TextureManager.h"
+#include "Tracer.h"
 
 #define RAD 6.28318530718 // 2*PI
 
@@ -12,6 +14,7 @@
 #define FX_FIRE 1
 #define FX_TRANSIT 2
 #define FX_PARTICLEFIELD 3
+#define FX_TRACER 4
 
 // Effekteigenschaften
 #define FX_VAR_TYPE 1
@@ -101,13 +104,16 @@ public:
 };
 
 class EffectManager {
+    std::list<effect_class> effects;
     effect_vars vars;
     int effectId;
     EventManager* eventManager;
 
-public:
-    std::list<effect_class> effects;
+    // Verwaltung der Tracer-Effekte
+    std::unordered_map<int, Tracer*> tracers;
+    SpriteSheetAnimation tracerTexture;
 
+public:
     EffectManager(EventManager* eventMgr);
     ~EffectManager();
 
@@ -122,15 +128,27 @@ public:
     int spawn(position p);
     void draw(const float deltaTime);
 
-    // Event-Handler für verschiedene Spielereignisse
-    void handleBallPaddleCollision(const EventData& data);
-    void handleBallBrickCollision(const EventData& data);
-    void handleBrickDestroyed(const EventData& data);
-    void handlePowerUpCollected(const EventData& data);
-
     int isActive(int id) const;
     void kill(int id);
 
+    // Tracer-Verwaltungsmethoden
+    int createTracer(float width, float height, bool explosive = false);
+    void updateTracer(int tracerId, float x, float y);
+    void setTracerColor(int tracerId, bool explosive, const GLfloat c[]);
+    void setTracerSize(int tracerId, float width, float height);
+    void removeTracer(int tracerId);
+
+    // Neue Event-Handler für Ball-Tracking
+    void handleObjectTracerCreate(const EventData &data);
+    void handleObjectTracerUpdate(const EventData &data);
+    void handleObjectTracerRemove(const EventData &data);
+
 private:
     void registerEventListeners();
+    // Map für Ball-zu-Tracer Zuordnungen
+    std::unordered_map<int, int> objectTracers;
+    void handleBallPaddleCollision(const EventData& data);
+    void handleBrickDestroyed(const EventData& data);
+    void handlePowerUpCollected(const EventData& data);
+    void handleBallBrickCollision(const EventData& data);
 };

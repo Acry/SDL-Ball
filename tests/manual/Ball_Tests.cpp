@@ -1,29 +1,14 @@
 #include <cstdlib>
+
+#include "Ball.h"
 #include "Paddle.h"
 #include "TextureManager.h"
 #include "Display.hpp"
 #include "CollisionManager.h"
 #include "difficulty_settings.h"
 #include "PlayfieldBorder.h"
-
-class MockEventManager : public EventManager {
-public:
-    int eventCount = 0;  // Zählt ausgelöste Events
-
-    void emit(GameEvent event, const EventData &data) override{
-        eventCount++;
-        const char *eventNames[] = {"BallHitBorder", "BallLost", "BallHitPaddle", "BrickDestroyed",
-                                   "PowerUpCollected", "LevelCompleted", "GameOver"};
-
-        SDL_Log("Event ausgelöst: %s (#%d) an Position (%.2f, %.2f)",
-                eventNames[static_cast<int>(event)], eventCount,
-                data.posX, data.posY);
-
-        if (data.soundID >= 0) {
-            SDL_Log("Sound-ID: %d", data.soundID);
-        }
-    }
-};
+#include "MockEventManager.h"
+#include "TextManager.h"
 
 GLfloat normalizedMouseX, normalizedMouseY;
 
@@ -33,13 +18,15 @@ int main() {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
-
+    TextManager textManager;
+    if (!textManager.setFontTheme("../themes/default/font/fonts.txt")) {
+        SDL_Log("Fehler beim Laden des Font-Themes");
+    }
     MockEventManager eventManager;
-    Ball ball(&eventManager);
-
     const TextureManager textureManager;
     SpriteSheetAnimation tex;
 
+    Ball ball(&eventManager);
     const std::filesystem::path ballTexPath = "../themes/default/gfx/ball/normal.png";
     const std::filesystem::path ballPropsPath = "../themes/default/gfx/ball/normal.txt";
 
@@ -58,20 +45,7 @@ int main() {
         textureManager.readTexProps(firePropsPath, ball.fireTex);
     }
 
-    // Ball-Textur für den Tracer laden
-    const std::filesystem::path tracerTexPath = "../themes/default/gfx/ball/tail.png";
-    const std::filesystem::path tracerPropsPath = "../themes/default/gfx/ball/tail.txt";
-
-    if (!textureManager.load(tracerTexPath, ball.tracer.tex)) {
-        SDL_Log("Fehler beim Laden der Tracer-Textur");
-    } else {
-        textureManager.readTexProps(tracerPropsPath, ball.tracer.tex);
-    }
-
-    // Paddle erstellen und initialisieren
-    Paddle paddle;
-
-    // Basis-Textur für das Paddle laden
+    Paddle paddle(&eventManager);
     const std::filesystem::path texturePath = "../themes/default/gfx/paddle/base.png";
     const std::filesystem::path propsPath = "../themes/default/gfx/paddle/base.txt";
 
@@ -92,8 +66,22 @@ int main() {
     textureManager.readTexProps(borderPropsPath, texBorder);
 
     // PlayfieldBorder-Objekte erzeugen
-    PlayfieldBorder leftPillar(PlayfieldBorder::Side::Left, texBorder);
-    PlayfieldBorder rightPillar(PlayfieldBorder::Side::Right, texBorder);
+    PlayfieldBorder leftBorder(PlayfieldBorder::Side::Left, texBorder, &eventManager);
+    PlayfieldBorder rightBorder(PlayfieldBorder::Side::Right, texBorder, &eventManager);
+    PlayfieldBorder topBorder(PlayfieldBorder::Side::Top, texBorder, &eventManager);
+
+    std::vector<std::string> instructions = {
+        "1: Ball speed EASY",
+        "2: Ball speed NORMAL",
+        "3: Ball speed HARD",
+        "e: Explosive ball",
+        "r: Reset ball",
+        "g: Ball grow",
+        "s: Ball shrink",
+        "m: max ball speed",
+        "p: Log ball speed",
+        "ESC: Quit"
+    };
 
     SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
     SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -136,20 +124,23 @@ int main() {
                     case SDLK_RIGHT:
                         paddle.moveTo(paddle.pos_x + moveStep, deltaTime);
                         break;
-                        // Für Taste 1: EASY-Einstellungen
+                    // Für Taste 1: EASY-Einstellungen
                     case SDLK_1:
                         ball.setSpeed(DifficultySettings::BallSpeed::EASY, DifficultySettings::MaxBallSpeed::EASY);
-                        SDL_Log("Ballgeschwindigkeit: EASY (%.2f/%.2f)", ball.velocity, DifficultySettings::MaxBallSpeed::EASY);
+                        SDL_Log("Ballgeschwindigkeit: EASY (%.2f/%.2f)", ball.velocity,
+                                DifficultySettings::MaxBallSpeed::EASY);
                         break;
-                        // Für Taste 2: NORMAL-Einstellungen
+                    // Für Taste 2: NORMAL-Einstellungen
                     case SDLK_2:
                         ball.setSpeed(DifficultySettings::BallSpeed::NORMAL, DifficultySettings::MaxBallSpeed::NORMAL);
-                        SDL_Log("Ballgeschwindigkeit: NORMAL (%.2f/%.2f)", ball.velocity, DifficultySettings::MaxBallSpeed::NORMAL);
+                        SDL_Log("Ballgeschwindigkeit: NORMAL (%.2f/%.2f)", ball.velocity,
+                                DifficultySettings::MaxBallSpeed::NORMAL);
                         break;
-                        // Für Taste 3: HARD-Einstellungen
+                    // Für Taste 3: HARD-Einstellungen
                     case SDLK_3:
                         ball.setSpeed(DifficultySettings::BallSpeed::HARD, DifficultySettings::MaxBallSpeed::HARD);
-                        SDL_Log("Ballgeschwindigkeit: HARD (%.2f/%.2f)", ball.velocity, DifficultySettings::MaxBallSpeed::HARD);
+                        SDL_Log("Ballgeschwindigkeit: HARD (%.2f/%.2f)", ball.velocity,
+                                DifficultySettings::MaxBallSpeed::HARD);
                         break;
                     case SDLK_e:
                         ball.explosive = !ball.explosive;
@@ -162,7 +153,8 @@ int main() {
                         break;
                     case SDLK_m: // Maximalgeschwindigkeit testen
                         // Sehr hohen Wert setzen, der die Maximalgeschwindigkeit überschreiten sollte
-                        ball.setSpeed(DifficultySettings::MaxBallSpeed::HARD, DifficultySettings::MaxBallSpeed::HARD); // Dieser Wert sollte auf die maximale Geschwindigkeit begrenzt werden
+                        ball.setSpeed(DifficultySettings::MaxBallSpeed::HARD, DifficultySettings::MaxBallSpeed::HARD);
+                        // Dieser Wert sollte auf die maximale Geschwindigkeit begrenzt werden
                         SDL_Log("Ballgeschwindigkeit auf Maximum gesetzt: %.2f", ball.velocity);
                         break;
                     case SDLK_p: // Aktuelle Geschwindigkeit ausgeben
@@ -195,9 +187,12 @@ int main() {
             ball.pos_x = paddle.pos_x + ball.gluedX;
             ball.pos_y = paddle.pos_y + paddle.height + ball.height;
         }
-        CollisionPoint cp;
-        if (ball.active && !ball.glued && CollisionManager::checkBallPaddleCollision(ball, paddle, cp)) {
-            // Abprallwinkel wird bereits in checkBallPaddleCollision gesetzt
+
+        // Neue Implementierung:
+        float hitX = 0.0f, hitY = 0.0f;
+        if (ball.active && !ball.glued && CollisionManager::checkCollision(ball, paddle, hitX, hitY)) {
+            // Die onCollision-Methoden von Ball und Paddle werden durch EventManager aufgerufen
+            // für manuelle Reaktion hier:
 
             // Wenn Paddle Klebeschicht hat, Ball festkleben
             if (paddle.hasGlueLayer) {
@@ -209,12 +204,18 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Spielfeldränder zeichnen
-        leftPillar.draw(deltaTime);
-        rightPillar.draw(deltaTime);
+        leftBorder.draw(deltaTime);
+        rightBorder.draw(deltaTime);
+        topBorder.draw(deltaTime); // should not be visible
 
         paddle.draw(deltaTime);
         if (ball.active) {
             ball.draw(deltaTime);
+        }
+        float yPos = 0.9f;
+        for (const auto &instruction: instructions) {
+            textManager.write(instruction, FONT_MENU, true, 0.75f, -0.0f, yPos);
+            yPos -= 0.07f;
         }
         SDL_GL_SwapWindow(display.sdlWindow);
         SDL_Delay(16); // ~60fps

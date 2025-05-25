@@ -4,8 +4,15 @@
 #include <epoxy/gl.h>
 #include "SpriteSheetAnimation.h"
 
+class EventManager;  // Vorwärtsdeklaration
+
 class GameObject {
+protected:
+    EventManager* eventManager{nullptr};  // Zugriff für abgeleitete Klassen
+
 public:
+    explicit GameObject(EventManager* eventMgr = nullptr) : eventManager(eventMgr) {}
+
     // Basisattribute für alle Spielobjekte
     GLfloat opacity{1.0f};
     GLfloat pos_x{0.0f}, pos_y{0.0f};
@@ -21,9 +28,7 @@ public:
     virtual void update(float deltaTime) = 0;
     virtual void draw(float deltaTime = 0.0f) = 0;
 
-    virtual bool isCollidingWith(const GameObject& other) const;
-
     // Hilfsfunktionen
-    bool isActive() const { return active; }
+    virtual bool isActive() const { return active; }
     bool isVisible() const { return opacity > 0.0f; }
 };

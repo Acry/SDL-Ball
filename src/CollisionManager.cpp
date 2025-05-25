@@ -1,77 +1,97 @@
 // CollisionManager.cpp
+#include <cmath>
 #include "CollisionManager.h"
-#include "config.h"
 
-bool CollisionManager::checkCollision(const GameObject& obj1, const GameObject& obj2) {
-    // Implementierung der AABB-Kollisionserkennung (Axis-Aligned Bounding Box)
-    return (obj1.pos_x - obj1.width < obj2.pos_x + obj2.width &&
-            obj1.pos_x + obj1.width > obj2.pos_x - obj2.width &&
-            obj1.pos_y - obj1.height < obj2.pos_y + obj2.height &&
-            obj1.pos_y + obj1.height > obj2.pos_y - obj2.height);
+bool CollisionManager::checkCollision(const ICollideable& obj1, const ICollideable& obj2) {
+    // Einfache AABB-Kollisionserkennung für rechteckige Objekte
+    return (obj1.getPosX() - obj1.getWidth() < obj2.getPosX() + obj2.getWidth() &&
+            obj1.getPosX() + obj1.getWidth() > obj2.getPosX() - obj2.getWidth() &&
+            obj1.getPosY() - obj1.getHeight() < obj2.getPosY() + obj2.getHeight() &&
+            obj1.getPosY() + obj1.getHeight() > obj2.getPosY() - obj2.getHeight());
 }
 
-bool CollisionManager::checkBallPaddleCollision(Ball& ball, const Paddle& paddle, CollisionPoint& collisionPoint) {
-    // Vereinfachte Prüfung, ob Ball in der Nähe des Paddles ist
-    if (ball.pos_y < (paddle.pos_y + paddle.height) + ball.height &&
-        ball.pos_y > paddle.pos_y - paddle.height) {
-        if (ball.pos_x > paddle.pos_x - (paddle.width * 2.0) - ball.width &&
-            ball.pos_x < paddle.pos_x + (paddle.width * 2.0) + ball.width) {
+bool CollisionManager::checkCollision(const ICollideable& obj1, const ICollideable& obj2,
+                                    float& hitX, float& hitY) {
+    // Prüfe zuerst die einfache AABB-Kollision
+    if (!checkCollision(obj1, obj2)) {
+        return false;
+    }
 
-            // Detaillierte Kollisionsprüfung mit den Ball-Punkten
-            float px = 0, py = 0;
-            bool collision = false;
-            int points = 0;
+    // Bei erfolgreicher Kollision, setze Kollisionspunkt als Mittelpunkt der Überlappung
+    float overlapLeft = obj1.getPosX() + obj1.getWidth() - (obj2.getPosX() - obj2.getWidth());
+    float overlapRight = obj2.getPosX() + obj2.getWidth() - (obj1.getPosX() - obj1.getWidth());
+    float overlapTop = obj1.getPosY() + obj1.getHeight() - (obj2.getPosY() - obj2.getHeight());
+    float overlapBottom = obj2.getPosY() + obj2.getHeight() - (obj1.getPosY() - obj1.getHeight());
 
-            for (int i = 0; i < 32; i++) {
-                float x = ball.bsin[i];
-                float y = ball.bcos[i];
+    // Finde die kleinste Überlappung (die wahrscheinlichste Kollisionsseite)
+    float minOverlapX = std::min(overlapLeft, overlapRight);
+    float minOverlapY = std::min(overlapTop, overlapBottom);
 
-                // Prüfe, ob Punkt im Paddle ist
-                if (ball.pos_x + x > paddle.pos_x - paddle.width &&
-                    ball.pos_x + x < paddle.pos_x + paddle.width) {
-                    if (ball.pos_y + y < paddle.pos_y + paddle.height &&
-                        ball.pos_y + y > paddle.pos_y - paddle.height) {
-                        collision = true;
-                        px += x;
-                        py += y;
-                        points++;
-                    }
-                }
-            }
-
-            if (collision && ball.yvel < 0) {
-                // Kollisionspunkt berechnen
-                px /= static_cast<float>(points);
-                py /= static_cast<float>(points);
-
-                collisionPoint.x = ball.pos_x + px;
-                collisionPoint.y = ball.pos_y + py;
-
-                // Ball-Position korrigieren
-                ball.pos_y = paddle.pos_y + paddle.height + ball.height;
-
-                // Abprallwinkel berechnen
-                float angle = calculateBounceAngle(paddle.width, paddle.pos_x, ball.pos_x);
-                ball.setAngle(angle);
-
-                return true;
-            }
+    if (minOverlapX < minOverlapY) {
+        // X-Achsen-Kollision
+        hitY = obj1.getPosY();
+        if (obj1.getPosX() < obj2.getPosX()) {
+            hitX = obj1.getPosX() + obj1.getWidth();
+        } else {
+            hitX = obj1.getPosX() - obj1.getWidth();
+        }
+    } else {
+        // Y-Achsen-Kollision
+        hitX = obj1.getPosX();
+        if (obj1.getPosY() < obj2.getPosY()) {
+            hitY = obj1.getPosY() + obj1.getHeight();
+        } else {
+            hitY = obj1.getPosY() - obj1.getHeight();
         }
     }
 
-    return false;
+    return true;
 }
 
-float CollisionManager::calculateBounceAngle(float paddleWidth, float paddleX, float hitX) {
-    // Berechne relativen Auftreffpunkt (-1 bis +1)
-    float relativeX = (hitX - paddleX) / paddleWidth;
+void CollisionManager::processCollisions(const std::vector<ICollideable*>& objects) {
+    // Alle Objekte miteinander auf Kollisionen prüfen
+    const size_t objectCount = objects.size();
 
-    // Begrenze den Wert
-    if (relativeX > 1.0f) relativeX = 1.0f;
-    if (relativeX < -1.0f) relativeX = -1.0f;
+    for (size_t i = 0; i < objectCount; ++i) {
+        auto* obj1 = objects[i];
+        if (!obj1->isActive()) continue;
 
-    // Korrigierte Formel für den Winkel:
-    // Links trifft (-1) -> links abprallen (MIN_BOUNCE_ANGLE + BOUNCE_ANGLE_RANGE)
-    // Rechts trifft (+1) -> rechts abprallen (MIN_BOUNCE_ANGLE)
-    return MIN_BOUNCE_ANGLE + (BOUNCE_ANGLE_RANGE * (1.0f - (relativeX + 1.0f) / 2.0f));
+        for (size_t j = i + 1; j < objectCount; ++j) {
+            auto* obj2 = objects[j];
+            if (!obj2->isActive()) continue;
+
+            float hitY = 0.0f;
+            if (float hitX = 0.0f; checkCollision(*obj1, *obj2, hitX, hitY)) {
+                // Kollision erkannt, benachrichtige beide Objekte
+                obj1->onCollision(obj2, hitX, hitY);
+                obj2->onCollision(obj1, hitX, hitY);
+            }
+        }
+    }
+}
+
+bool CollisionManager::checkCollisionWithBorder(
+    const ICollideable& movingObject,
+    const ICollideable& border,
+    float& hitX,
+    float& hitY) {
+
+    // Nutze die vorhandene Kollisionsprüfung
+    if (!movingObject.isActive() || !border.isActive() ||
+        !checkCollision(movingObject, border))
+        return false;
+
+    // Kollisionspunkt je nach Randtyp berechnen
+    int borderType = border.getCollisionType();
+    if (borderType == static_cast<int>(CollisionType::BorderLeft)) {
+        hitX = border.getPosX() + border.getWidth();
+        hitY = movingObject.getPosY();
+    } else if (borderType == static_cast<int>(CollisionType::BorderRight)) {
+        hitX = border.getPosX() - border.getWidth();
+        hitY = movingObject.getPosY();
+    } else if (borderType == static_cast<int>(CollisionType::BorderTop)) {
+        hitX = movingObject.getPosX();
+        hitY = border.getPosY() - border.getHeight();
+    }
+    return true;
 }

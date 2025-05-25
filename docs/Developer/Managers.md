@@ -1,13 +1,21 @@
 # ManagerClasses
 
-Grundsätzlich haben wir 3 Typen von Settings:
+Grundsätzlich haben wir 3 Typen von Einstellungen:
 - default aus config.h - compileTime settings
 - loaded - gespeicherte Settings des Spielers
 - current - und die runtime settings
 
+CollisionManager: Prüft nur, ob Kollisionen stattfinden
+PowerupManager: Verwaltet Powerups (Spawning, Update, Rendering)
+EffectManager: Kümmert sich um visuelle Effekte
+EventManager: Verteilt Events im System
+GameManager: Steuert die Spiellogik
+ConfigFileManager: verwaltet die Konfigurationsdateien
+SettingsManager: verwaltet die Einstellungen
+
 ## Init Managers
 
-An dieser Stelle bin ich mir noch nicht ob ich einen InitManager brauche oder möchte.
+An dieser Stelle bin ich mir noch nicht sicher, ob ich einen InitManager brauche oder möchte.
 
 ```text
 SettingsManager → ThemeManager → TextureManager → GameManager
@@ -24,7 +32,7 @@ Dann würde der GameManager den GameLoop starten.
 **Singletons provide a global access mechanism to an object.**
 **Singletons are a global variable dressed up in some awkward syntax.**
 
-Von Singletons bin ich gearde nicht mehr überzeugt.
+Von Singletons bin ich nicht mehr überzeugt.
 
 ## Manager Types
 

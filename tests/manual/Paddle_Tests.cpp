@@ -1,23 +1,28 @@
+// Paddle_Tests.cpp
 #include <cstdlib>
+
 #include "Paddle.h"
 #include "TextureManager.h"
 #include "Display.hpp"
+#include "PlayfieldBorder.h"
+#include "MockEventManager.h"
+#include "TextManager.h"
 
 GLfloat normalizedMouseX, normalizedMouseY;
 
 int main() {
-    // Display initialisieren
     Display display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
-
-    // TextureManager erstellen
+    TextManager textManager;
+    if (!textManager.setFontTheme("../themes/default/font/fonts.txt")) {
+        SDL_Log("Fehler beim Laden des Font-Themes");
+    }
+    MockEventManager eventManager;
+    Paddle paddle(&eventManager);
     const TextureManager textureManager;
-
-    // Paddle erstellen und initialisieren
-    Paddle paddle;
 
     // Basis-Textur für das Paddle laden
     const std::filesystem::path texturePath = "../themes/default/gfx/paddle/base.png";
@@ -49,6 +54,32 @@ int main() {
     } else {
         textureManager.readTexProps(gunPropsPath, paddle.layerTex[1]);
     }
+
+    // PlayfieldBorder-Textur laden
+    SpriteSheetAnimation texBorder;
+    const std::filesystem::path borderTexPath = "../themes/default/gfx/border.png";
+    const std::filesystem::path borderPropsPath = "../themes/default/gfx/border.txt";
+    if (!textureManager.load(borderTexPath, texBorder)) {
+        SDL_Log("Fehler beim Laden der Border-Textur: %s", borderTexPath.c_str());
+        return EXIT_FAILURE;
+    }
+    textureManager.readTexProps(borderPropsPath, texBorder);
+
+    // PlayfieldBorder-Objekte erzeugen
+    PlayfieldBorder leftBorder(PlayfieldBorder::Side::Left, texBorder, &eventManager);
+    PlayfieldBorder rightBorder(PlayfieldBorder::Side::Right, texBorder, &eventManager);
+
+    std::vector<std::string> instructions = {
+        "1: Set Paddle Glue Layer",
+        "2: Set Paddle Gun Layer",
+        "g: Paddle grow",
+        "s: Paddle shrink",
+        "<-: Padle move left",
+        "->: Paddle move right",
+        "Mouse: Move Paddle",
+        "ESC: Quit"
+    };
+
     SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
     SDL_SetRelativeMouseMode(SDL_TRUE);
     Uint32 lastTime = SDL_GetTicks();
@@ -110,11 +141,32 @@ int main() {
             }
         }
         paddle.update(deltaTime);
-
+        // In die update-Schleife von Paddle_Tests.cpp nach paddle.update(deltaTime) einfügen:
+        // Prüfe, ob das Paddle die linke oder rechte Grenze berührt hat
+        if (paddle.pos_x - paddle.getWidth() <= leftBorder.getPosX() + leftBorder.getWidth()) {
+            // Linke Grenze berührt
+            float hitX = leftBorder.getPosX() + leftBorder.getWidth();
+            float hitY = paddle.getPosY();
+            leftBorder.onCollision(&paddle, hitX, hitY);
+        }
+        else if (paddle.pos_x + paddle.getWidth() >= rightBorder.getPosX() - rightBorder.getWidth()) {
+            // Rechte Grenze berührt
+            float hitX = rightBorder.getPosX() - rightBorder.getWidth();
+            float hitY = paddle.getPosY();
+            rightBorder.onCollision(&paddle, hitX, hitY);
+        }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        paddle.draw(deltaTime);
+        // Spielfeldränder zeichnen
+        leftBorder.draw(deltaTime);
+        rightBorder.draw(deltaTime);
 
+        paddle.draw(deltaTime);
+        float yPos = 0.9f;
+        for (const auto &instruction: instructions) {
+            textManager.write(instruction, FONT_MENU, true, 0.75f, -0.0f, yPos);
+            yPos -= 0.07f;
+        }
         SDL_GL_SwapWindow(display.sdlWindow);
         SDL_Delay(16); // ~60fps
     }

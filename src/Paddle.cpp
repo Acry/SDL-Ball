@@ -1,8 +1,9 @@
 #include "Paddle.h"
-#include "config.h"
 #include <epoxy/gl.h>
 
-Paddle::Paddle() {
+Paddle::Paddle(EventManager *eventMgr) : MovingObject() {
+    // eventManager direkt zuweisen entfällt, da es jetzt durch GameObject verwaltet wird
+    this->eventManager = eventMgr; // Zugriff auf das geschützte Mitglied der Basisklasse
     init();
 }
 
@@ -14,6 +15,7 @@ void Paddle::init() {
     aspectRatio = 0.2f;
     keepAspectRatio = true;
 
+    // xvel = 0.0f;?
     // GameObject-Eigenschaften (und GrowableObject)
     pos_y = -0.955f;
     pos_x = 0.0f;
@@ -26,7 +28,7 @@ void Paddle::init() {
     hasGunLayer = false;
 }
 
-void Paddle::drawBase() {
+void Paddle::drawBase() const {
     glLoadIdentity();
     glTranslatef(pos_x, pos_y, 0.0);
     glEnable(GL_BLEND);
@@ -63,13 +65,13 @@ void Paddle::drawGlueLayer() const {
               layerTex[0].textureProperties.glTexColorInfo[2],
               layerTex[0].textureProperties.glTexColorInfo[3]);
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f);
+    glTexCoord2f(layerTex[0].texturePosition[0], layerTex[0].texturePosition[1]);
     glVertex3f(-width, height, 0.0f);
-    glTexCoord2f(1.0f, 0.0f);
+    glTexCoord2f(layerTex[0].texturePosition[2], layerTex[0].texturePosition[3]);
     glVertex3f(width, height, 0.0f);
-    glTexCoord2f(1.0f, 0.99f);
+    glTexCoord2f(layerTex[0].texturePosition[4], layerTex[0].texturePosition[5]);
     glVertex3f(width, -height, 0.0f);
-    glTexCoord2f(0.0f, 0.99f);
+    glTexCoord2f(layerTex[0].texturePosition[6], layerTex[0].texturePosition[7]);
     glVertex3f(-width, -height, 0.0f);
     glEnd();
     glDisable(GL_TEXTURE_2D);
@@ -77,7 +79,6 @@ void Paddle::drawGlueLayer() const {
 }
 
 void Paddle::drawGunLayer() const {
-    layerTex[1].play();
     glLoadIdentity();
     glTranslatef(pos_x, pos_y, 0.0);
     glEnable(GL_BLEND);
@@ -102,9 +103,11 @@ void Paddle::drawGunLayer() const {
     glDisable(GL_BLEND);
 }
 
-void Paddle::draw(float deltaTime) {
+void Paddle::draw(const float deltaTime) {
     if (dead) return;
 
+    // ---FIXME
+    // Wenn keine Spritesheet-Animationen vorhanden, muss auch kein Playback durchgeführt werden
     // Animation mit deltaTime aktualisieren
     texture.play(deltaTime);
 
@@ -131,7 +134,12 @@ void Paddle::setGunLayer(const bool enabled) {
 
 void Paddle::update(const float deltaTime) {
     updateGrowth(deltaTime);
+    // Paddle bewegt sich nicht automatisch, sondern wird durch Benutzereingaben gesteuert
+    // Bei Paddle keine automatische Bewegung durch MovingObject
+    // daher kein MovingObject::update(deltaTime) aufrufen
 }
+
+// set Speed ?
 
 void Paddle::moveTo(const float targetX, const float deltaTime) {
     // Unterscheidung zwischen direkter Positionierung und geschwindigkeitsbasierter Bewegung
@@ -142,13 +150,11 @@ void Paddle::moveTo(const float targetX, const float deltaTime) {
         constexpr float mouseSpeed = 8.0f;
         pos_x += (targetX - pos_x) * mouseSpeed * deltaTime;
     } else {
-        // Tastatur/Controller: Konstante Geschwindigkeit
-        constexpr float keyboardSpeed = 20.0f;
         // Richtung bestimmen (links/rechts)
         const float direction = (targetX > pos_x) ? 1.0f : -1.0f;
         // Nur bewegen, wenn Differenz vorhanden
         if (targetX != pos_x) {
-            // Geschwindigkeitsbasierte Bewegung
+            constexpr float keyboardSpeed = 20.0f;
             pos_x += direction * keyboardSpeed * deltaTime;
 
             // Vermeide Überschießen
@@ -158,8 +164,64 @@ void Paddle::moveTo(const float targetX, const float deltaTime) {
             }
         }
     }
+}
 
-    // Begrenzung auf den Spielfeldrand
-    if (pos_x < PLAYFIELD_LEFT_BORDER + width) pos_x = PLAYFIELD_LEFT_BORDER + width;
-    if (pos_x > PLAYFIELD_RIGHT_BORDER - width) pos_x = PLAYFIELD_RIGHT_BORDER - width;
+void Paddle::onSizeChanged() {
+    // Aktualisiere Kollisionspunkte wenn die Größe sich ändert
+    // Einfache rechteckige Kollisionsform
+    collisionPoints.clear();
+    collisionPoints = {
+        pos_x - width, pos_y + height, // oben links
+        pos_x + width, pos_y + height, // oben rechts
+        pos_x + width, pos_y - height, // unten rechts
+        pos_x - width, pos_y - height // unten links
+    };
+}
+
+const std::vector<float> *Paddle::getCollisionPoints() const {
+    // Aktualisiere die Punkte mit aktuellen Positionen
+    if (collisionPoints.empty() || collisionPoints.size() < 8) {
+        collisionPoints.resize(8);
+    }
+
+    collisionPoints[0] = pos_x - width;
+    collisionPoints[1] = pos_y + height;
+    collisionPoints[2] = pos_x + width;
+    collisionPoints[3] = pos_y + height;
+    collisionPoints[4] = pos_x + width;
+    collisionPoints[5] = pos_y - height;
+    collisionPoints[6] = pos_x - width;
+    collisionPoints[7] = pos_y - height;
+
+    return &collisionPoints;
+}
+
+void Paddle::onCollision(ICollideable *other, float hitX, float hitY) {
+
+    switch (other->getCollisionType()) {
+        case 4: {
+            EventData data;
+            data.posX = hitX;
+            data.posY = hitY;
+            data.sender = this;
+            data.target = other;
+            eventManager->emit(GameEvent::BallHitPaddle, data);
+        }
+        break;
+
+        case 6: {
+            EventData data;
+            data.posX = hitX;
+            data.posY = hitY;
+            data.sender = this;
+            data.target = other;
+            eventManager->emit(GameEvent::PowerUpCollected, data);
+        }
+        break;
+        default: ;
+    }
+}
+
+int Paddle::getCollisionType() const {
+    return static_cast<int>(CollisionType::Paddle);
 }

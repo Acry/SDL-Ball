@@ -2,9 +2,6 @@
 #include "EffectManager.h"
 #include <SDL2/SDL_log.h>
 
-extern int globalTicksSinceLastDraw;
-extern float globalMilliTicksSinceLastDraw;
-
 // The 'sparkle' class represents a single particle used for spark and particle field effects.
 // Each sparkle has its own position, velocity, size, color, and lifetime.
 // It simulates simple physics (gravity, friction, bounce) and fades out over time.
@@ -85,7 +82,7 @@ void Fade::init() {
 void Fade::draw(const float deltaTime) {
     age += (int) (deltaTime * 1000.0f);
 
-    float progress = std::min(1.0f, (float)age / (float)vars.life);
+    float progress = std::min(1.0f, (float) age / (float) vars.life);
 
     if (progress < 0.5f) {
         opacity = progress * 2.0f; // 0->1 in erster Hälfte
@@ -277,24 +274,43 @@ EffectManager::EffectManager(EventManager *eventMgr) : eventManager(eventMgr) {
     effects.clear();
     effectId = 0;
 
-    // Event-Listener registrieren
     registerEventListeners();
 }
 
 EffectManager::~EffectManager() {
     effects.clear();
+
+    // Lösche alle Tracer
+    for (auto &pair: tracers) {
+        delete pair.second;
+    }
+    tracers.clear();
+    objectTracers.clear();
 }
 
 void EffectManager::registerEventListeners() {
+    // Ball-Bewegungsereignisse
+    eventManager->addListener(GameEvent::BallCreated,
+                              [this](const EventData &data) { handleObjectTracerCreate(data); }, this);
+
+    eventManager->addListener(GameEvent::BallMoved,
+                              [this](const EventData &data) { handleObjectTracerUpdate(data); }, this);
+
+    eventManager->addListener(GameEvent::BallDestroyed,
+                              [this](const EventData &data) { handleObjectTracerRemove(data); }, this);
+
     // Event-Handler für Kollisionen registrieren
     eventManager->addListener(GameEvent::BallHitPaddle,
-                              [this](const EventData &data) { this->handleBallPaddleCollision(data); });
+                              [this](const EventData &data) { handleBallPaddleCollision(data); }, this);
+
+    eventManager->addListener(GameEvent::BallHitBrick,
+                              [this](const EventData &data) { handleBallBrickCollision(data); }, this);
 
     eventManager->addListener(GameEvent::BrickDestroyed,
-                              [this](const EventData &data) { this->handleBrickDestroyed(data); });
+                              [this](const EventData &data) { handleBrickDestroyed(data); }, this);
 
     eventManager->addListener(GameEvent::PowerUpCollected,
-                              [this](const EventData &data) { this->handlePowerUpCollected(data); });
+                              [this](const EventData &data) { handlePowerUpCollected(data); }, this);
 }
 
 void EffectManager::set(int var, GLfloat val) {
@@ -389,6 +405,11 @@ void EffectManager::draw(const float deltaTime) {
             ++it;
         }
     }
+    for (auto &pair: tracers) {
+        Tracer *tracer = pair.second;
+        tracer->update(deltaTime); // Updates Position und erzeugt neue Partikel
+        tracer->draw(deltaTime); // Zeichnet alle aktiven Partikel
+    }
 }
 
 int EffectManager::isActive(const int id) const {
@@ -460,4 +481,81 @@ void EffectManager::handlePowerUpCollected(const EventData &data) {
 
     position p = {data.posX, data.posY};
     spawn(p);
+}
+
+
+int EffectManager::createTracer(float width, float height, bool explosive) {
+    int id = ++effectId;
+    auto *tracer = new Tracer();
+    tracer->setSize(width, height); // Statt direktem Zugriff die Methode verwenden
+    tracer->texture = tracerTexture;
+
+    // Standardfarben für normale/explosive Tracer setzen
+    GLfloat defaultColors[3] = {0.7f, 0.7f, 1.0f}; // Blau für normale Tracer
+    tracer->colorRotate(explosive, explosive ? nullptr : defaultColors);
+
+    tracers[id] = tracer;
+    return id;
+}
+
+void EffectManager::updateTracer(int tracerId, float x, float y) {
+    auto it = tracers.find(tracerId);
+    if (it != tracers.end()) {
+        it->second->updatePosition(x, y); // Die überarbeitete Methode verwenden
+    }
+}
+
+void EffectManager::setTracerColor(int tracerId, bool explosive, const GLfloat c[]) {
+    auto it = tracers.find(tracerId);
+    if (it != tracers.end()) {
+        it->second->colorRotate(explosive, c);
+    }
+}
+
+void EffectManager::setTracerSize(int tracerId, float width, float height) {
+    auto it = tracers.find(tracerId);
+    if (it != tracers.end()) {
+        it->second->setSize(width, height); // Die dedizierte Methode verwenden
+    }
+}
+
+void EffectManager::removeTracer(int tracerId) {
+    auto it = tracers.find(tracerId);
+    if (it != tracers.end()) {
+        delete it->second;
+        tracers.erase(it);
+    }
+}
+
+// Handler für die Erstellung eines Tracers für ein Objekt
+void EffectManager::handleObjectTracerCreate(const EventData &data) {
+    void *object = data.sender;
+    bool isExplosive = (data.points != 0);
+    int tracerId = createTracer(0.015f, 0.015f, isExplosive);
+    int objectId = reinterpret_cast<uintptr_t>(object);
+    objectTracers[objectId] = tracerId;
+    updateTracer(tracerId, data.posX, data.posY);
+}
+
+// Handler für die Aktualisierung eines Tracers
+void EffectManager::handleObjectTracerUpdate(const EventData &data) {
+    void *object = data.sender;
+    int objectId = reinterpret_cast<uintptr_t>(object);
+    auto it = objectTracers.find(objectId);
+
+    if (it != objectTracers.end()) {
+        updateTracer(it->second, data.posX, data.posY);
+    }
+}
+
+// Handler für das Entfernen eines Tracers
+void EffectManager::handleObjectTracerRemove(const EventData &data) {
+    void *object = data.sender;
+    int objectId = reinterpret_cast<uintptr_t>(object);
+    auto it = objectTracers.find(objectId);
+
+    if (it != objectTracers.end()) {
+        removeTracer(it->second);
+        objectTracers.erase(it);
+    }
 }

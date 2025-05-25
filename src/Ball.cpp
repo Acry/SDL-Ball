@@ -2,18 +2,16 @@
 
 #include "colors.h"
 #include "config.h"
-#include "Tracer.h"
-#include "SettingsManager.h"
 
 Ball::Ball(EventManager* eventMgr) : eventManager(eventMgr) {
  init();
 }
 
+// Eigentschaften sortieren, sollten wie beim Paddle aussehen
 void Ball::init() {
     // MovingObject-Eigenschaften mit sinnvollen Standardwerten
     width = 0.018f;
     height = 0.018f;
-    eyeCandy = true;  // Tracer-Effekte standardmäßig aktiviert
     active = true;    // Ball ist standardmäßig aktiv
 
     // Bewegungseigenschaften
@@ -22,6 +20,7 @@ void Ball::init() {
     yvel = 0.0f;
 
     // Ball-spezifische Eigenschaften
+    // Nur wahr für Bälle die nicht im Feld spawnen
     glued = true;     // Ball startet am Paddle festgeklebt
     pos_x = 0.0f;
     pos_y = 0.0f;
@@ -40,77 +39,34 @@ void Ball::init() {
     onSizeChanged();
 }
 
-void Ball::hit(GLfloat c[]) {
-    if (eyeCandy)
-        tracer.colorRotate(explosive, c);
-}
 
-void Ball::update(const float deltaTime) {
+void Ball::update(float deltaTime) {
+    // Wachstum/Schrumpfung aktualisieren
     updateGrowth(deltaTime);
 
-    // Ball Border Collision
-    if (pos_x < PLAYFIELD_LEFT_BORDER && xvel < 0.0) {
-        // Event auslösen statt direktem soundManager-Aufruf
-        EventData data;
-        data.posX = pos_x;
-        data.soundID = SND_BALL_HIT_BORDER;
-        eventManager->emit(GameEvent::BallHitBorder, data);
-
-        xvel *= -1;
-    } else if (pos_x + width > PLAYFIELD_RIGHT_BORDER && xvel > 0.0) {
-        // Event auslösen
-        EventData data;
-        data.posX = pos_x;
-        data.soundID = SND_BALL_HIT_BORDER;
-        eventManager->emit(GameEvent::BallHitBorder, data);
-
-        xvel *= -1;
-    } else if (pos_y + height > 1.0f && yvel > 0.0) {
-        // Event auslösen
-        EventData data;
-        data.posX = pos_x;
-        data.soundID = SND_BALL_HIT_BORDER;
-        eventManager->emit(GameEvent::BallHitBorder, data);
-
-        yvel *= -1;
-    } else if (pos_y - height < -1.0f) {
-        // Event für verlorenen Ball auslösen
-        EventData data;
-        data.posX = pos_x;
-        data.posY = pos_y;
-        eventManager->emit(GameEvent::BallLost, data);
-
-        active = false;
-    }
-
-    pos_x += xvel * deltaTime;
+    // Event auslösen, dass der Ball sich bewegt hat
+    EventData data;
+    data.posX = pos_x;
+    data.posY = pos_y;
+    data.sender = this;
+    data.points = explosive ? 1 : 0;  // Optional: explosive-Status übertragen
+    eventManager->emit(GameEvent::BallMoved, data);
 
     if (!glued) {
-        pos_y += yvel * deltaTime;
-    }
-
-    if (eyeCandy && (xvel != 0.0f || yvel != 0.0f)) {
-        // Normalisiere den Bewegungsvektor
-        float length = sqrt(xvel * xvel + yvel * yvel);
-        float nx = xvel / length;
-        float ny = yvel / length;
-
-        // Kleinerer Abstand für besseren visuellen Effekt
-        float offset = width * 0.3f;
-
-        // Position am Rand des Balls plus kleiner Offset
-        float tracerX = pos_x - nx * (width + offset);
-        float tracerY = pos_y - ny * (height + offset);
-
-        tracer.update(tracerX, tracerY);
+        // Basisklassen-Update für Bewegung aufrufen
+        MovingObject::update(deltaTime);
+    } else {
+        // Wenn am Paddle geklebt, nur horizontal bewegen
+        pos_x += xvel * deltaTime;
     }
 }
 
+// ---FIXME: Ball und Paddle sollten sehr ähnlich sein
+// drawFireBall
+// drawNormalBall / DrawBase ?
 void Ball::draw(const float deltaTime) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    if (eyeCandy)
-        tracer.draw(deltaTime);
     // Funktionalität für Zielhilfe sollte in eine separate Klasse/Manager ausgelagert werden
 
     glLoadIdentity();
@@ -135,7 +91,7 @@ void Ball::draw(const float deltaTime) {
         glEnd();
         glDisable(GL_TEXTURE_2D);
     } else { // Normaler Ball hat momentan keine Animation
-        texture.play(deltaTime);
+        texture.play(deltaTime); // ---FIXME
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
         glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1],
@@ -178,7 +134,7 @@ void Ball::draw(const float deltaTime) {
     glDisable(GL_BLEND);
 }
 
-GLfloat Ball::getRad() {
+GLfloat Ball::getAngle() {
     rad = atan2(yvel, xvel);
     return (rad);
 }
@@ -197,14 +153,14 @@ void Ball::setAngle(GLfloat o) {
     yvel = velocity * sin(rad);
 }
 
-void Ball::setSpeed(GLfloat v, GLfloat maxSpeed) {
+void Ball::setSpeed(const GLfloat v, const GLfloat maxSpeed) {
     if (v > maxSpeed) {
         velocity = maxSpeed;
     } else {
         velocity = v;
     }
 
-    getRad();
+    getAngle();
     xvel = velocity * cos(rad);
     yvel = velocity * sin(rad);
 }
@@ -218,19 +174,12 @@ void Ball::setSize(GLfloat s) {
 }
 
 void Ball::onSizeChanged() {
-    // Diese Methode wird aufgerufen, wenn die Größe geändert wurde
-    // Aktualisiere die Tracer-Größe
-    tracer.width = width;
-    tracer.height = height;
-
     // Aktualisiere die Punkte für den Ball (bsin und bcos Arrays)
     constexpr int POINTS = 32;
-    constexpr float TWO_PI = 6.28318531f;  // Verwende die RAD-Konstante
-
-    // Verwende einen Integer-Index für die Schleife
     for (int i = 0; i < POINTS; ++i) {
+        constexpr float TWO_PI = 6.28318531f;
         // Berechne den Winkel basierend auf dem Index
-        float rad = static_cast<float>(i) * TWO_PI / POINTS;
+        const float rad = static_cast<float>(i) * TWO_PI / POINTS;
         bsin[i] = sin(rad) * width;
         bcos[i] = cos(rad) * width;
     }
@@ -239,4 +188,58 @@ void Ball::onSizeChanged() {
 void Ball::launchFromPaddle() {
     glued = false;
     setAngle(RAD / 4);  // Standard-Winkel von 45°
+}
+
+const std::vector<float>* Ball::getCollisionPoints() const {
+    // Hier könntest du ein statisches Array mit den bsin/bcos-Werten zurückgeben
+    // für eine genauere Kreis-Kollisionsberechnung
+    static std::vector<float> points;
+    if (points.empty()) {
+        points.reserve(64); // 32 Punkte * 2 Koordinaten
+        for (int i = 0; i < 32; ++i) {
+            points.push_back(pos_x + bcos[i]);
+            points.push_back(pos_y + bsin[i]);
+        }
+    }
+    return &points;
+}
+
+void Ball::onCollision(ICollideable* other, float hitX, float hitY) {
+    if (!eventManager) return;
+
+    EventData data;
+    data.posX = hitX;
+    data.posY = hitY;
+    data.sender = this;
+    data.target = other;
+
+    switch(other->getCollisionType()) {
+        case static_cast<int>(CollisionType::Paddle):
+            eventManager->emit(GameEvent::BallHitPaddle, data);
+            break;
+        case static_cast<int>(CollisionType::Brick):
+            eventManager->emit(GameEvent::BallHitBrick, data);
+            break;
+        case static_cast<int>(CollisionType::BorderLeft):
+            eventManager->emit(GameEvent::BallHitLeftBorder, data);
+            break;
+        case static_cast<int>(CollisionType::BorderRight):
+            eventManager->emit(GameEvent::BallHitRightBorder, data);
+            break;
+        case static_cast<int>(CollisionType::BorderTop):
+            eventManager->emit(GameEvent::BallHitTopBorder, data);
+            break;
+        default: break;
+    }
+}
+
+int Ball::getCollisionType() const {
+    return static_cast<int>(CollisionType::Ball);
+}
+
+Ball::~Ball() {
+    // Event auslösen, dass der Ball zerstört wird
+    EventData data;
+    data.sender = this;
+    eventManager->emit(GameEvent::BallDestroyed, data);
 }
