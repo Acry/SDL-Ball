@@ -51,7 +51,7 @@ int main() {
         return EXIT_FAILURE;
     }
     TextManager textManager;
-    if (!textManager.setFontTheme("../themes/default/font/fonts.txt")) {
+    if (!textManager.setTheme("../themes/default/font/fonts.txt")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
     MockEventManager eventManager;
@@ -140,7 +140,7 @@ int main() {
 
         float yPos = 0.9f;
         for (const auto &instruction: instructions) {
-            textManager.write(instruction, FONT_MENU, true, 0.75f, -0.0f, yPos);
+            textManager.write(instruction, Fonts::Menu, true, 0.75f, -0.0f, yPos);
             yPos -= 0.07f;
         }
         SDL_GL_SwapWindow(display.sdlWindow);

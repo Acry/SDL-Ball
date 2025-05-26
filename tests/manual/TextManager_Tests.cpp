@@ -10,27 +10,12 @@
 
 struct TextTest {
     std::string text;
-    int font;
+    Fonts font;
     bool centered;
     GLfloat scale;
     GLfloat x;
     GLfloat y;
 };
-
-bool initGL() {
-    // OpenGL-Einstellungen für 2D-Text
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_DEPTH_TEST);
-    glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
-
-    // Orthogonale Projektion für 2D
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
-
-    return true;
-}
 
 int main() {
     Display display(0, 1024, 768, false);
@@ -39,32 +24,35 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    // Hier wird direkt eine Instanz des TextManager erstellt
-    // Der Pfad muss zum tatsächlichen Speicherort der fonts.txt zeigen
     TextManager textManager;
-    if (!textManager.setFontTheme("../themes/default/font/fonts.txt")) {
+    if (!textManager.setTheme("../themes/default/font/fonts.txt")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
-    // Text-Tests vorbereiten
-    std::vector<TextTest> tests = {
-        {"FONT MENU (zentriert)", FONT_MENU, true, 1.0f, 0.0f, 0.92f}, // +
-        {"FONT ANNOUNCE_GOOD", FONT_ANNOUNCE_GOOD, true, 1.0f, 0.0f, 0.75f}, // +
-        {"FONT ANNOUNCE_BAD", FONT_ANNOUNCE_BAD, true, 1.0f, 0.0f, 0.6f}, // +
-        {"FONT HIGHSCORE", FONT_HIGHSCORE, false, 1.0f, -0.9f, 0.4f},
-        {"FONT MENUHIGHSCORE", FONT_MENUHIGHSCORE, false, 1.0f, -0.9f, 0.2f}, // +
-        {"FONT INTROHIGHSCORE", FONT_INTROHIGHSCORE, false, 1.0f, -0.9f, 0.0f}, // +
-        {"FONT INTRODESCRIPTION", FONT_INTRODESCRIPTION, false, 1.0f, -0.9f, -0.2f} // +
+
+    const std::vector<TextTest> tests = {
+        {"FONT HIGHSCORE", Fonts::Highscore, false, 1.0f, -0.9f, 0.6f}, // 80
+        {"FONT ANNOUNCE_GOOD", Fonts::AnnounceGood, false, 1.0f, -0.9f, 0.45f}, // 60
+        {"FONT ANNOUNCE_BAD", Fonts::AnnounceBad, false, 1.0f, -0.9f, 0.35f}, // 60
+        {"FONT INTROHIGHSCORE", Fonts::IntroHighscore, false, 1.0f, -0.9f, 0.25f}, // 40
+        {"FONT MENU", Fonts::Menu, false, 1.0f, -0.9f, 0.15f}, // 30
+        {"FONT MENUHIGHSCORE", Fonts::MenuHighscore, false, 1.0f, -0.9f, 0.05f}, // 28
+        {"FONT INTRODESCRIPTION", Fonts::IntroDescription, false, 1.0f, -0.9f, 0.0f} // 12
+    };
+
+    const std::vector<std::string> instructions = {
+        "1: Good Announcement",
+        "2: Bad Announcement",
+        "ESC: Quit"
     };
 
     glClearColor(0.05f, 0.06f, 0.2f, 1.0f);
-    // Main Loop
     bool running = true;
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
 
     while (running) {
         // Zeit seit dem letzten Frame berechnen
         auto currentTime = std::chrono::high_resolution_clock::now();
-        float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+        const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
         lastFrameTime = currentTime;
 
         SDL_Event event;
@@ -77,12 +65,9 @@ int main() {
                     if (event.key.keysym.sym == SDLK_ESCAPE)
                         running = false;
                     else if (event.key.keysym.sym == SDLK_1) {
-                        // Taste 1: Gute Nachricht
-                        textManager.addAnnouncement("Well Done!", 1500, FONT_ANNOUNCE_GOOD);
-                    }
-                    else if (event.key.keysym.sym == SDLK_2) {
-                        // Taste 2: Schlechte Nachricht
-                        textManager.addAnnouncement("GAME OVER!", 10000, FONT_ANNOUNCE_BAD);
+                        textManager.addAnnouncement("Well Done!", 1500, Fonts::AnnounceGood);
+                    } else if (event.key.keysym.sym == SDLK_2) {
+                        textManager.addAnnouncement("GAME OVER!", 10000, Fonts::AnnounceBad);
                     }
                     break;
                 case SDL_WINDOWEVENT:
@@ -97,28 +82,30 @@ int main() {
 
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Alle Tests rendern
-        glColor4f(1.0f, 0.98f, 0.94f, 1.0f);
-        for (const auto& test : tests) {
-            textManager.write(test.text, test.font, test.centered, test.scale, test.x, test.y);
-        }
-
-        // Ankündigungen aktualisieren und zeichnen
-        textManager.updateAnnouncements(deltaTime);
-        textManager.drawAnnouncements();
-
-        // Zusätzliche Info
-        textManager.write("ESC to quit", FONT_MENU, true, 1.0f, 0.0f, -0.95f);
-
         // Schrifthöhen anzeigen
         glColor4f(0.95f, 0.45f, 0.05f, 1.0f);
-        for (int i = 0; i < FONT_NUM; i++) {
+        for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
             std::string heightInfo = "Font " + std::to_string(i) + " height: " +
-                                    std::to_string(textManager.getHeight(i));
-            textManager.write(heightInfo, FONT_INTRODESCRIPTION, false, 1.0f, 0.5f, 0.0f - i * 0.08f);
+                                     std::to_string(textManager.getHeight(static_cast<Fonts>(i)));
+            textManager.write(heightInfo, Fonts::IntroDescription, false, 1.0f, 0.65f, 0.6f - i * 0.08f);
+        }
+        float yPos = 0.9f;
+        for (const auto &instruction: instructions) {
+            textManager.write(instruction, Fonts::Menu, true, 0.75f, -0.0f, yPos);
+            yPos -= 0.07f;
         }
 
+        glColor4f(1.0f, 0.98f, 0.94f, 1.0f);
+        for (const auto &[text, font, centered, scale, x, y]: tests) {
+            textManager.write(text, font, centered, scale, x, y);
+        }
+
+        if (textManager.getAnnouncementCount() > 0) {
+            textManager.updateAnnouncements(deltaTime);
+            textManager.drawAnnouncements(deltaTime);
+        }
         SDL_GL_SwapWindow(display.sdlWindow);
+        // FIXME
         SDL_Delay(16); // ~60fps
     }
     return EXIT_SUCCESS;

@@ -77,8 +77,7 @@ int main() {
                 }
             }
             // Sound abspielen, wenn Taste zugeordnet ist
-            auto it = keyToSound.find(event.key.keysym.sym);
-            if (it != keyToSound.end()) {
+            if (auto it = keyToSound.find(event.key.keysym.sym); it != keyToSound.end()) {
                 soundManager.queueSound(it->second, 0.0f);  // Zentrierte Position
                 soundManager.play();
                 SDL_Log("Sound %d abgespielt", it->second);

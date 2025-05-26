@@ -405,10 +405,12 @@ void EffectManager::draw(const float deltaTime) {
             ++it;
         }
     }
+    // Zeichne nur aktive Tracer
     for (auto &pair: tracers) {
         Tracer *tracer = pair.second;
-        tracer->update(deltaTime); // Updates Position und erzeugt neue Partikel
-        tracer->draw(deltaTime); // Zeichnet alle aktiven Partikel
+        if (tracer->isActive()) {  // Benutze die GameObject-Methode isActive()
+            tracer->draw(deltaTime);
+        }
     }
 }
 
@@ -488,7 +490,7 @@ int EffectManager::createTracer(float width, float height, bool explosive) {
     int id = ++effectId;
     auto *tracer = new Tracer();
     tracer->setSize(width, height); // Statt direktem Zugriff die Methode verwenden
-    tracer->texture = tracerTexture;
+    //tracer->texture = tracerTexture;
 
     // Standardfarben für normale/explosive Tracer setzen
     GLfloat defaultColors[3] = {0.7f, 0.7f, 1.0f}; // Blau für normale Tracer
@@ -506,11 +508,11 @@ void EffectManager::updateTracer(int tracerId, float x, float y) {
 }
 
 void EffectManager::setTracerColor(int tracerId, bool explosive, const GLfloat c[]) {
-    auto it = tracers.find(tracerId);
-    if (it != tracers.end()) {
+    if (auto it = tracers.find(tracerId); it != tracers.end()) {
         it->second->colorRotate(explosive, c);
     }
 }
+
 
 void EffectManager::setTracerSize(int tracerId, float width, float height) {
     auto it = tracers.find(tracerId);
@@ -524,6 +526,23 @@ void EffectManager::removeTracer(int tracerId) {
     if (it != tracers.end()) {
         delete it->second;
         tracers.erase(it);
+    }
+}
+
+void EffectManager::setTracerTexture(int tracerId, SpriteSheetAnimation texture) {
+    auto it = tracers.find(tracerId);
+    if (it != tracers.end()) {
+        it->second->texture = texture;
+    }
+}
+
+void EffectManager::setTracerActive(int tracerId, bool active) {
+    auto it = tracers.find(tracerId);
+    if (it != tracers.end()) {
+        GameObject* go = dynamic_cast<GameObject*>(it->second);
+        if (go) {
+            go->active = active;
+        }
     }
 }
 

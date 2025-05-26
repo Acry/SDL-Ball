@@ -104,7 +104,6 @@
 
 #define DEFAULT_DIFFICULTY    EASY
 
-
 #define BRICK_WIDTH 0.0719f
 #define BRICK_HEIGHT 0.0575f
 

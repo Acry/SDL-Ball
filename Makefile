@@ -14,6 +14,7 @@ RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)
 BUILD_DIR := build/
 SOURCE_DIR := src/
 MANUAL_TEST_DIR := tests/manual/
+AUTOMATIC_TEST_DIR := tests/automatic/
 
 SOURCES := $(addprefix $(SOURCE_DIR), \
     BackgroundManager.cpp \
@@ -45,17 +46,20 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
 $(shell mkdir -p $(BUILD_DIR))
 
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
-TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-test theme-test text-test sound-test ball-test effect-test
+TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-test theme-test text-test sound-test ball-test effect-test texture-test
+AUTO_TEST_TARGETS := texture-automatic-test
 TARGET=sdl-ball
 GAME_OBJECTS := $(OBJECTS)
 
 .PHONY: all clean-all clean debug release install install-bin install-data game tests clean-tests
 
-all: game tests
+all: game tests autoTests
 
 game: release debug
 
 tests: $(TEST_TARGETS)
+
+autoTests: $(AUTO_TEST_TARGETS)
 
 release: $(BUILD_DIR)$(TARGET)
 
@@ -157,7 +161,6 @@ $(BUILD_DIR)SpriteSheetAnimation_Tests.o: $(MANUAL_TEST_DIR)SpriteSheetAnimation
 
 ###############################################################################
 # Border-Tests
-
 BORDER_TEST_SOURCES := $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp \
                        $(MANUAL_TEST_DIR)MockEventManager.cpp \
                        $(SOURCE_DIR)PlayfieldBorder.cpp \
@@ -219,6 +222,7 @@ $(BUILD_DIR)ThemeManager_Tests.o: $(MANUAL_TEST_DIR)ThemeManager_Tests.cpp
 ###############################################################################
 # TextManager
 TEXT_TEST_SOURCES := $(MANUAL_TEST_DIR)TextManager_Tests.cpp \
+                     $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                      $(SOURCE_DIR)TextManager.cpp \
                      $(SOURCE_DIR)Display.cpp \
                      $(SOURCE_DIR)TextureManager.cpp
@@ -301,6 +305,21 @@ $(BUILD_DIR)EffectManager_Tests.o: $(MANUAL_TEST_DIR)EffectManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
+# TextureManager - Themes
+TEXTURE_MANAGER_TEST_SOURCES := $(MANUAL_TEST_DIR)TextureManager_Tests.cpp \
+                            $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                            $(SOURCE_DIR)Display.cpp \
+                            $(SOURCE_DIR)TextureManager.cpp \
+
+TEXTURE_MANAGER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXTURE_MANAGER_TEST_SOURCES:.cpp=.o)))
+
+texture-test: $(TEXTURE_MANAGER_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(TEXTURE_MANAGER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)texture-test
+
+$(BUILD_DIR)TextureManager_Tests.o: $(MANUAL_TEST_DIR)TextureManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
 # CLEANUP
 clean:
 	rm -rf $(BUILD_DIR)*.o $(BUILD_DIR)*-test $(BUILD_DIR)$(TARGET)
@@ -311,3 +330,18 @@ clean-tests:
 
 clean-all:
 	rm -rf $(BUILD_DIR) 2>/dev/null || true
+
+###############################################################################
+# AUTOMATIC TESTS - GTEST
+###############################################################################
+TEXTURE_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)TextureManager_aTests.cpp \
+                         $(SOURCE_DIR)TextureManager.cpp \
+                         $(SOURCE_DIR)SpriteSheetAnimation.cpp
+
+TEXTURE_ATEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXTURE_ATEST_SOURCES:.cpp=.o)))
+
+texture-automatic-test: $(TEXTURE_ATEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(TEXTURE_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)texture-automatic-test
+
+$(BUILD_DIR)TextureManager_aTests.o: $(AUTOMATIC_TEST_DIR)TextureManager_aTests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread

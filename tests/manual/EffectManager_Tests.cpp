@@ -5,6 +5,7 @@
 #include "TextureManager.h"
 #include "SpriteSheetAnimation.h"
 #include "TextManager.h"
+#include "Tracer.h"
 
 int main() {
     Display display(0, 1024, 768, false);
@@ -13,25 +14,24 @@ int main() {
         return EXIT_FAILURE;
     }
     TextManager textManager;
-    if (!textManager.setFontTheme("../themes/default/font/fonts.txt")) {
+    if (!textManager.setTheme("../themes/default/font/fonts.txt")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
     EventManager eventManager;
-    const TextureManager textureManager;
-    EffectManager effectManager(&eventManager);
+    TextureManager textureManager;
+    const std::filesystem::path themePath = "../themes/default";
+    textureManager.setSpriteTheme(themePath);
 
-    // Effekt-Textur laden
-    SpriteSheetAnimation effectTexture;
-    const std::filesystem::path texturePath = "../themes/default/gfx/effects/particle.png";
-    if (!textureManager.load(texturePath, effectTexture)) {
-        SDL_Log("Fehler beim Laden der Effekt-Textur: %s", texturePath.c_str());
-        return EXIT_FAILURE;
-    }
-    // Textur für den EffectManager setzen
+    EffectManager effectManager(&eventManager);
+    SpriteSheetAnimation effectTexture = *textureManager.getEffectTexture(EffectTexture::Particle);
     effectManager.set(FX_VAR_TEXTURE, effectTexture);
 
-    float mouseX = 0.0f, mouseY = 0.0f;
+    int tracerId = effectManager.createTracer(0.04f, 0.04f, false);
+    effectManager.setTracerTexture(tracerId, *textureManager.getEffectTexture(EffectTexture::Tail));
+    effectManager.setTracerActive(tracerId, false);
 
+    float mouseX = 0.0f, mouseY = 0.0f;
+    bool tracerActive = false;
     std::vector<std::string> instructions = {
         "1: Sparks",
         "2: Destroy bricks",
@@ -131,44 +131,9 @@ int main() {
                         effectManager.set(FX_VAR_RECTANGLE, rectSize); // Bereits deklarierte Variable verwenden
                         effectManager.spawn(mousePos);
                         break;
-                    case SDLK_6: // Tracer-Test
-                        SDL_Log("Tracer-Effekt mit simuliertem Ball-Event");
-                    {
-                        // Simuliere Ball-Erstellung mit Event
-                        static bool tracerActive = false;
-
-                        if (!tracerActive) {
-                            // Pseudo-Ball-Objekt erstellen
-                            static void* ballObject = reinterpret_cast<void*>(12345); // Dummy-ID
-
-                            // Ball-Erstellungsereignis simulieren
-                            EventData ballData;
-                            ballData.sender = ballObject;
-                            ballData.posX = mouseX;
-                            ballData.posY = mouseY;
-                            ballData.points = 0; // 0 = normaler Tracer, 1 = explosiver Tracer
-
-                            // Event auslösen, um Tracer zu erstellen
-                            eventManager.emit(GameEvent::BallCreated, ballData);
-
-                            // Bewegungssimulation einschalten
-                            tracerActive = true;
-                            SDL_Log("Tracer aktiviert - bewege die Maus, um den Tracer zu steuern");
-                        } else {
-                            // Bei nochmaligem Drücken deaktivieren
-                            static void* ballObject = reinterpret_cast<void*>(12345); // Gleiche ID wie oben
-
-                            // Ball-Zerstörungsereignis simulieren
-                            EventData ballData;
-                            ballData.sender = ballObject;
-
-                            // Event auslösen, um Tracer zu entfernen
-                            eventManager.emit(GameEvent::BallDestroyed, ballData);
-
-                            tracerActive = false;
-                            SDL_Log("Tracer deaktiviert");
-                        }
-                    }
+                    case SDLK_6:
+                        tracerActive = !tracerActive;
+                        effectManager.setTracerActive(tracerId, tracerActive);
                         break;
                     case SDLK_p: // Ball-Paddle-Kollisionseffekt über Event
                         SDL_Log("Ball-Paddle-Kollisionseffekt über Event an Position (%.2f, %.2f)", mouseX, mouseY);
@@ -181,24 +146,42 @@ int main() {
         // Szene rendern
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Alle aktiven Effekte zeichnen
-        effectManager.draw(deltaTime);
+        if (tracerActive) {
+            effectManager.updateTracer(tracerId, mouseX, mouseY);
+            // Regenbogenfarben über Zeit (HSV-zu-RGB Konvertierung)
+            static float hue = 0.0f;
+            hue += deltaTime * 0.5f;  // Geschwindigkeit der Farbänderung
+            if (hue > 1.0f) hue -= 1.0f;
 
-        // Position des Mauszeigers anzeigen (einfaches Quadrat)
-        glDisable(GL_TEXTURE_2D);
-        glColor4f(1.0f, 1.0f, 1.0f, 0.7f);
-        glBegin(GL_QUADS);
-        constexpr float cursorSize = 0.02f;
-        glVertex3f(mouseX - cursorSize, mouseY + cursorSize, 0.0);
-        glVertex3f(mouseX + cursorSize, mouseY + cursorSize, 0.0);
-        glVertex3f(mouseX + cursorSize, mouseY - cursorSize, 0.0);
-        glVertex3f(mouseX - cursorSize, mouseY - cursorSize, 0.0);
-        glEnd();
+            // HSV zu RGB Konvertierung
+            float h = hue * 6.0f;
+            float s = 1.0f;  // Sättigung
+            float v = 1.0f;  // Helligkeit
+            float c = v * s;
+            float x = c * (1.0f - fabsf(fmodf(h, 2.0f) - 1.0f));
+            float m = v - c;
+
+            GLfloat r = 0.0f, g = 0.0f, b = 0.0f;
+
+            if (h < 1.0f)      { r = c; g = x; b = 0.0f; }
+            else if (h < 2.0f) { r = x; g = c; b = 0.0f; }
+            else if (h < 3.0f) { r = 0.0f; g = c; b = x; }
+            else if (h < 4.0f) { r = 0.0f; g = x; b = c; }
+            else if (h < 5.0f) { r = x; g = 0.0f; b = c; }
+            else               { r = c; g = 0.0f; b = x; }
+
+            r += m; g += m; b += m;
+
+            GLfloat colors[3] = {r, g, b};
+            effectManager.setTracerColor(tracerId, false, colors);
+        }
+
+        effectManager.draw(deltaTime);
 
         glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
         float yPos = 0.9f;
-        for (const auto& instruction : instructions) {
-            textManager.write(instruction, FONT_MENU, true, 0.75f, -0.0f, yPos);
+        for (const auto &instruction: instructions) {
+            textManager.write(instruction, Fonts::Menu, true, 0.75f, -0.0f, yPos);
             yPos -= 0.07f;
         }
         SDL_GL_SwapWindow(display.sdlWindow);
@@ -207,7 +190,8 @@ int main() {
             SDL_Delay(targetFrameTime - frameTime);
         }
     }
-
+    effectManager.removeTracer(tracerId);
+    textureManager.clearTheme();
     SDL_Log("EffectManager-Tests beendet");
     return EXIT_SUCCESS;
 }

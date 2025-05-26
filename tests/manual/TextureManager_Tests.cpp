@@ -9,19 +9,17 @@ int main() {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
-    SpriteSheetAnimation spriteSheetAnimation;
-    // Pfad zu einer Textur-Datei und zugehörigen Eigenschaften
-    // const std::filesystem::path texturePath = "../themes/default/gfx/powerup/gun";
-    // const std::filesystem::path texturePath = "../themes/default/gfx/brick/green";
-    // const std::filesystem::path texturePath = "../themes/default/gfx/brick/glass";
-    // const std::filesystem::path texturePath = "../themes/default/gfx/border";
-    const std::filesystem::path texturePath = "../themes/default/gfx/ball/normal";
 
-    // Textur und Eigenschaft laden
-    if (const TextureManager textureManager; !textureManager.loadTextureWithProperties(texturePath, spriteSheetAnimation)) {
+    TextureManager textureManager;
+    const std::filesystem::path themePath = "../themes/default";
+
+    // Textur laden
+    if (!textureManager.setSpriteTheme(themePath)) {
+        SDL_Log("Fehler beim Laden der Textur: %s", themePath.c_str());
         return EXIT_FAILURE;
     }
 
+    SpriteSheetAnimation spriteSheetAnimation = *textureManager.getBallTexture(BallTexture::Fireball);
     // Animation aktivieren
     spriteSheetAnimation.playing = true;
     spriteSheetAnimation.textureProperties.playing = true;
@@ -93,8 +91,6 @@ int main() {
         SDL_Delay(13);
         SDL_GL_SwapWindow(display.sdlWindow);
     }
-    if (spriteSheetAnimation.textureProperties.texture != 0) {
-        glDeleteTextures(1, &spriteSheetAnimation.textureProperties.texture);
-    }
+    textureManager.clearTheme();
     return EXIT_SUCCESS;
 }

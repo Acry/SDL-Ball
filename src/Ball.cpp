@@ -49,7 +49,8 @@ void Ball::update(float deltaTime) {
     data.posX = pos_x;
     data.posY = pos_y;
     data.sender = this;
-    data.points = explosive ? 1 : 0;  // Optional: explosive-Status übertragen
+    data.target = nullptr; // Explizit auf nullptr setzen
+    data.points = explosive ? 1 : 0;
     eventManager->emit(GameEvent::BallMoved, data);
 
     if (!glued) {

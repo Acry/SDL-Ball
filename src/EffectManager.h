@@ -137,6 +137,8 @@ public:
     void setTracerColor(int tracerId, bool explosive, const GLfloat c[]);
     void setTracerSize(int tracerId, float width, float height);
     void removeTracer(int tracerId);
+    void setTracerTexture(int tracerId, SpriteSheetAnimation texture);
+    void setTracerActive(int tracerId, bool active);
 
     // Neue Event-Handler für Ball-Tracking
     void handleObjectTracerCreate(const EventData &data);

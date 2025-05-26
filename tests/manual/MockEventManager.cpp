@@ -3,25 +3,35 @@
 #include "ICollideable.h"
 #include <SDL.h>
 
+
 void MockEventManager::emit(GameEvent event, const EventData &data) {
     eventCount++;
     lastEvent = event;
     const char *eventNames[] = {
-        "BallHitLeftBorder",
-        "BallHitRightBorder",
-        "BallHitTopBorder",
-        "BallLost",
-        "BallHitPaddle",
-        "BrickDestroyed",
-        "PowerUpCollected",
-        "BallHitBrick",
-        "PaddleHitLeftBorder",
-        "PaddleHitRightBorder"
+        "BallHitLeftBorder", // Index 0
+        "BallHitRightBorder", // Index 1
+        "BallHitTopBorder", // Index 2
+        "BallLost", // Index 3
+        "BallHitPaddle", // Index 4
+        "BrickDestroyed", // Index 5
+        "PowerUpCollected", // Index 6
+        "BallHitBrick", // Index 7
+        "PaddleHitLeftBorder", // Index 8
+        "PaddleHitRightBorder", // Index 9
+        "BallCreated", // Index 10
+        "BallMoved", // Index 11
+        "BallDestroyed" // Index 12
     };
 
-    SDL_Log("Event ausgelöst: %s (#%d) an Position (%.2f, %.2f)",
-            eventNames[static_cast<int>(event)], eventCount,
-            data.posX, data.posY);
+    // Überprüfe, ob der Index für das Event gültig ist
+    int eventIndex = static_cast<int>(event);
+    if (eventIndex >= 0 && eventIndex < sizeof(eventNames) / sizeof(eventNames[0])) {
+        SDL_Log("Event ausgelöst: %s (#%d) an Position (%.2f, %.2f)",
+                eventNames[eventIndex], eventCount,
+                data.posX, data.posY);
+    } else {
+        SDL_Log("Unbekanntes Event (#%d) ausgelöst", eventCount);
+    }
 
     if (data.sender && data.target) {
         // Target ist immer ein ICollideable

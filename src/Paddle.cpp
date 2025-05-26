@@ -198,27 +198,26 @@ const std::vector<float> *Paddle::getCollisionPoints() const {
 
 void Paddle::onCollision(ICollideable *other, float hitX, float hitY) {
 
-    switch (other->getCollisionType()) {
-        case 4: {
-            EventData data;
-            data.posX = hitX;
-            data.posY = hitY;
-            data.sender = this;
-            data.target = other;
-            eventManager->emit(GameEvent::BallHitPaddle, data);
-        }
-        break;
+    EventData data;
+    data.posX = hitX;
+    data.posY = hitY;
+    data.sender = this;
+    data.target = other;
 
-        case 6: {
-            EventData data;
-            data.posX = hitX;
-            data.posY = hitY;
-            data.sender = this;
-            data.target = other;
+    switch (other->getCollisionType()) {
+        case static_cast<int>(CollisionType::Ball):
+            eventManager->emit(GameEvent::BallHitPaddle, data);
+            break;
+        case static_cast<int>(CollisionType::PowerUp):
             eventManager->emit(GameEvent::PowerUpCollected, data);
-        }
-        break;
-        default: ;
+            break;
+        case static_cast<int>(CollisionType::BorderLeft):
+            eventManager->emit(GameEvent::PaddleHitLeftBorder, data);
+            break;
+        case static_cast<int>(CollisionType::BorderRight):
+            eventManager->emit(GameEvent::PaddleHitRightBorder, data);
+            break;
+        default: break;
     }
 }
 

@@ -2,25 +2,137 @@
 #pragma once
 #include <filesystem>
 #include <string>
-#include <vector>
 
 #include "SpriteSheetAnimation.h"
+#include "ThemeManager.h"
+
+// in game_state.h sind noch texturen und Eigenschaften definiert.
+
+// Enumerationen für alle bekannten Texturen im Spiel
+enum class PaddleTexture {
+    Base, Glue, Gun,
+    Count
+};
+
+enum class BallTexture {
+    Normal, Fireball,
+    Count
+};
+
+enum class BrickTexture {
+    Base,
+    Blue,
+    Cement,
+    Doom,
+    Explosive,
+    Glass,
+    Green,
+    Grey,
+    Invisible,
+    Purple,
+    Red,
+    White,
+    Yellow,
+    Count
+};
+
+enum class PowerUpTexture {
+    Aim,
+    AimHelp,
+    BigBall,
+    Bullet,
+    Coin,
+    Detonate,
+    Die,
+    Drop,
+    EasyBrick,
+    Explosive,
+    ExplosiveGrow,
+    Glue,
+    GoThrough,
+    GrowPaddle,
+    Gun,
+    Laser,
+    Life,
+    Multiball,
+    NextLevel,
+    NormalBall,
+    ShrinkPaddle,
+    SmallBall,
+    Count
+};
+
+enum class MiscTexture {
+    Border,
+    Count
+};
+
+enum class EffectTexture {
+    Tail, Particle,
+    Count
+};
+
+enum class TitleTexture {
+    Title,
+    Count
+};
 
 class TextureManager {
-    std::vector<SpriteSheetAnimation*> loadedTextures;
-    int maxTexSize;
-public:
-    TextureManager() {
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
-    }
+    // Allgemeiner Cache für alle Texturen
+    std::unordered_map<std::string, std::unique_ptr<SpriteSheetAnimation> > textureCache;
 
-    ~TextureManager() {
-        // Alle geladenen Texturen aufräumen
-        for(const auto tex : loadedTextures) {
-            glDeleteTextures(1, &tex->textureProperties.texture);
-            delete tex;
-        }
-    }
-    bool load(const std::filesystem::path &pathName, SpriteSheetAnimation& tex) const;
-    void readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation& tex) const;
+    // Vorgefertigte Arrays für schnellen Zugriff auf häufig verwendete Texturen
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(PaddleTexture::Count)> paddleTextures;
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(BallTexture::Count)> ballTextures;
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(BrickTexture::Count)> brickTextures;
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(PowerUpTexture::Count)> powerUpTextures;
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(MiscTexture::Count)> miscTextures;
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(EffectTexture::Count)> effectTextures;
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(TitleTexture::Count)> titleTextures;
+
+    int maxTexSize;
+    std::string currentTheme;
+
+    // Hilfsfunktion zum Laden und Cachen einer Textur
+    SpriteSheetAnimation *loadAndCacheTexture(const std::string &path, bool forceReload = false);
+
+public:
+    TextureManager();
+
+    ~TextureManager();
+
+    // Verhindern von Kopieren
+    TextureManager(const TextureManager &) = delete;
+
+    TextureManager &operator=(const TextureManager &) = delete;
+
+    bool setSpriteTheme(const std::string &themeName);
+
+    void clearTheme();
+
+    // Generische Methoden zum Laden von Texturen
+    SpriteSheetAnimation *getTexture(const std::string &texturePath, bool forceReload = false);
+
+    // Typspezifischer Zugriff auf vordefinierte Texturen
+    SpriteSheetAnimation *getPaddleTexture(PaddleTexture type);
+
+    SpriteSheetAnimation *getBallTexture(BallTexture type);
+
+    SpriteSheetAnimation *getBrickTexture(BrickTexture type);
+
+    SpriteSheetAnimation *getPowerUpTexture(PowerUpTexture type);
+
+    SpriteSheetAnimation *getEffectTexture(EffectTexture type);
+
+    SpriteSheetAnimation *getMiscTexture(MiscTexture type);
+
+    // Lade alle Spiel-Texturen für das aktuelle Theme
+    bool loadAllGameTextures();
+
+    // Ursprüngliche Methoden beibehalten
+    bool load(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const;
+
+    void readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const;
+
+    bool loadTextureWithProperties(const std::string& basePath, SpriteSheetAnimation& animation) const;
 };

@@ -149,7 +149,7 @@ ___
 - [ ] solve brick fade issue
 - [X] Paddle: use playfield constants from config.h
 - [ ] Many comments are in German
-
+- [ ] wird brick/doom-org.png im Spiel verwendet?
 ## Additional things
 
 ### Gameplay
@@ -175,7 +175,7 @@ ___
 - [ ] rework positional sound <https://examples.libsdl.org/SDL3/audio/05-planar-data/>
 - [ ] modernize game controllers, see: https://examples.libsdl.org/SDL3/input/01-joystick-polling/
 - [ ] Play with pen? https://examples.libsdl.org/SDL3/pen/01-drawing-lines/
-- [ ] use sdl2 highperformance timer, see: [Timing](Refactoring/Timing.md)
+- [ ] use sdl2 highperformance timer, see: [Timing](Physics%20&%20Timing/Timing.md)
 - [ ] credits scene
 - [ ] save game should save the state of the game, not just the level
 - [ ] Fade in Paddle

@@ -1,3 +1,4 @@
+// TextureProperties.h
 #pragma once
 
 #include <string>

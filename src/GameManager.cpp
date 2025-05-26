@@ -2,10 +2,15 @@
 #include "GameManager.h"
 #include <SDL2/SDL_log.h>
 
-GameManager::GameManager(ConfigFileManager &cfg, SettingsManager &settings, ThemeManager &theme)
-    : configManager(cfg), settingsManager(settings), themeManager(theme),
-      gameRunning(false), gamePaused(false), currentLevel(1), score(0) {
-    // Leere Konstruktor, Initialisierung erfolgt in init()
+// GameManager game;
+// Game.startGame();
+// Game.handleEvents(event);
+// Game.update(deltaTime);
+// Game.render(deltaTime);
+// Game.quitGame();
+GameManager::GameManager()
+    : gameRunning(false), gamePaused(false), currentLevel(1), score(0) {
+    init();
 }
 
 GameManager::~GameManager() {
@@ -20,7 +25,6 @@ GameManager::~GameManager() {
 void GameManager::init() {
     SDL_Log("GameManager: Initialisierung...");
 
-    // Manager initialisieren
     initializeManagers();
 
     // Spielgrenzen einrichten
@@ -37,38 +41,46 @@ void GameManager::init() {
 
 void GameManager::initializeManagers() {
     // Grundlegende Manager initialisieren
-    textManager.init();
-    soundManager.init(settingsManager.getSettings().soundVolume);
 
-    // Spielspezifische Manager erstellen
+    configManager = new ConfigFileManager("./test");
+    settingsManager = new SettingsManager(configManager);
+    displayManager = new DisplayManager(settingsManager.getVideoSettings());
+    themeManager = new ThemeManager(configManager);
+    soundManager = new SoundManager();
+    soundManager.setSoundTheme(themeManager.getCurrentSoundTheme());
+    textureManager = new TextureManager();
+    textureManager.setSpriteTheme(themeManager.getCurrentSpriteTheme());
+    backgroundManager = new BackgroundManager(textureManager, themeManager);
+    backgroundManager.updateBgIfNeeded(currentLevel, themeManager.getCurrentBackgroundTheme());
+    textManager = new TextManager();
+    textManager.setTheme(themeManager.getCurrentFontTheme());
+    effectManager = new EffectManager(eventManager, textureManager);
+    effectManager->setTheme(themeManager.getCurrentEffectTheme());
+    levelManager = new LevelManager(configManager, themeManager);
+    saveGameManager = new SaveGameManager(configManager, settingsManager);
+    eventManager = new EventManager();
+    collisionManager = new CollisionManager();
+    highscoreManager = new HighscoreManager(configManager);
+
+    // Spielspezifische initialisieren
     ballManager = new BallManager(textureManager);
     brickManager = new BrickManager(textureManager, themeManager);
     powerupManager = new PowerupManager(textureManager, themeManager);
-    backgroundManager = new BackgroundManager(textureManager, themeManager);
-    effectManager = new EffectManager(eventManager, textureManager);
     player = new Player(textureManager, themeManager);
 
-    // Manager initialisieren
-    ballManager->init();
+    // GameObjects initialisieren
+    playfieldBorder = new PlayfieldBorder(textureManager);
+    ball;
     powerupManager->init();
     effectManager->init();
     player->init();
+
+    // hud initialisieren
+    hud.manager;
+    menu.manager;
+    sceneManager;
 }
 
-void GameManager::setupBorders() {
-    // Spielfeldgrenzen festlegen basierend auf Display-Größe
-    const settings &s = settingsManager.getSettings();
-
-    border.left = 0;
-    border.right = static_cast<float>(s.resolutionX);
-    border.top = static_cast<float>(s.resolutionY);
-    border.bottom = 0;
-}
-
-void GameManager::loadResources() {
-    // Lade Texturen für alle Spielobjekte
-    brickManager->loadLevel(currentLevel);
-}
 
 void GameManager::setupEventHandlers() {
     // Event-Handler für Kollisionen
@@ -262,7 +274,8 @@ void GameManager::checkCollisions() {
     }
 }
 
-void GameManager::render() {
+void GameManager::render(float deltaTime) {
+    // SceneManager.render?
     // Hintergrund rendern
     backgroundManager->render();
 
@@ -278,7 +291,7 @@ void GameManager::render() {
     textManager.renderText("Lives: " + std::to_string(player->getLives()), 10, 40, 24);
 }
 
-void GameManager::handleEvent(SDL_Event &event) {
+void GameManager::handleEvents(SDL_Event &event) {
     // Spieler-Eingaben
     player->handleEvent(event);
 
@@ -365,3 +378,8 @@ void GameManager::gameOver() {
 
     SDL_Log("Game Over! Finaler Score: %d", score);
 }
+
+void GameManager::quitGame() {
+    // Ressourcen freigeben;
+    delete Managers;
+};

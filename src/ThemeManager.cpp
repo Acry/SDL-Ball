@@ -1,8 +1,9 @@
-#include "ThemeManager.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <fstream>
 #include <SDL2/SDL_log.h>
+
+#include "ThemeManager.h"
 
 ThemeManager::ThemeManager(const ConfigFileManager &configFileManager)
     : currentTheme(getDefaultTheme()), configFileManager(configFileManager) {

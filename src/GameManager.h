@@ -1,6 +1,5 @@
 // GameStateManager.h
 #pragma once
-#pragma once
 
 #include "BackgroundManager.h"
 #include "BallManager.h"
@@ -22,7 +21,6 @@
 #include "EffectManager.h"
 
 class GameManager {
-private:
     // Grundlegende Manager
     ConfigFileManager& configManager;
     SettingsManager& settingsManager;
@@ -40,7 +38,6 @@ private:
     EffectManager* effectManager;
     Player* player;
 
-    // Spielfeld-Grenzen
     PlayfieldBorder border;
 
     // Spielzustand
@@ -48,25 +45,24 @@ private:
     bool gamePaused;
     int currentLevel;
     int score;
-
+    int currentScene;
+    currentDifficulty;
     // Initialisierungsmethoden
     void initializeManagers();
     void setupEventHandlers();
-    void setupBorders();
-    void loadResources();
 
     // Kollisionsprüfung
     void checkCollisions();
 
 public:
-    GameManager(ConfigFileManager& cfg, SettingsManager& settings, ThemeManager& theme);
+    GameManager();
     ~GameManager();
 
     // Hauptmethoden für den Spielablauf
     void init();
     void update(float deltaTime);
-    void render();
-    void handleEvent(SDL_Event& event);
+    void render(float deltaTime);
+    void handleEvents(SDL_Event& event);
 
     // Spielsteuerungsmethoden
     void startGame();
@@ -75,7 +71,7 @@ public:
     void restartLevel();
     void goToNextLevel();
     void gameOver();
-
+    void quitGame();
     // Settings-Anwendung
     void applySettings();
 };

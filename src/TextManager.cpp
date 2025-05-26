@@ -1,6 +1,6 @@
+// TextManager.cpp
 #include <epoxy/gl.h>
 #include <SDL2/SDL_ttf.h>
-#include <GL/glu.h>
 #include <fstream>
 #include <filesystem>
 #include <utility>
@@ -11,13 +11,13 @@ TextManager::TextManager() : fontInfo{} {
     TTF_Init();
 
     // Initialisiere alle Texturen mit 0
-    for (int i = 0; i < FONT_NUM; i++) {
+    for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
         fontInfo[i].tex = 0;
     }
 }
 
-bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize, const int font) {
-    std::string fullFontPath = fontThemePath + "/" + TTFfontName;
+bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize, const Fonts font) {
+    const std::string fullFontPath = themePath + "/" + TTFfontName;
 
     TTF_Font *ttfFont = nullptr;
     SDL_Surface *c, *t;
@@ -25,6 +25,7 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     char tempChar[2] = {0, 0};
     int sX = 0, sY = 0; //Size of the rendered character
     SDL_Rect src = {0, 0, 0, 0}, dst = {0, 0, 0, 0};
+    const int fontIndex = static_cast<int>(font);
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     rmask = 0xff000000;
@@ -48,7 +49,7 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     dst.x = 1;
     dst.y = 1;
 
-    fontInfo[font].height = 0.0;
+    fontInfo[fontIndex].height = 0.0;
     for (int i = 32; i < 128; i++) {
         constexpr SDL_Color white = {255, 255, 255, 255};
         tempChar[0] = static_cast<char>(i);
@@ -66,20 +67,20 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         if (dst.x + sX > 512) {
             dst.x = 1;
             dst.y += sY + 2;
-            if (dst.y > 512 && font != FONT_HIGHSCORE) //FONT_HIGHSCORE is always rendered too big for texture
+            if (dst.y > 512 && font != Fonts::Highscore) //FONT_HIGHSCORE is always rendered too big for texture
             {
                 SDL_Log("Too many chars for tex (%d)", i);
             }
         }
 
-        fontInfo[font].ch[i].Xa = (1.0f / (512.0f / static_cast<float>(dst.x)));
-        fontInfo[font].ch[i].Xb = (1.0f / (512.0f / (static_cast<float>(dst.x) + sX)));
-        fontInfo[font].ch[i].Ya = (1.0f / (512.0f / static_cast<float>(dst.y)));
-        fontInfo[font].ch[i].Yb = (1.0f / (512.0f / (static_cast<float>(dst.y) + sY)));
-        fontInfo[font].ch[i].width = sX / 800.0f;
+        fontInfo[fontIndex].ch[i].Xa = (1.0f / (512.0f / static_cast<float>(dst.x)));
+        fontInfo[fontIndex].ch[i].Xb = (1.0f / (512.0f / (static_cast<float>(dst.x) + sX)));
+        fontInfo[fontIndex].ch[i].Ya = (1.0f / (512.0f / static_cast<float>(dst.y)));
+        fontInfo[fontIndex].ch[i].Yb = (1.0f / (512.0f / (static_cast<float>(dst.y) + sY)));
+        fontInfo[fontIndex].ch[i].width = sX / 800.0f;
 
-        if (sY / 800.0 > fontInfo[font].height) {
-            fontInfo[font].height = sY / 800.0f;
+        if (sY / 800.0 > fontInfo[fontIndex].height) {
+            fontInfo[fontIndex].height = sY / 800.0f;
         }
 
         //blit
@@ -92,10 +93,10 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         SDL_FreeSurface(c); //Free character-surface
     }
 
-    glGenTextures(1, &fontInfo[font].tex); //Generate a gltexture for this font
+    glGenTextures(1, &fontInfo[fontIndex].tex); //Generate a gltexture for this font
 
-    glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
-    glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
+    glBindTexture(GL_TEXTURE_2D, fontInfo[fontIndex].tex);
+    glBindTexture(GL_TEXTURE_2D, fontInfo[fontIndex].tex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, t->w, t->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, t->pixels);
@@ -106,9 +107,10 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     return true;
 }
 
-void TextManager::write(const std::string &text, const int font, const bool center, const GLfloat scale,
+void TextManager::write(const std::string &text, const Fonts font, const bool center, const GLfloat scale,
                         const GLfloat x,
                         const GLfloat y) const {
+    int fontIndex = static_cast<int>(font);
     unsigned char c;
     GLfloat sX, posX = 0;
     // Disable depth test for UI elements if you want them always on top
@@ -119,7 +121,7 @@ void TextManager::write(const std::string &text, const int font, const bool cent
     if (center) {
         for (unsigned int i = 0; i < text.length(); i++) {
             c = static_cast<unsigned char>(text[i]);
-            sX = fontInfo[font].ch[c].width * scale;
+            sX = fontInfo[fontIndex].ch[c].width * scale;
             posX += sX;
         }
         posX *= -1;
@@ -134,24 +136,24 @@ void TextManager::write(const std::string &text, const int font, const bool cent
     glScalef(scale, scale, 0.0f);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, fontInfo[font].tex);
+    glBindTexture(GL_TEXTURE_2D, fontInfo[fontIndex].tex);
 
     GLfloat drawPosX = 0;
     for (unsigned char i = 0; i < text.length(); i++) {
         c = static_cast<unsigned char>(text[i]);
         if (c < 32 || c >= 128) c = '?';
-        sX = fontInfo[font].ch[c].width;
-        const GLfloat sY = fontInfo[font].height;
+        sX = fontInfo[fontIndex].ch[c].width;
+        const GLfloat sY = fontInfo[fontIndex].height;
         drawPosX += sX;
         constexpr float zFront = -0.15f;
         glBegin(GL_QUADS);
-        glTexCoord2f(fontInfo[font].ch[c].Xa, fontInfo[font].ch[c].Ya);
+        glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Ya);
         glVertex3f(-sX + drawPosX, sY, zFront);
-        glTexCoord2f(fontInfo[font].ch[c].Xb, fontInfo[font].ch[c].Ya);
+        glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Ya);
         glVertex3f(sX + drawPosX, sY, zFront);
-        glTexCoord2f(fontInfo[font].ch[c].Xb, fontInfo[font].ch[c].Yb);
+        glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Yb);
         glVertex3f(sX + drawPosX, -sY, zFront);
-        glTexCoord2f(fontInfo[font].ch[c].Xa, fontInfo[font].ch[c].Yb);
+        glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Yb);
         glVertex3f(-sX + drawPosX, -sY, zFront);
         glEnd();
         drawPosX += sX;
@@ -163,13 +165,13 @@ void TextManager::write(const std::string &text, const int font, const bool cent
     glEnable(GL_DEPTH_TEST);
 }
 
-GLfloat TextManager::getHeight(const int font) const {
-    return fontInfo[font].height;
+GLfloat TextManager::getHeight(Fonts font) const {
+    return fontInfo[static_cast<int>(font)].height;
 }
 
-void TextManager::clearFontTheme() {
+void TextManager::clearTheme() {
     // Bestehende Texturen freigeben, wenn vorhanden
-    for (int i = 0; i < FONT_NUM; i++) {
+    for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
         if (fontInfo[i].tex) {
             glDeleteTextures(1, &fontInfo[i].tex);
             fontInfo[i].tex = 0;
@@ -178,17 +180,17 @@ void TextManager::clearFontTheme() {
 }
 
 TextManager::~TextManager() {
-    clearFontTheme();
+    clearTheme();
     TTF_Quit();
 }
 
-bool TextManager::setFontTheme(const std::string &fontFilePath) {
+bool TextManager::setTheme(const std::string &fontFilePath) {
     // Bestehende Ressourcen freigeben
-    clearFontTheme();
+    clearTheme();
 
     // Font-Basispfad ermitteln (alles bis zum letzten /)
     std::filesystem::path path(fontFilePath);
-    fontThemePath = path.parent_path().string();
+    themePath = path.parent_path().string();
 
     // Parse font-description file
     std::ifstream f(fontFilePath);
@@ -223,15 +225,15 @@ bool TextManager::setFontTheme(const std::string &fontFilePath) {
                     SDL_Log("Ungültige Zahl in fonts.txt: %s", val.c_str());
                     continue;
                 }
-                int font = -1;
-                if (set == "menusize") font = FONT_MENU;
-                else if (set == "announcegoodsize") font = FONT_ANNOUNCE_GOOD;
-                else if (set == "announcebadsize") font = FONT_ANNOUNCE_BAD;
-                else if (set == "highscoresize") font = FONT_HIGHSCORE;
-                else if (set == "menuhighscoresize") font = FONT_MENUHIGHSCORE;
-                else if (set == "introhighscoresize") font = FONT_INTROHIGHSCORE;
-                else if (set == "introdescriptionsize") font = FONT_INTRODESCRIPTION;
-                if (font != -1)
+                auto font = Fonts::Count; // Standardwert als "ungültig"
+                if (set == "menusize") font = Fonts::Menu;
+                else if (set == "announcegoodsize") font = Fonts::AnnounceGood;
+                else if (set == "announcebadsize") font = Fonts::AnnounceBad;
+                else if (set == "highscoresize") font = Fonts::Highscore;
+                else if (set == "menuhighscoresize") font = Fonts::MenuHighscore;
+                else if (set == "introhighscoresize") font = Fonts::IntroHighscore;
+                else if (set == "introdescriptionsize") font = Fonts::IntroDescription;
+                if (font != Fonts::Count)
                     genFontTex(tempName, static_cast<int>(size), font);
             } else if (
                 set == "announcegoodfile" ||
@@ -249,7 +251,7 @@ bool TextManager::setFontTheme(const std::string &fontFilePath) {
     return true;
 }
 
-TextAnnouncement::TextAnnouncement(std::string msg, int fontId, int ttl, TextManager *mgr)
+TextAnnouncement::TextAnnouncement(std::string msg, Fonts fontId, int ttl, TextManager *mgr)
     : message(std::move(msg)), font(fontId), lifetime(ttl), textManager(mgr) {
     age = 0;
     zoom = 0.0f;
@@ -259,6 +261,7 @@ TextAnnouncement::TextAnnouncement(std::string msg, int fontId, int ttl, TextMan
 }
 
 void TextAnnouncement::update(const float deltaTime) {
+    // Zoom-Effekt mit deltaTime-Abhängigkeit
     zoom += 2.4f * deltaTime;
 
     // Fade-Effekt steuern
@@ -286,40 +289,48 @@ void TextAnnouncement::update(const float deltaTime) {
     }
 }
 
-void TextAnnouncement::draw() const {
+void TextAnnouncement::draw(const float deltaTime) const {
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
 
+    static float totalTime = 0.0f;
+    totalTime += deltaTime; // Zeit akkumulieren
+
     // Erhöhter Skalierungsfaktor für bessere Sichtbarkeit
     float baseScale = 0.8f;
 
+    // Pulsieren als visuellen Effekt basierend auf deltaTime hinzufügen
+    float pulseEffect = sin(totalTime * 2.0f) * 0.15f;
+
     // Mehrere Ebenen mit verschiedenen Farben für den Schatteneffekt
-    float s = zoom * baseScale * 0.85f;
+    float s = zoom * baseScale * (0.85f + pulseEffect);
     glColor4f(1.0f, 0.0f, 0.0f, fade);
     textManager->write(message, font, true, s, 0.0f, 0.0f);
 
-    s = zoom * baseScale * 0.90f;
+    s = zoom * baseScale * (0.90f + pulseEffect);
     glColor4f(0.0f, 1.0f, 0.0f, fade);
     textManager->write(message, font, true, s, 0.0f, 0.0f);
 
-    s = zoom * baseScale * 0.95f;
+    s = zoom * baseScale * (0.95f + pulseEffect);
     glColor4f(0.0f, 0.0f, 1.0f, fade);
     textManager->write(message, font, true, s, 0.0f, 0.0f);
 
     // Haupttext
-    s = zoom * baseScale;
+    s = zoom * baseScale * (1.0f + pulseEffect);
     glColor4f(1.0f, 1.0f, 1.0f, fade);
     textManager->write(message, font, true, s, 0.0f, 0.0f);
 
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
     glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
 }
 
-void TextManager::addAnnouncement(const std::string &message, int lifetime, int font) {
+void TextManager::addAnnouncement(const std::string &message, int lifetime, Fonts font) {
     // this-Zeiger übergeben statt getInstance() aufzurufen
     announcements.emplace_back(message, font, lifetime, this);
 }
@@ -338,9 +349,12 @@ void TextManager::updateAnnouncements(const float deltaTime) {
     }
 }
 
-void TextManager::drawAnnouncements() const {
-    // Alle aktiven Announcements zeichnen
+void TextManager::drawAnnouncements(const float deltaTime) {
     for (const auto &announcement: announcements) {
-        announcement.draw();
+        announcement.draw(deltaTime);
     }
+}
+
+size_t TextManager::getAnnouncementCount() const {
+    return announcements.size();
 }
