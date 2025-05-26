@@ -20,5 +20,5 @@ menuhighscoresize=28
 introhighscorefile=Bandal.ttf
 introhighscoresize=40
 
-introdescriptionfile=subgamefont.ttf
-introdescriptionsize=10
+introdescriptionfile=RobotoCondensed-Regular.ttf
+introdescriptionsize=12
