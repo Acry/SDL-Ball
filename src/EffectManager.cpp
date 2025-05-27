@@ -408,7 +408,8 @@ void EffectManager::draw(const float deltaTime) {
     // Zeichne nur aktive Tracer
     for (auto &pair: tracers) {
         Tracer *tracer = pair.second;
-        if (tracer->isActive()) {  // Benutze die GameObject-Methode isActive()
+        if (tracer->isActive()) {
+            // Benutze die GameObject-Methode isActive()
             tracer->draw(deltaTime);
         }
     }
@@ -539,7 +540,7 @@ void EffectManager::setTracerTexture(int tracerId, SpriteSheetAnimation texture)
 void EffectManager::setTracerActive(int tracerId, bool active) {
     auto it = tracers.find(tracerId);
     if (it != tracers.end()) {
-        GameObject* go = dynamic_cast<GameObject*>(it->second);
+        GameObject *go = dynamic_cast<GameObject *>(it->second);
         if (go) {
             go->active = active;
         }
