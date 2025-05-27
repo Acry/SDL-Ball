@@ -15,7 +15,7 @@ int main() {
     // Verfügbare Sound-Themes
     const std::array<std::string, 2> soundThemes = {
         "../themes/default/snd/",
-        "../themes/dio-sound-theme/snd/"  // Hier zweites Theme angeben
+        "../themes/dio-sound-theme/snd/" // Hier zweites Theme angeben
     };
     int currentTheme = 0;
     soundManager.setSoundTheme(soundThemes[currentTheme]);
@@ -39,7 +39,7 @@ int main() {
         {SDLK_e, SND_EVIL_PO_HIT_PADDLE},
         {SDLK_r, SND_SHOT},
         {SDLK_t, SND_DIE},
-        {SDLK_z, SND_NEXTLEVEL},  // QWERTZ-Layout
+        {SDLK_z, SND_NEXTLEVEL}, // QWERTZ-Layout
         {SDLK_u, SND_GAMEOVER},
         {SDLK_i, SND_HIGHSCORE},
         {SDLK_o, SND_MENUCLICK},
@@ -56,36 +56,36 @@ int main() {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     SDL_Event event;
     while (running) {
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) {
-            running = false;
-        }
-        if (event.type == SDL_WINDOWEVENT) {
-            if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                display.resize(event.window.data1, event.window.data2);
-            }
-        }
-        if (event.type == SDL_KEYDOWN) {
-            if (event.key.keysym.sym == SDLK_ESCAPE) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
                 running = false;
             }
-            // SPACE für Theme-Wechsel
-            if (event.key.keysym.sym == SDLK_SPACE) {
-                currentTheme = (currentTheme + 1) % soundThemes.size();
-                if (soundManager.setSoundTheme(soundThemes[currentTheme])) {
-                    SDL_Log("Sound-Theme gewechselt zu: %s", soundThemes[currentTheme].c_str());
+            if (event.type == SDL_WINDOWEVENT) {
+                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                    display.resize(event.window.data1, event.window.data2);
                 }
             }
-            // Sound abspielen, wenn Taste zugeordnet ist
-            if (auto it = keyToSound.find(event.key.keysym.sym); it != keyToSound.end()) {
-                soundManager.queueSound(it->second, 0.0f);  // Zentrierte Position
-                soundManager.play();
-                SDL_Log("Sound %d abgespielt", it->second);
+            if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    running = false;
+                }
+                // SPACE für Theme-Wechsel
+                if (event.key.keysym.sym == SDLK_SPACE) {
+                    currentTheme = (currentTheme + 1) % soundThemes.size();
+                    if (soundManager.setSoundTheme(soundThemes[currentTheme])) {
+                        SDL_Log("Sound-Theme gewechselt zu: %s", soundThemes[currentTheme].c_str());
+                    }
+                }
+                // Sound abspielen, wenn Taste zugeordnet ist
+                if (auto it = keyToSound.find(event.key.keysym.sym); it != keyToSound.end()) {
+                    soundManager.queueSound(it->second, 0.0f); // Zentrierte Position
+                    soundManager.play();
+                    SDL_Log("Sound %d abgespielt", it->second);
+                }
             }
         }
+        SDL_Delay(13);
+        SDL_GL_SwapWindow(display.sdlWindow);
     }
-    SDL_Delay(13);
-    SDL_GL_SwapWindow(display.sdlWindow);
-}
     return EXIT_SUCCESS;
 }

@@ -18,7 +18,8 @@ int main() {
     const std::filesystem::path texturePath = "../themes/default/gfx/ball/normal";
 
     // Textur und Eigenschaft laden
-    if (const TextureManager textureManager; !textureManager.loadTextureWithProperties(texturePath, spriteSheetAnimation)) {
+    if (const TextureManager textureManager; !textureManager.loadTextureWithProperties(
+        texturePath, spriteSheetAnimation)) {
         return EXIT_FAILURE;
     }
 

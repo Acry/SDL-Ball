@@ -35,7 +35,7 @@ void MockEventManager::emit(GameEvent event, const EventData &data) {
 
     if (data.sender && data.target) {
         // Target ist immer ein ICollideable
-        auto* target = static_cast<ICollideable*>(data.target);
+        auto *target = static_cast<ICollideable *>(data.target);
         int targetType = target->getCollisionType();
 
         // Prüfe, welches Event ausgelöst wurde und handle den Sender entsprechend
@@ -65,7 +65,7 @@ void MockEventManager::emit(GameEvent event, const EventData &data) {
             }
         } else {
             // Für alle anderen Events versuche einen ICollideable-Cast
-            auto* sender = static_cast<ICollideable*>(data.sender);
+            auto *sender = static_cast<ICollideable *>(data.sender);
             senderType = sender->getCollisionType();
         }
 
@@ -76,11 +76,11 @@ void MockEventManager::emit(GameEvent event, const EventData &data) {
 
         if (senderType >= 0 && senderType < 8 && targetType >= 0 && targetType < 8) {
             SDL_Log("Sender: %s, Target: %s",
-                  collisionTypeNames[senderType],
-                  collisionTypeNames[targetType]);
+                    collisionTypeNames[senderType],
+                    collisionTypeNames[targetType]);
         } else {
             SDL_Log("Ungültiger Kollisionstyp erkannt: Sender=%d, Target=%d",
-                  senderType, targetType);
+                    senderType, targetType);
         }
     }
 }

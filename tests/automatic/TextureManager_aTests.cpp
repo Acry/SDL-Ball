@@ -15,15 +15,15 @@ public:
 TEST(TextureManagerTest, ConstructorInitializesCorrectly) {
     ASSERT_NO_THROW({
         try {
-            std::unique_ptr<TextureManager> manager = std::make_unique<TextureManager>();
-            // Falls wir hier ankommen, war die Erstellung erfolgreich
-            SUCCEED();
+        std::unique_ptr<TextureManager> manager = std::make_unique<TextureManager>();
+        // Falls wir hier ankommen, war die Erstellung erfolgreich
+        SUCCEED();
         } catch (const std::exception& e) {
-            // Bei einer Ausnahme geben wir die Info aus und lassen den Test fehlschlagen
-            ADD_FAILURE() << "Exception beim Erstellen des TextureManagers: " << e.what();
-            throw;
+        // Bei einer Ausnahme geben wir die Info aus und lassen den Test fehlschlagen
+        ADD_FAILURE() << "Exception beim Erstellen des TextureManagers: " << e.what();
+        throw;
         }
-    });
+        });
 }
 
 TEST(TextureManagerTest, NonExistentThemeDirCausesError) {
@@ -31,7 +31,7 @@ TEST(TextureManagerTest, NonExistentThemeDirCausesError) {
         TextureManager textureManager;
         const std::string nonExistentThemePath = "./pfad";
         EXPECT_FALSE(textureManager.setSpriteTheme(nonExistentThemePath));
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         // Bei einer Ausnahme im Konstruktor überspringen wir diesen Test
         GTEST_SKIP() << "Konnte TextureManager nicht erstellen: " << e.what();
     }

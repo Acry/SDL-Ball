@@ -148,8 +148,7 @@ int main() {
             float hitX = leftBorder.getPosX() + leftBorder.getWidth();
             float hitY = paddle.getPosY();
             leftBorder.onCollision(&paddle, hitX, hitY);
-        }
-        else if (paddle.pos_x + paddle.getWidth() >= rightBorder.getPosX() - rightBorder.getWidth()) {
+        } else if (paddle.pos_x + paddle.getWidth() >= rightBorder.getPosX() - rightBorder.getWidth()) {
             // Rechte Grenze berührt
             float hitX = rightBorder.getPosX() - rightBorder.getWidth();
             float hitY = paddle.getPosY();

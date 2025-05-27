@@ -150,27 +150,48 @@ int main() {
             effectManager.updateTracer(tracerId, mouseX, mouseY);
             // Regenbogenfarben über Zeit (HSV-zu-RGB Konvertierung)
             static float hue = 0.0f;
-            hue += deltaTime * 0.5f;  // Geschwindigkeit der Farbänderung
+            hue += deltaTime * 0.5f; // Geschwindigkeit der Farbänderung
             if (hue > 1.0f) hue -= 1.0f;
 
             // HSV zu RGB Konvertierung
             float h = hue * 6.0f;
-            float s = 1.0f;  // Sättigung
-            float v = 1.0f;  // Helligkeit
+            float s = 1.0f; // Sättigung
+            float v = 1.0f; // Helligkeit
             float c = v * s;
             float x = c * (1.0f - fabsf(fmodf(h, 2.0f) - 1.0f));
             float m = v - c;
 
             GLfloat r = 0.0f, g = 0.0f, b = 0.0f;
 
-            if (h < 1.0f)      { r = c; g = x; b = 0.0f; }
-            else if (h < 2.0f) { r = x; g = c; b = 0.0f; }
-            else if (h < 3.0f) { r = 0.0f; g = c; b = x; }
-            else if (h < 4.0f) { r = 0.0f; g = x; b = c; }
-            else if (h < 5.0f) { r = x; g = 0.0f; b = c; }
-            else               { r = c; g = 0.0f; b = x; }
+            if (h < 1.0f) {
+                r = c;
+                g = x;
+                b = 0.0f;
+            } else if (h < 2.0f) {
+                r = x;
+                g = c;
+                b = 0.0f;
+            } else if (h < 3.0f) {
+                r = 0.0f;
+                g = c;
+                b = x;
+            } else if (h < 4.0f) {
+                r = 0.0f;
+                g = x;
+                b = c;
+            } else if (h < 5.0f) {
+                r = x;
+                g = 0.0f;
+                b = c;
+            } else {
+                r = c;
+                g = 0.0f;
+                b = x;
+            }
 
-            r += m; g += m; b += m;
+            r += m;
+            g += m;
+            b += m;
 
             GLfloat colors[3] = {r, g, b};
             effectManager.setTracerColor(tracerId, false, colors);
