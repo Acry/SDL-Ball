@@ -112,17 +112,17 @@ public:
 
     SpriteSheetAnimation *getTexture(const std::string &texturePath, bool forceReload = false);
 
-    SpriteSheetAnimation *getPaddleTexture(PaddleTexture type);
+    SpriteSheetAnimation *getPaddleTexture(PaddleTexture type) const;
 
-    SpriteSheetAnimation *getBallTexture(BallTexture type);
+    SpriteSheetAnimation *getBallTexture(BallTexture type) const;
 
-    SpriteSheetAnimation *getBrickTexture(BrickTexture type);
+    SpriteSheetAnimation *getBrickTexture(BrickTexture type) const;
 
-    SpriteSheetAnimation *getPowerUpTexture(PowerUpTexture type);
+    SpriteSheetAnimation *getPowerUpTexture(PowerUpTexture type) const;
 
-    SpriteSheetAnimation *getEffectTexture(EffectTexture type);
+    SpriteSheetAnimation *getEffectTexture(EffectTexture type) const;
 
-    SpriteSheetAnimation *getMiscTexture(MiscTexture type);
+    SpriteSheetAnimation *getMiscTexture(MiscTexture type) const;
 
     // LoadAllGameTexturesWithProperties
     bool loadAllGameTextures();

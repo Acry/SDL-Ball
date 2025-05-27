@@ -299,37 +299,37 @@ SpriteSheetAnimation *TextureManager::getTexture(const std::string &texturePath,
     return loadAndCacheTexture(texturePath, forceReload);
 }
 
-SpriteSheetAnimation *TextureManager::getPaddleTexture(PaddleTexture type) {
+SpriteSheetAnimation *TextureManager::getPaddleTexture(PaddleTexture type) const {
     size_t index = static_cast<size_t>(type);
     if (index >= paddleTextures.size()) return nullptr;
     return paddleTextures[index];
 }
 
-SpriteSheetAnimation *TextureManager::getBallTexture(BallTexture type) {
+SpriteSheetAnimation *TextureManager::getBallTexture(BallTexture type) const {
     size_t index = static_cast<size_t>(type);
     if (index >= ballTextures.size()) return nullptr;
     return ballTextures[index];
 }
 
-SpriteSheetAnimation *TextureManager::getBrickTexture(BrickTexture type) {
+SpriteSheetAnimation *TextureManager::getBrickTexture(BrickTexture type) const {
     size_t index = static_cast<size_t>(type);
     if (index >= brickTextures.size()) return nullptr;
     return brickTextures[index];
 }
 
-SpriteSheetAnimation *TextureManager::getPowerUpTexture(PowerUpTexture type) {
+SpriteSheetAnimation *TextureManager::getPowerUpTexture(PowerUpTexture type) const {
     size_t index = static_cast<size_t>(type);
     if (index >= powerUpTextures.size()) return nullptr;
     return powerUpTextures[index];
 }
 
-SpriteSheetAnimation *TextureManager::getEffectTexture(EffectTexture type) {
+SpriteSheetAnimation *TextureManager::getEffectTexture(EffectTexture type) const {
     size_t index = static_cast<size_t>(type);
     if (index >= effectTextures.size()) return nullptr;
     return effectTextures[index];
 }
 
-SpriteSheetAnimation *TextureManager::getMiscTexture(MiscTexture type) {
+SpriteSheetAnimation *TextureManager::getMiscTexture(MiscTexture type) const {
     size_t index = static_cast<size_t>(type);
     if (index >= miscTextures.size()) return nullptr;
     return miscTextures[index];
