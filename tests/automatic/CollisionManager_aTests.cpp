@@ -36,11 +36,11 @@ public:
 class CollisionManagerTest : public ::testing::Test {
 protected:
     // Einfache nicht-überlappende Objekte (NDC-Koordinaten)
-    MockCollideable obj1{-0.8f, -0.8f, 0.05f, 0.05f};  // (-0.85,-0.85) bis (-0.75,-0.75)
-    MockCollideable obj2{0.8f, 0.8f, 0.05f, 0.05f};    // (0.75,0.75) bis (0.85,0.85)
+    MockCollideable obj1{-0.8f, -0.8f, 0.05f, 0.05f};
+    MockCollideable obj2{0.8f, 0.8f, 0.05f, 0.05f};
 
     // Objekte mit Überlappung
-    MockCollideable obj3{-0.75f, -0.75f, 0.05f, 0.05f};  // (-0.8,-0.8) bis (-0.7,-0.7)
+    MockCollideable obj3{-0.75f, -0.75f, 0.05f, 0.05f};
 
     // Randobjekte in NDC
     MockCollideable leftBorder{-1.0f, 1.0f, 0.05f, 2.0f, true,
@@ -49,6 +49,8 @@ protected:
                               static_cast<int>(CollisionType::BorderRight)};
     MockCollideable topBorder{0.0f, 1.0f, 1.9f, 0.05f, true,
                             static_cast<int>(CollisionType::BorderTop)};
+
+    MockCollideable obj4{-1.0f, -0.95f, 2.0f, 0.05f};
 };
 
 TEST_F(CollisionManagerTest, NoCollisionWhenObjectsApartAABB) {
@@ -125,6 +127,38 @@ TEST_F(CollisionManagerTest, CollisionWithTopBorder) {
     EXPECT_TRUE(collision);
     EXPECT_FLOAT_EQ(ball.posX, hitX);
     EXPECT_FLOAT_EQ(topBorder.posY-topBorder.height, hitY);
+}
+
+TEST_F(CollisionManagerTest, checkCollisionTop) {
+    MockCollideable ball{0.0f, 0.95f, 0.05f, 0.05f};
+
+    bool collision = CollisionManager::checkCollision(ball, topBorder);
+
+    EXPECT_TRUE(collision);
+}
+
+TEST_F(CollisionManagerTest, checkCollisionLeft) {
+    MockCollideable ball{-0.95f, 0.0f, 0.05f, 0.05f};
+    bool collision = CollisionManager::checkCollision(ball, leftBorder);
+
+    EXPECT_TRUE(collision);
+}
+
+TEST_F(CollisionManagerTest, checkCollisionRight) {
+    MockCollideable ball{0.95f, 0.0f, 0.05f, 0.05f};
+
+    bool collision = CollisionManager::checkCollision(ball, rightBorder);
+
+    EXPECT_TRUE(collision);
+}
+
+TEST_F(CollisionManagerTest, checkCollisionBottom) {
+    MockCollideable ball{0.0f, -0.95f, 0.05f, 0.05f};
+
+    bool collision = CollisionManager::checkCollision(ball, obj4);
+
+    EXPECT_TRUE(collision);
+
 }
 
 TEST_F(CollisionManagerTest, NoCollisionWithBorder) {

@@ -75,7 +75,6 @@ bool CollisionManager::checkCollisionWithBorder(
     const ICollideable &border,
     float &hitX,
     float &hitY) {
-    // Nutze die vorhandene Kollisionsprüfung
     if (!movingObject.isActive() || !border.isActive() ||
         !checkCollision(movingObject, border))
         return false;

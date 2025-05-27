@@ -10,7 +10,7 @@ struct CollisionPoint {
 
 class CollisionManager {
 public:
-    // Einfache Kollisionserkennung zwischen zwei ICollideable-Objekten
+    // Einfache Kollisionserkennung
     static bool checkCollision(const ICollideable &obj1, const ICollideable &obj2);
 
     // Spezialisierte Kollisionserkennung mit Kollisionspunkt
