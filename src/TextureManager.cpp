@@ -349,17 +349,21 @@ bool TextureManager::loadAllGameTextures() {
         allTexturesLoaded = false;
     if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Glue)] = loadAndCacheTexture("gfx/powerup/glue")))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Multiball)] = loadAndCacheTexture("gfx/powerup/multiball")))
+    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Multiball)] =
+          loadAndCacheTexture("gfx/powerup/multiball")))
         allTexturesLoaded = false;
     if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::BigBall)] = loadAndCacheTexture("gfx/powerup/bigball")))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::NormalBall)] = loadAndCacheTexture("gfx/powerup/normalball")))
+    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::NormalBall)] = loadAndCacheTexture(
+              "gfx/powerup/normalball")))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::SmallBall)] = loadAndCacheTexture("gfx/powerup/smallball")))
+    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::SmallBall)] =
+          loadAndCacheTexture("gfx/powerup/smallball")))
         allTexturesLoaded = false;
     if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Aim)] = loadAndCacheTexture("gfx/powerup/aim")))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Explosive)] = loadAndCacheTexture("gfx/powerup/explosive")))
+    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Explosive)] =
+          loadAndCacheTexture("gfx/powerup/explosive")))
         allTexturesLoaded = false;
     if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Gun)] = loadAndCacheTexture("gfx/powerup/gun")))
         allTexturesLoaded = false;
@@ -373,17 +377,22 @@ bool TextureManager::loadAllGameTextures() {
         allTexturesLoaded = false;
     if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Detonate)] = loadAndCacheTexture("gfx/powerup/detonate")))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::ExplosiveGrow)] = loadAndCacheTexture("gfx/powerup/explosive-grow")))
+    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::ExplosiveGrow)] = loadAndCacheTexture(
+              "gfx/powerup/explosive-grow")))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::EasyBrick)] = loadAndCacheTexture("gfx/powerup/easybrick")))
+    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::EasyBrick)] =
+          loadAndCacheTexture("gfx/powerup/easybrick")))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::NextLevel)] = loadAndCacheTexture("gfx/powerup/nextlevel")))
+    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::NextLevel)] =
+          loadAndCacheTexture("gfx/powerup/nextlevel")))
         allTexturesLoaded = false;
     if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::AimHelp)] = loadAndCacheTexture("gfx/powerup/aimhelp")))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::GrowPaddle)] = loadAndCacheTexture("gfx/powerup/growbat")))
+    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::GrowPaddle)] =
+          loadAndCacheTexture("gfx/powerup/growbat")))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::ShrinkPaddle)] = loadAndCacheTexture("gfx/powerup/shrinkbat")))
+    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::ShrinkPaddle)] = loadAndCacheTexture(
+              "gfx/powerup/shrinkbat")))
         allTexturesLoaded = false;
     if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Bullet)] = loadAndCacheTexture("gfx/powerup/bullet")))
         allTexturesLoaded = false;
@@ -442,7 +451,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
             ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".webp", ".jxl", ".avif"
         };
 
-        for (const auto &format : supportedFormats) {
+        for (const auto &format: supportedFormats) {
             if (std::filesystem::path texturePath = basePath + format; std::filesystem::exists(texturePath)) {
                 if (load(texturePath, animation)) {
                     textureLoaded = true;
