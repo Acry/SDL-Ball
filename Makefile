@@ -47,7 +47,7 @@ $(shell mkdir -p $(BUILD_DIR))
 
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-test theme-test text-test sound-test ball-test effect-test texture-test
-AUTO_TEST_TARGETS := texture-automatic-test
+AUTO_TEST_TARGETS := texture-automatic-test event-automatic-test collision-automatic-test
 TARGET=sdl-ball
 GAME_OBJECTS := $(OBJECTS)
 
@@ -359,4 +359,16 @@ event-automatic-test: $(EVENT_ATEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(EVENT_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)event-automatic-test
 
 $(BUILD_DIR)EventManager_aTests.o: $(AUTOMATIC_TEST_DIR)EventManager_aTests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
+###############################################################################
+# collision-automatic-test
+COLLISION_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)CollisionManager_aTests.cpp \
+                          $(SOURCE_DIR)CollisionManager.cpp
+
+COLLISION_ATEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(COLLISION_ATEST_SOURCES:.cpp=.o)))
+
+collision-automatic-test: $(COLLISION_ATEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(COLLISION_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)collision-automatic-test
+
+$(BUILD_DIR)CollisionManager_aTests.o: $(AUTOMATIC_TEST_DIR)CollisionManager_aTests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread

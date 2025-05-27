@@ -80,17 +80,20 @@ bool CollisionManager::checkCollisionWithBorder(
         !checkCollision(movingObject, border))
         return false;
 
-    // Kollisionspunkt je nach Randtyp berechnen
-    int borderType = border.getCollisionType();
-    if (borderType == static_cast<int>(CollisionType::BorderLeft)) {
+    bool collision = false;
+
+    if (const int borderType = border.getCollisionType(); borderType == static_cast<int>(CollisionType::BorderLeft)) {
+        collision = movingObject.getPosX() <= border.getPosX() + border.getWidth();
         hitX = border.getPosX() + border.getWidth();
         hitY = movingObject.getPosY();
     } else if (borderType == static_cast<int>(CollisionType::BorderRight)) {
-        hitX = border.getPosX() - border.getWidth();
+        collision = movingObject.getPosX() + movingObject.getWidth() >= border.getPosX();
+        hitX = border.getPosX();
         hitY = movingObject.getPosY();
     } else if (borderType == static_cast<int>(CollisionType::BorderTop)) {
+        collision = movingObject.getPosY() >= border.getPosY() - border.getHeight();
         hitX = movingObject.getPosX();
         hitY = border.getPosY() - border.getHeight();
     }
-    return true;
+    return collision;
 }
