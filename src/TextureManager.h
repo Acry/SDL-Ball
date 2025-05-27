@@ -6,16 +6,18 @@
 #include "SpriteSheetAnimation.h"
 #include "ThemeManager.h"
 
-// in game_state.h sind noch texturen und Eigenschaften definiert.
+// in game_state.h sind noch Textur-Eigenschaften definiert.
 
-// Enumerationen für alle bekannten Texturen im Spiel
 enum class PaddleTexture {
-    Base, Glue, Gun,
+    Base,
+    Glue,
+    Gun,
     Count
 };
 
 enum class BallTexture {
-    Normal, Fireball,
+    Normal,
+    Fireball,
     Count
 };
 
@@ -68,7 +70,8 @@ enum class MiscTexture {
 };
 
 enum class EffectTexture {
-    Tail, Particle,
+    Tail,
+    Particle,
     Count
 };
 
@@ -78,10 +81,8 @@ enum class TitleTexture {
 };
 
 class TextureManager {
-    // Allgemeiner Cache für alle Texturen
     std::unordered_map<std::string, std::unique_ptr<SpriteSheetAnimation> > textureCache;
 
-    // Vorgefertigte Arrays für schnellen Zugriff auf häufig verwendete Texturen
     std::array<SpriteSheetAnimation *, static_cast<size_t>(PaddleTexture::Count)> paddleTextures;
     std::array<SpriteSheetAnimation *, static_cast<size_t>(BallTexture::Count)> ballTextures;
     std::array<SpriteSheetAnimation *, static_cast<size_t>(BrickTexture::Count)> brickTextures;
@@ -93,15 +94,14 @@ class TextureManager {
     int maxTexSize;
     std::string currentTheme;
 
-    // Hilfsfunktion zum Laden und Cachen einer Textur
     SpriteSheetAnimation *loadAndCacheTexture(const std::string &path, bool forceReload = false);
 
+    // create texture from image
 public:
     TextureManager();
 
     ~TextureManager();
 
-    // Verhindern von Kopieren
     TextureManager(const TextureManager &) = delete;
 
     TextureManager &operator=(const TextureManager &) = delete;
@@ -110,10 +110,8 @@ public:
 
     void clearTheme();
 
-    // Generische Methoden zum Laden von Texturen
     SpriteSheetAnimation *getTexture(const std::string &texturePath, bool forceReload = false);
 
-    // Typspezifischer Zugriff auf vordefinierte Texturen
     SpriteSheetAnimation *getPaddleTexture(PaddleTexture type);
 
     SpriteSheetAnimation *getBallTexture(BallTexture type);
@@ -126,13 +124,14 @@ public:
 
     SpriteSheetAnimation *getMiscTexture(MiscTexture type);
 
-    // Lade alle Spiel-Texturen für das aktuelle Theme
+    // LoadAllGameTexturesWithProperties
     bool loadAllGameTextures();
 
-    // Ursprüngliche Methoden beibehalten
+    // Load image file
     bool load(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const;
 
-    void readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const;
+    // load property file
+    bool readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const;
 
     bool loadTextureWithProperties(const std::string &basePath, SpriteSheetAnimation &animation) const;
 };

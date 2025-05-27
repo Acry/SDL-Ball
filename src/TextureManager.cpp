@@ -9,50 +9,55 @@
 
 GLuint getGLFormat(const SDL_Surface *surface) {
     if (!surface) {
-        return GL_RGBA; // Fallback
+        return GL_RGBA;
     }
 
     switch (surface->format->BytesPerPixel) {
         case 3:
             return GL_RGB;
-        case 4:
-            return GL_RGBA;
         default:
             return GL_RGBA;
     }
 }
 
-TextureManager::TextureManager() : maxTexSize(0) {
+TextureManager::TextureManager()
+    : maxTexSize(0) {
+
+    paddleTextures.fill(nullptr);
+    ballTextures.fill(nullptr);
+    brickTextures.fill(nullptr);
+    powerUpTextures.fill(nullptr);
+    miscTextures.fill(nullptr);
+    effectTextures.fill(nullptr);
+    titleTextures.fill(nullptr);
+
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
 }
 
 bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const {
     SDL_Surface *tempSurface = IMG_Load(pathName.c_str());
     if (!tempSurface) {
-        SDL_Log("Konnte Textur nicht laden: %s", pathName.c_str());
+        SDL_Log("Error: no image file: %s", pathName.c_str());
         return false;
     }
     if (tempSurface->w > maxTexSize || tempSurface->h > maxTexSize) {
-        SDL_Log("Textur zu groß: %s (%dx%d)", pathName.c_str(), tempSurface->w, tempSurface->h);
+        SDL_Log("Error: image too big: %s (%dx%d)", pathName.c_str(), tempSurface->w, tempSurface->h);
         SDL_FreeSurface(tempSurface);
         return false;
     }
-    const GLuint glFormat = getGLFormat(tempSurface);
+    const GLint glFormat = getGLFormat(tempSurface);
 
     glGenTextures(1, &tex.textureProperties.texture);
     glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
 
-    // MipMap-Filter für verkleinerte Texturen verwenden
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-    // Texture-Daten hochladen
     glTexImage2D(GL_TEXTURE_2D, 0, glFormat, tempSurface->w, tempSurface->h, 0, glFormat, GL_UNSIGNED_BYTE,
                  tempSurface->pixels);
 
-    // Moderne MipMap-Generierung verwenden
     glGenerateMipmap(GL_TEXTURE_2D);
 
     tex.textureProperties.pxw = tempSurface->w;
@@ -62,12 +67,18 @@ bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnim
     return true;
 }
 
-void TextureManager::readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const {
-    char rgba[4][5];
+bool TextureManager::readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const {
+
     std::ifstream f;
     std::string set, val;
     f.open(pathName.c_str());
 
+    if (!f.is_open()) {
+        SDL_Log("readTexProps: Cannot open '%s'", pathName.c_str());
+        return false;
+    }
+
+    char rgba[4][5];
     if (f.is_open()) {
         std::string line;
         while (!f.eof()) {
@@ -88,7 +99,7 @@ void TextureManager::readTexProps(const std::filesystem::path &pathName, SpriteS
                 } else if (set == "frames") {
                     tex.textureProperties.frames = atoi(val.data());
                 } else if (set == "bidir") {
-                    tex.textureProperties.bidir = atoi(val.data());
+                    tex.textureProperties.direction = atoi(val.data());
                 } else if (set == "playing") {
                     tex.textureProperties.playing = atoi(val.data());
                 } else if (set == "padding") {
@@ -133,17 +144,17 @@ TextureManager::~TextureManager() {
 }
 
 // bekommt z.B.: /home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball/SDL-Ball-Project/themes/default
-bool TextureManager::setSpriteTheme(const std::string &themePath) {
-    if (currentTheme == themePath) return true;
-    if (!std::filesystem::exists(themePath)) {
-        SDL_Log("Fehler: Theme-Verzeichnis existiert nicht: %s", themePath.c_str());
+bool TextureManager::setSpriteTheme(const std::string &themeName) {
+    if (currentTheme == themeName) return true;
+    if (!std::filesystem::exists(themeName)) {
+        SDL_Log("Error: Could not read theme-directory: %s", themeName.c_str());
         return false;
     }
     // Ressourcen freigeben
     clearTheme();
 
     // Neuen Pfad setzen
-    currentTheme = themePath;
+    currentTheme = themeName;
 
     // Texturen neu laden
     if (!loadAllGameTextures()) {
@@ -174,29 +185,25 @@ void TextureManager::clearTheme() {
     for (auto &tex: titleTextures) tex = nullptr;
 }
 
-SpriteSheetAnimation *TextureManager::loadAndCacheTexture(const std::string &path, bool forceReload) {
-    // Prüfen, ob Textur bereits im Cache ist
-    if (!forceReload && textureCache.find(path) != textureCache.end()) {
+SpriteSheetAnimation *TextureManager::loadAndCacheTexture(const std::string &path, const bool forceReload) {
+    if (!forceReload && textureCache.contains(path)) {
         return textureCache[path].get();
     }
 
-    // Ansonsten neu laden
     auto newTexture = std::make_unique<SpriteSheetAnimation>();
 
-    // Unterstützte Bildformate definieren
     const std::vector<std::string> supportedFormats = {
         ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".webp", ".jxl", ".avif"
     };
 
-    // Eigenschaften-Datei (immer .txt, später auch json möglich)
-    std::filesystem::path txtPath = currentTheme + "/" + path + ".txt";
+    const std::filesystem::path txtPath = currentTheme + "/" + path + ".txt";
 
-    // Versuche, Textur in einem der unterstützten Formate zu laden
     bool textureLoaded = false;
     std::filesystem::path loadedPath;
 
     for (const auto &format: supportedFormats) {
-        std::filesystem::path imagePath = currentTheme + "/" + path + format;
+        std::filesystem::path imagePath = std::filesystem::path(currentTheme) / path;
+        imagePath += format;
 
         if (std::filesystem::exists(imagePath)) {
             if (load(imagePath, *newTexture)) {
@@ -224,16 +231,13 @@ SpriteSheetAnimation *TextureManager::loadAndCacheTexture(const std::string &pat
         newTexture->textureProperties.yoffset = 1.0f;
         newTexture->textureProperties.frames = 1;
         newTexture->textureProperties.playing = false;
-        newTexture->textureProperties.bidir = false;
+        newTexture->textureProperties.direction = false;
         newTexture->textureProperties.padding = false;
     }
 
     // In Cache einfügen und Pointer zurückgeben
-    SpriteSheetAnimation *result = newTexture.get();
     textureCache[path] = std::move(newTexture);
-
-    SDL_Log("Textur geladen: %s", loadedPath.c_str());
-    return result;
+    return textureCache[path].get();
 }
 
 SpriteSheetAnimation *TextureManager::getTexture(const std::string &texturePath, bool forceReload) {
@@ -269,7 +273,6 @@ SpriteSheetAnimation *TextureManager::getEffectTexture(EffectTexture type) {
     if (index >= effectTextures.size()) return nullptr;
     return effectTextures[index];
 }
-
 
 SpriteSheetAnimation *TextureManager::getMiscTexture(MiscTexture type) {
     size_t index = static_cast<size_t>(type);
@@ -404,7 +407,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
         animation.textureProperties.yoffset = 1.0f;
         animation.textureProperties.frames = 1;
         animation.textureProperties.playing = false;
-        animation.textureProperties.bidir = false;
+        animation.textureProperties.direction = false;
         animation.textureProperties.padding = false;
 
         // Standardfarben setzen

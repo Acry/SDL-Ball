@@ -76,7 +76,6 @@ bool SettingsManager::loadSettings() {
         key = line.substr(0, pos);
         value = line.substr(pos + 1);
 
-        // Einstellungen einlesen
         if (key == "gfxtheme") loadedSettings.gfxTheme = value;
         else if (key == "sndtheme") loadedSettings.sndTheme = value;
         else if (key == "lvltheme") loadedSettings.lvlTheme = value;
@@ -92,7 +91,7 @@ bool SettingsManager::loadSettings() {
         else if (key == "stereo") loadedSettings.stereo = std::stoi(value);
         else if (key == "particlecollide") loadedSettings.particleCollide = std::stoi(value);
 
-            // Controls
+        // Controls
         else if (key == "keyleft") loadedSettings.keyLeft = static_cast<SDL_Keycode>(std::stoi(value));
         else if (key == "keyright") loadedSettings.keyRight = static_cast<SDL_Keycode>(std::stoi(value));
         else if (key == "keyshoot") loadedSettings.keyShoot = static_cast<SDL_Keycode>(std::stoi(value));
@@ -100,12 +99,12 @@ bool SettingsManager::loadSettings() {
         else if (key == "keyprevpo") loadedSettings.keyPrevPo = static_cast<SDL_Keycode>(std::stoi(value));
         else if (key == "keybuypo") loadedSettings.keyBuyPo = static_cast<SDL_Keycode>(std::stoi(value));
 
-            // Control speeds
+        // Control speeds
         else if (key == "controlaccel") loadedSettings.controlAccel = std::stof(value);
         else if (key == "controlstartspeed") loadedSettings.controlStartSpeed = std::stof(value);
         else if (key == "controlmaxspeed") loadedSettings.controlMaxSpeed = std::stof(value);
 
-            // Joystick
+        // Joystick
         else if (key == "joyenabled") loadedSettings.joyEnabled = std::stoi(value);
         else if (key == "joyisdigital") loadedSettings.joyIsDigital = std::stoi(value);
         else if (key == "joyispaddle") loadedSettings.joyIsPaddle = std::stoi(value);

@@ -17,7 +17,7 @@ void SpriteSheetAnimation::play(const float deltaTime) {
             // Rest der Methode bleibt unverändert
             if (!direction) {
                 if (frame == textureProperties.frames) {
-                    if (textureProperties.bidir) {
+                    if (textureProperties.direction) {
                         direction = true;
                     } else {
                         frame = 1;
