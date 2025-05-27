@@ -1,5 +1,8 @@
 # TextureManager
 
+[ ] Wenn ein Textur-Theme nicht in ordnung ist, default-Thema nutzen
+[ ] Embedded Thema
+
     const std::filesystem::path texturePath = "../themes/default/gfx/paddle/base.png";
     const std::filesystem::path propsPath = "../themes/default/gfx/paddle/base.txt";
 

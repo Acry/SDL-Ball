@@ -67,74 +67,79 @@ bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnim
 }
 
 bool TextureManager::readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const {
-    std::ifstream f;
-    std::string set, val;
-    f.open(pathName.c_str());
+    std::ifstream f(pathName);
 
     if (!f.is_open()) {
         SDL_Log("readTexProps: Cannot open '%s'", pathName.c_str());
         return false;
     }
 
-    char rgba[4][5];
-    if (f.is_open()) {
-        std::string line;
-        while (!f.eof()) {
-            getline(f, line);
-            if (line.find('=') != std::string::npos) {
-                set = line.substr(0, line.find('='));
-                val = line.substr(line.find('=') + 1);
-                if (set == "xoffset") {
-                    tex.textureProperties.xoffset = atof(val.data());
-                } else if (set == "yoffset") {
-                    tex.textureProperties.yoffset = atof(val.data());
-                } else if (set == "cols") {
-                    tex.textureProperties.cols = atoi(val.data());
-                } else if (set == "rows") {
-                    tex.textureProperties.rows = atoi(val.data());
-                } else if (set == "ticks") {
-                    tex.textureProperties.ticks = atoi(val.data());
-                } else if (set == "frames") {
-                    tex.textureProperties.frames = atoi(val.data());
-                } else if (set == "bidir") {
-                    tex.textureProperties.direction = atoi(val.data());
-                } else if (set == "playing") {
-                    tex.textureProperties.playing = atoi(val.data());
-                } else if (set == "padding") {
-                    tex.textureProperties.padding = atoi(val.data());
-                } else if (set == "texcolor") {
-                    sprintf(rgba[0], "0x%c%c", val[0], val[1]);
-                    sprintf(rgba[1], "0x%c%c", val[2], val[3]);
-                    sprintf(rgba[2], "0x%c%c", val[4], val[5]);
-                    sprintf(rgba[3], "0x%c%c", val[6], val[7]);
-                    tex.textureProperties.glTexColorInfo[0] = 0.003921569f * strtol(rgba[0], nullptr, 16);
-                    tex.textureProperties.glTexColorInfo[1] = 0.003921569f * strtol(rgba[1], nullptr, 16);
-                    tex.textureProperties.glTexColorInfo[2] = 0.003921569f * strtol(rgba[2], nullptr, 16);
-                    tex.textureProperties.glTexColorInfo[3] = 0.003921569f * strtol(rgba[3], nullptr, 16);
-                } else if (set == "parcolor") {
-                    sprintf(rgba[0], "0x%c%c", val[0], val[1]);
-                    sprintf(rgba[1], "0x%c%c", val[2], val[3]);
-                    sprintf(rgba[2], "0x%c%c", val[4], val[5]);
-                    tex.textureProperties.glParColorInfo[0] = 0.003921569f * strtol(rgba[0], nullptr, 16);
-                    tex.textureProperties.glParColorInfo[1] = 0.003921569f * strtol(rgba[1], nullptr, 16);
-                    tex.textureProperties.glParColorInfo[2] = 0.003921569f * strtol(rgba[2], nullptr, 16);
-                } else if (set == "file") {
-                    tex.textureProperties.fileName = val;
-                } else {
-                    SDL_Log("Error: '%s' invalid setting '%s' with value '%s'", pathName.c_str(), set.c_str(),
-                            val.c_str());
-                }
-            }
+    std::string line;
+    while (std::getline(f, line)) {
+        // Ignoriere empty lines and comments
+        if (size_t commentPos = line.find("//"); commentPos != std::string::npos) {
+            line = line.substr(0, commentPos);
         }
 
-        // Ich weiß momentan nicht ob das hier noch gebraucht wird
-        if (tex.textureProperties.fileName.length() > 1) {
-            std::string name = "gfx/" + tex.textureProperties.fileName;
-            // load(themeManager.getThemeFilePath(name, setting.gfxTheme), tex);
+        if (line.empty()) {
+            continue;
         }
-    } else {
-        SDL_Log("readTexProps: Cannot open '%s'", pathName.c_str());
+
+        // find key-value pairs
+        size_t separatorPos = line.find('=');
+        if (separatorPos == std::string::npos) {
+            continue;
+        }
+
+        std::string key = line.substr(0, separatorPos);
+        std::string value = line.substr(separatorPos + 1);
+
+        // trim whitespace
+        key.erase(0, key.find_first_not_of(" \t"));
+        key.erase(key.find_last_not_of(" \t") + 1);
+        value.erase(0, value.find_first_not_of(" \t"));
+        value.erase(value.find_last_not_of(" \t") + 1);
+
+        // read properties
+        if (key == "xoffset") {
+            tex.textureProperties.xoffset = std::stof(value);
+        } else if (key == "yoffset") {
+            tex.textureProperties.yoffset = std::stof(value);
+        } else if (key == "cols") {
+            tex.textureProperties.cols = std::stoi(value);
+        } else if (key == "rows") {
+            tex.textureProperties.rows = std::stoi(value);
+        } else if (key == "ticks") {
+            tex.textureProperties.ticks = std::stoi(value);
+        } else if (key == "frames") {
+            tex.textureProperties.frames = std::stoi(value);
+        } else if (key == "bidir") {
+            tex.textureProperties.direction = std::stoi(value) != 0;
+        } else if (key == "playing") {
+            tex.textureProperties.playing = std::stoi(value) != 0;
+        } else if (key == "padding") {
+            tex.textureProperties.padding = std::stoi(value) != 0;
+        } else if (key == "texcolor" && value.length() >= 8) {
+            // Texture color [RRGGBBAA]
+            constexpr float normalizer = 1.0f / 255.0f;
+            tex.textureProperties.glTexColorInfo[0] = static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
+            tex.textureProperties.glTexColorInfo[1] = static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
+            tex.textureProperties.glTexColorInfo[2] = static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
+            tex.textureProperties.glTexColorInfo[3] = static_cast<float>(std::stoi(value.substr(6, 2), nullptr, 16)) * normalizer;
+        } else if (key == "parcolor" && value.length() >= 6) {
+            // particle color [RRGGBB]
+            constexpr float normalizer = 1.0f / 255.0f;
+            tex.textureProperties.glParColorInfo[0] = static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
+            tex.textureProperties.glParColorInfo[1] = static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
+            tex.textureProperties.glParColorInfo[2] = static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
+        } else if (key == "file") {
+            tex.textureProperties.fileName = value;
+        } else {
+            SDL_Log("Error: '%s' invalid setting '%s' with value '%s'", pathName.c_str(), key.c_str(), value.c_str());
+        }
     }
+
+    return true;
 }
 
 TextureManager::~TextureManager() {
