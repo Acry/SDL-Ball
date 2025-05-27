@@ -131,7 +131,7 @@ public:
     bool load(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const;
 
     // load property file
-    bool readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const;
+    static bool readTextureProperties(const std::filesystem::path &pathName, SpriteSheetAnimation &tex);
 
     bool loadTextureWithProperties(const std::string &basePath, SpriteSheetAnimation &animation) const;
 };

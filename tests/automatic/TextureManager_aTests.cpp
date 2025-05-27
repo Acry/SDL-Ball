@@ -79,7 +79,7 @@ TEST(TextureManagerTest, ReadTexPropsLoadsPropertiesCorrectly) {
         SpriteSheetAnimation animation;
 
         // Methode testen
-        textureManager.readTexProps(testFilePath, animation);
+        textureManager.readTextureProperties(testFilePath, animation);
 
         // Überprüfen der gelesenen Werte
         EXPECT_FLOAT_EQ(0.5f, animation.textureProperties.xoffset);
@@ -125,7 +125,7 @@ TEST(TextureManagerTest, ReadTexPropsHandlesInvalidFile) {
         animation.textureProperties.ticks = 1000;
 
         // Methode mit nicht existierender Datei testen
-        textureManager.readTexProps("nicht_existierende_datei.txt", animation);
+        textureManager.readTextureProperties("nicht_existierende_datei.txt", animation);
 
         // Die Eigenschaften sollten unverändert bleiben
         EXPECT_FLOAT_EQ(1.0f, animation.textureProperties.xoffset);
@@ -162,7 +162,7 @@ TEST(TextureManagerTest, ReadTexPropsHandlesInvalidProperties) {
         animation.textureProperties.cols = 1;
 
         // Methode testen
-        textureManager.readTexProps(testFilePath, animation);
+        textureManager.readTextureProperties(testFilePath, animation);
 
         // Nur der gültige Wert sollte geändert werden
         EXPECT_FLOAT_EQ(1.0f, animation.textureProperties.xoffset); // Bleibt unverändert

@@ -32,7 +32,7 @@ int main() {
         SDL_Log("Fehler beim Laden der Paddle-Textur: %s", texturePath.c_str());
         return EXIT_FAILURE;
     }
-    textureManager.readTexProps(propsPath, paddle.texture);
+    textureManager.readTextureProperties(propsPath, paddle.texture);
 
     // Zusätzliche Texturen für die Layer (Glue und Gun)
     paddle.layerTex = new SpriteSheetAnimation[2];
@@ -43,7 +43,7 @@ int main() {
     if (!textureManager.load(glueTexPath, paddle.layerTex[0])) {
         SDL_Log("Fehler beim Laden der Glue-Textur");
     } else {
-        textureManager.readTexProps(gluePropsPath, paddle.layerTex[0]);
+        textureManager.readTextureProperties(gluePropsPath, paddle.layerTex[0]);
     }
 
     // Gun-Layer laden
@@ -52,7 +52,7 @@ int main() {
     if (!textureManager.load(gunTexPath, paddle.layerTex[1])) {
         SDL_Log("Fehler beim Laden der Gun-Textur");
     } else {
-        textureManager.readTexProps(gunPropsPath, paddle.layerTex[1]);
+        textureManager.readTextureProperties(gunPropsPath, paddle.layerTex[1]);
     }
 
     // PlayfieldBorder-Textur laden
@@ -63,7 +63,7 @@ int main() {
         SDL_Log("Fehler beim Laden der Border-Textur: %s", borderTexPath.c_str());
         return EXIT_FAILURE;
     }
-    textureManager.readTexProps(borderPropsPath, texBorder);
+    textureManager.readTextureProperties(borderPropsPath, texBorder);
 
     // PlayfieldBorder-Objekte erzeugen
     PlayfieldBorder leftBorder(PlayfieldBorder::Side::Left, texBorder, &eventManager);

@@ -34,7 +34,7 @@ int main() {
         SDL_Log("Fehler beim Laden der Ball-Textur: %s", ballTexPath.c_str());
         return EXIT_FAILURE;
     }
-    textureManager.readTexProps(ballPropsPath, ball.texture);
+    textureManager.readTextureProperties(ballPropsPath, ball.texture);
 
     // Feuertextur für explosiven Ball laden
     const std::filesystem::path fireTexPath = "../themes/default/gfx/ball/fireball.png";
@@ -42,7 +42,7 @@ int main() {
     if (!textureManager.load(fireTexPath, ball.fireTex)) {
         SDL_Log("Fehler beim Laden der Feuer-Textur");
     } else {
-        textureManager.readTexProps(firePropsPath, ball.fireTex);
+        textureManager.readTextureProperties(firePropsPath, ball.fireTex);
     }
 
     Paddle paddle(&eventManager);
@@ -53,7 +53,7 @@ int main() {
         SDL_Log("Fehler beim Laden der Paddle-Textur: %s", texturePath.c_str());
         return EXIT_FAILURE;
     }
-    textureManager.readTexProps(propsPath, paddle.texture);
+    textureManager.readTextureProperties(propsPath, paddle.texture);
 
     // PlayfieldBorder-Textur laden
     SpriteSheetAnimation texBorder;
@@ -63,7 +63,7 @@ int main() {
         SDL_Log("Fehler beim Laden der Border-Textur: %s", borderTexPath.c_str());
         return EXIT_FAILURE;
     }
-    textureManager.readTexProps(borderPropsPath, texBorder);
+    textureManager.readTextureProperties(borderPropsPath, texBorder);
 
     // PlayfieldBorder-Objekte erzeugen
     PlayfieldBorder leftBorder(PlayfieldBorder::Side::Left, texBorder, &eventManager);

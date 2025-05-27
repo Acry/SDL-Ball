@@ -87,7 +87,7 @@ bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnim
     return true;
 }
 
-bool TextureManager::readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const {
+bool TextureManager::readTextureProperties(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) {
     std::ifstream f(pathName);
 
     if (!f.is_open()) {
@@ -275,7 +275,7 @@ SpriteSheetAnimation *TextureManager::loadAndCacheTexture(const std::string &pat
 
     // Eigenschaften laden, falls vorhanden
     if (std::filesystem::exists(txtPath)) {
-        readTexProps(txtPath, *newTexture);
+        readTextureProperties(txtPath, *newTexture);
     } else {
         SDL_Log("Hinweis: Keine Eigenschaftsdatei für %s gefunden", path.c_str());
         // Standardwerte für Textureigenschaften setzen
@@ -420,7 +420,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
     // 3. Eigenschaften aus Textdatei laden
     bool hasProps = false;
     if (std::filesystem::exists(propsPath)) {
-        readTexProps(propsPath, animation);
+        readTextureProperties(propsPath, animation);
         hasProps = true;
 
         // 4. Wenn in den Eigenschaften ein "file=" Attribut existiert, dieses alternativ laden
