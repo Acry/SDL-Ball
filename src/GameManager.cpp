@@ -27,14 +27,13 @@ void GameManager::init() {
 
     initializeManagers();
 
+    loadResources();
+
     initializeGameObjects();
+
     // Spielgrenzen einrichten
     setupBorders();
 
-    // Ressourcen laden
-    loadResources();
-
-    // Event-Handler einrichten
     setupEventHandlers();
 
     SDL_Log("GameManager: Initialisierung abgeschlossen");
@@ -96,11 +95,11 @@ bool GameManager::initializeGameObjects() {
     paddle.setTexture(textureManager.getPaddleTexture(PaddleTexture::Base));
 
     // Bei PowerUps/Zustandsänderungen
-    paddle.setGlueLayer(false);  // Standardmäßig deaktiviert
-    paddle.setGunLayer(false);   // Standardmäßig deaktiviert
+    paddle.setGlueLayer(false); // Standardmäßig deaktiviert
+    paddle.setGunLayer(false); // Standardmäßig deaktiviert
 
     // Bricks mit verschiedenen Texturen initialisieren
-    for (auto& brick : bricks) {
+    for (auto &brick: bricks) {
         // Je nach Brick-Typ unterschiedliche Texturen zuweisen
         switch (brick.getType()) {
             case BrickType::Blue:
