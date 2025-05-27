@@ -27,6 +27,7 @@ void GameManager::init() {
 
     initializeManagers();
 
+    initializeGameObjects();
     // Spielgrenzen einrichten
     setupBorders();
 
@@ -81,6 +82,39 @@ void GameManager::initializeManagers() {
     sceneManager;
 }
 
+bool GameManager::initializeGameObjects() {
+    // Prüfen, ob alle Texturen geladen wurden
+    if (!textureManager.loadAllGameTextures()) {
+        SDL_Log("Fehler beim Laden der Spieltexturen");
+        return false;
+    }
+
+    // Ball-Textur zuweisen
+    ball.setTexture(textureManager.getBallTexture(BallTexture::Normal));
+
+    // Paddle-Texturen zuweisen
+    paddle.setTexture(textureManager.getPaddleTexture(PaddleTexture::Base));
+
+    // Bei PowerUps/Zustandsänderungen
+    paddle.setGlueLayer(false);  // Standardmäßig deaktiviert
+    paddle.setGunLayer(false);   // Standardmäßig deaktiviert
+
+    // Bricks mit verschiedenen Texturen initialisieren
+    for (auto& brick : bricks) {
+        // Je nach Brick-Typ unterschiedliche Texturen zuweisen
+        switch (brick.getType()) {
+            case BrickType::Blue:
+                brick.setTexture(textureManager.getBrickTexture(BrickTexture::Blue));
+                break;
+            case BrickType::Green:
+                brick.setTexture(textureManager.getBrickTexture(BrickTexture::Green));
+                break;
+                // usw. für andere Brick-Typen
+        }
+    }
+
+    return true;
+}
 
 void GameManager::setupEventHandlers() {
     // Event-Handler für Kollisionen
@@ -383,3 +417,18 @@ void GameManager::quitGame() {
     // Ressourcen freigeben;
     delete Managers;
 };
+
+void GameManager::activatePowerUp(PowerUpType type) {
+    switch (type) {
+        case PowerUpType::Glue:
+            paddle.setGlueLayer(true);
+            break;
+        case PowerUpType::Gun:
+            paddle.setGunLayer(true);
+            break;
+        case PowerUpType::Fireball:
+            ball.setTexture(textureManager.getBallTexture(BallTexture::Fireball));
+            break;
+            // weitere PowerUp-Typen
+    }
+}
