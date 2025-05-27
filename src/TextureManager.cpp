@@ -437,7 +437,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
         if (!animation.textureProperties.fileName.empty()) {
             const std::filesystem::path basePath_path(basePath);
             const std::filesystem::path themeRoot = basePath_path.parent_path().parent_path();
-            actualImagePath = themeRoot /  animation.textureProperties.fileName;
+            actualImagePath = themeRoot / animation.textureProperties.fileName;
 
             if (std::filesystem::exists(actualImagePath)) {
                 if (load(actualImagePath, animation)) {
