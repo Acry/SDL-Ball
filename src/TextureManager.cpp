@@ -397,62 +397,72 @@ bool TextureManager::loadAllGameTextures() {
 }
 
 bool TextureManager::loadTextureWithProperties(const std::string &basePath, SpriteSheetAnimation &animation) const {
-    // 1. Prüfen, ob die Basispfad ohne Dateiendung übergeben wurde
-    std::filesystem::path texturePath;
+    // 1. load properties
     std::filesystem::path propsPath = basePath + ".txt";
-    bool textureLoaded = false;
-
-    // 2. Unterstützte Bildformate durchprobieren
-    const std::vector<std::string> supportedFormats = {
-        ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".webp"
-    };
-
-    for (const auto &format: supportedFormats) {
-        texturePath = basePath + format;
-        if (std::filesystem::exists(texturePath)) {
-            if (load(texturePath, animation)) {
-                textureLoaded = true;
-                break;
-            }
-        }
-    }
-
-    // 3. Eigenschaften aus Textdatei laden
     bool hasProps = false;
-    if (std::filesystem::exists(propsPath)) {
-        readTextureProperties(propsPath, animation);
-        hasProps = true;
+    bool textureLoaded = false;
+    std::filesystem::path actualImagePath;
 
-        // 4. Wenn in den Eigenschaften ein "file=" Attribut existiert, dieses alternativ laden
-        if (!animation.textureProperties.fileName.empty() && !textureLoaded) {
+
+    if (std::filesystem::exists(propsPath)) {
+        hasProps = true;
+        if (!readTextureProperties(propsPath, animation)) {
+            SDL_Log("Warning: no properties '%s'", propsPath.c_str());
+        }
+
+        // 2. get image name from properties
+        if (!animation.textureProperties.fileName.empty()) {
             const std::filesystem::path basePath_path(basePath);
             const std::filesystem::path themeRoot = basePath_path.parent_path().parent_path();
-            const std::filesystem::path absolutePath = themeRoot / animation.textureProperties.fileName;
-            if (std::string altPath = absolutePath.string(); load(altPath, animation)) {
-                textureLoaded = true;
+            actualImagePath = themeRoot / "gfx" / animation.textureProperties.fileName;
+
+            if (std::filesystem::exists(actualImagePath)) {
+                if (load(actualImagePath, animation)) {
+                    textureLoaded = true;
+                } else {
+                    SDL_Log("Error: the image in the property couldn't be read: '%s'",
+                            actualImagePath.c_str());
+                }
             }
         }
     }
 
-    // 5. Fehlerbehandlung nach den genannten Regeln
+    // 3. try to ge an image from basename
+    if (!textureLoaded) {
+        const std::vector<std::string> supportedFormats = {
+            ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".webp", ".jxl", ".avif"
+        };
+
+        for (const auto &format : supportedFormats) {
+            if (std::filesystem::path texturePath = basePath + format; std::filesystem::exists(texturePath)) {
+                if (load(texturePath, animation)) {
+                    textureLoaded = true;
+                    actualImagePath = texturePath;
+                    break;
+                }
+            }
+        }
+    }
+
+    // 4. Fehlerbehandlung nach den genannten Regeln
     if (!textureLoaded) {
         if (hasProps && !animation.textureProperties.fileName.empty()) {
-            SDL_Log("Fehler: Die in der Eigenschaftsdatei angegebene Bilddatei existiert nicht: %s",
+            SDL_Log("Error: Die in der Eigenschaftsdatei angegebene Bilddatei existiert nicht: '%s'",
                     animation.textureProperties.fileName.c_str());
         } else if (hasProps) {
-            SDL_Log("Fehler: Eigenschaftsdatei gefunden, aber keine 'file=' Angabe oder die Datei existiert nicht: %s",
+            SDL_Log("Error: Eigenschaftsdatei gefunden, aber keine 'file=' Angabe oder die Datei existiert nicht: '%s'",
                     propsPath.c_str());
         } else {
-            SDL_Log("Fehler: Keine Bilddatei für %s in unterstützten Formaten gefunden", basePath.c_str());
+            SDL_Log("Error: Keine Bilddatei für '%s' in unterstützten Formaten gefunden", basePath.c_str());
         }
         return false;
     }
 
-    // 6. Standard-Eigenschaften setzen, wenn keine Eigenschaften geladen wurden
+    // ja, ich weiß nicht. das hat hier nichts zu suchen. mal sehen
+    // 5. Standard-Eigenschaften setzen, wenn keine Eigenschaften geladen wurden
     if (!hasProps) {
-        SDL_Log("Hinweis: Keine Eigenschaftsdatei für %s gefunden", texturePath.c_str());
+        SDL_Log("Hinweis: Keine Eigenschaftsdatei für '%s' gefunden", actualImagePath.c_str());
 
-        // Ist das clever?
         // Standardwerte für Textureigenschaften setzen
         animation.textureProperties.ticks = 1000;
         animation.textureProperties.cols = 1;
@@ -464,7 +474,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
         animation.textureProperties.direction = false;
         animation.textureProperties.padding = false;
 
-        // Standardfarben setzen
+        // Standardfarben setzen (weiß)
         for (int i = 0; i < 3; i++) {
             animation.textureProperties.glTexColorInfo[i] = 1.0f;
             animation.textureProperties.glParColorInfo[i] = 1.0f;

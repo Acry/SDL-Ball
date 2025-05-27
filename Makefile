@@ -149,6 +149,7 @@ $(BUILD_DIR)BackgroundManager.o: $(SOURCE_DIR)BackgroundManager.cpp
 SPRITESHEET_TEST_SOURCES := $(MANUAL_TEST_DIR)SpriteSheetAnimation_Tests.cpp \
                             $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                             $(SOURCE_DIR)Display.cpp \
+                            $(SOURCE_DIR)TextManager.cpp \
                             $(SOURCE_DIR)TextureManager.cpp \
 
 SPRITESHEET_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SPRITESHEET_TEST_SOURCES:.cpp=.o)))
@@ -309,6 +310,7 @@ $(BUILD_DIR)EffectManager_Tests.o: $(MANUAL_TEST_DIR)EffectManager_Tests.cpp
 TEXTURE_MANAGER_TEST_SOURCES := $(MANUAL_TEST_DIR)TextureManager_Tests.cpp \
                             $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                             $(SOURCE_DIR)Display.cpp \
+                            $(SOURCE_DIR)TextManager.cpp \
                             $(SOURCE_DIR)TextureManager.cpp \
 
 TEXTURE_MANAGER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXTURE_MANAGER_TEST_SOURCES:.cpp=.o)))

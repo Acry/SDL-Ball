@@ -2,6 +2,7 @@
 
 #include "TextureManager.h"
 #include "Display.hpp"
+#include "TextManager.h"
 
 int main() {
     Display display(0, 1024, 768, false);
@@ -9,24 +10,77 @@ int main() {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
-    SpriteSheetAnimation spriteSheetAnimation;
-    // Pfad zu einer Textur-Datei und zugehörigen Eigenschaften
-    // const std::filesystem::path texturePath = "../themes/default/gfx/powerup/gun";
-    // const std::filesystem::path texturePath = "../themes/default/gfx/brick/green";
-    // const std::filesystem::path texturePath = "../themes/default/gfx/brick/glass";
-    // const std::filesystem::path texturePath = "../themes/default/gfx/border";
-    const std::filesystem::path texturePath = "../themes/default/gfx/ball/normal";
+    SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: SpriteSheet Animation Test");
+    TextManager textManager;
+    if (!textManager.setTheme("../themes/default/font/fonts.txt")) {
+        SDL_Log("Fehler beim Laden des Font-Themes");
+    }
+    SpriteSheetAnimation spriteSheetAnimation1;
+    SpriteSheetAnimation spriteSheetAnimation2;
+    SpriteSheetAnimation spriteSheetAnimation3;
+    SpriteSheetAnimation spriteSheetAnimation4;
+    SpriteSheetAnimation spriteSheetAnimation5;
 
-    // Textur und Eigenschaft laden
-    if (const TextureManager textureManager; !textureManager.loadTextureWithProperties(
-        texturePath, spriteSheetAnimation)) {
+    const std::filesystem::path texturePath1 = "../themes/default/gfx/ball/fireball";
+    const std::filesystem::path texturePath2 = "../themes/default/gfx/brick/doom";
+    const std::filesystem::path texturePath3 = "../themes/default/gfx/brick/explosive";
+    const std::filesystem::path texturePath4 = "../themes/default/gfx/powerup/aim";
+    const std::filesystem::path texturePath5 = "../themes/default/gfx/powerup/gun";
+
+    // TextureManager erstellen
+    const TextureManager textureManager;
+
+    // Textur 1 laden
+    if (!textureManager.loadTextureWithProperties(texturePath1, spriteSheetAnimation1)) {
+        SDL_Log("Fehler beim Laden der Textur: %s", texturePath1.c_str());
         return EXIT_FAILURE;
     }
 
-    // Animation aktivieren
-    spriteSheetAnimation.playing = true;
-    spriteSheetAnimation.textureProperties.playing = true;
+    // Textur 2 laden
+    if (!textureManager.loadTextureWithProperties(texturePath2, spriteSheetAnimation2)) {
+        SDL_Log("Fehler beim Laden der Textur: %s", texturePath2.c_str());
+        return EXIT_FAILURE;
+    }
 
+    // Textur 3 laden
+    if (!textureManager.loadTextureWithProperties(texturePath3, spriteSheetAnimation3)) {
+        SDL_Log("Fehler beim Laden der Textur: %s", texturePath3.c_str());
+        return EXIT_FAILURE;
+    }
+
+    // Textur 4 laden
+    if (!textureManager.loadTextureWithProperties(texturePath4, spriteSheetAnimation4)) {
+        SDL_Log("Fehler beim Laden der Textur: %s", texturePath4.c_str());
+        return EXIT_FAILURE;
+    }
+
+    // Textur 5 laden
+    if (!textureManager.loadTextureWithProperties(texturePath5, spriteSheetAnimation5)) {
+        SDL_Log("Fehler beim Laden der Textur: %s", texturePath5.c_str());
+        return EXIT_FAILURE;
+    }
+
+    std::vector<std::string> instructions = {
+        "1: Fireball",
+        "2: Doom brick",
+        "3: Explosive brick",
+        "4: Aim Powerup",
+        "5: Gun Powerup",
+        "SPACE: Toggle Animation",
+        "ESC: Quit"
+    };
+
+    // Alle Animationen starten
+    spriteSheetAnimation1.textureProperties.playing = true;
+    spriteSheetAnimation2.textureProperties.playing = true;
+    spriteSheetAnimation3.textureProperties.playing = true;
+    spriteSheetAnimation4.textureProperties.playing = true;
+    spriteSheetAnimation5.textureProperties.playing = true;
+    int currentTexture = 1; // Start mit Textur 1
+    bool animationPaused = false;
+
+    // Pointer auf die aktuell aktive Animation
+    SpriteSheetAnimation *currentAnimation = &spriteSheetAnimation1;
     Uint32 lastTime = SDL_GetTicks();
     bool running = true;
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -42,11 +96,39 @@ int main() {
                 }
             }
             if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_t) {
-                    // do something
-                }
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     running = false;
+                } else if (event.type == SDL_KEYDOWN) {
+                    switch (event.key.keysym.sym) {
+                        case SDLK_ESCAPE:
+                            running = false;
+                            break;
+                        case SDLK_SPACE:
+                            animationPaused = !animationPaused;
+                            break;
+                        case SDLK_1:
+                            currentTexture = 1;
+                            currentAnimation = &spriteSheetAnimation1;
+                            break;
+                        case SDLK_2:
+                            currentTexture = 2;
+                            currentAnimation = &spriteSheetAnimation2;
+                            break;
+                        case SDLK_3:
+                            currentTexture = 3;
+                            currentAnimation = &spriteSheetAnimation3;
+                            break;
+                        case SDLK_4:
+                            currentTexture = 4;
+                            currentAnimation = &spriteSheetAnimation4;
+                            break;
+                        case SDLK_5:
+                            currentTexture = 5;
+                            currentAnimation = &spriteSheetAnimation5;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
@@ -56,7 +138,13 @@ int main() {
         lastTime = currentTime;
 
         // Animation aktualisieren
-        spriteSheetAnimation.play(deltaTime);
+        if (!animationPaused) {
+            spriteSheetAnimation1.play(deltaTime);
+            spriteSheetAnimation2.play(deltaTime);
+            spriteSheetAnimation3.play(deltaTime);
+            spriteSheetAnimation4.play(deltaTime);
+            spriteSheetAnimation5.play(deltaTime);
+        }
 
         // Rendern
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -65,37 +153,65 @@ int main() {
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBindTexture(GL_TEXTURE_2D, spriteSheetAnimation.textureProperties.texture);
+        glBindTexture(GL_TEXTURE_2D, currentAnimation->textureProperties.texture);
 
-        glColor4f(
-            spriteSheetAnimation.textureProperties.glTexColorInfo[0],
-            spriteSheetAnimation.textureProperties.glTexColorInfo[1],
-            spriteSheetAnimation.textureProperties.glTexColorInfo[2],
-            spriteSheetAnimation.textureProperties.glTexColorInfo[3]
-        );
+        // Mit den Texturfarben färben
+        glColor4fv(currentAnimation->textureProperties.glTexColorInfo);
 
-        // Ein Rechteck mit der Textur zeichnen
+        // Vergrößert in der Mitte zeichnen
         glBegin(GL_QUADS);
-        glTexCoord2f(spriteSheetAnimation.texturePosition[0], spriteSheetAnimation.texturePosition[1]);
+        glTexCoord2f(currentAnimation->texturePosition[0], currentAnimation->texturePosition[1]);
         glVertex2f(-0.5f, 0.5f);
 
-        glTexCoord2f(spriteSheetAnimation.texturePosition[2], spriteSheetAnimation.texturePosition[3]);
+        glTexCoord2f(currentAnimation->texturePosition[2], currentAnimation->texturePosition[3]);
         glVertex2f(0.5f, 0.5f);
 
-        glTexCoord2f(spriteSheetAnimation.texturePosition[4], spriteSheetAnimation.texturePosition[5]);
+        glTexCoord2f(currentAnimation->texturePosition[4], currentAnimation->texturePosition[5]);
         glVertex2f(0.5f, -0.5f);
 
-        glTexCoord2f(spriteSheetAnimation.texturePosition[6], spriteSheetAnimation.texturePosition[7]);
+        glTexCoord2f(currentAnimation->texturePosition[6], currentAnimation->texturePosition[7]);
         glVertex2f(-0.5f, -0.5f);
         glEnd();
-
         glDisable(GL_TEXTURE_2D);
+
         glDisable(GL_BLEND);
+        float yPos = 0.9f;
+        for (const auto &instruction: instructions) {
+            textManager.write(instruction, Fonts::IntroDescription, false, 1.3f, -0.9f, yPos);
+            yPos -= 0.07f;
+        }
+
+
+        std::string textureName;
+        switch (currentTexture) {
+            case 1: textureName = "Fireball";
+                break;
+            case 2: textureName = "Doom Brick";
+                break;
+            case 3: textureName = "Explosive Brick";
+                break;
+            case 4: textureName = "Aim Powerup";
+                break;
+            case 5: textureName = "Gun Powerup";
+                break;
+            default: textureName = "Unknown";
+                break;
+        }
+
+        std::string statusText = "Aktuelle Textur: " + textureName;
+        textManager.write(statusText, Fonts::Menu, true, 0.8f, 0.0f, -0.7f);
+
+        std::string animationStatus = animationPaused ? "Animation: Pausiert" : "Animation: Aktiv";
+        textManager.write(animationStatus, Fonts::Menu, true, 0.7f, 0.0f, -0.8f);
         SDL_Delay(13);
         SDL_GL_SwapWindow(display.sdlWindow);
     }
-    if (spriteSheetAnimation.textureProperties.texture != 0) {
-        glDeleteTextures(1, &spriteSheetAnimation.textureProperties.texture);
-    }
+
+    glDeleteTextures(1, &spriteSheetAnimation1.textureProperties.texture);
+    glDeleteTextures(1, &spriteSheetAnimation2.textureProperties.texture);
+    glDeleteTextures(1, &spriteSheetAnimation3.textureProperties.texture);
+    glDeleteTextures(1, &spriteSheetAnimation4.textureProperties.texture);
+    glDeleteTextures(1, &spriteSheetAnimation5.textureProperties.texture);
+
     return EXIT_SUCCESS;
 }
