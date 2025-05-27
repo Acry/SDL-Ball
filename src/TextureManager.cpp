@@ -132,7 +132,6 @@ bool TextureManager::readTextureProperties(const std::filesystem::path &pathName
         }
 
         try {
-            // Je nach Eigenschaft den Wert entsprechend verarbeiten
             switch (property) {
                 case TextureProperty::XOffset:
                     tex.textureProperties.xoffset = std::stof(value);
@@ -423,7 +422,7 @@ bool TextureManager::loadAllGameTextures() {
 
 bool TextureManager::loadTextureWithProperties(const std::string &basePath, SpriteSheetAnimation &animation) const {
     // 1. load properties
-    std::filesystem::path propsPath = basePath + ".txt";
+    const std::filesystem::path propsPath = basePath + ".txt";
     bool hasProps = false;
     bool textureLoaded = false;
     std::filesystem::path actualImagePath;
@@ -434,11 +433,11 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
             SDL_Log("Warning: no properties '%s'", propsPath.c_str());
         }
 
-        // 2. get image name from properties
+        // 2. get image from textureProperties.fileName
         if (!animation.textureProperties.fileName.empty()) {
             const std::filesystem::path basePath_path(basePath);
             const std::filesystem::path themeRoot = basePath_path.parent_path().parent_path();
-            actualImagePath = themeRoot / "gfx" / animation.textureProperties.fileName;
+            actualImagePath = themeRoot /  animation.textureProperties.fileName;
 
             if (std::filesystem::exists(actualImagePath)) {
                 if (load(actualImagePath, animation)) {
@@ -451,7 +450,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
         }
     }
 
-    // 3. try to ge an image from basename
+    // 3. try to get image from basename, case: missing properties file or no file specified
     if (!textureLoaded) {
         const std::vector<std::string> supportedFormats = {
             ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".webp", ".jxl", ".avif"
