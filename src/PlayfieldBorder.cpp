@@ -58,7 +58,7 @@ void PlayfieldBorder::onCollision(ICollideable *other, const float hitX, const f
                     break;
             }
         }
-            break;
+        break;
 
         case static_cast<int>(CollisionType::Paddle): {
             EventData data{};
@@ -73,7 +73,7 @@ void PlayfieldBorder::onCollision(ICollideable *other, const float hitX, const f
                 eventManager->emit(GameEvent::PaddleHitRightBorder, data);
             }
         }
-            break;
+        break;
         default: ;
     }
 }

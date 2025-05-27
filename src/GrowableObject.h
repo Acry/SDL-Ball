@@ -31,6 +31,7 @@ public:
     void updateGrowth(float deltaTime);
 
     void grow(GLfloat targetWidth);
+
     // Getter für Status
     bool isGrowing() const { return growing; }
     bool isShrinking() const { return shrinking; }

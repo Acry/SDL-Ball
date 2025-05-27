@@ -83,7 +83,7 @@ public:
     }
 };
 
-void load_level(const string& file, brick bricks[], const int level) {
+void load_level(const string &file, brick bricks[], const int level) {
     ifstream levelfile(file.data());
     if (!levelfile.is_open()) {
         SDL_Log(" Could not open%s", file.c_str());
@@ -129,13 +129,19 @@ void load_level(const string& file, brick bricks[], const int level) {
                                 sprintf(rgb[1], "0x%c%c", line[ch + 4], line[ch + 5]);
                                 sprintf(rgb[2], "0x%c%c", line[ch + 6], line[ch + 7]);
 
-                                bricks[brick].texture.textureProperties.glTexColorInfo[0] = 0.003921569 * strtol(rgb[0], nullptr, 16);
-                                bricks[brick].texture.textureProperties.glTexColorInfo[1] = 0.003921569 * strtol(rgb[1], nullptr, 16);
-                                bricks[brick].texture.textureProperties.glTexColorInfo[2] = 0.003921569 * strtol(rgb[2], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glTexColorInfo[0] =
+                                        0.003921569 * strtol(rgb[0], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glTexColorInfo[1] =
+                                        0.003921569 * strtol(rgb[1], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glTexColorInfo[2] =
+                                        0.003921569 * strtol(rgb[2], nullptr, 16);
 
-                                bricks[brick].texture.textureProperties.glParColorInfo[0] = 0.003921569 * strtol(rgb[0], nullptr, 16);
-                                bricks[brick].texture.textureProperties.glParColorInfo[1] = 0.003921569 * strtol(rgb[1], nullptr, 16);
-                                bricks[brick].texture.textureProperties.glParColorInfo[2] = 0.003921569 * strtol(rgb[2], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glParColorInfo[0] =
+                                        0.003921569 * strtol(rgb[0], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glParColorInfo[1] =
+                                        0.003921569 * strtol(rgb[1], nullptr, 16);
+                                bricks[brick].texture.textureProperties.glParColorInfo[2] =
+                                        0.003921569 * strtol(rgb[2], nullptr, 16);
 
                                 bricks[brick].texture.textureProperties.glTexColorInfo[3] = 1.0;
                                 ch += 6;
@@ -166,7 +172,6 @@ void init_levels(brick bricks[], SpriteSheetAnimation texLvl[]) {
 
     for (int row = 0; row < 23; row++) {
         for (int column = 0; column < 26; column++) {
-
             // Verfügbarer Bereich: 2.0 (-1 bis +1)
             // float total_width = 26 * BRICK_WIDTH;  // Gesamtbreite aller Steine
             // float total_height = 23 * BRICK_HEIGHT; // Gesamthöhe aller Steine

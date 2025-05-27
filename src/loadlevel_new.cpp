@@ -98,8 +98,9 @@ public:
         return evilPowerups[i];
     }
 };
+
 // ersetzt loadlevel
-bool get_level_data(size_t level, brick bricks[], const std::string& filename) {
+bool get_level_data(size_t level, brick bricks[], const std::string &filename) {
     if (level >= level_ranges.size()) {
         SDL_Log("Fehler: Level %ld existiert nicht", level);
         return false;
@@ -140,7 +141,7 @@ bool get_level_data(size_t level, brick bricks[], const std::string& filename) {
                 sprintf(rgb[1], "0x%c%c", line[ch + 4], line[ch + 5]);
                 sprintf(rgb[2], "0x%c%c", line[ch + 6], line[ch + 7]);
 
-                const float color_factor = 0.003921569f;  // 1/255
+                const float color_factor = 0.003921569f; // 1/255
                 for (int i = 0; i < 3; i++) {
                     float color_value = color_factor * std::strtol(rgb[i], nullptr, 16);
                     bricks[brick_index].tex.prop.glTexColorInfo[i] = color_value;
@@ -158,7 +159,7 @@ bool get_level_data(size_t level, brick bricks[], const std::string& filename) {
     return true;
 }
 
-bool read_levels_structure(const std::string& filename) {
+bool read_levels_structure(const std::string &filename) {
     std::ifstream infile(filename);
 
     // Prüfen ob Datei geöffnet werden kann
@@ -232,7 +233,8 @@ bool read_levels_structure(const std::string& filename) {
             static const std::string valid_chars = "0123456789ABCDEFGHIJKLMNOPQR";
             for (size_t i = 0; i < line.length(); i++) {
                 if (valid_chars.find(line[i]) == std::string::npos) {
-                    SDL_Log("Fehler: Ungültiges Zeichen '%c' in Level %d, Zeile %d, Position %ld", line[i], level_count + 1, current_row + 1, i + 1);
+                    SDL_Log("Fehler: Ungültiges Zeichen '%c' in Level %d, Zeile %d, Position %ld", line[i],
+                            level_count + 1, current_row + 1, i + 1);
                     return false;
                 }
             }
@@ -259,7 +261,9 @@ bool set_up_bricks_for_level(const size_t level, brick bricks[], texture texLvl[
         SDL_Log("Fehler: Level %ld existiert nicht", level);
         return false;
     }
-    if (const bool have_data = get_level_data(level, bricks, themeManager.getThemeFilePath("levels.txt", setting.lvlTheme)); !have_data) {
+    if (const bool have_data = get_level_data(level, bricks,
+                                              themeManager.getThemeFilePath("levels.txt", setting.lvlTheme)); !
+        have_data) {
         SDL_Log("Fehler: Konnte Level-Daten nicht lesen");
         return false;
     }
@@ -382,4 +386,3 @@ bool load_levels() {
     }
     return true;
 }
-

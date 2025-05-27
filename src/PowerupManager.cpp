@@ -1,7 +1,7 @@
 #include "PowerupManager.h"
 #include <chrono>
 
-PowerupManager::PowerupManager(EventManager* eventMgr, CollisionManager* collMgr, const int maxPowerupsCount)
+PowerupManager::PowerupManager(EventManager *eventMgr, CollisionManager *collMgr, const int maxPowerupsCount)
     : eventManager(eventMgr),
       collisionManager(collMgr),
       maxPowerups(maxPowerupsCount),
@@ -22,14 +22,14 @@ PowerupManager::PowerupManager(EventManager* eventMgr, CollisionManager* collMgr
 
 void PowerupManager::init() {
     // Initialisiere alle Powerups
-    for (auto& powerup : powerups) {
+    for (auto &powerup: powerups) {
         powerup.init();
     }
 }
 
 void PowerupManager::update(const float deltaTime) {
     // Aktualisiere alle aktiven Powerups
-    for (auto& powerup : powerups) {
+    for (auto &powerup: powerups) {
         if (powerup.isActive()) {
             powerup.update(deltaTime);
 
@@ -44,7 +44,7 @@ void PowerupManager::update(const float deltaTime) {
 
 void PowerupManager::draw(const float deltaTime) {
     // Zeichne alle aktiven Powerups
-    for (auto& powerup : powerups) {
+    for (auto &powerup: powerups) {
         if (powerup.isActive()) {
             powerup.draw(deltaTime);
         }
@@ -53,7 +53,7 @@ void PowerupManager::draw(const float deltaTime) {
 
 void PowerupManager::spawnPowerup(const float posX, const float posY) {
     // Suche ein inaktives Powerup
-    for (auto& powerup : powerups) {
+    for (auto &powerup: powerups) {
         if (!powerup.isActive()) {
             // Zufälliger Powerup-Typ
             const auto type = static_cast<PowerupType>(powerupDist(rng));

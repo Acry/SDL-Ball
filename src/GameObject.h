@@ -4,14 +4,15 @@
 #include <epoxy/gl.h>
 #include "SpriteSheetAnimation.h"
 
-class EventManager;  // Vorwärtsdeklaration
+class EventManager; // Vorwärtsdeklaration
 
 class GameObject {
 protected:
-    EventManager* eventManager{nullptr};  // Zugriff für abgeleitete Klassen
+    EventManager *eventManager{nullptr}; // Zugriff für abgeleitete Klassen
 
 public:
-    explicit GameObject(EventManager* eventMgr = nullptr) : eventManager(eventMgr) {}
+    explicit GameObject(EventManager *eventMgr = nullptr) : eventManager(eventMgr) {
+    }
 
     // Basisattribute für alle Spielobjekte
     GLfloat opacity{1.0f};
@@ -24,8 +25,11 @@ public:
 
     // Virtuelle Methoden - Interface-Definition
     virtual ~GameObject() = default;
+
     virtual void init() = 0;
+
     virtual void update(float deltaTime) = 0;
+
     virtual void draw(float deltaTime = 0.0f) = 0;
 
     // Hilfsfunktionen

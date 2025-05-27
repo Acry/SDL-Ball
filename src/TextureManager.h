@@ -134,5 +134,5 @@ public:
 
     void readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const;
 
-    bool loadTextureWithProperties(const std::string& basePath, SpriteSheetAnimation& animation) const;
+    bool loadTextureWithProperties(const std::string &basePath, SpriteSheetAnimation &animation) const;
 };

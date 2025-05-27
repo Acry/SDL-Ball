@@ -14,10 +14,14 @@ class Menu {
     std::string saveGameName[6];
     int saveGameSlot;
     SpriteSheetAnimation tex[5];
-    GLuint dl; joystickAttached;
+    GLuint dl;
+    joystickAttached;
 
     Menu();
+
     void refreshHighScoreList();
+
     void enterSaveGameName(const SDL_Event &e);
+
     void doMenu();
 };

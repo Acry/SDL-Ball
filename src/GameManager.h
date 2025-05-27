@@ -22,21 +22,21 @@
 
 class GameManager {
     // Grundlegende Manager
-    ConfigFileManager& configManager;
-    SettingsManager& settingsManager;
-    ThemeManager& themeManager;
+    ConfigFileManager &configManager;
+    SettingsManager &settingsManager;
+    ThemeManager &themeManager;
     TextureManager textureManager;
     SoundManager soundManager;
     TextManager textManager;
     EventManager eventManager;
 
     // Spielspezifische Manager
-    BallManager* ballManager;
-    BrickManager* brickManager;
-    PowerupManager* powerupManager;
-    BackgroundManager* backgroundManager;
-    EffectManager* effectManager;
-    Player* player;
+    BallManager *ballManager;
+    BrickManager *brickManager;
+    PowerupManager *powerupManager;
+    BackgroundManager *backgroundManager;
+    EffectManager *effectManager;
+    Player *player;
 
     PlayfieldBorder border;
 
@@ -47,8 +47,10 @@ class GameManager {
     int score;
     int currentScene;
     currentDifficulty;
+
     // Initialisierungsmethoden
     void initializeManagers();
+
     void setupEventHandlers();
 
     // Kollisionsprüfung
@@ -56,22 +58,33 @@ class GameManager {
 
 public:
     GameManager();
+
     ~GameManager();
 
     // Hauptmethoden für den Spielablauf
     void init();
+
     void update(float deltaTime);
+
     void render(float deltaTime);
-    void handleEvents(SDL_Event& event);
+
+    void handleEvents(SDL_Event &event);
 
     // Spielsteuerungsmethoden
     void startGame();
+
     void pauseGame();
+
     void resumeGame();
+
     void restartLevel();
+
     void goToNextLevel();
+
     void gameOver();
+
     void quitGame();
+
     // Settings-Anwendung
     void applySettings();
 };

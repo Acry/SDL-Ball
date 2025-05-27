@@ -12,23 +12,28 @@ struct themeInfo {
 
 class ThemeManager {
 public:
-    explicit ThemeManager(const ConfigFileManager& configFileManager);
+    explicit ThemeManager(const ConfigFileManager &configFileManager);
 
     // Bestehende Methoden
     std::vector<themeInfo> listThemes();
-    bool themeExists(const std::string& name) const;
-    std::string getThemeFilePath(const std::string& path, const std::string& theme = "") const;
+
+    bool themeExists(const std::string &name) const;
+
+    std::string getThemeFilePath(const std::string &path, const std::string &theme = "") const;
+
     [[nodiscard]] static std::string getDefaultTheme();
 
     // Neue Methoden
-    bool setCurrentTheme(const std::string& themeName);
+    bool setCurrentTheme(const std::string &themeName);
+
     std::string getCurrentTheme() const;
-    bool themeHasResource(const std::string& path, const std::string& theme = "") const;
+
+    bool themeHasResource(const std::string &path, const std::string &theme = "") const;
 
 private:
     std::vector<themeInfo> themes;
     std::string currentTheme;
-    const ConfigFileManager& configFileManager;
+    const ConfigFileManager &configFileManager;
     mutable std::unordered_map<std::string, std::string> pathCache;
 
     void scanThemes();

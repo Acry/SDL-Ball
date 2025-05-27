@@ -43,14 +43,21 @@ struct savedGame {
 class SaveGameManager {
 public:
     explicit SaveGameManager(ConfigFileManager &cfg);
+
     void saveGame(int slot, const std::string &name, const player_struct &player) const;
+
     bool loadGame(int slot, player_struct &player) const;
+
     void clearSaveGames() const;
+
     int listSaveGames(std::string slotNames[6]) const;
 
 private:
     bool loadLegacyGame(int slot, player_struct &player) const;
+
     void SaveGameManager::convertLegacyToCurrentFormat() const;
+
     bool SaveGameManager::detectLegacyFormat() const;
+
     ConfigFileManager &configFileManager;
 };

@@ -6,7 +6,7 @@
 
 void Speedometer::draw() {
     float targetHeight;
-    switch(player.difficulty) {
+    switch (player.difficulty) {
         case EASY:
             targetHeight = (var.averageBallSpeed / fixed_difficulty.maxballspeed[EASY]) * 2.0f;
             break;

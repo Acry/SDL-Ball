@@ -37,7 +37,7 @@ vector<score> sortScores() {
     }
 
     sort(scores.begin(), scores.end(),
-         [](const score& a, const score& b) { return a.points > b.points; });
+         [](const score &a, const score &b) { return a.points > b.points; });
 
     if (scores.size() > 20) {
         scores.resize(20);
@@ -47,7 +47,7 @@ vector<score> sortScores() {
 }
 
 class Menu {
-    TextManager& text;  // Referenz auf das Singleton
+    TextManager &text; // Referenz auf das Singleton
     string saveGameName[6]; //The name of saveGames
     int saveGameSlot; //Where player choose to save/load to/from
     SpriteSheetAnimation tex[5];
@@ -77,7 +77,7 @@ public:
 
         // Hauptmenu-Rahmen
         glNewList(dl, GL_COMPILE);
-        glEnable( GL_TEXTURE_2D );
+        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex[0].textureProperties.texture);
         glColor4f(GL_WHITE);
         glBegin(GL_QUADS);
@@ -95,12 +95,12 @@ public:
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(-half_width, -half_height, 0.0f);
         glEnd();
-        glDisable( GL_TEXTURE_2D );
+        glDisable(GL_TEXTURE_2D);
         glEndList();
 
         // Menupunkt - bläulich
         glNewList(dl + 1, GL_COMPILE);
-        glEnable( GL_TEXTURE_2D );
+        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex[1].textureProperties.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
@@ -112,12 +112,12 @@ public:
         glTexCoord2f(0.132f, 0.7f);
         glVertex3f(-MENU_HALF_WIDTH, -MENU_HALF_HEIGHT, 0.0);
         glEnd();
-        glDisable( GL_TEXTURE_2D );
+        glDisable(GL_TEXTURE_2D);
         glEndList();
 
         // Menupunkt - rötlich
         glNewList(dl + 2, GL_COMPILE);
-        glEnable( GL_TEXTURE_2D );
+        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex[2].textureProperties.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
@@ -129,12 +129,12 @@ public:
         glTexCoord2f(0.132f, 0.7f);
         glVertex3f(-MENU_HALF_WIDTH, -MENU_HALF_HEIGHT, 0.0);
         glEnd();
-        glDisable( GL_TEXTURE_2D );
+        glDisable(GL_TEXTURE_2D);
         glEndList();
 
         // Menupunkt - grünlich
         glNewList(dl + 3, GL_COMPILE);
-        glEnable( GL_TEXTURE_2D );
+        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex[3].textureProperties.texture);
         glBegin(GL_QUADS);
         glTexCoord2f(0.132f, 0.3f);
@@ -146,7 +146,7 @@ public:
         glTexCoord2f(0.132f, 0.7f);
         glVertex3f(-MENU_HALF_WIDTH, -MENU_HALF_HEIGHT, 0.0);
         glEnd();
-        glDisable( GL_TEXTURE_2D );
+        glDisable(GL_TEXTURE_2D);
         glEndList();
     }
 
@@ -188,7 +188,7 @@ public:
 
         //Highscores list
         int t = 0;
-        for (const auto& s : scores) {
+        for (const auto &s: scores) {
             snprintf(highScores[t], sizeof(highScores[t]), "%s%i - %s",
                      s.level.c_str(), s.points, s.name.c_str());
             t++;
@@ -212,12 +212,10 @@ public:
     }
 
     void doMenu() {
-
         glLoadIdentity();
         // Menu-background
         glCallList(dl);
         if (var.menuShown == 1) {
-
             // Quit SDL-Ball
             // ORDER: BOTTOM UP
             constexpr float start_bottom = -0.62f;
@@ -241,7 +239,7 @@ public:
                 glCallList(dl + 1);
 
             glColor4f(GL_BLACK);
-            text.write("Settings", FONT_MENU, true, 1.0, 0.0, start_bottom+MENU_SPACING);
+            text.write("Settings", FONT_MENU, true, 1.0, 0.0, start_bottom + MENU_SPACING);
 
             // Highscores
             glColor4f(GL_WHITE);
@@ -252,7 +250,7 @@ public:
                 glCallList(dl + 1);
 
             glColor4f(GL_BLACK);
-            text.write("Highscores", FONT_MENU, true, 1.0, 0.0, start_bottom+MENU_SPACING*2);
+            text.write("Highscores", FONT_MENU, true, 1.0, 0.0, start_bottom + MENU_SPACING * 2);
 
             // Save Game
             glColor4f(GL_WHITE);
@@ -265,19 +263,18 @@ public:
                     glCallList(dl + 1);
 
                 glColor4f(GL_BLACK);
-                text.write("Save Game", FONT_MENU, true, 1.0, 0.0, start_bottom+MENU_SPACING*3);
+                text.write("Save Game", FONT_MENU, true, 1.0, 0.0, start_bottom + MENU_SPACING * 3);
                 glColor4f(GL_WHITE);
             } else {
                 if (var.menuItemHovered == 4) {
                     glCallList(dl + 2);
                     glColor4f(0.5, 0.5, 0.5, 1);
-                    text.write("Not in Level 1", FONT_MENU, true, 1.0, 0.0, start_bottom+MENU_SPACING*3);
+                    text.write("Not in Level 1", FONT_MENU, true, 1.0, 0.0, start_bottom + MENU_SPACING * 3);
                 } else {
                     glCallList(dl + 1);
                     glColor4f(0.5, 0.5, 0.5, 1);
-                    text.write("Save Game", FONT_MENU, true, 1.0, 0.0, start_bottom+MENU_SPACING*3);
+                    text.write("Save Game", FONT_MENU, true, 1.0, 0.0, start_bottom + MENU_SPACING * 3);
                 }
-
             }
 
             // Load
@@ -289,7 +286,7 @@ public:
                 glCallList(dl + 1);
 
             glColor4f(GL_BLACK);
-            text.write("Load Game", FONT_MENU, true, 1.0, 0.0, start_bottom+MENU_SPACING*4);
+            text.write("Load Game", FONT_MENU, true, 1.0, 0.0, start_bottom + MENU_SPACING * 4);
 
             // Continue
             glColor4f(GL_WHITE);
@@ -301,7 +298,7 @@ public:
             glPopMatrix();
 
             glColor4f(GL_BLACK);
-            text.write("Continue", FONT_MENU, true, 1.0, 0.0, start_bottom+MENU_SPACING*5);
+            text.write("Continue", FONT_MENU, true, 1.0, 0.0, start_bottom + MENU_SPACING * 5);
 
             // New game
             glColor4f(GL_WHITE);
@@ -312,7 +309,7 @@ public:
                 glCallList(dl + 3);
 
             glColor4f(GL_BLACK);
-            text.write("New Game", FONT_MENU, true, 1.0, 0.0, start_bottom+MENU_SPACING*6);
+            text.write("New Game", FONT_MENU, true, 1.0, 0.0, start_bottom + MENU_SPACING * 6);
             glColor4f(GL_WHITE);
 
             if (var.menuPressed) {
@@ -436,7 +433,6 @@ public:
             }
             var.menuNumItems = 6;
         } else if (var.menuShown == 3) {
-
             // Video options
             glLoadIdentity();
             glTranslatef(0.0, 0.54, 0.0f);
@@ -727,7 +723,6 @@ public:
 
             var.menuNumItems = 7;
         } else if (var.menuShown == 6) {
-
             // Exit
             glColor4f(GL_WHITE);
             glCallList(dl + 2);
@@ -785,7 +780,7 @@ public:
             text.write("Highscores", FONT_MENU, 1, 1.0, 0.0, -0.005);
 
             glTranslatef(0.0, -0.75, 0.0f);
-            glEnable( GL_TEXTURE_2D );
+            glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, tex[4].textureProperties.texture);
             glColor4f(1.0, 1.0, 1.0, 1.0);
             glBegin(GL_QUADS);
@@ -798,7 +793,7 @@ public:
             glTexCoord2f(0.0, 1.0);
             glVertex3f(-0.8, -0.63, 0.0);
             glEnd();
-            glDisable( GL_TEXTURE_2D );
+            glDisable(GL_TEXTURE_2D);
             glTranslatef(0.0, 0.435, 0.0f);
 
             //Find out how many lines we have room for in the box.
@@ -983,8 +978,7 @@ public:
                 var.menuPressed = 0;
             }
             var.menuNumItems = 6;
-        }
-        else if (var.menuShown == 12) //Theme selector (Main screen)
+        } else if (var.menuShown == 12) //Theme selector (Main screen)
         {
             glTranslatef(0.0, 0.54, 0.0f);
             glCallList(dl + 3);

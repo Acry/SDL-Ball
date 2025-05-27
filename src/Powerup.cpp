@@ -2,10 +2,10 @@
 #include "Constants.h"
 #include <epoxy/gl.h>
 
-Powerup::Powerup(EventManager* eventMgr) : eventManager(eventMgr), active(false) {
+Powerup::Powerup(EventManager *eventMgr) : eventManager(eventMgr), active(false) {
     width = 0.05f;
     height = 0.05f;
-    yvel = -0.3f;  // Powerups fallen immer nach unten
+    yvel = -0.3f; // Powerups fallen immer nach unten
     xvel = 0.0f;
 }
 

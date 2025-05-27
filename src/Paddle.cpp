@@ -197,7 +197,6 @@ const std::vector<float> *Paddle::getCollisionPoints() const {
 }
 
 void Paddle::onCollision(ICollideable *other, float hitX, float hitY) {
-
     EventData data;
     data.posX = hitX;
     data.posY = hitY;

@@ -51,7 +51,7 @@ typedef GLfloat texPos[8];
 
 class EffectManager;
 
-void makeExplosive(brick &b);
+void makeExplosive(brick & b);
 
 // nasty fix to a problem
 int nbrick[23][26];
@@ -1070,10 +1070,10 @@ class Hud {
 
 public:
     Hud(SpriteSheetAnimation texB, SpriteSheetAnimation texPo[]): texBall(texB),
-                                             text(TextManager::getInstance()),
-                                             ticksSinceLastClockCheck(1001),
-                                             texPowerup(texPo),
-                                             shopItemSelected(0) {
+                                                                  text(TextManager::getInstance()),
+                                                                  ticksSinceLastClockCheck(1001),
+                                                                  texPowerup(texPo),
+                                                                  shopItemSelected(0) {
         item[0].type = PO_LASER;
         item[0].price = 600;
         item[1].type = PO_NORMALBALL;
@@ -1630,7 +1630,7 @@ int main(int argc, char *argv[]) {
                     pauseGame();
                     if (HighScore::isHighScore()) {
                         // announce.write(string text, int mslife, int fontnum);
-                        announce.write("Highscore!", 3000,FONT_ANNOUNCE_GOOD);
+                        announce.write("Highscore!", 3000, FONT_ANNOUNCE_GOOD);
                         var.showHighScores = 1;
                         soundManager.add(SND_HIGHSCORE, 0);
                     }
@@ -1645,7 +1645,7 @@ int main(int argc, char *argv[]) {
 
                         // Kør en transition effekt
                         var.effectnum = effectMananger.spawn(p);
-                        announce.write("GameOver!", 1500,FONT_ANNOUNCE_BAD);
+                        announce.write("GameOver!", 1500, FONT_ANNOUNCE_BAD);
                         soundManager.add(SND_GAMEOVER, 0);
                     } else {
                         if (var.transition_half_done) {
@@ -1688,11 +1688,11 @@ int main(int argc, char *argv[]) {
                             if (player.level == var.numlevels) {
                                 player.multiply += player.multiply * 3;
                                 player.level = 0;
-                                announce.write("Finished!", 3500,FONT_ANNOUNCE_GOOD);
+                                announce.write("Finished!", 3500, FONT_ANNOUNCE_GOOD);
                             }
 
                             sprintf(txt, "Level %i", player.level + 1); // +1 fordi levels starter fra 0
-                            announce.write(txt, 1500,FONT_ANNOUNCE_GOOD);
+                            announce.write(txt, 1500, FONT_ANNOUNCE_GOOD);
 
                             //check om vi skal fjerne powerups
                             if (player.difficulty > EASY) {

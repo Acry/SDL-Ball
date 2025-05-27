@@ -2,9 +2,11 @@
 #include "MathHelper.h"
 
 class powerupDescriptionClass : public MovingObject {
-    TextManager& text;
+    TextManager &text;
+
 public:
     powerupDescriptionClass();
+
     SpriteSheetAnimation *tex;
 
     void draw() const;
@@ -25,7 +27,8 @@ void powerupDescriptionClass::draw() const {
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex->textureProperties.texture);
-    glColor4f(tex->textureProperties.glTexColorInfo[0], tex->textureProperties.glTexColorInfo[1], tex->textureProperties.glTexColorInfo[2],
+    glColor4f(tex->textureProperties.glTexColorInfo[0], tex->textureProperties.glTexColorInfo[1],
+              tex->textureProperties.glTexColorInfo[2],
               tex->textureProperties.glTexColorInfo[3]);
     glBegin(GL_QUADS);
     glTexCoord2f(tex->texturePosition[0], tex->texturePosition[1]);
@@ -44,20 +47,20 @@ void powerupDescriptionClass::draw() const {
     constexpr float leading = -0.018f; // Leading for the text
     const float textX = pos_x + spacing;
     text.write(name,
-                  FONT_INTRODESCRIPTION,
-                  false,
-                  scale, textX,
-                  pos_y - leading);
+               FONT_INTRODESCRIPTION,
+               false,
+               scale, textX,
+               pos_y - leading);
     text.write(description,
-                  FONT_INTRODESCRIPTION,
-                  false,
-                  scale,
-                  textX,
-                  pos_y - height - leading);
+               FONT_INTRODESCRIPTION,
+               false,
+               scale,
+               textX,
+               pos_y - height - leading);
 }
 
 class TitleScreen {
-    TextManager& text;  // Als Referenz
+    TextManager &text; // Als Referenz
     EffectManager *fxMan;
     int ticksSinceLastSpawn;
     TextureManager texMgr;
@@ -84,8 +87,7 @@ public:
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };
 
-TitleScreen::TitleScreen(EffectManager *m, SpriteSheetAnimation tp[], Menu *me): text(TextManager::getInstance())
-{
+TitleScreen::TitleScreen(EffectManager *m, SpriteSheetAnimation tp[], Menu *me): text(TextManager::getInstance()) {
     menu = me;
     numHighScores = 7;
     texPowerups = tp;
@@ -210,13 +212,13 @@ void TitleScreen::draw(Uint32 *frameAge, Uint32 *maxFrameAge) {
             if (runnerPos.x > 1.0f && runnerVelX > 0) {
                 runnerVelX *= -1.0f;
             }
-            if (runnerPos.x < -1.0f && runnerVelX < 0) {
+            if (runnerPos.x<-1.0f && runnerVelX < 0) {
                 runnerVelX *= -1.0f;
             }
             if (runnerPos.y > 1.0f && runnerVelY > 0) {
                 runnerVelY *= -1.0f;
             }
-            if (runnerPos.y < -1.0f && runnerVelY < 0) {
+            if (runnerPos.y<-1.0f && runnerVelY < 0) {
                 runnerVelY *= -1.0f;
             }
             runnerTime = 0;

@@ -3,26 +3,25 @@
 
 #include "SettingsManager.h"
 
-Player::Player() :
-    lives(3),
-    score(0),
-    coins(0),
-    multiply(1),
-    difficulty(DEFAULT_DIFFICULTY) {
+Player::Player() : lives(3),
+                   score(0),
+                   coins(0),
+                   multiply(1),
+                   difficulty(DEFAULT_DIFFICULTY) {
     clearPowerups();
 }
 
 void Player::init() {
     // Hole den Schwierigkeitsgrad aus den Settings
-    const auto& settings = SettingsManager::getInstance(configFileManager);
+    const auto &settings = SettingsManager::getInstance(configFileManager);
     initDifficulty(settings.getDifficulty());
 }
 
 void Player::reset() {
     initDifficulty
 
-    // Abhängig vom SaveGameManager
-    currentLevel = 0;
+            // Abhängig vom SaveGameManager
+            currentLevel = 0;
     lastClearedLevel = 0;
 
     score = 0;
@@ -33,11 +32,11 @@ void Player::reset() {
 
 
 void Player::initDifficulty(int startingDifficulty) {
-        difficulty = startingDifficulty;
+    difficulty = startingDifficulty;
 
-        // Verwende die vordefinierten Werte aus der difficulty-Struktur
-        coins = fixed_difficulty.coins[difficulty];
-        lives = fixed_difficulty.life[difficulty];
+    // Verwende die vordefinierten Werte aus der difficulty-Struktur
+    coins = fixed_difficulty.coins[difficulty];
+    lives = fixed_difficulty.life[difficulty];
 }
 
 void Player::addLife() {
@@ -67,10 +66,10 @@ void Player::clearPowerups() {
 }
 
 void Player::updatePowerups(float deltaTime) {
-    for(size_t i = 0; i < powerupTimeLeft.size(); i++) {
-        if(powerup[i] && powerupTimeLeft[i] > 0) {
+    for (size_t i = 0; i < powerupTimeLeft.size(); i++) {
+        if (powerup[i] && powerupTimeLeft[i] > 0) {
             powerupTimeLeft[i] -= deltaTime;
-            if(powerupTimeLeft[i] <= 0) {
+            if (powerupTimeLeft[i] <= 0) {
                 powerup[i] = false;
             }
         }

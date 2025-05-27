@@ -5,7 +5,8 @@
 
 #include "config.h"
 
-SaveGameManager::SaveGameManager(ConfigFileManager &cfg) : configFileManager(cfg) {}
+SaveGameManager::SaveGameManager(ConfigFileManager &cfg) : configFileManager(cfg) {
+}
 
 void SaveGameManager::saveGame(const int slot, const std::string &name, const player_struct &player) const {
     std::fstream file;
@@ -16,7 +17,7 @@ void SaveGameManager::saveGame(const int slot, const std::string &name, const pl
     file.open(configFileManager.getSaveGameFile().c_str(), std::ios::out | std::ios::in | std::ios::binary);
     if (!file.is_open()) return;
     file.seekp(sizeof(int) + (sizeof(savedGame) * slot));
-    file.write(reinterpret_cast<char*>(&game), sizeof(savedGame));
+    file.write(reinterpret_cast<char *>(&game), sizeof(savedGame));
     file.close();
 }
 
@@ -29,7 +30,7 @@ bool SaveGameManager::loadGame(const int slot, player_struct &player) const {
         return false;
     }
     file.seekg(sizeof(int) + (sizeof(savedGame) * slot));
-    file.read(reinterpret_cast<char*>(&game), sizeof(savedGame));
+    file.read(reinterpret_cast<char *>(&game), sizeof(savedGame));
     file.close();
     if (game.player.level != 0) {
         player = game.player;
@@ -47,7 +48,7 @@ void SaveGameManager::clearSaveGames() const {
     }
     //Write the header
     constexpr int sgHead = SAVEGAME_VERSION;
-    file.write(reinterpret_cast<const char*>(&sgHead), sizeof(int));
+    file.write(reinterpret_cast<const char *>(&sgHead), sizeof(int));
     file.close();
     for (int i = 0; i < 6; ++i)
         saveGame(i, "Empty Slot", player_struct{});
@@ -63,7 +64,7 @@ int SaveGameManager::listSaveGames(std::string slotNames[6]) const {
 
     // Versuche, den Header zu lesen
     int sgHead = 0;
-    file.read(reinterpret_cast<char*>(&sgHead), sizeof(int));
+    file.read(reinterpret_cast<char *>(&sgHead), sizeof(int));
 
     // Prüfe, ob es sich um einen gültigen Header handelt
     if (sgHead != SAVEGAME_VERSION) {
@@ -92,7 +93,7 @@ int SaveGameManager::listSaveGames(std::string slotNames[6]) const {
     savedGame slot[6];
     int i = 0;
     while (i < 6) {
-        file.read(reinterpret_cast<char*>(&slot[i]), sizeof(savedGame));
+        file.read(reinterpret_cast<char *>(&slot[i]), sizeof(savedGame));
         if (file.eof()) break;
         slotNames[i] = slot[i].name;
         i++;
@@ -114,7 +115,7 @@ bool SaveGameManager::loadLegacyGame(int slot, player_struct &player) const {
 
     // Direkt zu Version 1 Position springen (ohne Header)
     file.seekg(sizeof(savedGame) * slot);
-    file.read(reinterpret_cast<char*>(&game), sizeof(savedGame));
+    file.read(reinterpret_cast<char *>(&game), sizeof(savedGame));
 
     if (file.fail() || file.eof()) {
         file.close();
@@ -143,7 +144,7 @@ bool SaveGameManager::detectLegacyFormat() const {
     for (int slot = 0; slot < 6; slot++) {
         savedGame game;
         file.seekg(sizeof(savedGame) * slot);
-        file.read(reinterpret_cast<char*>(&game), sizeof(savedGame));
+        file.read(reinterpret_cast<char *>(&game), sizeof(savedGame));
 
         if (file.fail() || file.eof()) {
             file.close();
@@ -162,13 +163,14 @@ bool SaveGameManager::detectLegacyFormat() const {
         // Prüfe, ob Level im sinnvollen Bereich ist
         if (validName && game.player.level >= 0 && game.player.level <= 100) {
             file.close();
-            return true;  // Wahrscheinlich ein Legacy-Format
+            return true; // Wahrscheinlich ein Legacy-Format
         }
     }
 
     file.close();
     return false;
 }
+
 void SaveGameManager::convertLegacyToCurrentFormat() const {
     std::fstream fileIn, fileOut;
     savedGame slots[6];
@@ -180,7 +182,7 @@ void SaveGameManager::convertLegacyToCurrentFormat() const {
     // Lese alle Slots ein
     for (int i = 0; i < 6; i++) {
         fileIn.seekg(sizeof(savedGame) * i);
-        fileIn.read(reinterpret_cast<char*>(&slots[i]), sizeof(savedGame));
+        fileIn.read(reinterpret_cast<char *>(&slots[i]), sizeof(savedGame));
         if (fileIn.fail()) {
             // Bei Fehler: Initialisiere leeren Slot
             std::strncpy(slots[i].name, "Empty Slot", sizeof(slots[i].name));
@@ -196,11 +198,11 @@ void SaveGameManager::convertLegacyToCurrentFormat() const {
 
     // Schreibe den Header
     constexpr int sgHead = SAVEGAME_VERSION;
-    fileOut.write(reinterpret_cast<const char*>(&sgHead), sizeof(int));
+    fileOut.write(reinterpret_cast<const char *>(&sgHead), sizeof(int));
 
     // Schreibe die konvertierten Slots
     for (int i = 0; i < 6; i++) {
-        fileOut.write(reinterpret_cast<char*>(&slots[i]), sizeof(savedGame));
+        fileOut.write(reinterpret_cast<char *>(&slots[i]), sizeof(savedGame));
     }
 
     fileOut.close();

@@ -13,6 +13,7 @@ public:
     powerupDescriptionClass();
 
     SpriteSheetAnimation *tex;
+
     void draw() const;
 
     std::string name;
@@ -42,5 +43,6 @@ class TitleScreen {
 
 public:
     TitleScreen(effectManager *m, SpriteSheetAnimation tp[], menuClass *me);
+
     void draw(Uint32 *frame_age, Uint32 *max_frame_age);
 };

@@ -12,20 +12,30 @@ private:
 public:
     // Konstruktor/Destruktor
     Player();
+
     ~Player() = default;
 
     void init();
+
     void reset();
+
     void addLife();
+
     void removeLife();
+
     void addScore(int points);
+
     void addCoins(int amount);
+
     void initDifficulty(int startingDifficulty);
 
     // Powerup API
     bool hasPowerup(int type) const;
+
     void activatePowerup(int type, int duration = 0);
+
     void clearPowerups();
+
     void updatePowerups(float deltaTime);
 
     // Spielervariablen
