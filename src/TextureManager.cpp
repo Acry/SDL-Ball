@@ -22,7 +22,6 @@ GLuint getGLFormat(const SDL_Surface *surface) {
 
 TextureManager::TextureManager()
     : maxTexSize(0) {
-
     paddleTextures.fill(nullptr);
     ballTextures.fill(nullptr);
     brickTextures.fill(nullptr);
@@ -68,7 +67,6 @@ bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnim
 }
 
 bool TextureManager::readTexProps(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const {
-
     std::ifstream f;
     std::string set, val;
     f.open(pathName.c_str());

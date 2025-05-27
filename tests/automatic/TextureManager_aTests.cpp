@@ -60,17 +60,17 @@ TEST(TextureManagerTest, ReadTexPropsLoadsPropertiesCorrectly) {
 
     // Testdaten in die Datei schreiben
     testFile << "xoffset=0.5\n"
-             << "yoffset=0.25\n"
-             << "cols=4\n"
-             << "rows=2\n"
-             << "ticks=500\n"
-             << "frames=8\n"
-             << "bidir=1\n"
-             << "playing=1\n"
-             << "padding=1\n"
-             << "texcolor=FFFFFFFF\n"
-             << "parcolor=FFFFFF\n"
-             << "file=testfile.png\n";
+            << "yoffset=0.25\n"
+            << "cols=4\n"
+            << "rows=2\n"
+            << "ticks=500\n"
+            << "frames=8\n"
+            << "bidir=1\n"
+            << "playing=1\n"
+            << "padding=1\n"
+            << "texcolor=FFFFFFFF\n"
+            << "parcolor=FFFFFF\n"
+            << "file=testfile.png\n";
     testFile.close();
 
     try {
@@ -103,8 +103,7 @@ TEST(TextureManagerTest, ReadTexPropsLoadsPropertiesCorrectly) {
         EXPECT_FLOAT_EQ(1.0f, animation.textureProperties.glParColorInfo[2]);
 
         EXPECT_EQ("testfile.png", animation.textureProperties.fileName);
-
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         FAIL() << "Ausnahme während des Tests: " << e.what();
     }
 
@@ -134,8 +133,7 @@ TEST(TextureManagerTest, ReadTexPropsHandlesInvalidFile) {
         EXPECT_EQ(1, animation.textureProperties.cols);
         EXPECT_EQ(1, animation.textureProperties.rows);
         EXPECT_EQ(1000, animation.textureProperties.ticks);
-
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         FAIL() << "Ausnahme während des Tests: " << e.what();
     }
 }
@@ -147,10 +145,10 @@ TEST(TextureManagerTest, ReadTexPropsHandlesInvalidProperties) {
 
     // Testdaten mit ungültigen Werten in die Datei schreiben
     testFile << "xoffset=invalid\n"
-             << "yoffset=0.25\n"
-             << "cols=nicht_numerisch\n"
-             << "texcolor=XYZ\n"  // Ungültiges Farbformat
-             << "unbekannte_eigenschaft=123\n";  // Unbekannte Eigenschaft
+            << "yoffset=0.25\n"
+            << "cols=nicht_numerisch\n"
+            << "texcolor=XYZ\n" // Ungültiges Farbformat
+            << "unbekannte_eigenschaft=123\n"; // Unbekannte Eigenschaft
     testFile.close();
 
     try {
@@ -167,11 +165,10 @@ TEST(TextureManagerTest, ReadTexPropsHandlesInvalidProperties) {
         textureManager.readTexProps(testFilePath, animation);
 
         // Nur der gültige Wert sollte geändert werden
-        EXPECT_FLOAT_EQ(1.0f, animation.textureProperties.xoffset);  // Bleibt unverändert
+        EXPECT_FLOAT_EQ(1.0f, animation.textureProperties.xoffset); // Bleibt unverändert
         EXPECT_FLOAT_EQ(0.25f, animation.textureProperties.yoffset); // Wurde aktualisiert
-        EXPECT_EQ(1, animation.textureProperties.cols);  // Bleibt unverändert
-
-    } catch (const std::exception& e) {
+        EXPECT_EQ(1, animation.textureProperties.cols); // Bleibt unverändert
+    } catch (const std::exception &e) {
         FAIL() << "Ausnahme während des Tests: " << e.what();
     }
 
