@@ -377,7 +377,8 @@ bool TextureManager::loadAllGameTextures() {
         allTexturesLoaded = false;
     if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Drop)] = loadAndCacheTexture("gfx/powerup/drop"))))
         allTexturesLoaded = false;
-    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Detonate)] = loadAndCacheTexture("gfx/powerup/detonate"))))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Detonate)] =
+           loadAndCacheTexture("gfx/powerup/detonate"))))
         allTexturesLoaded = false;
     if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::ExplosiveGrow)] = loadAndCacheTexture(
                "gfx/powerup/explosive-grow"))))
