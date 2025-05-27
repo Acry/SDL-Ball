@@ -22,8 +22,11 @@ public:
      * @param root Optional custom root path. If empty, the path will be auto-detected
      */
     explicit ConfigFileManager(std::string root = "");
+
     [[nodiscard]] std::string getUserThemeDir() const;
+
     [[nodiscard]] static std::string getGlobalThemeDir();
+
     /**
      * @brief Initializes paths and creates required directories
      * @return true if initialization successful, false otherwise
