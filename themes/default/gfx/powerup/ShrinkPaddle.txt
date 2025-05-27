@@ -1,4 +1,4 @@
-file=powerup/shrinkbat.png
+file=powerup/ShrinkPaddle.png
 ticks=1000
 cols=1
 rows=1

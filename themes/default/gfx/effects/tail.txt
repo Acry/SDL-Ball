@@ -1,4 +1,4 @@
-file=ball/tail.png
+file=effects/tail.png
 ticks=1000
 cols=1
 rows=1

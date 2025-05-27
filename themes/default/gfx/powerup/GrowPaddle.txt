@@ -1,4 +1,4 @@
-file=powerup/growbat.png
+file=powerup/GrowPaddle.png
 ticks=1000
 cols=1
 rows=1

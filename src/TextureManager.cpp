@@ -178,6 +178,7 @@ bool TextureManager::readTextureProperties(const std::filesystem::path &pathName
                     }
                     break;
                 case TextureProperty::FileName:
+                    // Dateiname aus der Eigenschaftsdatei speichern
                     tex.textureProperties.fileName = value;
                     break;
                 case TextureProperty::Unknown:
@@ -389,10 +390,10 @@ bool TextureManager::loadAllGameTextures() {
     if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::AimHelp)] = loadAndCacheTexture("gfx/powerup/aimhelp")))
         allTexturesLoaded = false;
     if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::GrowPaddle)] =
-          loadAndCacheTexture("gfx/powerup/growbat")))
+          loadAndCacheTexture("gfx/powerup/GrowPaddle")))
         allTexturesLoaded = false;
     if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::ShrinkPaddle)] = loadAndCacheTexture(
-              "gfx/powerup/shrinkbat")))
+              "gfx/powerup/ShrinkPaddle")))
         allTexturesLoaded = false;
     if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Bullet)] = loadAndCacheTexture("gfx/powerup/bullet")))
         allTexturesLoaded = false;
@@ -420,7 +421,6 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
     bool hasProps = false;
     bool textureLoaded = false;
     std::filesystem::path actualImagePath;
-
 
     if (std::filesystem::exists(propsPath)) {
         hasProps = true;
