@@ -40,7 +40,6 @@ void Ball::init() {
 }
 
 void Ball::update(float deltaTime) {
-    // Wachstum/Schrumpfung aktualisieren
     updateGrowth(deltaTime);
 
     if (!glued) {
