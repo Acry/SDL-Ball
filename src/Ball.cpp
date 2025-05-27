@@ -3,8 +3,8 @@
 #include "colors.h"
 #include "config.h"
 
-Ball::Ball(EventManager* eventMgr) : eventManager(eventMgr) {
- init();
+Ball::Ball(EventManager *eventMgr) : eventManager(eventMgr) {
+    init();
 }
 
 // Eigentschaften sortieren, sollten wie beim Paddle aussehen
@@ -12,16 +12,16 @@ void Ball::init() {
     // MovingObject-Eigenschaften mit sinnvollen Standardwerten
     width = 0.018f;
     height = 0.018f;
-    active = true;    // Ball ist standardmäßig aktiv
+    active = true; // Ball ist standardmäßig aktiv
 
     // Bewegungseigenschaften
-    velocity = 0.3f;  // Standardgeschwindigkeit
+    velocity = 0.3f; // Standardgeschwindigkeit
     xvel = 0.0f;
     yvel = 0.0f;
 
     // Ball-spezifische Eigenschaften
     // Nur wahr für Bälle die nicht im Feld spawnen
-    glued = true;     // Ball startet am Paddle festgeklebt
+    glued = true; // Ball startet am Paddle festgeklebt
     pos_x = 0.0f;
     pos_y = 0.0f;
     aimdir = false;
@@ -38,7 +38,6 @@ void Ball::init() {
     // Kollisionspunkte initialisieren
     onSizeChanged();
 }
-
 
 void Ball::update(float deltaTime) {
     // Wachstum/Schrumpfung aktualisieren
@@ -72,7 +71,7 @@ void Ball::draw(const float deltaTime) {
     glTranslatef(pos_x, pos_y, 0.0);
     glColor4f(GL_WHITE);
     if (explosive) {
-        fireTex.play(deltaTime/5.0f);
+        fireTex.play(deltaTime / 5.0f);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, fireTex.textureProperties.texture);
         glColor4f(fireTex.textureProperties.glTexColorInfo[0], fireTex.textureProperties.glTexColorInfo[1],
@@ -89,7 +88,8 @@ void Ball::draw(const float deltaTime) {
         glVertex3f(-width, -height, 0.0);
         glEnd();
         glDisable(GL_TEXTURE_2D);
-    } else { // Normaler Ball hat momentan keine Animation
+    } else {
+        // Normaler Ball hat momentan keine Animation
         texture.play(deltaTime); // ---FIXME
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
@@ -186,10 +186,10 @@ void Ball::onSizeChanged() {
 
 void Ball::launchFromPaddle() {
     glued = false;
-    setAngle(RAD / 4);  // Standard-Winkel von 45°
+    setAngle(RAD / 4); // Standard-Winkel von 45°
 }
 
-const std::vector<float>* Ball::getCollisionPoints() const {
+const std::vector<float> *Ball::getCollisionPoints() const {
     // Hier könntest du ein statisches Array mit den bsin/bcos-Werten zurückgeben
     // für eine genauere Kreis-Kollisionsberechnung
     static std::vector<float> points;
@@ -203,7 +203,7 @@ const std::vector<float>* Ball::getCollisionPoints() const {
     return &points;
 }
 
-void Ball::onCollision(ICollideable* other, float hitX, float hitY) {
+void Ball::onCollision(ICollideable *other, float hitX, float hitY) {
     if (!eventManager) return;
 
     EventData data;
@@ -212,7 +212,7 @@ void Ball::onCollision(ICollideable* other, float hitX, float hitY) {
     data.sender = this;
     data.target = other;
 
-    switch(other->getCollisionType()) {
+    switch (other->getCollisionType()) {
         case static_cast<int>(CollisionType::Paddle):
             eventManager->emit(GameEvent::BallHitPaddle, data);
             break;
@@ -237,7 +237,6 @@ int Ball::getCollisionType() const {
 }
 
 Ball::~Ball() {
-    // Event auslösen, dass der Ball zerstört wird
     EventData data;
     data.sender = this;
     eventManager->emit(GameEvent::BallDestroyed, data);
