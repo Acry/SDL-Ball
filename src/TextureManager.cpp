@@ -4,10 +4,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <epoxy/gl.h>
-
+#include <unordered_set>
 #include "TextureManager.h"
 
-// Hilfsfunktion für die Konvertierung
 TextureProperty getPropertyFromString(const std::string &key) {
     static const std::unordered_map<std::string, TextureProperty> propertyMap = {
         {"xoffset", TextureProperty::XOffset},
@@ -95,6 +94,9 @@ bool TextureManager::readTextureProperties(const std::filesystem::path &pathName
         return false;
     }
 
+    // Set zum Verfolgen der bereits verarbeiteten Eigenschaften
+    std::unordered_set<TextureProperty> processedProperties;
+
     std::string line;
     while (std::getline(f, line)) {
         // Ignoriere empty lines and comments
@@ -122,6 +124,12 @@ bool TextureManager::readTextureProperties(const std::filesystem::path &pathName
         value.erase(value.find_last_not_of(" \t") + 1);
 
         TextureProperty property = getPropertyFromString(key);
+
+        // Überspringen, wenn diese Eigenschaft bereits verarbeitet wurde
+        if (processedProperties.count(property) > 0) {
+            SDL_Log("Warning: Duplicate property '%s' in '%s' - ignoring", key.c_str(), pathName.c_str());
+            continue;
+        }
 
         try {
             // Je nach Eigenschaft den Wert entsprechend verarbeiten
@@ -178,7 +186,6 @@ bool TextureManager::readTextureProperties(const std::filesystem::path &pathName
                     }
                     break;
                 case TextureProperty::FileName:
-                    // Dateiname aus der Eigenschaftsdatei speichern
                     tex.textureProperties.fileName = value;
                     break;
                 case TextureProperty::Unknown:
@@ -187,8 +194,7 @@ bool TextureManager::readTextureProperties(const std::filesystem::path &pathName
                     break;
             }
         } catch (const std::exception &e) {
-            SDL_Log("Error reading key: '%s' with value '%s': %s",
-                    key.c_str(), value.c_str(), e.what());
+            SDL_Log("Error parsing property '%s' in '%s': %s", key.c_str(), pathName.c_str(), e.what());
         }
     }
 
