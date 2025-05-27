@@ -44,17 +44,15 @@ void Ball::update(float deltaTime) {
     updateGrowth(deltaTime);
 
     if (!glued) {
-        // Basisklassen-Update für Bewegung aufrufen
         EventData data;
         data.posX = pos_x;
         data.posY = pos_y;
         data.sender = this;
-        data.target = nullptr; // Explizit auf nullptr setzen
+        data.target = nullptr;
         data.points = explosive ? 1 : 0;
         eventManager->emit(GameEvent::BallMoved, data);
         MovingObject::update(deltaTime);
     } else {
-        // Wenn am Paddle geklebt, nur horizontal bewegen
         pos_x += xvel * deltaTime;
     }
 }
