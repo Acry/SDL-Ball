@@ -2,13 +2,13 @@
 #include <SDL2/SDL_log.h>
 #include <algorithm>
 
-void EventManager::addListener(GameEvent event, EventCallback callback, void* owner) {
+void EventManager::addListener(GameEvent event, EventCallback callback, void *owner) {
     listeners[event].emplace_back(callback, owner);
     SDL_Log("Event-Listener für Event %d hinzugefügt, jetzt %zu Listener",
             static_cast<int>(event), listeners[event].size());
 }
 
-void EventManager::emit(GameEvent event, const EventData& data) {
+void EventManager::emit(GameEvent event, const EventData &data) {
     if (listeners.find(event) != listeners.end()) {
         SDL_Log("Event %d ausgelöst mit Position (%.2f, %.2f)",
                 static_cast<int>(event), data.posX, data.posY);
@@ -16,20 +16,20 @@ void EventManager::emit(GameEvent event, const EventData& data) {
         // Kopiere die Liste der Callbacks, um Probleme zu vermeiden,
         // falls Callbacks während der Verarbeitung hinzugefügt/entfernt werden
         auto callbacksList = listeners[event];
-        for (const auto& callbackInfo : callbacksList) {
+        for (const auto &callbackInfo: callbacksList) {
             callbackInfo.callback(data);
         }
     }
 }
 
-void EventManager::removeListener(GameEvent event, void* owner) {
+void EventManager::removeListener(GameEvent event, void *owner) {
     if (listeners.find(event) != listeners.end()) {
         // Entferne alle Callbacks, die dem angegebenen Besitzer gehören
-        auto& callbacksList = listeners[event];
+        auto &callbacksList = listeners[event];
         auto newEnd = std::remove_if(callbacksList.begin(), callbacksList.end(),
-                                    [owner](const CallbackInfo& info) {
-                                        return info.owner == owner;
-                                    });
+                                     [owner](const CallbackInfo &info) {
+                                         return info.owner == owner;
+                                     });
         size_t removedCount = std::distance(newEnd, callbacksList.end());
         callbacksList.erase(newEnd, callbacksList.end());
 
@@ -49,7 +49,7 @@ void EventManager::removeAllListeners(GameEvent event) {
 
 void EventManager::clearAllListeners() {
     size_t totalCount = 0;
-    for (const auto& pair : listeners) {
+    for (const auto &pair: listeners) {
         totalCount += pair.second.size();
     }
     listeners.clear();
