@@ -425,11 +425,10 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
 
         // 4. Wenn in den Eigenschaften ein "file=" Attribut existiert, dieses alternativ laden
         if (!animation.textureProperties.fileName.empty() && !textureLoaded) {
-            std::filesystem::path basePath_path(basePath);
-            std::filesystem::path themeRoot = basePath_path.parent_path().parent_path();
-            std::filesystem::path absolutePath = themeRoot / animation.textureProperties.fileName;
-            std::string altPath = absolutePath.string();
-            if (load(altPath, animation)) {
+            const std::filesystem::path basePath_path(basePath);
+            const std::filesystem::path themeRoot = basePath_path.parent_path().parent_path();
+            const std::filesystem::path absolutePath = themeRoot / animation.textureProperties.fileName;
+            if (std::string altPath = absolutePath.string(); load(altPath, animation)) {
                 textureLoaded = true;
             }
         }
