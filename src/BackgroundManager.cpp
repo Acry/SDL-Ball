@@ -6,8 +6,6 @@
 // #include "Texture.h"
 #include "TextureManager.h"
 
-
-
 // zu, setting.showBg = false;
 // Gibt der TextureManager ein false zurück. lief irgendetwas schief und runtime-setting.showBg = false
 // Beim nächsten Update wird der BackgroundManager nicht mehr gezeichnet. Aber nach dem Level wird BGManager
