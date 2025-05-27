@@ -2,7 +2,7 @@
 #include <cmath>
 #include "CollisionManager.h"
 
-bool CollisionManager::checkCollision(const ICollideable& obj1, const ICollideable& obj2) {
+bool CollisionManager::checkCollision(const ICollideable &obj1, const ICollideable &obj2) {
     // Einfache AABB-Kollisionserkennung für rechteckige Objekte
     return (obj1.getPosX() - obj1.getWidth() < obj2.getPosX() + obj2.getWidth() &&
             obj1.getPosX() + obj1.getWidth() > obj2.getPosX() - obj2.getWidth() &&
@@ -10,8 +10,8 @@ bool CollisionManager::checkCollision(const ICollideable& obj1, const ICollideab
             obj1.getPosY() + obj1.getHeight() > obj2.getPosY() - obj2.getHeight());
 }
 
-bool CollisionManager::checkCollision(const ICollideable& obj1, const ICollideable& obj2,
-                                    float& hitX, float& hitY) {
+bool CollisionManager::checkCollision(const ICollideable &obj1, const ICollideable &obj2,
+                                      float &hitX, float &hitY) {
     // Prüfe zuerst die einfache AABB-Kollision
     if (!checkCollision(obj1, obj2)) {
         return false;
@@ -48,16 +48,16 @@ bool CollisionManager::checkCollision(const ICollideable& obj1, const ICollideab
     return true;
 }
 
-void CollisionManager::processCollisions(const std::vector<ICollideable*>& objects) {
+void CollisionManager::processCollisions(const std::vector<ICollideable *> &objects) {
     // Alle Objekte miteinander auf Kollisionen prüfen
     const size_t objectCount = objects.size();
 
     for (size_t i = 0; i < objectCount; ++i) {
-        auto* obj1 = objects[i];
+        auto *obj1 = objects[i];
         if (!obj1->isActive()) continue;
 
         for (size_t j = i + 1; j < objectCount; ++j) {
-            auto* obj2 = objects[j];
+            auto *obj2 = objects[j];
             if (!obj2->isActive()) continue;
 
             float hitY = 0.0f;
@@ -71,11 +71,10 @@ void CollisionManager::processCollisions(const std::vector<ICollideable*>& objec
 }
 
 bool CollisionManager::checkCollisionWithBorder(
-    const ICollideable& movingObject,
-    const ICollideable& border,
-    float& hitX,
-    float& hitY) {
-
+    const ICollideable &movingObject,
+    const ICollideable &border,
+    float &hitX,
+    float &hitY) {
     // Nutze die vorhandene Kollisionsprüfung
     if (!movingObject.isActive() || !border.isActive() ||
         !checkCollision(movingObject, border))

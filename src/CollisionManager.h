@@ -11,18 +11,18 @@ struct CollisionPoint {
 class CollisionManager {
 public:
     // Einfache Kollisionserkennung zwischen zwei ICollideable-Objekten
-    static bool checkCollision(const ICollideable& obj1, const ICollideable& obj2);
+    static bool checkCollision(const ICollideable &obj1, const ICollideable &obj2);
 
     // Spezialisierte Kollisionserkennung mit Kollisionspunkt
-    static bool checkCollision(const ICollideable& obj1, const ICollideable& obj2,
-                             float& hitX, float& hitY);
+    static bool checkCollision(const ICollideable &obj1, const ICollideable &obj2,
+                               float &hitX, float &hitY);
 
     // Prüfe alle Kollisionen zwischen Objekten und leite Events weiter
-    static void processCollisions(const std::vector<ICollideable*>& objects);
+    static void processCollisions(const std::vector<ICollideable *> &objects);
 
     static bool checkCollisionWithBorder(
-    const ICollideable& movingObject,
-    const ICollideable& border,
-    float& hitX,
-    float& hitY);
+        const ICollideable &movingObject,
+        const ICollideable &border,
+        float &hitX,
+        float &hitY);
 };
