@@ -1,5 +1,8 @@
 # TextureManager
 
+Ich denke, wir sollten zuerst die Properties auslesen und dann die Textur laden.
+Denn überlicherweise steht dort die Datei, die geladen werden soll.
+
 [ ] Wenn ein Textur-Theme nicht in ordnung ist, default-Thema nutzen
 [ ] Embedded Thema
 
