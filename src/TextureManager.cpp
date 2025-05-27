@@ -94,9 +94,6 @@ bool TextureManager::readTextureProperties(const std::filesystem::path &pathName
         return false;
     }
 
-    // Set zum Verfolgen der bereits verarbeiteten Eigenschaften
-    std::unordered_set<TextureProperty> processedProperties;
-
     std::string line;
     while (std::getline(f, line)) {
         // Ignoriere empty lines and comments
@@ -126,7 +123,7 @@ bool TextureManager::readTextureProperties(const std::filesystem::path &pathName
         TextureProperty property = getPropertyFromString(key);
 
         // Überspringen, wenn diese Eigenschaft bereits verarbeitet wurde
-        if (processedProperties.count(property) > 0) {
+        if (std::unordered_set<TextureProperty> processedProperties; processedProperties.contains(property)) {
             SDL_Log("Warning: Duplicate property '%s' in '%s' - ignoring", key.c_str(), pathName.c_str());
             continue;
         }
@@ -204,7 +201,6 @@ TextureManager::~TextureManager() {
     clearTheme();
 }
 
-// bekommt z.B.: /home/carsten/sources/extern/GameDev/example_games/breakout/SDL-Ball/SDL-Ball-Project/themes/default
 bool TextureManager::setSpriteTheme(const std::string &themeName) {
     if (currentTheme == themeName) return true;
     if (!std::filesystem::exists(themeName)) {
@@ -309,112 +305,112 @@ bool TextureManager::loadAllGameTextures() {
     bool allTexturesLoaded = true;
 
     // Paddle-Texturen laden
-    if (!(paddleTextures[static_cast<size_t>(PaddleTexture::Base)] = loadAndCacheTexture("gfx/paddle/base")))
+    if (!((paddleTextures[static_cast<size_t>(PaddleTexture::Base)] = loadAndCacheTexture("gfx/paddle/base"))))
         allTexturesLoaded = false;
-    if (!(paddleTextures[static_cast<size_t>(PaddleTexture::Glue)] = loadAndCacheTexture("gfx/paddle/glue")))
+    if (!((paddleTextures[static_cast<size_t>(PaddleTexture::Glue)] = loadAndCacheTexture("gfx/paddle/glue"))))
         allTexturesLoaded = false;
-    if (!(paddleTextures[static_cast<size_t>(PaddleTexture::Gun)] = loadAndCacheTexture("gfx/paddle/gun")))
+    if (!((paddleTextures[static_cast<size_t>(PaddleTexture::Gun)] = loadAndCacheTexture("gfx/paddle/gun"))))
         allTexturesLoaded = false;
 
     // Ball-Texturen laden
-    if (!(ballTextures[static_cast<size_t>(BallTexture::Normal)] = loadAndCacheTexture("gfx/ball/normal")))
+    if (!((ballTextures[static_cast<size_t>(BallTexture::Normal)] = loadAndCacheTexture("gfx/ball/normal"))))
         allTexturesLoaded = false;
-    if (!(ballTextures[static_cast<size_t>(BallTexture::Fireball)] = loadAndCacheTexture("gfx/ball/fireball")))
+    if (!((ballTextures[static_cast<size_t>(BallTexture::Fireball)] = loadAndCacheTexture("gfx/ball/fireball"))))
         allTexturesLoaded = false;
 
     // Brick-Texturen laden
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Explosive)] = loadAndCacheTexture("gfx/brick/explosive")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Explosive)] = loadAndCacheTexture("gfx/brick/explosive"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Base)] = loadAndCacheTexture("gfx/brick/base")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Base)] = loadAndCacheTexture("gfx/brick/base"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Cement)] = loadAndCacheTexture("gfx/brick/cement")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Cement)] = loadAndCacheTexture("gfx/brick/cement"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Doom)] = loadAndCacheTexture("gfx/brick/doom")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Doom)] = loadAndCacheTexture("gfx/brick/doom"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Glass)] = loadAndCacheTexture("gfx/brick/glass")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Glass)] = loadAndCacheTexture("gfx/brick/glass"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Invisible)] = loadAndCacheTexture("gfx/brick/invisible")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Invisible)] = loadAndCacheTexture("gfx/brick/invisible"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Blue)] = loadAndCacheTexture("gfx/brick/blue")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Blue)] = loadAndCacheTexture("gfx/brick/blue"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Yellow)] = loadAndCacheTexture("gfx/brick/yellow")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Yellow)] = loadAndCacheTexture("gfx/brick/yellow"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Green)] = loadAndCacheTexture("gfx/brick/green")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Green)] = loadAndCacheTexture("gfx/brick/green"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Grey)] = loadAndCacheTexture("gfx/brick/grey")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Grey)] = loadAndCacheTexture("gfx/brick/grey"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Purple)] = loadAndCacheTexture("gfx/brick/purple")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Purple)] = loadAndCacheTexture("gfx/brick/purple"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::White)] = loadAndCacheTexture("gfx/brick/white")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::White)] = loadAndCacheTexture("gfx/brick/white"))))
         allTexturesLoaded = false;
-    if (!(brickTextures[static_cast<size_t>(BrickTexture::Red)] = loadAndCacheTexture("gfx/brick/red")))
+    if (!((brickTextures[static_cast<size_t>(BrickTexture::Red)] = loadAndCacheTexture("gfx/brick/red"))))
         allTexturesLoaded = false;
 
     // Powerup-Texturen laden
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Coin)] = loadAndCacheTexture("gfx/powerup/coin")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Coin)] = loadAndCacheTexture("gfx/powerup/coin"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Glue)] = loadAndCacheTexture("gfx/powerup/glue")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Glue)] = loadAndCacheTexture("gfx/powerup/glue"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Multiball)] =
-          loadAndCacheTexture("gfx/powerup/multiball")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Multiball)] =
+           loadAndCacheTexture("gfx/powerup/multiball"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::BigBall)] = loadAndCacheTexture("gfx/powerup/bigball")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::BigBall)] = loadAndCacheTexture("gfx/powerup/bigball"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::NormalBall)] = loadAndCacheTexture(
-              "gfx/powerup/normalball")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::NormalBall)] = loadAndCacheTexture(
+               "gfx/powerup/normalball"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::SmallBall)] =
-          loadAndCacheTexture("gfx/powerup/smallball")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::SmallBall)] =
+           loadAndCacheTexture("gfx/powerup/smallball"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Aim)] = loadAndCacheTexture("gfx/powerup/aim")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Aim)] = loadAndCacheTexture("gfx/powerup/aim"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Explosive)] =
-          loadAndCacheTexture("gfx/powerup/explosive")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Explosive)] =
+           loadAndCacheTexture("gfx/powerup/explosive"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Gun)] = loadAndCacheTexture("gfx/powerup/gun")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Gun)] = loadAndCacheTexture("gfx/powerup/gun"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Laser)] = loadAndCacheTexture("gfx/powerup/laser")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Laser)] = loadAndCacheTexture("gfx/powerup/laser"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Life)] = loadAndCacheTexture("gfx/powerup/life")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Life)] = loadAndCacheTexture("gfx/powerup/life"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Die)] = loadAndCacheTexture("gfx/powerup/die")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Die)] = loadAndCacheTexture("gfx/powerup/die"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Drop)] = loadAndCacheTexture("gfx/powerup/drop")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Drop)] = loadAndCacheTexture("gfx/powerup/drop"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Detonate)] = loadAndCacheTexture("gfx/powerup/detonate")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Detonate)] = loadAndCacheTexture("gfx/powerup/detonate"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::ExplosiveGrow)] = loadAndCacheTexture(
-              "gfx/powerup/explosive-grow")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::ExplosiveGrow)] = loadAndCacheTexture(
+               "gfx/powerup/explosive-grow"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::EasyBrick)] =
-          loadAndCacheTexture("gfx/powerup/easybrick")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::EasyBrick)] =
+           loadAndCacheTexture("gfx/powerup/easybrick"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::NextLevel)] =
-          loadAndCacheTexture("gfx/powerup/nextlevel")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::NextLevel)] =
+           loadAndCacheTexture("gfx/powerup/nextlevel"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::AimHelp)] = loadAndCacheTexture("gfx/powerup/aimhelp")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::AimHelp)] = loadAndCacheTexture("gfx/powerup/aimhelp"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::GrowPaddle)] =
-          loadAndCacheTexture("gfx/powerup/GrowPaddle")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::GrowPaddle)] =
+           loadAndCacheTexture("gfx/powerup/GrowPaddle"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::ShrinkPaddle)] = loadAndCacheTexture(
-              "gfx/powerup/ShrinkPaddle")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::ShrinkPaddle)] = loadAndCacheTexture(
+               "gfx/powerup/ShrinkPaddle"))))
         allTexturesLoaded = false;
-    if (!(powerUpTextures[static_cast<size_t>(PowerUpTexture::Bullet)] = loadAndCacheTexture("gfx/powerup/bullet")))
+    if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Bullet)] = loadAndCacheTexture("gfx/powerup/bullet"))))
         allTexturesLoaded = false;
 
     // Misc Textures
-    if (!(miscTextures[static_cast<size_t>(MiscTexture::Border)] = loadAndCacheTexture("gfx/border")))
+    if (!((miscTextures[static_cast<size_t>(MiscTexture::Border)] = loadAndCacheTexture("gfx/border"))))
         allTexturesLoaded = false;
 
     // Effects Textures
-    if (!(effectTextures[static_cast<size_t>(EffectTexture::Tail)] = loadAndCacheTexture("gfx/effects/tail")))
+    if (!((effectTextures[static_cast<size_t>(EffectTexture::Tail)] = loadAndCacheTexture("gfx/effects/tail"))))
         allTexturesLoaded = false;
-    if (!(effectTextures[static_cast<size_t>(EffectTexture::Particle)] = loadAndCacheTexture("gfx/effects/particle")))
+    if (!((effectTextures[static_cast<size_t>(EffectTexture::Particle)] = loadAndCacheTexture("gfx/effects/particle"))))
         allTexturesLoaded = false;
 
     // Title Textures
-    if (!(titleTextures[static_cast<size_t>(TitleTexture::Title)] = loadAndCacheTexture("gfx/title/title")))
+    if (!((titleTextures[static_cast<size_t>(TitleTexture::Title)] = loadAndCacheTexture("gfx/title/title"))))
         allTexturesLoaded = false;
 
     return allTexturesLoaded;
