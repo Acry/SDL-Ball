@@ -7,6 +7,27 @@
 
 #include "TextureManager.h"
 
+// Hilfsfunktion für die Konvertierung
+TextureProperty getPropertyFromString(const std::string& key) {
+    static const std::unordered_map<std::string, TextureProperty> propertyMap = {
+        {"xoffset", TextureProperty::XOffset},
+        {"yoffset", TextureProperty::YOffset},
+        {"cols", TextureProperty::Cols},
+        {"rows", TextureProperty::Rows},
+        {"ticks", TextureProperty::Ticks},
+        {"frames", TextureProperty::Frames},
+        {"bidir", TextureProperty::Bidir},
+        {"playing", TextureProperty::Playing},
+        {"padding", TextureProperty::Padding},
+        {"texcolor", TextureProperty::TexColor},
+        {"parcolor", TextureProperty::ParColor},
+        {"file", TextureProperty::FileName}
+    };
+
+    auto it = propertyMap.find(key);
+    return it != propertyMap.end() ? it->second : TextureProperty::Unknown;
+}
+
 GLuint getGLFormat(const SDL_Surface *surface) {
     if (!surface) {
         return GL_RGBA;
@@ -100,42 +121,73 @@ bool TextureManager::readTexProps(const std::filesystem::path &pathName, SpriteS
         value.erase(0, value.find_first_not_of(" \t"));
         value.erase(value.find_last_not_of(" \t") + 1);
 
-        // read properties
-        if (key == "xoffset") {
-            tex.textureProperties.xoffset = std::stof(value);
-        } else if (key == "yoffset") {
-            tex.textureProperties.yoffset = std::stof(value);
-        } else if (key == "cols") {
-            tex.textureProperties.cols = std::stoi(value);
-        } else if (key == "rows") {
-            tex.textureProperties.rows = std::stoi(value);
-        } else if (key == "ticks") {
-            tex.textureProperties.ticks = std::stoi(value);
-        } else if (key == "frames") {
-            tex.textureProperties.frames = std::stoi(value);
-        } else if (key == "bidir") {
-            tex.textureProperties.direction = std::stoi(value) != 0;
-        } else if (key == "playing") {
-            tex.textureProperties.playing = std::stoi(value) != 0;
-        } else if (key == "padding") {
-            tex.textureProperties.padding = std::stoi(value) != 0;
-        } else if (key == "texcolor" && value.length() >= 8) {
-            // Texture color [RRGGBBAA]
-            constexpr float normalizer = 1.0f / 255.0f;
-            tex.textureProperties.glTexColorInfo[0] = static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
-            tex.textureProperties.glTexColorInfo[1] = static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
-            tex.textureProperties.glTexColorInfo[2] = static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
-            tex.textureProperties.glTexColorInfo[3] = static_cast<float>(std::stoi(value.substr(6, 2), nullptr, 16)) * normalizer;
-        } else if (key == "parcolor" && value.length() >= 6) {
-            // particle color [RRGGBB]
-            constexpr float normalizer = 1.0f / 255.0f;
-            tex.textureProperties.glParColorInfo[0] = static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
-            tex.textureProperties.glParColorInfo[1] = static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
-            tex.textureProperties.glParColorInfo[2] = static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
-        } else if (key == "file") {
-            tex.textureProperties.fileName = value;
-        } else {
-            SDL_Log("Error: '%s' invalid setting '%s' with value '%s'", pathName.c_str(), key.c_str(), value.c_str());
+        TextureProperty property = getPropertyFromString(key);
+
+        try {
+            // Je nach Eigenschaft den Wert entsprechend verarbeiten
+            switch (property) {
+                case TextureProperty::XOffset:
+                    tex.textureProperties.xoffset = std::stof(value);
+                    break;
+                case TextureProperty::YOffset:
+                    tex.textureProperties.yoffset = std::stof(value);
+                    break;
+                case TextureProperty::Cols:
+                    tex.textureProperties.cols = std::stoi(value);
+                    break;
+                case TextureProperty::Rows:
+                    tex.textureProperties.rows = std::stoi(value);
+                    break;
+                case TextureProperty::Ticks:
+                    tex.textureProperties.ticks = std::stoi(value);
+                    break;
+                case TextureProperty::Frames:
+                    tex.textureProperties.frames = std::stoi(value);
+                    break;
+                case TextureProperty::Bidir:
+                    tex.textureProperties.direction = std::stoi(value) != 0;
+                    break;
+                case TextureProperty::Playing:
+                    tex.textureProperties.playing = std::stoi(value) != 0;
+                    break;
+                case TextureProperty::Padding:
+                    tex.textureProperties.padding = std::stoi(value) != 0;
+                    break;
+                case TextureProperty::TexColor:
+                    if (value.length() >= 8) {
+                        constexpr float normalizer = 1.0f / 255.0f;
+                        tex.textureProperties.glTexColorInfo[0] =
+                            static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
+                        tex.textureProperties.glTexColorInfo[1] =
+                            static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
+                        tex.textureProperties.glTexColorInfo[2] =
+                            static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
+                        tex.textureProperties.glTexColorInfo[3] =
+                            static_cast<float>(std::stoi(value.substr(6, 2), nullptr, 16)) * normalizer;
+                    }
+                    break;
+                case TextureProperty::ParColor:
+                    if (value.length() >= 6) {
+                        constexpr float normalizer = 1.0f / 255.0f;
+                        tex.textureProperties.glParColorInfo[0] =
+                            static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
+                        tex.textureProperties.glParColorInfo[1] =
+                            static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
+                        tex.textureProperties.glParColorInfo[2] =
+                            static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
+                    }
+                    break;
+                case TextureProperty::FileName:
+                    tex.textureProperties.fileName = value;
+                    break;
+                case TextureProperty::Unknown:
+                    SDL_Log("Warning: '%s' hat unknown property key: '%s' with value: '%s'",
+                            pathName.c_str(), key.c_str(), value.c_str());
+                    break;
+            }
+        } catch (const std::exception& e) {
+            SDL_Log("Error reading key: '%s' with value '%s': %s",
+                   key.c_str(), value.c_str(), e.what());
         }
     }
 

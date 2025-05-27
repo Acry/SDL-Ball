@@ -40,6 +40,22 @@ struct SpriteSheetAnimationProperties {
     std::string fileName; // Quite the fugly.. This will be set by readTexProps();
 };
 
+enum class TextureProperty {
+    XOffset,
+    YOffset,
+    Cols,
+    Rows,
+    Ticks,
+    Frames,
+    Bidir,
+    Playing,
+    Padding,
+    TexColor,
+    ParColor,
+    FileName,
+    Unknown
+};
+
 // Texture coordinates array type (8 floats for 4 vertices)
 using texPos = float[8];
 
