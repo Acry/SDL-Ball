@@ -336,6 +336,7 @@ clean-all:
 ###############################################################################
 # AUTOMATIC TESTS - GTEST
 ###############################################################################
+# texture-automatic-test
 TEXTURE_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)TextureManager_aTests.cpp \
                          $(SOURCE_DIR)TextureManager.cpp \
                          $(SOURCE_DIR)SpriteSheetAnimation.cpp
@@ -346,4 +347,16 @@ texture-automatic-test: $(TEXTURE_ATEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(TEXTURE_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)texture-automatic-test
 
 $(BUILD_DIR)TextureManager_aTests.o: $(AUTOMATIC_TEST_DIR)TextureManager_aTests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
+###############################################################################
+# event-automatic-test
+EVENT_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)EventManager_aTests.cpp \
+                        $(SOURCE_DIR)EventManager.cpp
+
+EVENT_ATEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EVENT_ATEST_SOURCES:.cpp=.o)))
+
+event-automatic-test: $(EVENT_ATEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(EVENT_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)event-automatic-test
+
+$(BUILD_DIR)EventManager_aTests.o: $(AUTOMATIC_TEST_DIR)EventManager_aTests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread

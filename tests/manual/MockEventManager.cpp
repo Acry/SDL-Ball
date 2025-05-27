@@ -24,7 +24,8 @@ void MockEventManager::emit(GameEvent event, const EventData &data) {
     };
 
     // Überprüfe, ob der Index für das Event gültig ist
-    if (const int eventIndex = static_cast<int>(event); eventIndex >= 0 && static_cast<size_t>(eventIndex) < std::size(eventNames)) {
+    if (const int eventIndex = static_cast<int>(event);
+        eventIndex >= 0 && static_cast<size_t>(eventIndex) < std::size(eventNames)) {
         SDL_Log("Event ausgelöst: %s (#%d) an Position (%.2f, %.2f)",
                 eventNames[eventIndex], eventCount,
                 data.posX, data.posY);
