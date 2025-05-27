@@ -83,13 +83,13 @@ enum class TitleTexture {
 class TextureManager {
     std::unordered_map<std::string, std::unique_ptr<SpriteSheetAnimation> > textureCache;
 
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(PaddleTexture::Count)> paddleTextures;
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(BallTexture::Count)> ballTextures;
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(BrickTexture::Count)> brickTextures;
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(PowerUpTexture::Count)> powerUpTextures;
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(MiscTexture::Count)> miscTextures;
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(EffectTexture::Count)> effectTextures;
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(TitleTexture::Count)> titleTextures;
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(PaddleTexture::Count)> paddleTextures{};
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(BallTexture::Count)> ballTextures{};
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(BrickTexture::Count)> brickTextures{};
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(PowerUpTexture::Count)> powerUpTextures{};
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(MiscTexture::Count)> miscTextures{};
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(EffectTexture::Count)> effectTextures{};
+    std::array<SpriteSheetAnimation *, static_cast<size_t>(TitleTexture::Count)> titleTextures{};
 
     int maxTexSize;
     std::string currentTheme;
