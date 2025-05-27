@@ -8,7 +8,7 @@
 #include "TextureManager.h"
 
 // Hilfsfunktion für die Konvertierung
-TextureProperty getPropertyFromString(const std::string& key) {
+TextureProperty getPropertyFromString(const std::string &key) {
     static const std::unordered_map<std::string, TextureProperty> propertyMap = {
         {"xoffset", TextureProperty::XOffset},
         {"yoffset", TextureProperty::YOffset},
@@ -157,24 +157,24 @@ bool TextureManager::readTexProps(const std::filesystem::path &pathName, SpriteS
                     if (value.length() >= 8) {
                         constexpr float normalizer = 1.0f / 255.0f;
                         tex.textureProperties.glTexColorInfo[0] =
-                            static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
+                                static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
                         tex.textureProperties.glTexColorInfo[1] =
-                            static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
+                                static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
                         tex.textureProperties.glTexColorInfo[2] =
-                            static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
+                                static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
                         tex.textureProperties.glTexColorInfo[3] =
-                            static_cast<float>(std::stoi(value.substr(6, 2), nullptr, 16)) * normalizer;
+                                static_cast<float>(std::stoi(value.substr(6, 2), nullptr, 16)) * normalizer;
                     }
                     break;
                 case TextureProperty::ParColor:
                     if (value.length() >= 6) {
                         constexpr float normalizer = 1.0f / 255.0f;
                         tex.textureProperties.glParColorInfo[0] =
-                            static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
+                                static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
                         tex.textureProperties.glParColorInfo[1] =
-                            static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
+                                static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
                         tex.textureProperties.glParColorInfo[2] =
-                            static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
+                                static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
                     }
                     break;
                 case TextureProperty::FileName:
@@ -185,9 +185,9 @@ bool TextureManager::readTexProps(const std::filesystem::path &pathName, SpriteS
                             pathName.c_str(), key.c_str(), value.c_str());
                     break;
             }
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             SDL_Log("Error reading key: '%s' with value '%s': %s",
-                   key.c_str(), value.c_str(), e.what());
+                    key.c_str(), value.c_str(), e.what());
         }
     }
 
