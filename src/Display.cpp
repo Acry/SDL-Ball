@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "Display.hpp"
-#include <memory>
 
 using namespace std;
 
@@ -79,6 +78,9 @@ void Display::resize(const int width, const int height) {
     glunits_per_xpixel = 2.0f / static_cast<GLfloat>(viewportW);
     glunits_per_ypixel = 2.0f / static_cast<GLfloat>(viewportH);
 
+    // The near and far values used by glOrtho are only distances and (assuming that the eye is located at the origin)
+    // sets up a projection where -nearVal is on the front clipping plane and -farVal is the location of the far
+    // clipping plane.
     // Flipping the y-axis with glOrtho only affects the projection
     // The viewport’s origin (0, 0) remains at the bottom-left in window
     // coordinates unless you modify the viewport or use a custom framebuffer.
@@ -90,6 +92,12 @@ void Display::resize(const int width, const int height) {
 
     // NDC projection: OpenGL
     // Von -1 bis +1 in NDC
+    // Die Werte für near und far in glOrtho sind tatsächlich etwas verwirrend.
+    // Die Z-Werte -1.0f (near) und 1.0f (far) definieren den sichtbaren Tiefenbereich.
+    // -1.0f (near) ist die hintere Clipping-Ebene (weiter vom Betrachter entfernt)
+    // und 1.0f (far) ist die vordere Clipping-Ebene (näher am Betrachter).
+    // Z = -1.0f wird zu 1.0 im Tiefenpuffer (am weitesten entfernt)
+    // Z = 1.0f wird zu 0.0 im Tiefenpuffer (am nächsten zum Betrachter)
     glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f); // left, right, bottom, top, near, far
     //         +1
     //         ^
@@ -266,8 +274,7 @@ bool Display::initOpenGL(const unsigned int flags) {
     /* Enables Depth Testing */
     glEnable(GL_DEPTH_TEST);
 
-    /* The Type Of Depth Test To Do */
-    glDepthFunc(GL_LEQUAL);
+    glDepthFunc(GL_LESS);
 
     glEnable(GL_MULTISAMPLE);
 

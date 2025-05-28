@@ -10,8 +10,8 @@ int main() {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
-    Grid grid;
     // Oder mit benutzerdefiniertem Spacing: Grid grid(0.2f);
+    Grid grid;
 
     glClearColor(GL_DARK_BLUE);
     bool running = true;
@@ -47,6 +47,7 @@ int main() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         grid.draw();
+        grid.drawCenterLines();
         SDL_Delay(13);
         SDL_GL_SwapWindow(display.sdlWindow);
     }

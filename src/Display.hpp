@@ -1,4 +1,4 @@
-// DisplayManaher.h
+// DisplayManager.h
 #pragma once
 
 #include <epoxy/gl.h>
@@ -26,6 +26,8 @@ public:
 
     static bool updateForMenu();
 
+    // FIXME: Use TGA format only for Development and testing purposes.
+    // Use AVIF for single images or JPEG XL for short sequences.
     [[nodiscard]] bool screenshot(const std::filesystem::path &pathName) const;
 
     void resize(int, int);
