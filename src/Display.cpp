@@ -1,8 +1,8 @@
+// DisplayManager.cpp
 #include <iostream>
 
 #include "Display.hpp"
 #include <memory>
-#include "colors.h"
 
 using namespace std;
 
@@ -58,7 +58,7 @@ void Display::resize(const int width, const int height) {
     window_ratio = static_cast<GLfloat>(currentW) / static_cast<GLfloat>(currentH);
 
     // Ziel-Seitenverhältnis 4:3
-    const float target_ratio = 4.0f / 3.0f;
+    constexpr float target_ratio = 4.0f / 3.0f;
     int vpW, vpH;
 
     if (window_ratio >= target_ratio) {
@@ -79,24 +79,60 @@ void Display::resize(const int width, const int height) {
     glunits_per_xpixel = 2.0f / static_cast<GLfloat>(viewportW);
     glunits_per_ypixel = 2.0f / static_cast<GLfloat>(viewportH);
 
+    // Flipping the y-axis with glOrtho only affects the projection
+    // The viewport’s origin (0, 0) remains at the bottom-left in window
+    // coordinates unless you modify the viewport or use a custom framebuffer.
     glViewport(viewportX, viewportY, viewportW, viewportH);
     glScissor(viewportX, viewportY, viewportW, viewportH);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    // Von -1 bis +1 in NDC, direkt Stein an Stein
-    // glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+    // NDC projection: OpenGL
+    // Von -1 bis +1 in NDC
+    glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);  // left, right, bottom, top, near, far
     //         +1
     //         ^
     //         |
     // -1 <----+----> +1
     //         |
     //        -1
-    glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
 
+    // In OpenGL, texture coordinates (u, v) typically have (0, 0) at the bottom-left of the texture
+    // (0, 1) ------ ( 1, 1)
+    //   |              |
+    //   |              |
+    //   |              |
+    //   (0, 0) ------ (1, 0)
+    //
+    //  (0, 0): Bottom-left corner.
+    //  (1, 0): Bottom-right corner.
+    //  (0, 1): Top-left corner.
+    //  (1, 1): Top-right corner.
+
+    //         -1
+    //         ^
+    //         |
+    // -1 <----+----> +1
+    //         |
+    //        +1
+    // (0, 0) ------ ( 1, 0)
+    //   |              |
+    //   |              |
+    //   |              |
+    //   (0, 1) ------ (1, 1)
+    // flipped y-axis projection
+    // glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, -1.0f); // Bottom-left vertex, top of texture
+    // glTexCoord2f(1.0f, 1.0f); glVertex2f( 1.0f, -1.0f); // Bottom-right vertex, top of texture
+    // glTexCoord2f(1.0f, 0.0f); glVertex2f( 1.0f,  1.0f); // Top-right vertex, bottom of texture
+    // glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f,  1.0f); // Top-left vertex, bottom of texture
+    // glOrtho(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    // When using SDL2 with OpenGL and you don’t flip the y-axis in the projection (e.g., using glOrtho(-1, 1, -1, 1, -1, 1) for standard OpenGL NDC where positive y is up), you will likely need to flip the v-coordinates of your texture coordinates to align SDL2-loaded textures correctly. This is because SDL2 and OpenGL have different conventions for texture origins:
+    // SDL2: Assumes the texture/image origin (0, 0) is at the top-left, with positive y extending downward.
+    // OpenGL: Defines texture coordinates with (u, v) = (0, 0) at the bottom-left, with positive v extending upward.
 }
 
 bool Display::screenshot(const filesystem::path &pathName) const {
@@ -227,11 +263,9 @@ bool Display::initOpenGL(const unsigned int flags) {
     /* Enable smooth shading */
     // glShadeModel(GL_SMOOTH);
 
-    /* Set the background black */
-    glClearColor(GL_BLACK);
-
     /* Enables Depth Testing */
     glEnable(GL_DEPTH_TEST);
+
     /* The Type Of Depth Test To Do */
     glDepthFunc(GL_LEQUAL);
 
@@ -251,6 +285,7 @@ bool Display::initOpenGL(const unsigned int flags) {
 Display::~Display() {
     SDL_DestroyWindow(sdlWindow);
     SDL_GL_DeleteContext(glcontext);
+    // TODO: MouseManager
     SDL_SetRelativeMouseMode(SDL_FALSE);
     SDL_Quit();
 }

@@ -85,6 +85,7 @@ void PlayfieldBorder::createDisplayList() {
 
     dl = glGenLists(1);
     glNewList(dl, GL_COMPILE);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);  // Rot (R,G,B,A)
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);

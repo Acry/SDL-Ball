@@ -12,16 +12,16 @@ void Paddle::init() {
     growing = false;
     shrinking = false;
     growSpeed = 0.05f;
-    aspectRatio = 0.2f;
-    keepAspectRatio = true;
+    keepAspectRatio = true; //?
 
     // xvel = 0.0f;?
     // GameObject-Eigenschaften (und GrowableObject)
-    pos_y = -0.955f;
-    pos_x = 0.0f;
-    width = 0.062f;
-    height = 0.016f;
 
+    width = 0.124f;
+    height = 0.032f;
+    aspectRatio = width / height;
+    pos_y = -0.955f;
+    pos_x = 0.0f - width / 2.0f;
     // Paddle-spezifische Eigenschaften
     dead = false;
     hasGlueLayer = false;
@@ -30,24 +30,27 @@ void Paddle::init() {
 
 void Paddle::drawBase() const {
     glLoadIdentity();
-    glTranslatef(pos_x, pos_y, 0.0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
     glColor4f(texture.textureProperties.glTexColorInfo[0],
-              texture.textureProperties.glTexColorInfo[1],
-              texture.textureProperties.glTexColorInfo[2],
-              texture.textureProperties.glTexColorInfo[3]);
+          texture.textureProperties.glTexColorInfo[1],
+          texture.textureProperties.glTexColorInfo[2],
+          texture.textureProperties.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
     glBegin(GL_QUADS);
-    glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
-    glVertex3f(-width, height, 0.0f);
-    glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
-    glVertex3f(width, height, 0.0f);
-    glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
-    glVertex3f(width, -height, 0.0f);
-    glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
-    glVertex3f(-width, -height, 0.0f);
+    // unten links
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3f(pos_x, pos_y+height, 0.0f);
+    // unten rechts
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3f(pos_x + width, pos_y+height, 0.0f);
+    // oben rechts
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3f(pos_x + width, pos_y, 0.0f);
+    // oben links
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3f(pos_x, pos_y, 0.0f);
     glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);

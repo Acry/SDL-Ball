@@ -29,9 +29,19 @@ struct SpriteSheetAnimationProperties {
     Uint32 frames;
     bool direction; // Does the animation loop from 0 -> X -> 0 or from 0 -> X - 0
     bool playing; // Is the animation currently playing?
-
-    bool padding;
+    /*
+     * Eine Technik zur Vermeidung von Texture Bleeding, nicht alle Sprite-Sheets benötigen es. Es gibt mehrere
+     * Faktoren, die bestimmen, ob Padding notwendig ist:
+     * Samplingmethode: Bei GL_NEAREST (Point-Sampling) tritt kein Texture Bleeding auf, da exakt ein Texel ausgewählt
+     * wird. Bleeding ist hauptsächlich ein Problem bei GL_LINEAR (bilinearem Filtering).
+     * UV-Genauigkeit: Wenn die UV-Koordinaten exakt auf Texelgrenzen liegen und die mathematische Berechnung präzise
+     * ist, kann Bleeding vermieden werden.
+     * Mipmapping: Bei aktiviertem Mipmapping ist Padding besonders wichtig, da bei niedrigeren Mip-Levels benachbarte
+     * Texel stärker gemischt werden.
+     * Power-of-Two Texturen: Diese können manchmal besser mit Texturkoordinaten umgehen als Non-Power-of-Two Texturen.
+     */
     // Bit of a nasty hack, but if a texture is padded with 1 pixel around each frame, this have to be set to 1
+    bool padding;
     float pxw, pxh; // pixel width, and height
 
     GLfloat glTexColorInfo[4];

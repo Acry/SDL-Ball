@@ -1,7 +1,10 @@
+// BackgroundManager.h
 #pragma once
+
 #include <filesystem>
 
 #include "SpriteSheetAnimation.h"
+#include "colors.h"
 
 class TextureManager;
 

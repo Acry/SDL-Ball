@@ -1,7 +1,9 @@
+// DisplayManaher.h
 #pragma once
+
 #include <epoxy/gl.h>
-#include <filesystem>
 #include <SDL2/SDL.h>
+#include <filesystem>
 
 class Display {
     int displayToUse = 0;

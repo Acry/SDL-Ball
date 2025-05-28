@@ -2,7 +2,7 @@
 
 #include "colors.h"
 #include "config.h"
-
+#define DEBUG_DRAW_BALL_QUAD 0
 Ball::Ball(EventManager *eventMgr) : eventManager(eventMgr) {
     init();
 }
@@ -63,7 +63,7 @@ void Ball::draw(const float deltaTime) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // Funktionalität für Zielhilfe sollte in eine separate Klasse/Manager ausgelagert werden
-
+    glPushMatrix();
     glLoadIdentity();
     glTranslatef(pos_x, pos_y, 0.0);
     glColor4f(GL_WHITE);
@@ -90,20 +90,36 @@ void Ball::draw(const float deltaTime) {
         texture.play(deltaTime); // ---FIXME
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
-        glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1],
-                  texture.textureProperties.glTexColorInfo[2],
-                  texture.textureProperties.glTexColorInfo[3]);
+        //glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1],
+        //          texture.textureProperties.glTexColorInfo[2],
+        //          texture.textureProperties.glTexColorInfo[3]);
+        // Von -1 bis +1 in NDC, direkt Stein an Stein
+        // glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
+        //         +1
+        //         ^
+        //         |
+        // -1 <----+----> +1
+        //         |
+        //        -1
         glBegin(GL_QUADS);
-        glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
+        // oben links
+        glTexCoord2f(0.0f, 0.0f);
+        //glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
         glVertex3f(-width, height, 0.0);
-        glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
+        // oben rechts
+        glTexCoord2f(1.0f, 0.0f);
+        //glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
         glVertex3f(width, height, 0.0);
-        glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
+        // unten rechts
+        glTexCoord2f(1.0f, 1.0f);
+        //glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
         glVertex3f(width, -height, 0.0);
-        glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
+        // unten links
+        glTexCoord2f(0.0f, 1.0f);
+        //glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
         glVertex3f(-width, -height, 0.0);
         glEnd();
-        glDisable(GL_TEXTURE_2D);
+
     }
 
 #if DEBUG_DRAW_BALL_QUAD
@@ -128,6 +144,8 @@ void Ball::draw(const float deltaTime) {
     glEnable(GL_TEXTURE_2D);
 #endif
     glDisable(GL_BLEND);
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
 }
 
 GLfloat Ball::getAngle() {

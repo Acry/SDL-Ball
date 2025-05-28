@@ -1,9 +1,8 @@
-#include "BackgroundManager.h"
-
 #include <SDL2/SDL.h>
 #include <string>
 #include <epoxy/gl.h>
-// #include "Texture.h"
+
+#include "BackgroundManager.h"
 #include "TextureManager.h"
 
 // zu, setting.showBg = false;

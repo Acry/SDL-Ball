@@ -46,7 +46,20 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
 $(shell mkdir -p $(BUILD_DIR))
 
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
-TEST_TARGETS := config-test settings-test display-test spritesheet-test paddle-test theme-test text-test sound-test ball-test effect-test texture-test
+TEST_TARGETS := \
+    config-test \
+    settings-test \
+    test-background \
+    test-display \
+    spritesheet-test \
+    paddle-test \
+    theme-test \
+    text-test \
+    sound-test \
+    ball-test \
+    effect-test \
+    texture-test \
+
 AUTO_TEST_TARGETS := texture-automatic-test event-automatic-test collision-automatic-test
 TARGET=sdl-ball
 GAME_OBJECTS := $(OBJECTS)
@@ -86,7 +99,7 @@ remove-config:
 	rm -R ~/.config/sdl-ball
 
 ###############################################################################
-# TEST TARGETS
+# MANUAL TEST TARGETS
 # This section contains the test targets for various components of the project.
 ###############################################################################
 # ConfigManager
@@ -122,18 +135,30 @@ $(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)SettingsManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
 ###############################################################################
-# DisplayManager, also used for TextureManager and BackgroundManager
-DISPLAY_TEST_SOURCES := $(MANUAL_TEST_DIR)BackgroundManager_Tests.cpp \
+# DisplayManager
+DISPLAY_TEST_SOURCES := $(MANUAL_TEST_DIR)DisplayManager_Tests.cpp \
+                        $(MANUAL_TEST_DIR)Grid.cpp \
+                        $(SOURCE_DIR)Display.cpp \
+
+test-display: $(DISPLAY_TEST_SOURCES)
+	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(DISPLAY_TEST_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)test-display
+
+GRID_SOURCES := $(MANUAL_TEST_DIR)Grid.cpp \
+                $(SOURCE_DIR)Display.cpp \
+
+grid: $(GRID_SOURCES)
+	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(GRID_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)grid
+
+###############################################################################
+# BackgroundManager
+BACKGROUND_TEST_SOURCES := $(MANUAL_TEST_DIR)BackgroundManager_Tests.cpp \
                         $(SOURCE_DIR)Display.cpp \
                         $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                         $(SOURCE_DIR)TextureManager.cpp \
                         $(SOURCE_DIR)BackgroundManager.cpp
 
-display-test: $(DISPLAY_TEST_SOURCES)
-	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(DISPLAY_TEST_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)display-test
-
-$(BUILD_DIR)Display.o: $(SOURCE_DIR)Display.cpp
-	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
+test-background: $(BACKGROUND_TEST_SOURCES)
+	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(BACKGROUND_TEST_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)test-background
 
 $(BUILD_DIR)Texture.o: $(SOURCE_DIR)SpriteSheetAnimation.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
@@ -319,6 +344,31 @@ texture-test: $(TEXTURE_MANAGER_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(TEXTURE_MANAGER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)texture-test
 
 $(BUILD_DIR)TextureManager_Tests.o: $(MANUAL_TEST_DIR)TextureManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
+# CollisionManager
+COLLISION_TEST_SOURCES := $(MANUAL_TEST_DIR)Collision_Tests.cpp \
+                          $(SOURCE_DIR)Ball.cpp \
+                          $(SOURCE_DIR)Paddle.cpp \
+                          $(SOURCE_DIR)GameObject.cpp \
+                          $(SOURCE_DIR)MovingObject.cpp \
+                          $(SOURCE_DIR)GrowableObject.cpp \
+                          $(SOURCE_DIR)Display.cpp \
+                          $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                          $(SOURCE_DIR)TextManager.cpp \
+                          $(SOURCE_DIR)TextureManager.cpp \
+                          $(SOURCE_DIR)CollisionManager.cpp \
+                          $(SOURCE_DIR)PlayfieldBorder.cpp \
+                          $(SOURCE_DIR)EventManager.cpp
+
+COLLISION_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(COLLISION_TEST_SOURCES:.cpp=.o)))
+
+collision-test: $(COLLISION_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(COLLISION_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)collision-test
+
+
+$(BUILD_DIR)Collision_Tests.o: $(MANUAL_TEST_DIR)Collision_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################

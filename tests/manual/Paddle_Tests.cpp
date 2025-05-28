@@ -157,15 +157,40 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Spielfeldränder zeichnen
-        leftBorder.draw(deltaTime);
-        rightBorder.draw(deltaTime);
+        //leftBorder.draw(deltaTime);
+        //rightBorder.draw(deltaTime);
 
         paddle.draw(deltaTime);
-        float yPos = 0.9f;
-        for (const auto &instruction: instructions) {
-            textManager.write(instruction, Fonts::Menu, true, 0.75f, -0.0f, yPos);
-            yPos -= 0.07f;
-        }
+        //float yPos = 0.9f;
+        //for (const auto &instruction: instructions) {
+        //    textManager.write(instruction, Fonts::Menu, true, 0.75f, -0.0f, yPos);
+        //    yPos -= 0.07f;
+        //}
+        // Rote Linie zeichnen
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glLoadIdentity();
+        glLineWidth(1.0f);
+
+        glColor4f(1.0f, 0.0f, 0.0f, 1.0f);  // Rot (R,G,B,A)
+        glBegin(GL_LINES);
+        glVertex3f(-0.9f, 0.0f, 0.0f);  // Startpunkt der Linie
+        glVertex3f(0.9f, 0.0f, 0.0f);   // Endpunkt der Linie
+        glEnd();
+        glPopMatrix();
+
+        glPushMatrix();
+        glLoadIdentity();
+        glLineWidth(0.01f);
+
+        glBegin(GL_LINES);
+        glVertex3f(0.0f, 0.0f, 0.0f);    // Startpunkt in der Mitte
+        glVertex3f(0.0f, -1.0f, 0.0f);
+        glEnd();
+        glPopMatrix();
         SDL_GL_SwapWindow(display.sdlWindow);
         SDL_Delay(16); // ~60fps
     }
