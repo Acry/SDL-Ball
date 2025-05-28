@@ -29,6 +29,17 @@ struct glFontInfo_struct {
 };
 
 class TextManager {
+    std::string currentTheme;
+
+    bool loadAllFonts();
+
+    bool genFontTex(const std::string &TTFfontName, int fontSize, Fonts font);
+
+    void clearTheme();
+
+    glFontInfo_struct fontInfo[static_cast<int>(Fonts::Count)];
+    std::list<TextAnnouncement> announcements;
+
 public:
     TextManager();
 
@@ -47,15 +58,6 @@ public:
     void drawAnnouncements(const float deltaTime);
 
     size_t getAnnouncementCount() const;
-
-private:
-    bool genFontTex(const std::string &TTFfontName, int fontSize, Fonts font);
-
-    void clearTheme();
-
-    glFontInfo_struct fontInfo[static_cast<int>(Fonts::Count)];
-    std::string themePath;
-    std::list<TextAnnouncement> announcements;
 };
 
 class TextAnnouncement {

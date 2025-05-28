@@ -12,7 +12,7 @@ int main() {
     }
     SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: SpriteSheet Animation Test");
     TextManager textManager;
-    if (!textManager.setTheme("../themes/default/font/fonts.txt")) {
+    if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
     SpriteSheetAnimation spriteSheetAnimation1;

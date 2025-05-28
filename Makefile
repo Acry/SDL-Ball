@@ -54,7 +54,7 @@ TEST_TARGETS := \
     spritesheet-test \
     paddle-test \
     theme-test \
-    text-test \
+    test-text \
     sound-test \
     ball-test \
     effect-test \
@@ -259,8 +259,8 @@ TEXT_TEST_SOURCES := $(MANUAL_TEST_DIR)TextManager_Tests.cpp \
 
 TEXT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXT_TEST_SOURCES:.cpp=.o)))
 
-text-test: $(TEXT_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(TEXT_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)text-test
+test-text: $(TEXT_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(TEXT_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-text
 
 $(BUILD_DIR)TextManager_Tests.o: $(MANUAL_TEST_DIR)TextManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@

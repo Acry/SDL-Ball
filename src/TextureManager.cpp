@@ -208,7 +208,6 @@ bool TextureManager::setSpriteTheme(const std::string &themeName) {
         SDL_Log("Error: Could not read theme-directory: %s", themeName.c_str());
         return false;
     }
-    // Ressourcen freigeben
     clearTheme();
 
     // Neuen Pfad setzen

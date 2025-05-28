@@ -19,7 +19,7 @@ int main() {
         return EXIT_FAILURE;
     }
     TextManager textManager;
-    if (!textManager.setTheme("../themes/default/font/fonts.txt")) {
+    if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
     MockEventManager eventManager;

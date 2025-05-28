@@ -17,7 +17,7 @@ TextManager::TextManager() : fontInfo{} {
 }
 
 bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize, const Fonts font) {
-    const std::string fullFontPath = themePath + "/" + TTFfontName;
+    std::string fullPath = currentTheme + "/" + "font/" + TTFfontName;
 
     TTF_Font *ttfFont = nullptr;
     SDL_Surface *c, *t;
@@ -40,7 +40,7 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
 #endif
 
 
-    ttfFont = TTF_OpenFont(fullFontPath.c_str(), fontSize);
+    ttfFont = TTF_OpenFont(fullPath.c_str(), fontSize);
     if (!ttfFont) {
         SDL_Log("TTF_OpenFont: %s", TTF_GetError());
         return false;
@@ -188,18 +188,29 @@ TextManager::~TextManager() {
     TTF_Quit();
 }
 
-bool TextManager::setTheme(const std::string &fontFilePath) {
-    // Bestehende Ressourcen freigeben
+bool TextManager::setTheme(const std::string &themeName) {
+    if (currentTheme == themeName) return true;
+    if (!std::filesystem::exists(themeName)) {
+        SDL_Log("Error: Could not read theme-directory: %s", themeName.c_str());
+        return false;
+    }
     clearTheme();
+    currentTheme = themeName;
 
-    // Font-Basispfad ermitteln (alles bis zum letzten /)
-    std::filesystem::path path(fontFilePath);
-    themePath = path.parent_path().string();
+    if (!loadAllFonts()) {
+        SDL_Log("Fehler beim Laden der Texturen für Theme: %s", currentTheme.c_str());
+        return false;
+    }
+    return true;
+}
+
+bool TextManager::loadAllFonts() {
+    std::string fullPath = currentTheme + "/" + "font/fonts.txt";
 
     // Parse font-description file
-    std::ifstream f(fontFilePath);
+    std::ifstream f(fullPath);
     if (!f.is_open()) {
-        SDL_Log("Error: could not open font-description file: %s", fontFilePath.c_str());
+        SDL_Log("Error: could not open font-description file: %s", fullPath.c_str());
         return false;
     }
 
@@ -229,7 +240,7 @@ bool TextManager::setTheme(const std::string &fontFilePath) {
                     SDL_Log("Ungültige Zahl in fonts.txt: %s", val.c_str());
                     continue;
                 }
-                auto font = Fonts::Count; // Standardwert als "ungültig"
+                auto font = Fonts::Count;
                 if (set == "menusize") font = Fonts::Menu;
                 else if (set == "announcegoodsize") font = Fonts::AnnounceGood;
                 else if (set == "announcebadsize") font = Fonts::AnnounceBad;

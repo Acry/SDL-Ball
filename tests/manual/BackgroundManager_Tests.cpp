@@ -4,8 +4,6 @@
 #include "Display.hpp"
 #include "TextureManager.h"
 
-int globalTicksSinceLastDraw = 0;
-
 int main() {
     Display display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
