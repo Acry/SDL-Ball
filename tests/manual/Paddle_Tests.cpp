@@ -8,6 +8,8 @@
 #include "MockEventManager.h"
 #include "TextManager.h"
 
+#define DEBUG_DRAW_PADDLE_BOUNDING_BOXES 0
+
 GLfloat normalizedMouseX, normalizedMouseY;
 
 int main() {
@@ -85,7 +87,7 @@ int main() {
     SDL_SetRelativeMouseMode(SDL_TRUE);
     Uint32 lastTime = SDL_GetTicks();
     bool running = true;
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
     while (running) {
         // Zeit für Animation und Update aktualisieren
@@ -148,6 +150,25 @@ int main() {
         rightBorder.draw(deltaTime);
 
         paddle.draw(deltaTime);
+#if DEBUG_DRAW_PADDLE_BOUNDING_BOXES
+        GLfloat oldColor[4];
+        glGetFloatv(GL_CURRENT_COLOR, oldColor);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor4f(1.0f, 1.0f, 1.0f, 0.1f); // Weiß für die Paddle-Farbe
+        glBegin(GL_QUADS);
+        // unten links
+        glVertex3f(paddle.pos_x, paddle.pos_y + paddle.height, 0.0f);
+        // unten rechts
+        glVertex3f(paddle.pos_x + paddle.width, paddle.pos_y + paddle.height, 0.0f);
+        // oben rechts
+        glVertex3f(paddle.pos_x + paddle.width, paddle.pos_y, 0.0f);
+        // oben links
+        glVertex3f(paddle.pos_x, paddle.pos_y, 0.0f);
+        glEnd();
+        glDisable(GL_BLEND);
+        glColor4fv(oldColor);
+#endif
         float yPos = 0.9f;
         constexpr auto currentFont = Fonts::Menu;
         const auto height = textManager.getHeight(currentFont);

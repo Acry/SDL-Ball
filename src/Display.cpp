@@ -286,7 +286,7 @@ bool Display::initOpenGL(const unsigned int flags) {
     /* Enables Depth Testing */
     glEnable(GL_DEPTH_TEST);
 
-    glDepthFunc(GL_LESS);
+    glDepthFunc(GL_LEQUAL);
 
     glEnable(GL_MULTISAMPLE);
 

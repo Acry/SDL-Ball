@@ -68,13 +68,17 @@ void Paddle::drawGlueLayer() const {
               layerTex[0].textureProperties.glTexColorInfo[3]);
     glBindTexture(GL_TEXTURE_2D, layerTex[0].textureProperties.texture);
     glBegin(GL_QUADS);
-    glTexCoord2f(layerTex[0].texturePosition[0], layerTex[0].texturePosition[1]);
+    // unten links
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(pos_x, pos_y + height, 0.0f);
-    glTexCoord2f(layerTex[0].texturePosition[2], layerTex[0].texturePosition[3]);
+    // unten rechts
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
-    glTexCoord2f(layerTex[0].texturePosition[4], layerTex[0].texturePosition[5]);
+    // oben rechts
+    glTexCoord2f(1.0f, 1.0f);
     glVertex3f(pos_x + width, pos_y, 0.0f);
-    glTexCoord2f(layerTex[0].texturePosition[6], layerTex[0].texturePosition[7]);
+    // oben links
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(pos_x, pos_y, 0.0f);
     glEnd();
     glDisable(GL_TEXTURE_2D);
@@ -86,20 +90,24 @@ void Paddle::drawGunLayer() const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, layerTex[1].textureProperties.texture);
     glColor4f(layerTex[1].textureProperties.glTexColorInfo[0],
               layerTex[1].textureProperties.glTexColorInfo[1],
               layerTex[1].textureProperties.glTexColorInfo[2],
               layerTex[1].textureProperties.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, layerTex[1].textureProperties.texture);
     glBegin(GL_QUADS);
+    // unten links
     glTexCoord2f(layerTex[1].texturePosition[0], layerTex[1].texturePosition[1]);
-    glVertex3f(pos_x, pos_y + height, 0.0f);
+    glVertex3f(pos_x, pos_y + height * 2.0f, 0.0f);
+    // unten rechts
     glTexCoord2f(layerTex[1].texturePosition[2], layerTex[1].texturePosition[3]);
-    glVertex3f(pos_x + width, pos_y + height, 0.0f);
+    glVertex3f(pos_x + width, pos_y + height * 2.0f, 0.0f);
+    // oben rechts
     glTexCoord2f(layerTex[1].texturePosition[4], layerTex[1].texturePosition[5] - 0.01f);
-    glVertex3f(pos_x + width, pos_y, 0.0f);
+    glVertex3f(pos_x + width, pos_y + height, 0.0f);
+    // oben links
     glTexCoord2f(layerTex[1].texturePosition[6], layerTex[1].texturePosition[7] - 0.01f);
-    glTranslatef(pos_x, pos_y, 0.0);
+    glVertex3f(pos_x, pos_y + height, 0.0f);
     glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
@@ -107,6 +115,7 @@ void Paddle::drawGunLayer() const {
 
 void Paddle::draw(const float deltaTime) {
     if (!active) return;
+
 
     texture.play(deltaTime);
     drawBase();
