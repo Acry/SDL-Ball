@@ -1,34 +1,37 @@
-// Grid.cpp
+// TestHelper.cpp
 #include <epoxy/gl.h>
 
 #include "colors.h"
-#include "Grid.h"
+#include "TestHelper.h"
 
-Grid::Grid(const float gridSpacing, const float gridExtent)
+TestHelper::TestHelper(const float gridSpacing, const float gridExtent)
     : m_gridSpacing(gridSpacing), m_gridExtent(gridExtent) {
+    glClearColor(GL_DARK_BLUE);
 }
 
-float Grid::getSpacing() const {
+float TestHelper::getSpacing() const {
     return m_gridSpacing;
 }
 
-void Grid::setSpacing(const float spacing) {
+void TestHelper::setSpacing(const float spacing) {
     m_gridSpacing = spacing;
 }
 
-float Grid::getExtent() const {
+float TestHelper::getExtent() const {
     return m_gridExtent;
 }
 
-void Grid::setExtent(const float extent) {
+void TestHelper::setExtent(const float extent) {
     m_gridExtent = extent;
 }
 
-void Grid::draw() const {
+void TestHelper::drawGrid(const GLfloat alpha) const {
     glDisable(GL_MULTISAMPLE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(0.1f);
-    glColor4f(GL_WHITE);
+    glColor4f(1.0f, 1.0f, 1.0f, alpha);
 
     // vertical
     glBegin(GL_LINES);
@@ -51,9 +54,10 @@ void Grid::draw() const {
     glEnd();
     glDisable(GL_LINE_SMOOTH);
     glEnable(GL_MULTISAMPLE);
+    glDisable(GL_BLEND);
 }
 
-void Grid::drawCenterLines() const {
+void TestHelper::drawCenterLines() const {
     glDisable(GL_MULTISAMPLE);
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(1.0f);

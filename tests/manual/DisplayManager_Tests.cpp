@@ -1,8 +1,10 @@
 #include <cstdlib>
+#include <vector>
 
 #include "Display.hpp"
 #include "colors.h"
-#include "Grid.h"
+#include "TestHelper.h"
+#include "TextManager.h"
 
 int main() {
     Display display(0, 1024, 768, false);
@@ -10,13 +12,26 @@ int main() {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
-    // Oder mit benutzerdefiniertem Spacing: Grid grid(0.2f);
-    Grid grid;
+    SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Display Test");
+    TextManager textManager;
+    if (!textManager.setTheme("../themes/default/font/fonts.txt")) {
+        SDL_Log("Error loading font theme");
+        return EXIT_FAILURE;
+    }
+    TestHelper testHelper;
 
-    glClearColor(GL_DARK_BLUE);
+    const std::vector<std::string> instructions = {
+        "S: Create Screenshot",
+        "ESC: Quit"
+    };
+
     bool running = true;
-
+    auto lastFrameTime = std::chrono::high_resolution_clock::now();
     while (running) {
+        // Zeit seit dem letzten Frame berechnen
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+        lastFrameTime = currentTime;
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -37,17 +52,33 @@ int main() {
                         std::filesystem::create_directories(screenshotPath);
                     }
                     if (display.screenshot(screenshotPath)) {
-                        SDL_Log("Screenshot erstellt");
+                        textManager.addAnnouncement("Screenshot saved.", 1500, Fonts::AnnounceGood);
                     } else {
-                        SDL_Log("Screenshot konnte nicht erstellt werden");
+                        textManager.addAnnouncement("Screenshot not created.", 1500, Fonts::AnnounceBad);
                     }
                 }
             }
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        grid.draw();
-        grid.drawCenterLines();
+        testHelper.drawGrid();
+        testHelper.drawCenterLines();
+
+        // Instructions
+        glColor4f(GL_ORANGE);
+        float yPos = 0.9f;
+        constexpr auto currentFont = Fonts::Menu;
+        const auto height = textManager.getHeight(currentFont);
+        const auto offest = height;
+        for (const auto &instruction: instructions) {
+            textManager.write(instruction, currentFont, true, 1.0f, 0.0f, yPos);
+            yPos -= height + offest;
+        }
+        if (textManager.getAnnouncementCount() > 0) {
+            textManager.updateAnnouncements(deltaTime);
+            textManager.drawAnnouncements(deltaTime);
+        }
+
         SDL_Delay(13);
         SDL_GL_SwapWindow(display.sdlWindow);
     }

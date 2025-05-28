@@ -1,12 +1,12 @@
-// Grid.h
+// TestHelper.h
 #pragma once
-
-class Grid {
+#include "colors.h"
+class TestHelper {
     float m_gridSpacing;
     float m_gridExtent;
 
 public:
-    explicit Grid(float gridSpacing = 0.1f, float gridExtent = 1.0f);
+    explicit TestHelper(float gridSpacing = 0.1f, float gridExtent = 1.0f);
 
     float getSpacing() const;
 
@@ -16,7 +16,7 @@ public:
 
     void setExtent(float extent);
 
-    void draw() const;
+    void drawGrid(GLfloat alpha = 1.0f) const;
 
     void drawCenterLines() const;
 };

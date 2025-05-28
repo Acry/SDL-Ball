@@ -21,4 +21,4 @@ introhighscorefile=Bandal.ttf
 introhighscoresize=40
 
 introdescriptionfile=RobotoCondensed-Regular.ttf
-introdescriptionsize=12
+introdescriptionsize=14

@@ -39,17 +39,23 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     amask = 0xff000000;
 #endif
 
+
     ttfFont = TTF_OpenFont(fullFontPath.c_str(), fontSize);
     if (!ttfFont) {
         SDL_Log("TTF_OpenFont: %s", TTF_GetError());
         return false;
     }
-    t = SDL_CreateRGBSurface(0, 512, 512, 32, rmask, gmask, bmask, amask);
+    TTF_SetFontHinting(ttfFont, TTF_HINTING_LIGHT_SUBPIXEL);
+    int surfaceDim = 1024; // Size of the surface to render the font to
+    t = SDL_CreateRGBSurface(0, surfaceDim, surfaceDim, 32, rmask, gmask, bmask, amask);
 
     dst.x = 1;
     dst.y = 1;
 
-    fontInfo[fontIndex].height = 0.0;
+    // Anfangshöhe auf Null setzen, wir ermitteln die maximale Höhe während der Schleife
+    fontInfo[fontIndex].height = 0.0f;
+    float maxHeight = 0.0f;
+
     for (int i = 32; i < 128; i++) {
         constexpr SDL_Color white = {255, 255, 255, 255};
         tempChar[0] = static_cast<char>(i);
@@ -59,29 +65,30 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         SDL_SetSurfaceAlphaMod(c, 0xFF);
         TTF_SizeText(ttfFont, tempChar, &sX, &sY);
 
+        // Pixel-Höhe für die maximale Höhenberechnung speichern
+        if (sY > maxHeight) {
+            maxHeight = static_cast<float>(sY);
+        }
+
         src.x = 0;
         src.y = 0;
         src.w = sX;
         src.h = sY;
 
-        if (dst.x + sX > 512) {
+        if (dst.x + sX > surfaceDim) {
             dst.x = 1;
             dst.y += sY + 2;
-            if (dst.y > 512 && font != Fonts::Highscore) //FONT_HIGHSCORE is always rendered too big for texture
+            if (dst.y > surfaceDim)
             {
                 SDL_Log("Too many chars for tex (%d)", i);
             }
         }
 
-        fontInfo[fontIndex].ch[i].Xa = (1.0f / (512.0f / static_cast<float>(dst.x)));
-        fontInfo[fontIndex].ch[i].Xb = (1.0f / (512.0f / (static_cast<float>(dst.x) + sX)));
-        fontInfo[fontIndex].ch[i].Ya = (1.0f / (512.0f / static_cast<float>(dst.y)));
-        fontInfo[fontIndex].ch[i].Yb = (1.0f / (512.0f / (static_cast<float>(dst.y) + sY)));
-        fontInfo[fontIndex].ch[i].width = sX / 800.0f;
-
-        if (sY / 800.0 > fontInfo[fontIndex].height) {
-            fontInfo[fontIndex].height = sY / 800.0f;
-        }
+        fontInfo[fontIndex].ch[i].Xa = (1.0f / (surfaceDim / static_cast<float>(dst.x)));
+        fontInfo[fontIndex].ch[i].Xb = (1.0f / (surfaceDim / (static_cast<float>(dst.x) + sX)));
+        fontInfo[fontIndex].ch[i].Ya = (1.0f / (surfaceDim / static_cast<float>(dst.y)));
+        fontInfo[fontIndex].ch[i].Yb = (1.0f / (surfaceDim / (static_cast<float>(dst.y) + sY)));
+        fontInfo[fontIndex].ch[i].width = sX / static_cast<float>(surfaceDim);
 
         //blit
         dst.w = sX;
@@ -92,6 +99,9 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
 
         SDL_FreeSurface(c); //Free character-surface
     }
+
+    // Setze die finale Höhe nach derselben Normalisierungsmethode wie bei der Breite
+    fontInfo[fontIndex].height = maxHeight / static_cast<float>(surfaceDim);
 
     glGenTextures(1, &fontInfo[fontIndex].tex); //Generate a gltexture for this font
 
@@ -113,10 +123,6 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
     int fontIndex = static_cast<int>(font);
     unsigned char c;
     GLfloat sX, posX = 0;
-    // Disable depth test for UI elements if you want them always on top
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // find out half of the string width to center
     if (center) {
         for (unsigned int i = 0; i < text.length(); i++) {
@@ -128,10 +134,10 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
     }
     posX += x;
 
-    glMatrixMode(GL_MODELVIEW);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glPushMatrix();
-    glLoadIdentity();
-
     glTranslatef(posX, y, 0.0f);
     glScalef(scale, scale, 0.0f);
 
@@ -145,21 +151,20 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
         sX = fontInfo[fontIndex].ch[c].width;
         const GLfloat sY = fontInfo[fontIndex].height;
         drawPosX += sX;
-        constexpr float zFront = -0.15f;
+
         glBegin(GL_QUADS);
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Ya);
-        glVertex3f(-sX + drawPosX, sY, zFront);
+        glVertex3f(-sX + drawPosX, sY, 0.0f);
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Ya);
-        glVertex3f(sX + drawPosX, sY, zFront);
+        glVertex3f(sX + drawPosX, sY, 0.0f);
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Yb);
-        glVertex3f(sX + drawPosX, -sY, zFront);
+        glVertex3f(sX + drawPosX, -sY, 0.0f);
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Yb);
-        glVertex3f(-sX + drawPosX, -sY, zFront);
+        glVertex3f(-sX + drawPosX, -sY, 0.0f);
         glEnd();
         drawPosX += sX;
     }
     glDisable(GL_TEXTURE_2D);
-    glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
@@ -293,9 +298,6 @@ void TextAnnouncement::draw(const float deltaTime) const {
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
 
     static float totalTime = 0.0f;
     totalTime += deltaTime; // Zeit akkumulieren
@@ -324,8 +326,6 @@ void TextAnnouncement::draw(const float deltaTime) const {
     glColor4f(1.0f, 1.0f, 1.0f, fade);
     textManager->write(message, font, true, s, 0.0f, 0.0f);
 
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
 }

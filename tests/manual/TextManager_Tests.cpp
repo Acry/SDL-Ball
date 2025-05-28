@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Display.hpp"
+#include "TestHelper.h"
 #include "TextManager.h"
 
 struct TextTest {
@@ -23,11 +24,13 @@ int main() {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
-
+    SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Text Test");
     TextManager textManager;
     if (!textManager.setTheme("../themes/default/font/fonts.txt")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
+
+    TestHelper testHelper;
 
     const std::vector<TextTest> tests = {
         {"FONT HIGHSCORE", Fonts::Highscore, false, 1.0f, -0.9f, 0.6f}, // 80
@@ -36,7 +39,7 @@ int main() {
         {"FONT INTROHIGHSCORE", Fonts::IntroHighscore, false, 1.0f, -0.9f, 0.25f}, // 40
         {"FONT MENU", Fonts::Menu, false, 1.0f, -0.9f, 0.15f}, // 30
         {"FONT MENUHIGHSCORE", Fonts::MenuHighscore, false, 1.0f, -0.9f, 0.05f}, // 28
-        {"FONT INTRODESCRIPTION", Fonts::IntroDescription, false, 1.0f, -0.9f, 0.0f} // 12
+        {"FONT INTRODESCRIPTION", Fonts::IntroDescription, false, 1.0f, -0.9f, -0.05f} // 12
     };
 
     const std::vector<std::string> instructions = {
@@ -45,7 +48,6 @@ int main() {
         "ESC: Quit"
     };
 
-    glClearColor(0.05f, 0.06f, 0.2f, 1.0f);
     bool running = true;
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
 
@@ -80,19 +82,24 @@ int main() {
             }
         }
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        testHelper.drawGrid(0.2f);
+        testHelper.drawCenterLines();
+
+        // Instructions
+        glColor4f(0.95f, 0.45f, 0.05f, 1.0f);
+        float yPos = 0.9f;
+        for (const auto &instruction: instructions) {
+            textManager.write(instruction, Fonts::Menu, true, 1.0f, 0.0f, yPos);
+            yPos -= 0.07f;
+        }
 
         // Schrifthöhen anzeigen
-        glColor4f(0.95f, 0.45f, 0.05f, 1.0f);
         for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
             std::string heightInfo = "Font " + std::to_string(i) + " height: " +
                                      std::to_string(textManager.getHeight(static_cast<Fonts>(i)));
-            textManager.write(heightInfo, Fonts::IntroDescription, false, 1.0f, 0.65f, 0.6f - i * 0.08f);
-        }
-        float yPos = 0.9f;
-        for (const auto &instruction: instructions) {
-            textManager.write(instruction, Fonts::Menu, true, 0.75f, -0.0f, yPos);
-            yPos -= 0.07f;
+            textManager.write(heightInfo, Fonts::IntroDescription, false, 1.0f, 0.5f, 0.6f - i * 0.08f);
         }
 
         glColor4f(1.0f, 0.98f, 0.94f, 1.0f);
@@ -100,13 +107,14 @@ int main() {
             textManager.write(text, font, centered, scale, x, y);
         }
 
+
+
         if (textManager.getAnnouncementCount() > 0) {
             textManager.updateAnnouncements(deltaTime);
             textManager.drawAnnouncements(deltaTime);
         }
+        // currently I use VSync, so this is not needed
         SDL_GL_SwapWindow(display.sdlWindow);
-        // FIXME
-        SDL_Delay(16); // ~60fps
     }
     return EXIT_SUCCESS;
 }

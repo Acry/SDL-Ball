@@ -270,6 +270,12 @@ bool Display::initOpenGL(const unsigned int flags) {
     SDL_Log("Context Version: %d.%d", maj, min);
 
 
+    if (SDL_GL_SetSwapInterval(1) == 0) {
+        SDL_Log("VSync aktiviert");
+    } else {
+        SDL_Log("VSync konnte nicht aktiviert werden: %s", SDL_GetError());
+    }
+
     int doubleBuffered = 0;
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &doubleBuffered);
     SDL_Log("Double buffering %s", doubleBuffered ? "aktiviert" : "deaktiviert");

@@ -137,18 +137,21 @@ $(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)SettingsManager.cpp
 ###############################################################################
 # DisplayManager
 DISPLAY_TEST_SOURCES := $(MANUAL_TEST_DIR)DisplayManager_Tests.cpp \
-                        $(MANUAL_TEST_DIR)Grid.cpp \
+                        $(MANUAL_TEST_DIR)TestHelper.cpp \
                         $(SOURCE_DIR)Display.cpp \
+                        $(SOURCE_DIR)TextManager.cpp \
 
 test-display: $(DISPLAY_TEST_SOURCES)
 	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(DISPLAY_TEST_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)test-display
 
-GRID_SOURCES := $(MANUAL_TEST_DIR)Grid.cpp \
+TEST_HELPER_SOURCES := $(MANUAL_TEST_DIR)TestHelper.cpp \
                 $(SOURCE_DIR)Display.cpp \
 
-grid: $(GRID_SOURCES)
-	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(GRID_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)grid
+TestHelper: $(TEST_HELPER_SOURCES)
+	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(TEST_HELPER_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)TestHelper
 
+$(BUILD_DIR)TestHelper.o: $(MANUAL_TEST_DIR)TestHelper.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 ###############################################################################
 # BackgroundManager
 BACKGROUND_TEST_SOURCES := $(MANUAL_TEST_DIR)BackgroundManager_Tests.cpp \
@@ -248,6 +251,7 @@ $(BUILD_DIR)ThemeManager_Tests.o: $(MANUAL_TEST_DIR)ThemeManager_Tests.cpp
 ###############################################################################
 # TextManager
 TEXT_TEST_SOURCES := $(MANUAL_TEST_DIR)TextManager_Tests.cpp \
+                     $(MANUAL_TEST_DIR)TestHelper.cpp \
                      $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                      $(SOURCE_DIR)TextManager.cpp \
                      $(SOURCE_DIR)Display.cpp \
