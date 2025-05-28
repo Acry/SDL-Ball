@@ -16,6 +16,7 @@ int main() {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
+    SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Paddle Test");
     TextManager textManager;
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
@@ -141,32 +142,21 @@ int main() {
             }
         }
         paddle.update(deltaTime);
-        // In die update-Schleife von Paddle_Tests.cpp nach paddle.update(deltaTime) einfügen:
-        // Prüfe, ob das Paddle die linke oder rechte Grenze berührt hat
-        if (paddle.pos_x - paddle.getWidth() <= leftBorder.getPosX() + leftBorder.getWidth()) {
-            // Linke Grenze berührt
-            float hitX = leftBorder.getPosX() + leftBorder.getWidth();
-            float hitY = paddle.getPosY();
-            leftBorder.onCollision(&paddle, hitX, hitY);
-        } else if (paddle.pos_x + paddle.getWidth() >= rightBorder.getPosX() - rightBorder.getWidth()) {
-            // Rechte Grenze berührt
-            float hitX = rightBorder.getPosX() - rightBorder.getWidth();
-            float hitY = paddle.getPosY();
-            rightBorder.onCollision(&paddle, hitX, hitY);
-        }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Spielfeldränder zeichnen
-        //leftBorder.draw(deltaTime);
-        //rightBorder.draw(deltaTime);
+        leftBorder.draw(deltaTime);
+        rightBorder.draw(deltaTime);
 
         paddle.draw(deltaTime);
-        //float yPos = 0.9f;
-        //for (const auto &instruction: instructions) {
-        //    textManager.write(instruction, Fonts::Menu, true, 0.75f, -0.0f, yPos);
-        //    yPos -= 0.07f;
-        //}
-        // Rote Linie zeichnen
+        float yPos = 0.9f;
+        constexpr auto currentFont = Fonts::Menu;
+        const auto height = textManager.getHeight(currentFont);
+        const auto offest = height;
+        for (const auto &instruction: instructions) {
+            textManager.write(instruction, currentFont, true, 1.0f, 0.0f, yPos);
+            yPos -= height + offest;
+        }
+        // Red lines
         glDisable(GL_LINE_SMOOTH);
         glDisable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);
@@ -175,10 +165,10 @@ int main() {
         glLoadIdentity();
         glLineWidth(1.0f);
 
-        glColor4f(1.0f, 0.0f, 0.0f, 1.0f);  // Rot (R,G,B,A)
+        glColor4f(1.0f, 0.0f, 0.0f, 1.0f); // Rot (R,G,B,A)
         glBegin(GL_LINES);
-        glVertex3f(-0.9f, 0.0f, 0.0f);  // Startpunkt der Linie
-        glVertex3f(0.9f, 0.0f, 0.0f);   // Endpunkt der Linie
+        glVertex3f(-0.9f, 0.0f, 0.0f); // Startpunkt der Linie
+        glVertex3f(0.9f, 0.0f, 0.0f); // Endpunkt der Linie
         glEnd();
         glPopMatrix();
 
@@ -187,12 +177,11 @@ int main() {
         glLineWidth(0.01f);
 
         glBegin(GL_LINES);
-        glVertex3f(0.0f, 0.0f, 0.0f);    // Startpunkt in der Mitte
+        glVertex3f(0.0f, 0.0f, 0.0f); // Startpunkt in der Mitte
         glVertex3f(0.0f, -1.0f, 0.0f);
         glEnd();
         glPopMatrix();
         SDL_GL_SwapWindow(display.sdlWindow);
-        SDL_Delay(16); // ~60fps
     }
 
     // Aufräumen

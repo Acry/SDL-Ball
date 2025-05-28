@@ -78,8 +78,6 @@ int main() {
             textManager.updateAnnouncements(deltaTime);
             textManager.drawAnnouncements(deltaTime);
         }
-
-        SDL_Delay(13);
         SDL_GL_SwapWindow(display.sdlWindow);
     }
     return EXIT_SUCCESS;

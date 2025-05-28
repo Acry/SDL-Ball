@@ -17,6 +17,8 @@ protected:
     void onSizeChanged() override;
 
 public:
+    float centerX{0.0f};
+    float centerY{0.0f};
     bool explosive{false};
     bool glued{false};
     GLfloat bsin[32]{}, bcos[32]{};

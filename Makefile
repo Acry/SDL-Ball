@@ -52,7 +52,7 @@ TEST_TARGETS := \
     test-background \
     test-display \
     spritesheet-test \
-    paddle-test \
+    test-paddle \
     theme-test \
     test-text \
     sound-test \
@@ -228,8 +228,8 @@ PADDLE_TEST_SOURCES := $(MANUAL_TEST_DIR)Paddle_Tests.cpp \
 
 PADDLE_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(PADDLE_TEST_SOURCES:.cpp=.o)))
 
-paddle-test: $(PADDLE_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(PADDLE_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)paddle-test
+test-paddle: $(PADDLE_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(PADDLE_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-paddle
 
 $(BUILD_DIR)Paddle_Tests.o: $(MANUAL_TEST_DIR)Paddle_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@

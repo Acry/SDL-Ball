@@ -16,11 +16,7 @@ void Paddle::init() {
     pos_x = 0.0f - width / 2.0f;
 
     // GrowableObject
-    growing = false;
-    shrinking = false;
-    growSpeed = 0.05f;
-    keepAspectRatio = true;
-    aspectRatio = width / height;
+    aspectRatio = height / width;
 
     // MovingObject
 
@@ -38,17 +34,17 @@ void Paddle::drawBase() const {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glColor4f(texture.textureProperties.glTexColorInfo[0],
-          texture.textureProperties.glTexColorInfo[1],
-          texture.textureProperties.glTexColorInfo[2],
-          texture.textureProperties.glTexColorInfo[3]);
+              texture.textureProperties.glTexColorInfo[1],
+              texture.textureProperties.glTexColorInfo[2],
+              texture.textureProperties.glTexColorInfo[3]);
     glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
     glBegin(GL_QUADS);
     // unten links
     glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(pos_x, pos_y+height, 0.0f);
+    glVertex3f(pos_x, pos_y + height, 0.0f);
     // unten rechts
     glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(pos_x + width, pos_y+height, 0.0f);
+    glVertex3f(pos_x + width, pos_y + height, 0.0f);
     // oben rechts
     glTexCoord2f(1.0f, 1.0f);
     glVertex3f(pos_x + width, pos_y, 0.0f);
@@ -62,24 +58,24 @@ void Paddle::drawBase() const {
 
 void Paddle::drawGlueLayer() const {
     glLoadIdentity();
-    glTranslatef(pos_x, pos_y, 0.0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, layerTex[0].textureProperties.texture);
+
     glColor4f(layerTex[0].textureProperties.glTexColorInfo[0],
               layerTex[0].textureProperties.glTexColorInfo[1],
               layerTex[0].textureProperties.glTexColorInfo[2],
               layerTex[0].textureProperties.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, layerTex[0].textureProperties.texture);
     glBegin(GL_QUADS);
     glTexCoord2f(layerTex[0].texturePosition[0], layerTex[0].texturePosition[1]);
-    glVertex3f(-width, height, 0.0f);
+    glVertex3f(pos_x, pos_y + height, 0.0f);
     glTexCoord2f(layerTex[0].texturePosition[2], layerTex[0].texturePosition[3]);
-    glVertex3f(width, height, 0.0f);
+    glVertex3f(pos_x + width, pos_y + height, 0.0f);
     glTexCoord2f(layerTex[0].texturePosition[4], layerTex[0].texturePosition[5]);
-    glVertex3f(width, -height, 0.0f);
+    glVertex3f(pos_x + width, pos_y, 0.0f);
     glTexCoord2f(layerTex[0].texturePosition[6], layerTex[0].texturePosition[7]);
-    glVertex3f(-width, -height, 0.0f);
+    glVertex3f(pos_x, pos_y, 0.0f);
     glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
@@ -87,7 +83,6 @@ void Paddle::drawGlueLayer() const {
 
 void Paddle::drawGunLayer() const {
     glLoadIdentity();
-    glTranslatef(pos_x, pos_y, 0.0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
@@ -98,13 +93,13 @@ void Paddle::drawGunLayer() const {
               layerTex[1].textureProperties.glTexColorInfo[3]);
     glBegin(GL_QUADS);
     glTexCoord2f(layerTex[1].texturePosition[0], layerTex[1].texturePosition[1]);
-    glVertex3f(-width, height * 4, 0.0f);
+    glVertex3f(pos_x, pos_y + height, 0.0f);
     glTexCoord2f(layerTex[1].texturePosition[2], layerTex[1].texturePosition[3]);
-    glVertex3f(width, height * 4, 0.0f);
+    glVertex3f(pos_x + width, pos_y + height, 0.0f);
     glTexCoord2f(layerTex[1].texturePosition[4], layerTex[1].texturePosition[5] - 0.01f);
-    glVertex3f(width, height, 0.0f);
+    glVertex3f(pos_x + width, pos_y, 0.0f);
     glTexCoord2f(layerTex[1].texturePosition[6], layerTex[1].texturePosition[7] - 0.01f);
-    glVertex3f(-width, height, 0.0f);
+    glTranslatef(pos_x, pos_y, 0.0);
     glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
@@ -137,13 +132,11 @@ void Paddle::setGunLayer(const bool enabled) {
 
 void Paddle::update(const float deltaTime) {
     if (!active) return;
-    updateGrowth(deltaTime);
-    // Paddle bewegt sich nicht automatisch, sondern wird durch Benutzereingaben gesteuert
-    // Bei Paddle keine automatische Bewegung durch MovingObject
-    // daher kein MovingObject::update(deltaTime) aufrufen
+    if (growing || shrinking) {
+        centerX = pos_x + width / 2.0f;
+        updateGrowth(deltaTime);
+    }
 }
-
-// set Speed ?
 
 void Paddle::moveTo(const float targetX, const float deltaTime) {
     if (!active) return;
@@ -172,8 +165,8 @@ void Paddle::moveTo(const float targetX, const float deltaTime) {
 }
 
 void Paddle::onSizeChanged() {
-    // Aktualisiere Kollisionspunkte wenn die Größe sich ändert
-    // Einfache rechteckige Kollisionsform
+    pos_x = centerX - width / 2.0f;
+
     collisionPoints.clear();
     collisionPoints = {
         pos_x - width, pos_y + height, // oben links

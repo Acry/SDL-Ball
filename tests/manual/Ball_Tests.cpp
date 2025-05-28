@@ -17,6 +17,7 @@ int main() {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;
     }
+    SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Ball Test");
     TextManager textManager;
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
@@ -192,6 +193,7 @@ int main() {
             ball.glued = true;
         }
 
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Spielfeldränder zeichnen
@@ -206,10 +208,38 @@ int main() {
             ball.draw(deltaTime);
         }
         float yPos = 0.9f;
+        constexpr auto currentFont = Fonts::Menu;
+        const auto height = textManager.getHeight(currentFont);
+        const auto offest = height;
         for (const auto &instruction: instructions) {
-            textManager.write(instruction, Fonts::Menu, true, 0.75f, -0.0f, yPos);
-            yPos -= 0.07f;
+            textManager.write(instruction, currentFont, true, 1.0f, 0.0f, yPos);
+            yPos -= height + offest;
         }
+        // Red lines
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glLoadIdentity();
+        glLineWidth(1.0f);
+
+        glColor4f(1.0f, 0.0f, 0.0f, 1.0f); // Rot (R,G,B,A)
+        glBegin(GL_LINES);
+        glVertex3f(-0.9f, 0.0f, 0.0f); // Startpunkt der Linie
+        glVertex3f(0.9f, 0.0f, 0.0f); // Endpunkt der Linie
+        glEnd();
+        glPopMatrix();
+
+        glPushMatrix();
+        glLoadIdentity();
+        glLineWidth(0.01f);
+
+        glBegin(GL_LINES);
+        glVertex3f(0.0f, 0.0f, 0.0f); // Startpunkt in der Mitte
+        glVertex3f(0.0f, -1.0f, 0.0f);
+        glEnd();
+        glPopMatrix();
         SDL_GL_SwapWindow(display.sdlWindow);
     }
     return EXIT_SUCCESS;

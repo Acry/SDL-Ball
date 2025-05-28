@@ -6,7 +6,7 @@ protected:
     bool growing{false};
     bool shrinking{false};
     GLfloat destWidth{0.0f};
-    GLfloat growSpeed{0.1f};
+    GLfloat growSpeed{0.05f};
     bool keepAspectRatio{true};
     GLfloat aspectRatio{1.0f};
 

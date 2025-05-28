@@ -14,13 +14,6 @@ void Ball::init() {
     pos_x = 0.0f;
     pos_y = 0.0f;
 
-    // GrowableObject
-    growing = false;
-    shrinking = false;
-    growSpeed = 0.05f;
-    keepAspectRatio = true;
-    aspectRatio = width / height;
-
     // MovingObject
     velocity = 0.3f;
     xvel = 0.0f;
@@ -36,7 +29,11 @@ void Ball::init() {
 
 void Ball::update(const float deltaTime) {
     if (!active) return;
-    updateGrowth(deltaTime);
+    if (growing || shrinking) {
+        centerX = pos_x + width / 2.0f;
+        centerY = pos_y + height / 2.0f;
+        updateGrowth(deltaTime);
+    }
 
     if (!glued) {
         EventData data;
@@ -112,7 +109,6 @@ void Ball::draw(const float deltaTime) {
     }
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
-
 }
 
 GLfloat Ball::getAngle() {
@@ -155,6 +151,8 @@ void Ball::setSize(GLfloat s) {
 }
 
 void Ball::onSizeChanged() {
+    pos_x = centerX - width / 2.0f;
+    pos_y = centerY - height / 2.0f;
     // Aktualisiere die Punkte für den Ball (bsin und bcos Arrays)
     constexpr int POINTS = 32;
     for (int i = 0; i < POINTS; ++i) {
