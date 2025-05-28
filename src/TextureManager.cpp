@@ -1,10 +1,11 @@
 // TextureManager.cpp
-#include <filesystem>
-#include <fstream>
+#include <epoxy/gl.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <epoxy/gl.h>
+#include <filesystem>
+#include <fstream>
 #include <unordered_set>
+
 #include "TextureManager.h"
 
 TextureProperty getPropertyFromString(const std::string &key) {

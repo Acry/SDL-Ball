@@ -1,13 +1,20 @@
 # BackgroundManager
 
-Vorab: ShaderManager: Vertex- und Fragment-Shader sollten für lange Zeit reichen.
+[ ] Overlay to setting
+[ ] Background-Texture to setting
+[ ] Rethink: Use Type SpriteSheetAnimation for backgrounds?
+[ ] Background-Texture from TextureManager
+std::array<SpriteSheetAnimation *, static_cast<size_t>(PaddleTexture::Count)> paddleTextures{};
+SpriteSheetAnimation *getPaddleTexture(PaddleTexture type) const;
 
-# Modernisierung des BackgroundManagers mit Shadern
+## Modernisierung des BackgroundManagers mit Shadern
+
+Vorab: ShaderManager: Vertex- und Fragment-Shader sollten für lange Zeit reichen.
 
 Der BackgroundManager ist ein idealer Kandidat für die Einführung von Shadern!
 Er hat eine einfache Aufgabe (Textur-Rendering auf einem Quad) und verwendet derzeit Display-Listen, die in modernem OpenGL veraltet sind.
 
-## 1. Schrittweise Modernisierung mit Compatibility Profile
+### 1. Schrittweise Modernisierung mit Compatibility Profile
 
 Wie in deinen Dokumenten erwähnt, kannst du mit dem OpenGL 3.1 Compatibility Profile sowohl Shader als auch legacy-Code gemeinsam nutzen. So könntest du den BackgroundManager modernisieren, ohne andere Teile des Spiels zu beeinträchtigen.
 
@@ -48,7 +55,7 @@ public:
 };
 ```
 
-## 2. Implementierung mit Shadern
+### 2. Implementierung mit Shadern
 
 Hier ist die Implementierung des modernisierten BackgroundManagers:
 
@@ -336,7 +343,7 @@ BackgroundManager::~BackgroundManager() {
 }
 ```
 
-## 3. Vorteile dieser Implementierung
+### 3. Vorteile dieser Implementierung
 
 1. **Fallback-Mechanismus**: Wenn Shader nicht unterstützt werden oder ein Fehler auftritt, werden automatisch Display-Listen verwendet
 2. **Kompatibilität**: Funktioniert sowohl mit modernem als auch mit Legacy-OpenGL
@@ -344,11 +351,11 @@ BackgroundManager::~BackgroundManager() {
 4. **Erweiterbarkeit**: Der Shader-Code kann leicht um weitere Effekte erweitert werden
 5. **Sauberer Code**: Klare Trennung zwischen modernem und Legacy-Code
 
-## 4. Mögliche Erweiterungen
+### 4. Mögliche Erweiterungen
 
 Mit diesem Grundgerüst könntest du den Hintergrund noch weiter aufwerten:
 
-### a) Animierte Hintergründe
+#### a) Animierte Hintergründe
 
 ```glsl
 // Im Fragment-Shader
@@ -364,7 +371,7 @@ void main() {
 }
 ```
 
-### b) Vignette-Effekt
+#### b) Vignette-Effekt
 
 ```glsl
 void main() {
@@ -379,7 +386,7 @@ void main() {
 }
 ```
 
-### c) Farbverläufe
+#### c) Farbverläufe
 
 Da du bereits r, g, b Arrays für die Ecken hast, könntest du diese Farbwerte direkt in den VBO übernehmen:
 

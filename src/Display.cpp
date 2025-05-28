@@ -90,6 +90,12 @@ void Display::resize(const int width, const int height) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
+    // NOTE: Accidentaly did not flipped y-axis projection
+    // That means, most Texture Coordinates are flipped.
+    // I will resolve this. Since the y-axis is openGL default,
+    // I want the UV coordinates to be OpenGL-default as well.
+    // That will need work in the texture manager, I need to flip the image on loading.
+
     // NDC projection: OpenGL
     // Von -1 bis +1 in NDC
     // Die Werte für near und far in glOrtho sind tatsächlich etwas verwirrend.

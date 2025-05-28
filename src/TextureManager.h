@@ -1,12 +1,13 @@
 // TextureManager.h
 #pragma once
+
 #include <filesystem>
 #include <string>
 
 #include "SpriteSheetAnimation.h"
 #include "ThemeManager.h"
 
-// in game_state.h sind noch Textur-Eigenschaften definiert.
+// HINT: in game_state.h sind noch Textur-Eigenschaften definiert.
 
 enum class PaddleTexture {
     Base,
@@ -126,6 +127,11 @@ public:
 
     // LoadAllGameTexturesWithProperties
     bool loadAllGameTextures();
+
+    // Load SpriteTextures
+    // Load BackgroundTextures
+    // Load MenuTextures
+    // Load EffectsTestures
 
     // Load image file
     bool load(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const;
