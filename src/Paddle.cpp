@@ -8,24 +8,28 @@ Paddle::Paddle(EventManager *eventMgr) : MovingObject() {
 }
 
 void Paddle::init() {
-    // GrowableObject-Eigenschaften
+    // GameObject
+    width = 0.124f;
+    height = 0.032f;
+    active = true;
+    pos_y = -0.955f;
+    pos_x = 0.0f - width / 2.0f;
+
+    // GrowableObject
     growing = false;
     shrinking = false;
     growSpeed = 0.05f;
-    keepAspectRatio = true; //?
-
-    // xvel = 0.0f;?
-    // GameObject-Eigenschaften (und GrowableObject)
-
-    width = 0.124f;
-    height = 0.032f;
+    keepAspectRatio = true;
     aspectRatio = width / height;
-    pos_y = -0.955f;
-    pos_x = 0.0f - width / 2.0f;
-    // Paddle-spezifische Eigenschaften
-    dead = false;
+
+    // MovingObject
+
+    // Paddle-specific
     hasGlueLayer = false;
     hasGunLayer = false;
+
+    // Collision
+    onSizeChanged();
 }
 
 void Paddle::drawBase() const {
@@ -107,13 +111,9 @@ void Paddle::drawGunLayer() const {
 }
 
 void Paddle::draw(const float deltaTime) {
-    if (dead) return;
+    if (!active) return;
 
-    // ---FIXME
-    // Wenn keine Spritesheet-Animationen vorhanden, muss auch kein Playback durchgeführt werden
-    // Animation mit deltaTime aktualisieren
     texture.play(deltaTime);
-
     drawBase();
 
     if (hasGlueLayer) {
@@ -136,6 +136,7 @@ void Paddle::setGunLayer(const bool enabled) {
 }
 
 void Paddle::update(const float deltaTime) {
+    if (!active) return;
     updateGrowth(deltaTime);
     // Paddle bewegt sich nicht automatisch, sondern wird durch Benutzereingaben gesteuert
     // Bei Paddle keine automatische Bewegung durch MovingObject
@@ -145,6 +146,7 @@ void Paddle::update(const float deltaTime) {
 // set Speed ?
 
 void Paddle::moveTo(const float targetX, const float deltaTime) {
+    if (!active) return;
     // Unterscheidung zwischen direkter Positionierung und geschwindigkeitsbasierter Bewegung
     const bool isMouseInput = std::abs(targetX - pos_x) > 0.1f;
 

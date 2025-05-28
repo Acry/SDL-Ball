@@ -1,45 +1,41 @@
 #include "Ball.h"
-
 #include "colors.h"
 #include "config.h"
-#define DEBUG_DRAW_BALL_QUAD 0
+
 Ball::Ball(EventManager *eventMgr) : eventManager(eventMgr) {
     init();
 }
 
-// Eigentschaften sortieren, sollten wie beim Paddle aussehen
 void Ball::init() {
-    // MovingObject-Eigenschaften mit sinnvollen Standardwerten
-    width = 0.018f;
-    height = 0.018f;
-    active = true; // Ball ist standardmäßig aktiv
-
-    // Bewegungseigenschaften
-    velocity = 0.3f; // Standardgeschwindigkeit
-    xvel = 0.0f;
-    yvel = 0.0f;
-
-    // Ball-spezifische Eigenschaften
-    // Nur wahr für Bälle die nicht im Feld spawnen
-    glued = true; // Ball startet am Paddle festgeklebt
+    // GameObject
+    width = 0.05f;
+    height = 0.05f;
+    active = true;
     pos_x = 0.0f;
     pos_y = 0.0f;
-    aimdir = false;
-    explosive = false;
-    gluedX = 0.0f;
 
-    // GrowableObject-Eigenschaften neu initialisieren
+    // GrowableObject
     growing = false;
     shrinking = false;
     growSpeed = 0.05f;
     keepAspectRatio = true;
-    aspectRatio = 1.0f;
+    aspectRatio = width / height;
 
-    // Kollisionspunkte initialisieren
+    // MovingObject
+    velocity = 0.3f;
+    xvel = 0.0f;
+    yvel = 0.0f;
+
+    // Ball-specific
+    glued = true;
+    explosive = false;
+
+    // Collision
     onSizeChanged();
 }
 
-void Ball::update(float deltaTime) {
+void Ball::update(const float deltaTime) {
+    if (!active) return;
     updateGrowth(deltaTime);
 
     if (!glued) {
@@ -60,35 +56,33 @@ void Ball::update(float deltaTime) {
 // drawFireBall
 // drawNormalBall / DrawBase ?
 void Ball::draw(const float deltaTime) {
+    if (!active) return;
+    glLoadIdentity();
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    // Funktionalität für Zielhilfe sollte in eine separate Klasse/Manager ausgelagert werden
-    glPushMatrix();
-    glLoadIdentity();
-    glTranslatef(pos_x, pos_y, 0.0);
+    glEnable(GL_TEXTURE_2D);
+
     glColor4f(GL_WHITE);
     if (explosive) {
         fireTex.play(deltaTime / 5.0f);
-        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, fireTex.textureProperties.texture);
         glColor4f(fireTex.textureProperties.glTexColorInfo[0], fireTex.textureProperties.glTexColorInfo[1],
                   fireTex.textureProperties.glTexColorInfo[2],
                   fireTex.textureProperties.glTexColorInfo[3]);
         glBegin(GL_QUADS);
         glTexCoord2f(fireTex.texturePosition[0], fireTex.texturePosition[1]);
-        glVertex3f(-width, height, 0.0);
+        glVertex3f(pos_x, pos_y+height, 0.0f);
         glTexCoord2f(fireTex.texturePosition[2], fireTex.texturePosition[3]);
-        glVertex3f(width, height, 0.0);
+        glVertex3f(pos_x + width, pos_y+height, 0.0f);
         glTexCoord2f(fireTex.texturePosition[4], fireTex.texturePosition[5]);
-        glVertex3f(width, -height, 0.0);
+        glVertex3f(pos_x + width, pos_y, 0.0f);
         glTexCoord2f(fireTex.texturePosition[6], fireTex.texturePosition[7]);
-        glVertex3f(-width, -height, 0.0);
+        glVertex3f(pos_x, pos_y, 0.0f);
         glEnd();
         glDisable(GL_TEXTURE_2D);
     } else {
         // Normaler Ball hat momentan keine Animation
-        texture.play(deltaTime); // ---FIXME
-        glEnable(GL_TEXTURE_2D);
+        // texture.play(deltaTime); // ---FIXME
         glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
         //glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1],
         //          texture.textureProperties.glTexColorInfo[2],
@@ -102,50 +96,23 @@ void Ball::draw(const float deltaTime) {
         //         |
         //        -1
         glBegin(GL_QUADS);
-        // oben links
-        glTexCoord2f(0.0f, 0.0f);
-        //glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
-        glVertex3f(-width, height, 0.0);
-        // oben rechts
-        glTexCoord2f(1.0f, 0.0f);
-        //glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
-        glVertex3f(width, height, 0.0);
-        // unten rechts
-        glTexCoord2f(1.0f, 1.0f);
-        //glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
-        glVertex3f(width, -height, 0.0);
         // unten links
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(pos_x, pos_y+height, 0.0f);
+        // unten rechts
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(pos_x + width, pos_y+height, 0.0f);
+        // oben rechts
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(pos_x + width, pos_y, 0.0f);
+        // oben links
         glTexCoord2f(0.0f, 1.0f);
-        //glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
-        glVertex3f(-width, -height, 0.0);
+        glVertex3f(pos_x, pos_y, 0.0f);
         glEnd();
-
     }
-
-#if DEBUG_DRAW_BALL_QUAD
-    glLoadIdentity();
-    glTranslatef(pos_x, pos_y, 0.0);
     glDisable(GL_TEXTURE_2D);
-    glColor4f(GL_WHITE);
-    glBegin(GL_LINES);
-    glVertex3f(-width, height, 0);
-    glVertex3f(width, height, 0);
-
-    glVertex3f(-width, -height, 0);
-    glVertex3f(width, -height, 0);
-
-    glVertex3f(-width, height, 0);
-    glVertex3f(-width, -height, 0);
-
-    glVertex3f(width, height, 0);
-    glVertex3f(width, -height, 0);
-
-    glEnd();
-    glEnable(GL_TEXTURE_2D);
-#endif
     glDisable(GL_BLEND);
-    glPopMatrix();
-    glDisable(GL_TEXTURE_2D);
+
 }
 
 GLfloat Ball::getAngle() {

@@ -1,8 +1,9 @@
 // MovingObject.h
 #pragma once
 
-#include "GameObject.h"
 #include <epoxy/gl.h>
+
+#include "GameObject.h"
 
 class MovingObject : public GameObject {
 public:

@@ -19,7 +19,6 @@ protected:
 public:
     bool explosive{false};
     bool glued{false};
-    GLfloat gluedX{0.0f};
     GLfloat bsin[32]{}, bcos[32]{};
     bool aimdir{false};
     SpriteSheetAnimation fireTex;

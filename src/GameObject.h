@@ -19,7 +19,7 @@ public:
     GLfloat pos_x{0.0f}, pos_y{0.0f};
     GLfloat width{0.0f}, height{0.0f};
     bool active{true};
-    bool collide{true};
+    bool collide{true}; // Think this is not used anymore -> ICollideable interface
     bool reflect{false};
     SpriteSheetAnimation texture;
 

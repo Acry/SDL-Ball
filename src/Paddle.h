@@ -19,7 +19,6 @@ protected:
     void onSizeChanged() override;
 
 public:
-    bool dead;
     bool hasGlueLayer;
     bool hasGunLayer;
     SpriteSheetAnimation *layerTex;

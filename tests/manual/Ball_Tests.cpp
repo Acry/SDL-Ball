@@ -4,7 +4,6 @@
 #include "Paddle.h"
 #include "TextureManager.h"
 #include "Display.hpp"
-#include "CollisionManager.h"
 #include "difficulty_settings.h"
 #include "PlayfieldBorder.h"
 #include "MockEventManager.h"
@@ -181,24 +180,16 @@ int main() {
         if (ball.active) {
             ball.update(deltaTime);
         }
-
-        paddle.update(deltaTime);
+        if (paddle.active) {
+            paddle.update(deltaTime);
+        }
         if (ball.glued) {
-            ball.pos_x = paddle.pos_x + ball.gluedX;
-            ball.pos_y = paddle.pos_y + paddle.height + ball.height;
+            ball.pos_y = paddle.pos_y + paddle.height;
+            ball.pos_x = paddle.pos_x + paddle.getWidth() / 2.0f - ball.getWidth() / 2.0f;
         }
 
-        // Neue Implementierung:
-        float hitX = 0.0f, hitY = 0.0f;
-        if (ball.active && !ball.glued && CollisionManager::checkCollision(ball, paddle, hitX, hitY)) {
-            // Die onCollision-Methoden von Ball und Paddle werden durch EventManager aufgerufen
-            // für manuelle Reaktion hier:
-
-            // Wenn Paddle Klebeschicht hat, Ball festkleben
-            if (paddle.hasGlueLayer) {
-                ball.glued = true;
-                ball.gluedX = ball.pos_x - paddle.pos_x;
-            }
+        if (paddle.hasGlueLayer) {
+            ball.glued = true;
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -207,8 +198,10 @@ int main() {
         leftBorder.draw(deltaTime);
         rightBorder.draw(deltaTime);
         topBorder.draw(deltaTime); // should not be visible
+        if (paddle.active) {
+            paddle.draw(deltaTime);
+        }
 
-        paddle.draw(deltaTime);
         if (ball.active) {
             ball.draw(deltaTime);
         }
@@ -218,7 +211,6 @@ int main() {
             yPos -= 0.07f;
         }
         SDL_GL_SwapWindow(display.sdlWindow);
-        SDL_Delay(16); // ~60fps
     }
     return EXIT_SUCCESS;
 }
