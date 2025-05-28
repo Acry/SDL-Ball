@@ -71,9 +71,9 @@ void Ball::draw(const float deltaTime) {
                   fireTex.textureProperties.glTexColorInfo[3]);
         glBegin(GL_QUADS);
         glTexCoord2f(fireTex.texturePosition[0], fireTex.texturePosition[1]);
-        glVertex3f(pos_x, pos_y+height, 0.0f);
+        glVertex3f(pos_x, pos_y + height, 0.0f);
         glTexCoord2f(fireTex.texturePosition[2], fireTex.texturePosition[3]);
-        glVertex3f(pos_x + width, pos_y+height, 0.0f);
+        glVertex3f(pos_x + width, pos_y + height, 0.0f);
         glTexCoord2f(fireTex.texturePosition[4], fireTex.texturePosition[5]);
         glVertex3f(pos_x + width, pos_y, 0.0f);
         glTexCoord2f(fireTex.texturePosition[6], fireTex.texturePosition[7]);
@@ -98,10 +98,10 @@ void Ball::draw(const float deltaTime) {
         glBegin(GL_QUADS);
         // unten links
         glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(pos_x, pos_y+height, 0.0f);
+        glVertex3f(pos_x, pos_y + height, 0.0f);
         // unten rechts
         glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(pos_x + width, pos_y+height, 0.0f);
+        glVertex3f(pos_x + width, pos_y + height, 0.0f);
         // oben rechts
         glTexCoord2f(1.0f, 1.0f);
         glVertex3f(pos_x + width, pos_y, 0.0f);
