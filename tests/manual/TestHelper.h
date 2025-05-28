@@ -1,6 +1,7 @@
 // TestHelper.h
 #pragma once
 #include "colors.h"
+
 class TestHelper {
     float m_gridSpacing;
     float m_gridExtent;

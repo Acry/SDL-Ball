@@ -78,8 +78,7 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         if (dst.x + sX > surfaceDim) {
             dst.x = 1;
             dst.y += sY + 2;
-            if (dst.y > surfaceDim)
-            {
+            if (dst.y > surfaceDim) {
                 SDL_Log("Too many chars for tex (%d)", i);
             }
         }

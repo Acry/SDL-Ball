@@ -108,7 +108,6 @@ int main() {
         }
 
 
-
         if (textManager.getAnnouncementCount() > 0) {
             textManager.updateAnnouncements(deltaTime);
             textManager.drawAnnouncements(deltaTime);
