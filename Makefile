@@ -56,7 +56,7 @@ TEST_TARGETS := \
     theme-test \
     test-text \
     sound-test \
-    ball-test \
+    test-ball \
     effect-test \
     texture-test \
 
@@ -298,8 +298,8 @@ BALL_TEST_SOURCES := $(MANUAL_TEST_DIR)Ball_Tests.cpp \
 
 BALL_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BALL_TEST_SOURCES:.cpp=.o)))
 
-ball-test: $(BALL_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(BALL_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)ball-test
+test-ball: $(BALL_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(BALL_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-ball
 
 $(BUILD_DIR)CollisionManager.o: $(SOURCE_DIR)CollisionManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
