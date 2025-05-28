@@ -90,7 +90,7 @@ void Display::resize(const int width, const int height) {
 
     // NDC projection: OpenGL
     // Von -1 bis +1 in NDC
-    glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);  // left, right, bottom, top, near, far
+    glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f); // left, right, bottom, top, near, far
     //         +1
     //         ^
     //         |

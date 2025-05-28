@@ -2,7 +2,6 @@
 #pragma once
 
 
-
 class Grid {
     float m_gridSpacing;
     float m_gridExtent;
@@ -13,10 +12,12 @@ public:
 
     // Getter und Setter für das Spacing
     float getSpacing() const;
+
     void setSpacing(float spacing);
 
     // Getter und Setter für die Ausdehnung
     float getExtent() const;
+
     void setExtent(float extent);
 
     // Grid zeichnen
