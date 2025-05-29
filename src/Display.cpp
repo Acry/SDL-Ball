@@ -102,16 +102,16 @@ void Display::resize(const int width, const int height) {
 
     glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f); // left, right, bottom, top, near, far
 
+    // The near and far values used by glOrtho are only distances and (assuming that the eye is located at the origin).
+    // Sets up a projection where -nearVal is on the front clipping plane and -farVal is the location of the far
+    // clipping plane.
+
     //        +1
     //         ^
     //         |
     // -1 <----+----> +1
     //         |
     //        -1
-
-    // The near and far values used by glOrtho are only distances and (assuming that the eye is located at the origin).
-    // Sets up a projection where -nearVal is on the front clipping plane and -farVal is the location of the far
-    // clipping plane.
 
     // Flipping the y-axis with glOrtho only affects the projection
     // The viewport’s origin (0, 0) remains at the bottom-left in window
