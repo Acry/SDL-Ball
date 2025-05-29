@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <unordered_set>
-
+#include "TextureUtilities.h"
 #include "TextureManager.h"
 
 TextureProperty getPropertyFromString(const std::string &key) {
@@ -65,20 +65,10 @@ bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnim
         SDL_FreeSurface(tempSurface);
         return false;
     }
-    const GLint glFormat = getGLFormat(tempSurface);
-
-    glGenTextures(1, &tex.textureProperties.texture);
-    glBindTexture(GL_TEXTURE_2D, tex.textureProperties.texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, glFormat, tempSurface->w, tempSurface->h, 0, glFormat, GL_UNSIGNED_BYTE,
-                 tempSurface->pixels);
-
-    glGenerateMipmap(GL_TEXTURE_2D);
+    if (!TextureUtils::createGLTextureFromSurface(tempSurface, tex.textureProperties.texture, true)) {
+        SDL_FreeSurface(tempSurface);
+        return false;
+    }
 
     tex.textureProperties.pxw = tempSurface->w;
     tex.textureProperties.pxh = tempSurface->h;

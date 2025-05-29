@@ -8,6 +8,7 @@
 #include <set>
 
 #include "TextManager.h"
+#include "TextureUtilities.h"
 
 TextManager::TextManager() : fontInfo{} {
     TTF_Init();
@@ -22,7 +23,7 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     std::string fullPath = currentTheme + "/" + "font/" + TTFfontName;
 
     TTF_Font *ttfFont = nullptr;
-    SDL_Surface *c, *t;
+    SDL_Surface *c, *invertedC, *t;
     Uint32 rmask, gmask, bmask, amask;
     char tempChar[2] = {0, 0};
     int sX = 0, sY = 0; //Size of the rendered character
@@ -67,6 +68,13 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         SDL_SetSurfaceAlphaMod(c, 0xFF);
         TTF_SizeText(ttfFont, tempChar, &sX, &sY);
 
+        // Y-invertierte Surface erstellen
+        invertedC = TextureUtils::invertSurfaceY(c);
+        if (!invertedC) {
+            SDL_FreeSurface(c);
+            continue;
+        }
+
         // Pixel-Höhe für die maximale Höhenberechnung speichern
         if (sY > maxHeight) {
             maxHeight = static_cast<float>(sY);
@@ -94,37 +102,34 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         //blit
         dst.w = sX;
         dst.h = sY;
-        SDL_BlitSurface(c, &src, t, &dst);
+        SDL_BlitSurface(invertedC, &src, t, &dst);
 
         dst.x += sX + 2; // Waste some space 1 px padding around each char
 
-        SDL_FreeSurface(c); //Free character-surface
+        SDL_FreeSurface(invertedC);
+        SDL_FreeSurface(c);
     }
 
     // Setze die finale Höhe nach derselben Normalisierungsmethode wie bei der Breite
     fontInfo[fontIndex].height = maxHeight / static_cast<float>(surfaceDim);
 
-    glGenTextures(1, &fontInfo[fontIndex].tex); //Generate a gltexture for this font
+    if (!TextureUtils::createGLTextureFromSurface(t, fontInfo[fontIndex].tex)) {
+        SDL_FreeSurface(t);
+        TTF_CloseFont(ttfFont);
+        return false;
+    }
 
-    glBindTexture(GL_TEXTURE_2D, fontInfo[fontIndex].tex);
-    glBindTexture(GL_TEXTURE_2D, fontInfo[fontIndex].tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, t->w, t->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, t->pixels);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    TTF_CloseFont(ttfFont); //Free the font
-    SDL_FreeSurface(t); //Free text-surface
+    SDL_FreeSurface(t);
+    TTF_CloseFont(ttfFont);
     return true;
 }
-
 void TextManager::write(const std::string &text, const Fonts font, const bool center, const GLfloat scale,
                         const GLfloat x,
                         const GLfloat y) const {
     int fontIndex = static_cast<int>(font);
     unsigned char c;
     GLfloat sX, posX = 0;
-    // find out half of the string width to center
+    // Berechne die Breite für zentrierten Text
     if (center) {
         for (unsigned int i = 0; i < text.length(); i++) {
             c = static_cast<unsigned char>(text[i]);
@@ -154,14 +159,15 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
         drawPosX += sX;
 
         glBegin(GL_QUADS);
+        // Änderung hier: Y-Koordinaten umgekehrt, damit Text nach unten gerendert wird
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Ya);
-        glVertex3f(-sX + drawPosX, sY, 0.0f);
+        glVertex3f(-sX + drawPosX, -sY, 0.0f); // Früher +sY, jetzt -sY
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Ya);
-        glVertex3f(sX + drawPosX, sY, 0.0f);
+        glVertex3f(sX + drawPosX, -sY, 0.0f);  // Früher +sY, jetzt -sY
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Yb);
-        glVertex3f(sX + drawPosX, -sY, 0.0f);
+        glVertex3f(sX + drawPosX, sY, 0.0f);   // Früher -sY, jetzt +sY
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Yb);
-        glVertex3f(-sX + drawPosX, -sY, 0.0f);
+        glVertex3f(-sX + drawPosX, sY, 0.0f);  // Früher -sY, jetzt +sY
         glEnd();
         drawPosX += sX;
     }
