@@ -2,6 +2,7 @@
 #pragma once
 
 #include <list>
+#include <map>
 #include <string>
 #include <epoxy/gl.h>
 
@@ -35,6 +36,11 @@ class TextManager {
 
     bool genFontTex(const std::string &TTFfontName, int fontSize, Fonts font);
 
+    Fonts getFontTypeFromKey(const std::string& key);
+
+    bool parseFontThemeDescriptionFile(const std::string& filePath, std::map<std::string, std::string>& fontFiles, std::map<std::string, int>& fontSizes);
+
+    bool createFontTextures(const std::map<std::string, std::string>& fontFiles, const std::map<std::string, int>& fontSizes);
     void clearTheme();
 
     glFontInfo_struct fontInfo[static_cast<int>(Fonts::Count)];

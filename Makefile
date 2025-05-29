@@ -1,4 +1,4 @@
-gluPREFIX?=~/.local
+PREFIX?=~/.local
 
 DATADIR?=$(PREFIX)share/sdl-ball/themes/
 BINDIR?=$(PREFIX)/bin/
@@ -59,6 +59,7 @@ TEST_TARGETS := \
     test-ball \
     effect-test \
     texture-test \
+    test-collision \
 
 AUTO_TEST_TARGETS := texture-automatic-test event-automatic-test collision-automatic-test
 TARGET=sdl-ball
@@ -368,9 +369,8 @@ COLLISION_TEST_SOURCES := $(MANUAL_TEST_DIR)Collision_Tests.cpp \
 
 COLLISION_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(COLLISION_TEST_SOURCES:.cpp=.o)))
 
-collision-test: $(COLLISION_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(COLLISION_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)collision-test
-
+test-collision: $(COLLISION_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(COLLISION_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-collision
 
 $(BUILD_DIR)Collision_Tests.o: $(MANUAL_TEST_DIR)Collision_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@

@@ -7,6 +7,8 @@
 
 #include "TextManager.h"
 
+#include <map>
+
 TextManager::TextManager() : fontInfo{} {
     TTF_Init();
 
@@ -204,66 +206,93 @@ bool TextManager::setTheme(const std::string &themeName) {
     return true;
 }
 
-bool TextManager::loadAllFonts() {
-    std::string fullPath = currentTheme + "/" + "font/fonts.txt";
+Fonts TextManager::getFontTypeFromKey(const std::string& key) {
+    if (key == "menusize") return Fonts::Menu;
+    if (key == "announcegoodsize") return Fonts::AnnounceGood;
+    if (key == "announcebadsize") return Fonts::AnnounceBad;
+    if (key == "highscoresize") return Fonts::Highscore;
+    if (key == "menuhighscoresize") return Fonts::MenuHighscore;
+    if (key == "introhighscoresize") return Fonts::IntroHighscore;
+    if (key == "introdescriptionsize") return Fonts::IntroDescription;
+    return Fonts::Count;
+}
 
-    // Parse font-description file
-    std::ifstream f(fullPath);
-    if (!f.is_open()) {
-        SDL_Log("Error: could not open font-description file: %s", fullPath.c_str());
-        return false;
-    }
+bool TextManager::createFontTextures(const std::map<std::string, std::string>& fontFiles, const std::map<std::string, int>& fontSizes) {
+    std::map<std::string, std::string> fontTypeMap = {
+        {"menufile", "menusize"},
+        {"announcegoodfile", "announcegoodsize"},
+        {"announcebadfile", "announcebadsize"},
+        {"highscorefile", "highscoresize"},
+        {"menuhighscorefile", "menuhighscoresize"},
+        {"introhighscorefile", "introhighscoresize"},
+        {"introdescriptionfile", "introdescriptionsize"}
+    };
 
-    std::string val;
-    std::string tempName;
-    std::string set;
-    std::string line;
+    for (const auto& [fileKey, fileName] : fontFiles) {
+        // Finde die zugehörige Größe
+        std::string sizeKey = fontTypeMap[fileKey];
+        auto sizeIt = fontSizes.find(sizeKey);
+        if (sizeIt == fontSizes.end()) continue;
 
-    while (std::getline(f, line)) {
-        if (line.find('=') != std::string::npos) {
-            set = line.substr(0, line.find('='));
-            val = line.substr(line.find('=') + 1);
-            if (set == "menufile") {
-                tempName = val;
-            } else if (
-                set == "menusize" ||
-                set == "announcegoodsize" ||
-                set == "announcebadsize" ||
-                set == "highscoresize" ||
-                set == "menuhighscoresize" ||
-                set == "introhighscoresize" ||
-                set == "introdescriptionsize"
-            ) {
-                char *endptr = nullptr;
-                long size = strtol(val.c_str(), &endptr, 10);
-                if (*endptr != '\0') {
-                    SDL_Log("Ungültige Zahl in fonts.txt: %s", val.c_str());
-                    continue;
-                }
-                auto font = Fonts::Count;
-                if (set == "menusize") font = Fonts::Menu;
-                else if (set == "announcegoodsize") font = Fonts::AnnounceGood;
-                else if (set == "announcebadsize") font = Fonts::AnnounceBad;
-                else if (set == "highscoresize") font = Fonts::Highscore;
-                else if (set == "menuhighscoresize") font = Fonts::MenuHighscore;
-                else if (set == "introhighscoresize") font = Fonts::IntroHighscore;
-                else if (set == "introdescriptionsize") font = Fonts::IntroDescription;
-                if (font != Fonts::Count)
-                    genFontTex(tempName, static_cast<int>(size), font);
-            } else if (
-                set == "announcegoodfile" ||
-                set == "announcebadfile" ||
-                set == "highscorefile" ||
-                set == "menuhighscorefile" ||
-                set == "introhighscorefile" ||
-                set == "introdescriptionfile"
-            ) {
-                tempName = val;
+        // Font-Typ ermitteln und Textur generieren
+        Fonts fontType = getFontTypeFromKey(sizeKey);
+        if (fontType != Fonts::Count) {
+            if (!genFontTex(fileName, sizeIt->second, fontType)) {
+                SDL_Log("Fehler beim Generieren der Textur für %s", fileKey.c_str());
+                return false;
             }
         }
     }
-    f.close();
     return true;
+}
+
+bool TextManager::parseFontThemeDescriptionFile(const std::string& filePath, std::map<std::string, std::string>& fontFiles, std::map<std::string, int>& fontSizes) {
+    std::ifstream configFile(filePath);
+    if (!configFile.is_open()) {
+        SDL_Log("Error: could not open font-description file: %s", filePath.c_str());
+        return false;
+    }
+
+    std::string line;
+    while (std::getline(configFile, line)) {
+        size_t equalsPos = line.find('=');
+        if (equalsPos == std::string::npos) continue;
+
+        std::string key = line.substr(0, equalsPos);
+        std::string value = line.substr(equalsPos + 1);
+
+        // Fonts speichern
+        if (key.find("file") != std::string::npos) {
+            fontFiles[key] = value;
+        }
+        // Größen speichern
+        else if (key.find("size") != std::string::npos) {
+            char* endptr = nullptr;
+            long size = strtol(value.c_str(), &endptr, 10);
+            if (*endptr != '\0') {
+                SDL_Log("Ungültige Zahl in fonts.txt: %s", value.c_str());
+                continue;
+            }
+            fontSizes[key] = static_cast<int>(size);
+        }
+    }
+    configFile.close();
+    return true;
+}
+
+bool TextManager::loadAllFonts() {
+    const std::string fullPath = currentTheme + "/" + "font/fonts.txt";
+
+    // Parsen der Font-Beschreibungsdatei
+    std::map<std::string, std::string> fontFiles;
+    std::map<std::string, int> fontSizes;
+
+    if (!parseFontThemeDescriptionFile(fullPath, fontFiles, fontSizes)) {
+        return false;
+    }
+
+    // Erzeugen der Font-Texturen
+    return createFontTextures(fontFiles, fontSizes);
 }
 
 TextAnnouncement::TextAnnouncement(std::string msg, Fonts fontId, int ttl, TextManager *mgr)
