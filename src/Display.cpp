@@ -54,10 +54,10 @@ void Display::resize(const int width, const int height) {
     currentW = width;
     currentH = height;
 
-    window_ratio = static_cast<GLfloat>(currentW) / static_cast<GLfloat>(currentH);
+    window_ratio = static_cast<double>(currentW) / static_cast<double>(currentH);
 
     // Ziel-Seitenverhältnis 4:3
-    constexpr float target_ratio = 4.0f / 3.0f;
+    constexpr double target_ratio = 4.0f / 3.0f;
     int vpW, vpH;
 
     if (window_ratio >= target_ratio) {

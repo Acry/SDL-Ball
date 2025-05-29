@@ -22,7 +22,7 @@ public:
     Display(const int display, const int width, const int height, const bool fullscreen);
 
     GLfloat playfield_ratio;
-    GLfloat window_ratio;
+    GLdouble window_ratio;
 
     static bool updateForMenu();
 
