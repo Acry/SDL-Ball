@@ -94,12 +94,40 @@ void TestHelper::toggleMouseCoordinates(bool show) {
 }
 
 void TestHelper::drawMouseCoordinates() const {
+    if (!m_showMouseCoords) return;
+
+    // Aktuellen Farbwert speichern
     GLfloat oldColor[4];
     glGetFloatv(GL_CURRENT_COLOR, oldColor);
     glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-    if (m_showMouseCoords) {
-        m_textManager.write(m_mouseText, Fonts::IntroDescription, false, 1.0f, m_mouseX, m_mouseY);
+
+    // Textgröße bestimmen
+    const auto fontHeight = m_textManager.getHeight(Fonts::IntroDescription);
+    const auto textWidth = fontHeight *8.0f;
+
+    // Position anhand des Quadranten anpassen
+    float displayX = m_mouseX;
+    float displayY = m_mouseY;
+
+    // X-Position anpassen, damit der Text im Fenster bleibt
+    if (m_mouseX + textWidth > m_gridExtent) {
+        displayX = m_mouseX - textWidth;
     }
+
+    // Y-Position anpassen, damit der Text im Fenster bleibt
+    if (m_mouseY - fontHeight < -m_gridExtent) {
+        displayY = m_mouseY + fontHeight;
+    }
+
+    // Kleiner Offset für bessere Lesbarkeit
+    constexpr float offset = 0.02f;
+    displayX += (m_mouseX > 0) ? -offset : offset;
+    displayY += (m_mouseY > 0) ? -offset : offset;
+
+    // Text rendern
+    m_textManager.write(m_mouseText, Fonts::IntroDescription, false, 1.0f, displayX, displayY);
+
+    // Farbwert wiederherstellen
     glColor4fv(oldColor);
 }
 
