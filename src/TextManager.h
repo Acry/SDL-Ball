@@ -36,9 +36,10 @@ class TextManager {
 
     bool genFontTex(const std::string &TTFfontName, int fontSize, Fonts font);
 
-    Fonts getFontTypeFromKey(const std::string &key);
+    static Fonts getFontTypeFromKey(const std::string &key);
 
-    static bool parseFontThemeDescriptionFile(const std::string &filePath, std::map<std::string, std::string> &fontFiles,
+    static bool parseFontThemeDescriptionFile(const std::string &filePath,
+                                              std::map<std::string, std::string> &fontFiles,
                                               std::map<std::string, int> &fontSizes);
 
     bool createFontTextures(const std::map<std::string, std::string> &fontFiles,

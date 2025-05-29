@@ -4,10 +4,10 @@
 #include <fstream>
 #include <filesystem>
 #include <utility>
+#include <map>
+#include <set>
 
 #include "TextManager.h"
-
-#include <map>
 
 TextManager::TextManager() : fontInfo{} {
     TTF_Init();
@@ -177,10 +177,10 @@ GLfloat TextManager::getHeight(Fonts font) const {
 
 void TextManager::clearTheme() {
     // Bestehende Texturen freigeben, wenn vorhanden
-    for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
-        if (fontInfo[i].tex) {
-            glDeleteTextures(1, &fontInfo[i].tex);
-            fontInfo[i].tex = 0;
+    for (auto &i: fontInfo) {
+        if (i.tex) {
+            glDeleteTextures(1, &i.tex);
+            i.tex = 0;
         }
     }
 }
@@ -200,7 +200,7 @@ bool TextManager::setTheme(const std::string &themeName) {
     currentTheme = themeName;
 
     if (!loadAllFonts()) {
-        SDL_Log("Fehler beim Laden der Texturen für Theme: %s", currentTheme.c_str());
+        SDL_Log("Error getting font theme: %s", currentTheme.c_str());
         return false;
     }
     return true;
@@ -239,7 +239,7 @@ bool TextManager::createFontTextures(const std::map<std::string, std::string> &f
         Fonts fontType = getFontTypeFromKey(sizeKey);
         if (fontType != Fonts::Count) {
             if (!genFontTex(fileName, sizeIt->second, fontType)) {
-                SDL_Log("Fehler beim Generieren der Textur für %s", fileKey.c_str());
+                SDL_Log("Error: generating texture %s", fileKey.c_str());
                 return false;
             }
         }
@@ -257,12 +257,31 @@ bool TextManager::parseFontThemeDescriptionFile(const std::string &filePath,
     }
 
     std::string line;
+    int lineNumber = 0;
+    std::set<std::string> processedKeys; // Sammlung bereits verarbeiteter Schlüssel
+
     while (std::getline(configFile, line)) {
+        lineNumber++;
+
+        // Kommentare und leere Zeilen überspringen
+        if (line.empty() || line[0] == '#' || line[0] == '/') {
+            continue;
+        }
+
         size_t equalsPos = line.find('=');
         if (equalsPos == std::string::npos) continue;
 
         std::string key = line.substr(0, equalsPos);
         std::string value = line.substr(equalsPos + 1);
+
+        // Auf duplizierte Schlüssel prüfen
+        if (processedKeys.find(key) != processedKeys.end()) {
+            SDL_Log("Warning: ignoring duplicate key '%s' in line %d",
+                    key.c_str(), lineNumber);
+            continue;
+        }
+
+        processedKeys.insert(key);
 
         // Fonts speichern
         if (key.find("file") != std::string::npos) {
@@ -273,7 +292,8 @@ bool TextManager::parseFontThemeDescriptionFile(const std::string &filePath,
             char *endptr = nullptr;
             long size = strtol(value.c_str(), &endptr, 10);
             if (*endptr != '\0') {
-                SDL_Log("Ungültige Zahl in fonts.txt: %s", value.c_str());
+                SDL_Log("Not a number in fonts.txt: %s (line %d)",
+                        value.c_str(), lineNumber);
                 continue;
             }
             fontSizes[key] = static_cast<int>(size);
