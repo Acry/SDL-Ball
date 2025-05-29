@@ -191,7 +191,7 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
             sX = fontInfo[fontIndex].ch[c].width * scale;
             posX += sX;
         }
-        posX *= -1;
+        posX *= -0.5f; // Halbiere für echte Zentrierung
     }
     posX += x;
 
@@ -213,8 +213,11 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
             c = '?';
         }
         sX = fontInfo[fontIndex].ch[c].width;
-        const GLfloat sY = fontInfo[fontIndex].height;
-        drawPosX += sX;
+
+        // Baseline-Position verwenden statt fester Höhe
+        const GLfloat baseline = fontInfo[fontIndex].ascent;
+        const GLfloat descent = fontInfo[fontIndex].descent;
+        const GLfloat charHeight = fontInfo[fontIndex].height;
 
         glBegin(GL_QUADS);
 
@@ -236,21 +239,26 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
 
         // Texturkoordinate (uLeft, vBottom) -> Vertex-Position unten links
         glTexCoord2f(fontInfo[fontIndex].ch[c].uLeft, fontInfo[fontIndex].ch[c].vBottom);
-        glVertex3f(-sX + drawPosX, -sY, 0.0f);
+        glVertex3f(drawPosX, -baseline, 0.0f); // Unten links relativ zur Baseline
 
         // Texturkoordinate (uRight, vBottom) -> Vertex-Position unten rechts
         glTexCoord2f(fontInfo[fontIndex].ch[c].uRight, fontInfo[fontIndex].ch[c].vBottom);
-        glVertex3f(sX + drawPosX, -sY, 0.0f);
+        glVertex3f(drawPosX + sX, -baseline, 0.0f); // Unten rechts relativ zur Baseline
 
         // Texturkoordinate (uRight, vTop) -> Vertex-Position oben rechts
         glTexCoord2f(fontInfo[fontIndex].ch[c].uRight, fontInfo[fontIndex].ch[c].vTop);
-        glVertex3f(sX + drawPosX, sY, 0.0f);
+        glVertex3f(drawPosX + sX, charHeight - baseline, 0.0f); // Oben rechts relativ zur Baseline
 
         // Texturkoordinate (uLeft, vTop) -> Vertex-Position oben links
         glTexCoord2f(fontInfo[fontIndex].ch[c].uLeft, fontInfo[fontIndex].ch[c].vTop);
-        glVertex3f(-sX + drawPosX, sY, 0.0f);
+        glVertex3f(drawPosX, charHeight - baseline, 0.0f); // Oben links relativ zur Baseline
 
         glEnd();
+
+        // Kerning können wir nicht direkt implementieren, da ttfFont nicht verfügbar ist
+        // Um Kerning zu unterstützen, müssten wir die Kerning-Werte in genFontTex vorberechnen
+        // und in einer separaten Struktur speichern
+
         drawPosX += sX;
     }
     glDisable(GL_TEXTURE_2D);
