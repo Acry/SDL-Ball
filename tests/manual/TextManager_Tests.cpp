@@ -113,7 +113,7 @@ int main() {
         for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
             std::string heightInfo = "Font " + std::to_string(i) + " height: " +
                                      std::to_string(textManager.getHeight(static_cast<Fonts>(i)));
-            textManager.write(heightInfo, Fonts::IntroDescription, false, 1.0f, 0.5f, 0.6 - 0.5f - i * 0.08f);
+            textManager.write(heightInfo, Fonts::IntroDescription, false, 2.0f, 0.25f, 0.6 - 0.5f - i * 0.08f);
         }
         // render theme fonts
         glColor4f(1.0f, 0.98f, 0.94f, 1.0f);

@@ -12,7 +12,7 @@ namespace TextureUtils {
      * @return Eine neue, Y-invertierte Surface oder nullptr bei Fehlern
      */
     SDL_Surface *invertSurfaceY(const SDL_Surface *surface);
-
+    int SDL_FlipSurfaceVertical(SDL_Surface *surface);
     /**
      * Erstellt eine OpenGL-Textur aus einer SDL-Surface mit einheitlichen Parametern
      *

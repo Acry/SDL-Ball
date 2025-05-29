@@ -20,13 +20,16 @@ enum class Fonts {
 class TextAnnouncement;
 
 struct glCharInfo_struct {
-    GLfloat Xa, Ya, Xb, Yb, width;
+    GLfloat uLeft, vTop, uRight, vBottom, width;
 };
 
 struct glFontInfo_struct {
     GLuint tex;
     GLfloat height;
     glCharInfo_struct ch[255];
+    int ascent;    // Obere Höhe über der Baseline
+    int descent;   // Untere Höhe unter der Baseline
+    int lineSkip;  // Empfohlener Zeilenabstand
 };
 
 class TextManager {

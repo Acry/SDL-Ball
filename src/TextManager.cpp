@@ -13,12 +13,16 @@
 #define DEBUG_ATLAS 1
 
 TextManager::TextManager() : fontInfo{} {
-    TTF_Init();
-
-    // Initialisiere alle Texturen mit 0
-    for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
-        fontInfo[i].tex = 0;
+    for (auto &i: fontInfo) {
+        i.tex = 0;
+        for (int j = 0; j < 255; j++) {
+            i.ch[j] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+        }
     }
+    for (auto &i: fontInfo) {
+        i.tex = 0;
+    }
+    TTF_Init();
 }
 
 bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize, const Fonts font) {
@@ -31,92 +35,79 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         return false;
     }
 
-    SDL_Surface *c, *invertedC, *t;
-    Uint32 rmask, gmask, bmask, amask;
     char tempChar[2] = {0, 0};
-    int sX = 0, sY = 0; //Size of the rendered character
+    int characterWidth = 0, characterHeight = 0; // Size of the rendered character in Pixels
     SDL_Rect src = {0, 0, 0, 0}, dst = {0, 0, 0, 0};
     const int fontIndex = static_cast<int>(font);
 
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    rmask = 0xff000000;
-    gmask = 0x00ff0000;
-    bmask = 0x0000ff00;
-    amask = 0x000000ff;
-#else
-    rmask = 0x000000ff;
-    gmask = 0x0000ff00;
-    bmask = 0x00ff0000;
-    amask = 0xff000000;
-#endif
-
     TTF_SetFontHinting(ttfFont, TTF_HINTING_LIGHT_SUBPIXEL);
 
+    const int ascent = TTF_FontAscent(ttfFont); // Obere Höhe über der Baseline
+    const int descent = TTF_FontDescent(ttfFont); // Untere Höhe unter der Baseline
+    const int lineSkip = TTF_FontLineSkip(ttfFont); // Empfohlener Zeilenabstand
+
     constexpr int surfaceDim = 1024; // Size of the surface to render the font to
-    t = SDL_CreateRGBSurface(0, surfaceDim, surfaceDim, 32, rmask, gmask, bmask, amask);
+    SDL_Surface *targetSurface = SDL_CreateRGBSurfaceWithFormat(0, surfaceDim, surfaceDim, 32, SDL_PIXELFORMAT_RGBA32);
 
     dst.x = 1;
     dst.y = 1;
 
     fontInfo[fontIndex].height = 0.0f;
-    float maxHeight = 0.0f;
+    float highestCharacter = 0.0f;
 
     for (int i = 32; i < 128; i++) {
         constexpr SDL_Color white = {255, 255, 255, 255};
         tempChar[0] = static_cast<char>(i);
 
-        //Render to surface
-        c = TTF_RenderText_Blended(ttfFont, tempChar, white);
-        SDL_SetSurfaceAlphaMod(c, 0xFF);
-        TTF_SizeText(ttfFont, tempChar, &sX, &sY);
+        // Render character to surface
+        SDL_Surface *character = TTF_RenderText_Blended(ttfFont, tempChar, white);
+        SDL_SetSurfaceAlphaMod(character, 0xFF);
+        TTF_SizeText(ttfFont, tempChar, &characterWidth, &characterHeight);
 
-        // Y-invertierte Surface erstellen
-        invertedC = TextureUtils::invertSurfaceY(c);
-
-        if (!invertedC) {
-            SDL_FreeSurface(c);
-            continue;
-        }
-
-        // Pixel-Höhe für die maximale Höhenberechnung speichern
-        if (sY > maxHeight) {
-            maxHeight = static_cast<float>(sY);
+        // Pixel-Höhe für den größten Buchstaben merken
+        if (characterHeight > highestCharacter) {
+            highestCharacter = static_cast<float>(characterHeight);
         }
 
         src.x = 0;
         src.y = 0;
-        src.w = sX;
-        src.h = sY;
+        src.w = characterWidth;
+        src.h = characterHeight;
 
-        if (dst.x + sX > surfaceDim) {
+        if (dst.x + characterWidth > surfaceDim) {
             dst.x = 1;
-            dst.y += sY + 2;
+            dst.y += characterHeight + 2;
             if (dst.y > surfaceDim) {
                 SDL_Log("Too many chars for tex (%d)", i);
             }
         }
 
-        fontInfo[fontIndex].ch[i].Xa = (1.0f / (surfaceDim / static_cast<float>(dst.x)));
-        fontInfo[fontIndex].ch[i].Xb = (1.0f / (surfaceDim / (static_cast<float>(dst.x) + sX)));
-        fontInfo[fontIndex].ch[i].Ya = (1.0f / (surfaceDim / static_cast<float>(dst.y)));
-        fontInfo[fontIndex].ch[i].Yb = (1.0f / (surfaceDim / (static_cast<float>(dst.y) + sY)));
-        fontInfo[fontIndex].ch[i].width = sX / static_cast<float>(surfaceDim);
+        // Neue Berechnung (OpenGL-konform mit invertierten v-Koordinaten):
+        fontInfo[fontIndex].ch[i].uLeft = static_cast<float>(dst.x) / surfaceDim;
+        fontInfo[fontIndex].ch[i].uRight = static_cast<float>(dst.x + characterWidth) / surfaceDim;
+        fontInfo[fontIndex].ch[i].vTop = 1.0f - static_cast<float>(dst.y) / surfaceDim;
+        fontInfo[fontIndex].ch[i].vBottom = 1.0f - static_cast<float>(dst.y + characterHeight) / surfaceDim;
 
-        //blit
-        dst.w = sX;
-        dst.h = sY;
-        SDL_BlitSurface(invertedC, &src, t, &dst);
+        fontInfo[fontIndex].ch[i].width = characterWidth / static_cast<float>(surfaceDim);
 
-        dst.x += sX + 2; // Waste some space 1 px padding around each char
+        dst.w = characterWidth;
+        dst.h = characterHeight;
 
-        SDL_FreeSurface(invertedC);
-        SDL_FreeSurface(c);
+        // Blit the character onto the target surface
+        SDL_BlitSurface(character, &src, targetSurface, &dst);
+
+        dst.x += characterWidth + 2;
+
+        SDL_FreeSurface(character);
     }
 
-    fontInfo[fontIndex].height = maxHeight / static_cast<float>(surfaceDim);
+    fontInfo[fontIndex].ascent = static_cast<float>(ascent) / static_cast<float>(surfaceDim);
+    fontInfo[fontIndex].descent = static_cast<float>(descent) / static_cast<float>(surfaceDim);
+    fontInfo[fontIndex].lineSkip = static_cast<float>(lineSkip) / static_cast<float>(surfaceDim);
+    fontInfo[fontIndex].height = highestCharacter / static_cast<float>(surfaceDim);
 
 #if DEBUG_ATLAS
-    // Speichere die komplette Surface vor der Texturerstellung
+    // Speichere die Surface
     char surfaceFileName[256];
     std::filesystem::path debugDir = "./debug";
     if (!std::filesystem::exists(debugDir)) {
@@ -125,99 +116,68 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
 
     snprintf(surfaceFileName, sizeof(surfaceFileName), "./debug/font_atlas_surface_%s_%d.bmp",
              TTFfontName.c_str(), fontSize);
-    SDL_SaveBMP(t, surfaceFileName);
+    SDL_SaveBMP(targetSurface, surfaceFileName);
     SDL_Log("Font atlas surface gespeichert: %s", surfaceFileName);
 #endif
 
-    if (!TextureUtils::createGLTextureFromSurface(t, fontInfo[fontIndex].tex)) {
-        SDL_FreeSurface(t);
+    TextureUtils::SDL_FlipSurfaceVertical(targetSurface);
+
+#if DEBUG_ATLAS
+    // Speichere die inverted Surface vor der Texturerstellung
+    char invertedSurfaceFileName[256];
+
+    snprintf(invertedSurfaceFileName, sizeof(invertedSurfaceFileName), "./debug/font_atlas_inverted_surface_%s_%d.bmp",
+             TTFfontName.c_str(), fontSize);
+    SDL_SaveBMP(targetSurface, invertedSurfaceFileName);
+
+    SDL_Log("Font atlas inverted surface gespeichert: %s", invertedSurfaceFileName);
+#endif
+
+    if (!TextureUtils::createGLTextureFromSurface(targetSurface, fontInfo[fontIndex].tex)) {
+        SDL_FreeSurface(targetSurface);
         TTF_CloseFont(ttfFont);
         return false;
     }
 
 #if DEBUG_ATLAS
-    // Speichere die OpenGL-Textur als Screenshot
-    // Erstelle ein FBO und rendere die Textur in ein Framebuffer
-    GLuint fbo;
-    glGenFramebuffers(1, &fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-    // Rendere die Textur in das FBO
-    GLuint tempTexture;
-    glGenTextures(1, &tempTexture);
-    glBindTexture(GL_TEXTURE_2D, tempTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surfaceDim, surfaceDim, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tempTexture, 0);
-
-    // Rendere die Textur
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    glViewport(0, 0, surfaceDim, surfaceDim);
-
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, fontInfo[fontIndex].tex);
-
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0, surfaceDim, 0.0, surfaceDim, -1.0, 1.0);
-
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex2f(0.0f, 0.0f);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex2f(surfaceDim, 0.0f);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex2f(surfaceDim, surfaceDim);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex2f(0.0f, surfaceDim);
-    glEnd();
-
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-
-    // Lese die Pixel zurück
+    // save texture
+    // Lese die Texturdaten direkt aus
     auto *pixels = new GLubyte[surfaceDim * surfaceDim * 4];
-    glReadPixels(0, 0, surfaceDim, surfaceDim, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    glBindTexture(GL_TEXTURE_2D, fontInfo[fontIndex].tex);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
     // Erstelle eine SDL_Surface aus den Pixeln
     SDL_Surface *textureSurface = SDL_CreateRGBSurfaceWithFormatFrom(
         pixels, surfaceDim, surfaceDim, 32,
         surfaceDim * 4, SDL_PIXELFORMAT_RGBA32);
 
-    // Invertiere die Textur-Surface (OpenGL hat Y nach oben)
-    SDL_Surface *invertedTextureSurface = TextureUtils::invertSurfaceY(textureSurface);
+    if (!textureSurface) {
+        SDL_Log("Fehler beim Erstellen der Textur-Surface: %s", SDL_GetError());
+        delete[] pixels;
+    } else {
+        // OpenGL speichert Bilder mit Y nach oben, aber BMP hat Y nach unten
+        // Wir müssen also die Y-Achse umkehren für korrekte BMP-Darstellung
+        TextureUtils::SDL_FlipSurfaceVertical(textureSurface);
 
-    // Speichere die Textur
-    char textureFileName[256];
-    snprintf(textureFileName, sizeof(textureFileName), "./debug/font_atlas_texture_%s_%d.bmp",
-             TTFfontName.c_str(), fontSize);
-    SDL_SaveBMP(invertedTextureSurface, textureFileName);
-    SDL_Log("Font atlas texture gespeichert: %s", textureFileName);
+        // Speichere die Textur
+        char textureFileName[256];
+        snprintf(textureFileName, sizeof(textureFileName), "./debug/font_atlas_texture_%s_%d.bmp",
+                TTFfontName.c_str(), fontSize);
+        SDL_SaveBMP(textureSurface, textureFileName);
+        SDL_Log("Font atlas texture gespeichert: %s", textureFileName);
 
-    // Aufräumen
-    SDL_FreeSurface(invertedTextureSurface);
-    SDL_FreeSurface(textureSurface);
+        SDL_FreeSurface(textureSurface);
+    }
+
     delete[] pixels;
 
-    glDeleteTextures(1, &tempTexture);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDeleteFramebuffers(1, &fbo);
-    glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 #endif
-    SDL_FreeSurface(t);
+
+    SDL_FreeSurface(targetSurface);
     TTF_CloseFont(ttfFont);
     return true;
 }
+
 void TextManager::write(const std::string &text, const Fonts font, const bool center, const GLfloat scale,
                         const GLfloat x,
                         const GLfloat y) const {
@@ -249,19 +209,26 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
     for (unsigned char i = 0; i < text.length(); i++) {
         c = static_cast<unsigned char>(text[i]);
         if (c < 32 || c >= 128) c = '?';
+        if (c >= std::size(fontInfo[fontIndex].ch)) {
+            c = '?';
+        }
         sX = fontInfo[fontIndex].ch[c].width;
         const GLfloat sY = fontInfo[fontIndex].height;
         drawPosX += sX;
 
         glBegin(GL_QUADS);
         // Korrekte Zuordnung für OpenGL mit Y nach oben und SDL Texture mit Y nach unten
-        glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Yb); // Xa, Yb für untere linke Ecke
+        glTexCoord2f(fontInfo[fontIndex].ch[c].uLeft, fontInfo[fontIndex].ch[c].vBottom);
+        // uLeft, vBottom für untere linke Ecke
         glVertex3f(-sX + drawPosX, -sY, 0.0f); // Unten links
-        glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Yb); // Xb, Yb für untere rechte Ecke
+        glTexCoord2f(fontInfo[fontIndex].ch[c].uRight, fontInfo[fontIndex].ch[c].vBottom);
+        // uRight, vBottom für untere rechte Ecke
         glVertex3f(sX + drawPosX, -sY, 0.0f); // Unten rechts
-        glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Ya); // Xb, Ya für obere rechte Ecke
+        glTexCoord2f(fontInfo[fontIndex].ch[c].uRight, fontInfo[fontIndex].ch[c].vTop);
+        // uRight, vTop für obere rechte Ecke
         glVertex3f(sX + drawPosX, sY, 0.0f); // Oben rechts
-        glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Ya); // Xa, Ya für obere linke Ecke
+        glTexCoord2f(fontInfo[fontIndex].ch[c].uLeft, fontInfo[fontIndex].ch[c].vTop);
+        // uLeft, vTop für obere linke Ecke
         glVertex3f(-sX + drawPosX, sY, 0.0f); // Oben links
         glEnd();
         drawPosX += sX;
@@ -277,7 +244,6 @@ GLfloat TextManager::getHeight(Fonts font) const {
 }
 
 void TextManager::clearTheme() {
-    // Bestehende Texturen freigeben, wenn vorhanden
     for (auto &i: fontInfo) {
         if (i.tex) {
             glDeleteTextures(1, &i.tex);

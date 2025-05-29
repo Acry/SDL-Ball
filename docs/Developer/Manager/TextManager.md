@@ -26,3 +26,15 @@ if (kerning != -1) {
 drawPosX += kerning / static_cast<float>(surfaceDim);
 }
 }
+___
+
+stack smashing
+
+c = static_cast<unsigned char>(text[i]);
+if (c < 32 || c >= 128) {
+c = '?';
+}
+// Zusätzliche Sicherheitsprüfung
+if (c < sizeof(fontInfo[fontIndex].ch)/sizeof(fontInfo[fontIndex].ch[0])) {
+// Zugriff auf ch[c]
+}
