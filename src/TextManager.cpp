@@ -10,7 +10,7 @@
 #include "TextManager.h"
 #include "TextureUtilities.h"
 
-#define DEBUG_ATLAS 1
+#define DEBUG_ATLAS 0
 
 TextManager::TextManager() : fontInfo{} {
     for (auto &i: fontInfo) {
@@ -162,7 +162,7 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         // Speichere die Textur
         char textureFileName[256];
         snprintf(textureFileName, sizeof(textureFileName), "./debug/font_atlas_texture_%s_%d.bmp",
-                TTFfontName.c_str(), fontSize);
+                 TTFfontName.c_str(), fontSize);
         SDL_SaveBMP(textureSurface, textureFileName);
         SDL_Log("Font atlas texture gespeichert: %s", textureFileName);
 
