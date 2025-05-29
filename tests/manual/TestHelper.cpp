@@ -103,7 +103,7 @@ void TestHelper::drawMouseCoordinates() const {
 
     // Textgröße bestimmen
     const auto fontHeight = m_textManager.getHeight(Fonts::IntroDescription);
-    const auto textWidth = fontHeight *8.0f;
+    const auto textWidth = fontHeight * 8.0f;
 
     // Position anhand des Quadranten anpassen
     float displayX = m_mouseX;
