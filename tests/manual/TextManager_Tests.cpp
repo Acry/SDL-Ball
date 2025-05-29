@@ -33,24 +33,26 @@ int main() {
     TestHelper testHelper(textManager);
 
     const std::vector<TextTest> tests = {
-        {"FONT HIGHSCORE", Fonts::Highscore, false, 1.0f, -0.9f, 0.6f}, // 80
-        {"FONT ANNOUNCE_GOOD", Fonts::AnnounceGood, false, 1.0f, -0.9f, 0.45f}, // 60
-        {"FONT ANNOUNCE_BAD", Fonts::AnnounceBad, false, 1.0f, -0.9f, 0.35f}, // 60
-        {"FONT INTROHIGHSCORE", Fonts::IntroHighscore, false, 1.0f, -0.9f, 0.25f}, // 40
-        {"FONT MENU", Fonts::Menu, false, 1.0f, -0.9f, 0.15f}, // 30
-        {"FONT MENUHIGHSCORE", Fonts::MenuHighscore, false, 1.0f, -0.9f, 0.05f}, // 28
-        {"FONT INTRODESCRIPTION", Fonts::IntroDescription, false, 1.0f, -0.9f, -0.05f} // 12
+        {"FONT HIGHSCORE", Fonts::Highscore, false, 1.0f, -0.9f, 0.1f}, // 80
+        {"FONT ANNOUNCE_GOOD", Fonts::AnnounceGood, false, 1.0f, -0.9f, 0.45f-0.5f}, // 60
+        {"FONT ANNOUNCE_BAD", Fonts::AnnounceBad, false, 1.0f, -0.9f, 0.35f-0.5f}, // 60
+        {"FONT INTROHIGHSCORE", Fonts::IntroHighscore, false, 1.0f, -0.9f, 0.25f-0.5f}, // 40
+        {"FONT MENU", Fonts::Menu, false, 1.0f, -0.9f, 0.15f-0.5f}, // 30
+        {"FONT MENUHIGHSCORE", Fonts::MenuHighscore, false, 1.0f, -0.9f, 0.05f-0.5f}, // 28
+        {"FONT INTRODESCRIPTION", Fonts::IntroDescription, false, 1.0f, -0.9f, -0.05f-0.5f} // 12
     };
 
     const std::vector<std::string> instructions = {
         "1: Good Announcement",
         "2: Bad Announcement",
+        "M: Toggle Mouse Coordinates",
+        "S: Create Screenshot",
         "ESC: Quit"
     };
 
     bool running = true;
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
-
+    GLfloat normalizedMouseX = 0.0f, normalizedMouseY = 0.0f;
     while (running) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
@@ -69,6 +71,18 @@ int main() {
                         textManager.addAnnouncement("Well Done!", 1500, Fonts::AnnounceGood);
                     } else if (event.key.keysym.sym == SDLK_2) {
                         textManager.addAnnouncement("GAME OVER!", 10000, Fonts::AnnounceBad);
+                    } else if (event.key.keysym.sym == SDLK_m) {
+                        testHelper.m_showMouseCoords = !testHelper.m_showMouseCoords;
+                    } else if (event.key.keysym.sym == SDLK_s) {
+                        const std::filesystem::path screenshotPath = "./screenshots/";
+                        if (!std::filesystem::exists(screenshotPath)) {
+                            std::filesystem::create_directories(screenshotPath);
+                        }
+                        if (display.screenshot(screenshotPath)) {
+                            textManager.addAnnouncement("Screenshot saved.", 1500, Fonts::AnnounceGood);
+                        } else {
+                            textManager.addAnnouncement("Screenshot not created.", 1500, Fonts::AnnounceBad);
+                        }
                     }
                     break;
                 case SDL_WINDOWEVENT:
@@ -76,10 +90,18 @@ int main() {
                         display.resize(event.window.data1, event.window.data2);
                     }
                     break;
+                case SDL_MOUSEMOTION: {
+                    normalizedMouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) * (
+                                           2.0f / display.viewportW);
+                    normalizedMouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 * (
+                                           2.0f / display.viewportH);
+                }
                 default:
                     break;
             }
         }
+
+        testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -91,7 +113,7 @@ int main() {
         for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
             std::string heightInfo = "Font " + std::to_string(i) + " height: " +
                                      std::to_string(textManager.getHeight(static_cast<Fonts>(i)));
-            textManager.write(heightInfo, Fonts::IntroDescription, false, 1.0f, 0.5f, 0.6f - i * 0.08f);
+            textManager.write(heightInfo, Fonts::IntroDescription, false, 1.0f, 0.5f, 0.6-0.5f - i * 0.08f);
         }
         // render theme fonts
         glColor4f(1.0f, 0.98f, 0.94f, 1.0f);
@@ -104,6 +126,7 @@ int main() {
             textManager.updateAnnouncements(deltaTime);
             textManager.drawAnnouncements(deltaTime);
         }
+        testHelper.drawMouseCoordinates();
         SDL_GL_SwapWindow(display.sdlWindow);
     }
     return EXIT_SUCCESS;
