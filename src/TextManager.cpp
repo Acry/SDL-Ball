@@ -135,7 +135,7 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         return false;
     }
 
-    #if DEBUG_ATLAS
+#if DEBUG_ATLAS
     // Speichere die OpenGL-Textur als Screenshot
     // Erstelle ein FBO und rendere die Textur in ein Framebuffer
     GLuint fbo;
@@ -170,10 +170,14 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     glLoadIdentity();
 
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 0.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(surfaceDim, 0.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(surfaceDim, surfaceDim);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, surfaceDim);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex2f(0.0f, 0.0f);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex2f(surfaceDim, 0.0f);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex2f(surfaceDim, surfaceDim);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex2f(0.0f, surfaceDim);
     glEnd();
 
     glPopMatrix();
@@ -252,13 +256,13 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
         glBegin(GL_QUADS);
         // Korrekte Zuordnung für OpenGL mit Y nach oben und SDL Texture mit Y nach unten
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Yb); // Xa, Yb für untere linke Ecke
-        glVertex3f(-sX + drawPosX, -sY, 0.0f);                                   // Unten links
+        glVertex3f(-sX + drawPosX, -sY, 0.0f); // Unten links
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Yb); // Xb, Yb für untere rechte Ecke
-        glVertex3f(sX + drawPosX, -sY, 0.0f);                                    // Unten rechts
+        glVertex3f(sX + drawPosX, -sY, 0.0f); // Unten rechts
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Ya); // Xb, Ya für obere rechte Ecke
-        glVertex3f(sX + drawPosX, sY, 0.0f);                                     // Oben rechts
+        glVertex3f(sX + drawPosX, sY, 0.0f); // Oben rechts
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Ya); // Xa, Ya für obere linke Ecke
-        glVertex3f(-sX + drawPosX, sY, 0.0f);                                    // Oben links
+        glVertex3f(-sX + drawPosX, sY, 0.0f); // Oben links
         glEnd();
         drawPosX += sX;
     }
