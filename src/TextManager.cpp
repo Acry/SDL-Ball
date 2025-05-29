@@ -217,19 +217,39 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
         drawPosX += sX;
 
         glBegin(GL_QUADS);
-        // Korrekte Zuordnung für OpenGL mit Y nach oben und SDL Texture mit Y nach unten
+
+        //        +1
+        //         ^
+        //         |
+        // -1 <----+----> +1
+        //         |
+        //        -1
+
+        // (0, 1) ------- (1, 1)
+        //   |              |
+        //   |              |
+        //   |              |
+        // (0, 0) ------- (1, 0)
+
+        // U = horizontal texture coordinate
+        // V = vertical texture coordinate
+
+        // Texturkoordinate (uLeft, vBottom) -> Vertex-Position unten links
         glTexCoord2f(fontInfo[fontIndex].ch[c].uLeft, fontInfo[fontIndex].ch[c].vBottom);
-        // uLeft, vBottom für untere linke Ecke
-        glVertex3f(-sX + drawPosX, -sY, 0.0f); // Unten links
+        glVertex3f(-sX + drawPosX, -sY, 0.0f);
+
+        // Texturkoordinate (uRight, vBottom) -> Vertex-Position unten rechts
         glTexCoord2f(fontInfo[fontIndex].ch[c].uRight, fontInfo[fontIndex].ch[c].vBottom);
-        // uRight, vBottom für untere rechte Ecke
-        glVertex3f(sX + drawPosX, -sY, 0.0f); // Unten rechts
+        glVertex3f(sX + drawPosX, -sY, 0.0f);
+
+        // Texturkoordinate (uRight, vTop) -> Vertex-Position oben rechts
         glTexCoord2f(fontInfo[fontIndex].ch[c].uRight, fontInfo[fontIndex].ch[c].vTop);
-        // uRight, vTop für obere rechte Ecke
-        glVertex3f(sX + drawPosX, sY, 0.0f); // Oben rechts
+        glVertex3f(sX + drawPosX, sY, 0.0f);
+
+        // Texturkoordinate (uLeft, vTop) -> Vertex-Position oben links
         glTexCoord2f(fontInfo[fontIndex].ch[c].uLeft, fontInfo[fontIndex].ch[c].vTop);
-        // uLeft, vTop für obere linke Ecke
-        glVertex3f(-sX + drawPosX, sY, 0.0f); // Oben links
+        glVertex3f(-sX + drawPosX, sY, 0.0f);
+
         glEnd();
         drawPosX += sX;
     }
