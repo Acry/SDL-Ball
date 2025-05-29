@@ -36,11 +36,14 @@ class TextManager {
 
     bool genFontTex(const std::string &TTFfontName, int fontSize, Fonts font);
 
-    Fonts getFontTypeFromKey(const std::string& key);
+    Fonts getFontTypeFromKey(const std::string &key);
 
-    bool parseFontThemeDescriptionFile(const std::string& filePath, std::map<std::string, std::string>& fontFiles, std::map<std::string, int>& fontSizes);
+    static bool parseFontThemeDescriptionFile(const std::string &filePath, std::map<std::string, std::string> &fontFiles,
+                                              std::map<std::string, int> &fontSizes);
 
-    bool createFontTextures(const std::map<std::string, std::string>& fontFiles, const std::map<std::string, int>& fontSizes);
+    bool createFontTextures(const std::map<std::string, std::string> &fontFiles,
+                            const std::map<std::string, int> &fontSizes);
+
     void clearTheme();
 
     glFontInfo_struct fontInfo[static_cast<int>(Fonts::Count)];
@@ -74,7 +77,7 @@ class TextAnnouncement {
     std::string message;
     Fonts font;
     int lifetime;
-    TextManager *textManager; // Zeiger auf die übergeordnete TextManager-Instanz
+    TextManager *textManager;
 
 public:
     TextAnnouncement(std::string msg, Fonts fontId, int ttl, TextManager *mgr);

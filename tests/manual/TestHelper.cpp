@@ -4,9 +4,15 @@
 #include "colors.h"
 #include "TestHelper.h"
 
-TestHelper::TestHelper(const float gridSpacing, const float gridExtent)
-    : m_gridSpacing(gridSpacing), m_gridExtent(gridExtent) {
+TestHelper::TestHelper(TextManager &textManager, const float gridSpacing, const float gridExtent)
+    : m_gridSpacing(gridSpacing),
+      m_gridExtent(gridExtent),
+      m_mouseX(0.0f),
+      m_mouseY(0.0f),
+      m_textManager(textManager),
+      m_showMouseCoords(false) {
     glClearColor(GL_DARK_BLUE);
+    m_mouseText[0] = '\0';
 }
 
 float TestHelper::getSpacing() const {
@@ -75,4 +81,43 @@ void TestHelper::drawCenterLines() const {
     glEnd();
     glDisable(GL_LINE_SMOOTH);
     glEnable(GL_MULTISAMPLE);
+}
+
+void TestHelper::updateMousePosition(float x, float y) {
+    m_mouseX = x;
+    m_mouseY = y;
+    sprintf(m_mouseText, "%.2f, %.2f", m_mouseX, m_mouseY);
+}
+
+void TestHelper::toggleMouseCoordinates(bool show) {
+    m_showMouseCoords = show;
+}
+
+void TestHelper::drawMouseCoordinates() const {
+    GLfloat oldColor[4];
+    glGetFloatv(GL_CURRENT_COLOR, oldColor);
+    glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+    if (m_showMouseCoords) {
+        m_textManager.write(m_mouseText, Fonts::IntroDescription, false, 1.0f, m_mouseX, m_mouseY);
+    }
+    glColor4fv(oldColor);
+}
+
+void TestHelper::renderInstructions(const float deltaTime, const std::vector<std::string> &instructions) const {
+    GLfloat oldColor[4];
+    glGetFloatv(GL_CURRENT_COLOR, oldColor);
+    glColor4f(GL_ORANGE);
+    float yPos = 0.9f;
+    constexpr auto currentFont = Fonts::Menu;
+    const auto height = m_textManager.getHeight(currentFont);
+    const auto offest = height;
+    for (const auto &instruction: instructions) {
+        m_textManager.write(instruction, currentFont, true, 1.0f, 0.0f, yPos);
+        yPos -= height + offest;
+    }
+    if (m_textManager.getAnnouncementCount() > 0) {
+        m_textManager.updateAnnouncements(deltaTime);
+        m_textManager.drawAnnouncements(deltaTime);
+    }
+    glColor4fv(oldColor);
 }

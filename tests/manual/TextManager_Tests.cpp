@@ -1,7 +1,7 @@
 // TextManager_Tests.cpp
-#include <cstdlib>
-#include <SDL2/SDL.h>
 #include <epoxy/gl.h>
+#include <SDL2/SDL.h>
+#include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -30,7 +30,7 @@ int main() {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
 
-    TestHelper testHelper;
+    TestHelper testHelper(textManager);
 
     const std::vector<TextTest> tests = {
         {"FONT HIGHSCORE", Fonts::Highscore, false, 1.0f, -0.9f, 0.6f}, // 80
@@ -52,7 +52,6 @@ int main() {
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
 
     while (running) {
-        // Zeit seit dem letzten Frame berechnen
         auto currentTime = std::chrono::high_resolution_clock::now();
         const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
         lastFrameTime = currentTime;
@@ -86,33 +85,24 @@ int main() {
 
         testHelper.drawGrid(0.2f);
         testHelper.drawCenterLines();
+        testHelper.renderInstructions(deltaTime, instructions);
 
-        // Instructions
-        glColor4f(0.95f, 0.45f, 0.05f, 1.0f);
-        float yPos = 0.9f;
-        for (const auto &instruction: instructions) {
-            textManager.write(instruction, Fonts::Menu, true, 1.0f, 0.0f, yPos);
-            yPos -= 0.07f;
-        }
-
-        // Schrifthöhen anzeigen
+        // font heights
         for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
             std::string heightInfo = "Font " + std::to_string(i) + " height: " +
                                      std::to_string(textManager.getHeight(static_cast<Fonts>(i)));
             textManager.write(heightInfo, Fonts::IntroDescription, false, 1.0f, 0.5f, 0.6f - i * 0.08f);
         }
-
+        // render theme fonts
         glColor4f(1.0f, 0.98f, 0.94f, 1.0f);
         for (const auto &[text, font, centered, scale, x, y]: tests) {
             textManager.write(text, font, centered, scale, x, y);
         }
 
-
         if (textManager.getAnnouncementCount() > 0) {
             textManager.updateAnnouncements(deltaTime);
             textManager.drawAnnouncements(deltaTime);
         }
-        // currently I use VSync, so this is not needed
         SDL_GL_SwapWindow(display.sdlWindow);
     }
     return EXIT_SUCCESS;

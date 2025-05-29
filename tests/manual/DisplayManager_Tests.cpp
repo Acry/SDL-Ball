@@ -2,14 +2,13 @@
 #include <vector>
 
 #include "Display.hpp"
-#include "colors.h"
 #include "TestHelper.h"
 #include "TextManager.h"
 
 int main() {
     Display display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
-        SDL_Log("Display konnte nicht initialisiert werden");
+        SDL_Log("Could not initialize display");
         return EXIT_FAILURE;
     }
     SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Display Test");
@@ -18,17 +17,18 @@ int main() {
         SDL_Log("Error loading font theme");
         return EXIT_FAILURE;
     }
-    TestHelper testHelper;
+    TestHelper testHelper(textManager);
 
     const std::vector<std::string> instructions = {
         "S: Create Screenshot",
+        "M: Toggle Mouse Coordinates",
         "ESC: Quit"
     };
 
     bool running = true;
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
+    GLfloat normalizedMouseX = 0.0f, normalizedMouseY = 0.0f;
     while (running) {
-        // Zeit seit dem letzten Frame berechnen
         auto currentTime = std::chrono::high_resolution_clock::now();
         const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
         lastFrameTime = currentTime;
@@ -43,11 +43,11 @@ int main() {
                 }
             }
             if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    running = false;
+                }
                 if (event.key.keysym.sym == SDLK_s) {
-                    // Screenshot erstellen und im Ordner "screenshots" speichern
                     const std::filesystem::path screenshotPath = "./screenshots/";
-
-                    // Erstelle den Ordner, falls er nicht existiert
                     if (!std::filesystem::exists(screenshotPath)) {
                         std::filesystem::create_directories(screenshotPath);
                     }
@@ -57,27 +57,27 @@ int main() {
                         textManager.addAnnouncement("Screenshot not created.", 1500, Fonts::AnnounceBad);
                     }
                 }
+                if (event.key.keysym.sym == SDLK_m) {
+                    testHelper.m_showMouseCoords = !testHelper.m_showMouseCoords;
+                }
+            }
+            if (event.type == SDL_MOUSEMOTION) {
+                normalizedMouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) * (
+                                       2.0f / display.viewportW);
+                normalizedMouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 * (
+                                       2.0f / display.viewportH);
             }
         }
 
+        testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         testHelper.drawGrid();
         testHelper.drawCenterLines();
+        testHelper.renderInstructions(deltaTime, instructions);
+        testHelper.drawMouseCoordinates();
 
-        // Instructions
-        glColor4f(GL_ORANGE);
-        float yPos = 0.9f;
-        constexpr auto currentFont = Fonts::Menu;
-        const auto height = textManager.getHeight(currentFont);
-        const auto offest = height;
-        for (const auto &instruction: instructions) {
-            textManager.write(instruction, currentFont, true, 1.0f, 0.0f, yPos);
-            yPos -= height + offest;
-        }
-        if (textManager.getAnnouncementCount() > 0) {
-            textManager.updateAnnouncements(deltaTime);
-            textManager.drawAnnouncements(deltaTime);
-        }
         SDL_GL_SwapWindow(display.sdlWindow);
     }
     return EXIT_SUCCESS;

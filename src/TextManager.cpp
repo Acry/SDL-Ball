@@ -206,7 +206,7 @@ bool TextManager::setTheme(const std::string &themeName) {
     return true;
 }
 
-Fonts TextManager::getFontTypeFromKey(const std::string& key) {
+Fonts TextManager::getFontTypeFromKey(const std::string &key) {
     if (key == "menusize") return Fonts::Menu;
     if (key == "announcegoodsize") return Fonts::AnnounceGood;
     if (key == "announcebadsize") return Fonts::AnnounceBad;
@@ -217,7 +217,8 @@ Fonts TextManager::getFontTypeFromKey(const std::string& key) {
     return Fonts::Count;
 }
 
-bool TextManager::createFontTextures(const std::map<std::string, std::string>& fontFiles, const std::map<std::string, int>& fontSizes) {
+bool TextManager::createFontTextures(const std::map<std::string, std::string> &fontFiles,
+                                     const std::map<std::string, int> &fontSizes) {
     std::map<std::string, std::string> fontTypeMap = {
         {"menufile", "menusize"},
         {"announcegoodfile", "announcegoodsize"},
@@ -228,7 +229,7 @@ bool TextManager::createFontTextures(const std::map<std::string, std::string>& f
         {"introdescriptionfile", "introdescriptionsize"}
     };
 
-    for (const auto& [fileKey, fileName] : fontFiles) {
+    for (const auto &[fileKey, fileName]: fontFiles) {
         // Finde die zugehörige Größe
         std::string sizeKey = fontTypeMap[fileKey];
         auto sizeIt = fontSizes.find(sizeKey);
@@ -246,7 +247,9 @@ bool TextManager::createFontTextures(const std::map<std::string, std::string>& f
     return true;
 }
 
-bool TextManager::parseFontThemeDescriptionFile(const std::string& filePath, std::map<std::string, std::string>& fontFiles, std::map<std::string, int>& fontSizes) {
+bool TextManager::parseFontThemeDescriptionFile(const std::string &filePath,
+                                                std::map<std::string, std::string> &fontFiles,
+                                                std::map<std::string, int> &fontSizes) {
     std::ifstream configFile(filePath);
     if (!configFile.is_open()) {
         SDL_Log("Error: could not open font-description file: %s", filePath.c_str());
@@ -267,7 +270,7 @@ bool TextManager::parseFontThemeDescriptionFile(const std::string& filePath, std
         }
         // Größen speichern
         else if (key.find("size") != std::string::npos) {
-            char* endptr = nullptr;
+            char *endptr = nullptr;
             long size = strtol(value.c_str(), &endptr, 10);
             if (*endptr != '\0') {
                 SDL_Log("Ungültige Zahl in fonts.txt: %s", value.c_str());
@@ -283,7 +286,6 @@ bool TextManager::parseFontThemeDescriptionFile(const std::string& filePath, std
 bool TextManager::loadAllFonts() {
     const std::string fullPath = currentTheme + "/" + "font/fonts.txt";
 
-    // Parsen der Font-Beschreibungsdatei
     std::map<std::string, std::string> fontFiles;
     std::map<std::string, int> fontSizes;
 
@@ -291,7 +293,6 @@ bool TextManager::loadAllFonts() {
         return false;
     }
 
-    // Erzeugen der Font-Texturen
     return createFontTextures(fontFiles, fontSizes);
 }
 
