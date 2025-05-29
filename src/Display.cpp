@@ -78,23 +78,18 @@ void Display::resize(const int width, const int height) {
     glunits_per_xpixel = 2.0f / static_cast<GLfloat>(viewportW);
     glunits_per_ypixel = 2.0f / static_cast<GLfloat>(viewportH);
 
-    // The near and far values used by glOrtho are only distances and (assuming that the eye is located at the origin)
-    // sets up a projection where -nearVal is on the front clipping plane and -farVal is the location of the far
-    // clipping plane.
-    // Flipping the y-axis with glOrtho only affects the projection
-    // The viewport’s origin (0, 0) remains at the bottom-left in window
-    // coordinates unless you modify the viewport or use a custom framebuffer.
     glViewport(viewportX, viewportY, viewportW, viewportH);
     glScissor(viewportX, viewportY, viewportW, viewportH);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    // NOTE: Accidentaly did not flipped y-axis projection
-    // That means, most Texture Coordinates are flipped.
-    // I will resolve this. Since the y-axis is openGL default,
+    // NOTE: I accidentally did not flip y-axis projection as intended.
+
+    // That means many Texture Coordinates are flipped.
+
+    // I am currently resolving this. The Y-axis is OpenGL default axis.
     // I want the UV coordinates to be OpenGL-default as well.
-    // That will need work in the texture manager, I need to flip the image on loading.
 
     // NDC projection: OpenGL
     // Von -1 bis +1 in NDC
@@ -104,50 +99,68 @@ void Display::resize(const int width, const int height) {
     // und 1.0f (far) ist die vordere Clipping-Ebene (näher am Betrachter).
     // Z = -1.0f wird zu 1.0 im Tiefenpuffer (am weitesten entfernt)
     // Z = 1.0f wird zu 0.0 im Tiefenpuffer (am nächsten zum Betrachter)
+
     glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f); // left, right, bottom, top, near, far
-    //         +1
+
+    //        +1
     //         ^
     //         |
     // -1 <----+----> +1
     //         |
     //        -1
 
+    // The near and far values used by glOrtho are only distances and (assuming that the eye is located at the origin).
+    // Sets up a projection where -nearVal is on the front clipping plane and -farVal is the location of the far
+    // clipping plane.
+
+    // Flipping the y-axis with glOrtho only affects the projection
+    // The viewport’s origin (0, 0) remains at the bottom-left in window
+    // coordinates unless you modify the viewport or use a custom framebuffer.
+
     // In OpenGL, texture coordinates (u, v) typically have (0, 0) at the bottom-left of the texture
-    // (0, 1) ------  (1, 1)
+    // (0, 1) ------- (1, 1)
     //   |              |
     //   |              |
     //   |              |
-    //   (0, 0) ----- (1, 0)
-    //
-    //  (0, 0): Bottom-left corner.
-    //  (1, 0): Bottom-right corner.
-    //  (0, 1): Top-left corner.
-    //  (1, 1): Top-right corner.
+    // (0, 0) ------- (1, 0)
+
+    // (0, 0): Bottom-left corner.
+    // (1, 0): Bottom-right corner.
+    // (1, 1): Top-right corner.
+    // (0, 1): Top-left corner.
 
     // flipped y-axis projection
-    //         -1
+
+    //        -1
     //         ^
     //         |
     // -1 <----+----> +1
     //         |
     //        +1
+
+    // glOrtho(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
+
     // (0, 0) ------ ( 1, 0)
     //   |              |
     //   |              |
     //   |              |
-    //   (0, 1) ------ (1, 1)
+    // (0, 1) ------ (1, 1)
 
-    // glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, -1.0f); // Bottom-left vertex, top of texture
-    // glTexCoord2f(1.0f, 1.0f); glVertex2f( 1.0f, -1.0f); // Bottom-right vertex, top of texture
-    // glTexCoord2f(1.0f, 0.0f); glVertex2f( 1.0f,  1.0f); // Top-right vertex, bottom of texture
-    // glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f,  1.0f); // Top-left vertex, bottom of texture
-    // glOrtho(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
+    // (0, 1): Bottom-left corner.
+    // (1, 1): Bottom-right corner.
+    // (1, 0): Top-right corner.
+    // (0, 0): Top-left corner.
+
+    // When using SDL2 with OpenGL and you don’t flip the y-axis in the projection
+    // (e.g., using glOrtho(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f) for standard OpenGL NDC where positive y is up),
+    // you will likely need to flip the v-coordinates of your texture coordinates to align SDL-loaded textures
+    // correctly. This is because SDL and OpenGL have different conventions
+    // For texture origins:
+    // SDL: Assumes the texture/image origin (0, 0) is at the top-left, with positive y extending downward.
+    // OpenGL: Defines texture coordinates with (u, v) = (0, 0) at the bottom-left, with positive v extending upward.
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
-    // When using SDL2 with OpenGL and you don’t flip the y-axis in the projection (e.g., using glOrtho(-1, 1, -1, 1, -1, 1) for standard OpenGL NDC where positive y is up), you will likely need to flip the v-coordinates of your texture coordinates to align SDL2-loaded textures correctly. This is because SDL2 and OpenGL have different conventions for texture origins:
-    // SDL2: Assumes the texture/image origin (0, 0) is at the top-left, with positive y extending downward.
-    // OpenGL: Defines texture coordinates with (u, v) = (0, 0) at the bottom-left, with positive v extending upward.
 }
 
 bool Display::screenshot(const filesystem::path &pathName) const {
