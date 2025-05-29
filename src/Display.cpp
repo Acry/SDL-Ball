@@ -113,17 +113,18 @@ void Display::resize(const int width, const int height) {
     //        -1
 
     // In OpenGL, texture coordinates (u, v) typically have (0, 0) at the bottom-left of the texture
-    // (0, 1) ------ ( 1, 1)
+    // (0, 1) ------  (1, 1)
     //   |              |
     //   |              |
     //   |              |
-    //   (0, 0) ------ (1, 0)
+    //   (0, 0) ----- (1, 0)
     //
     //  (0, 0): Bottom-left corner.
     //  (1, 0): Bottom-right corner.
     //  (0, 1): Top-left corner.
     //  (1, 1): Top-right corner.
 
+    // flipped y-axis projection
     //         -1
     //         ^
     //         |
@@ -135,7 +136,7 @@ void Display::resize(const int width, const int height) {
     //   |              |
     //   |              |
     //   (0, 1) ------ (1, 1)
-    // flipped y-axis projection
+
     // glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, -1.0f); // Bottom-left vertex, top of texture
     // glTexCoord2f(1.0f, 1.0f); glVertex2f( 1.0f, -1.0f); // Bottom-right vertex, top of texture
     // glTexCoord2f(1.0f, 0.0f); glVertex2f( 1.0f,  1.0f); // Top-right vertex, bottom of texture

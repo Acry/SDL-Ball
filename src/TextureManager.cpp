@@ -65,14 +65,22 @@ bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnim
         SDL_FreeSurface(tempSurface);
         return false;
     }
-    if (!TextureUtils::createGLTextureFromSurface(tempSurface, tex.textureProperties.texture, true)) {
+    SDL_Surface *invertedSurface = TextureUtils::invertSurfaceY(tempSurface);
+    if (!invertedSurface) {
+        SDL_Log("Error: could not invert surface for texture: %s", pathName.c_str());
         SDL_FreeSurface(tempSurface);
         return false;
     }
-
-    tex.textureProperties.pxw = tempSurface->w;
-    tex.textureProperties.pxh = tempSurface->h;
     SDL_FreeSurface(tempSurface);
+
+    if (!TextureUtils::createGLTextureFromSurface(invertedSurface, tex.textureProperties.texture, true)) {
+        SDL_FreeSurface(invertedSurface);
+        return false;
+    }
+
+    tex.textureProperties.pxw = invertedSurface->w;
+    tex.textureProperties.pxh = invertedSurface->h;
+    SDL_FreeSurface(invertedSurface);
 
     return true;
 }
@@ -256,37 +264,37 @@ SpriteSheetAnimation *TextureManager::getTexture(const std::string &texturePath,
 }
 
 SpriteSheetAnimation *TextureManager::getPaddleTexture(PaddleTexture type) const {
-    size_t index = static_cast<size_t>(type);
+    const auto index = static_cast<size_t>(type);
     if (index >= paddleTextures.size()) return nullptr;
     return paddleTextures[index];
 }
 
 SpriteSheetAnimation *TextureManager::getBallTexture(BallTexture type) const {
-    size_t index = static_cast<size_t>(type);
+    const auto index = static_cast<size_t>(type);
     if (index >= ballTextures.size()) return nullptr;
     return ballTextures[index];
 }
 
 SpriteSheetAnimation *TextureManager::getBrickTexture(BrickTexture type) const {
-    size_t index = static_cast<size_t>(type);
+    const auto index = static_cast<size_t>(type);
     if (index >= brickTextures.size()) return nullptr;
     return brickTextures[index];
 }
 
 SpriteSheetAnimation *TextureManager::getPowerUpTexture(PowerUpTexture type) const {
-    size_t index = static_cast<size_t>(type);
+    const auto index = static_cast<size_t>(type);
     if (index >= powerUpTextures.size()) return nullptr;
     return powerUpTextures[index];
 }
 
 SpriteSheetAnimation *TextureManager::getEffectTexture(EffectTexture type) const {
-    size_t index = static_cast<size_t>(type);
+    const auto index = static_cast<size_t>(type);
     if (index >= effectTextures.size()) return nullptr;
     return effectTextures[index];
 }
 
 SpriteSheetAnimation *TextureManager::getMiscTexture(MiscTexture type) const {
-    size_t index = static_cast<size_t>(type);
+    const auto index = static_cast<size_t>(type);
     if (index >= miscTextures.size()) return nullptr;
     return miscTextures[index];
 }

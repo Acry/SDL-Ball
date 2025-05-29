@@ -15,6 +15,8 @@ int main() {
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
+    SpriteSheetAnimation uvTest;
+
     SpriteSheetAnimation spriteSheetAnimation1;
     SpriteSheetAnimation spriteSheetAnimation2;
     SpriteSheetAnimation spriteSheetAnimation3;
@@ -29,6 +31,12 @@ int main() {
 
     // TextureManager erstellen
     const TextureManager textureManager;
+
+    // uv test bg
+    if (!textureManager.load("../tests/textures/UV-Test-Grid.png", uvTest)) {
+        SDL_Log("Fehler beim Laden der Textur: %s", texturePath1.c_str());
+        return EXIT_FAILURE;
+    }
 
     // Textur 1 laden
     if (!textureManager.loadTextureWithProperties(texturePath1, spriteSheetAnimation1)) {
@@ -151,8 +159,33 @@ int main() {
 
         // Hier die Textur zeichnen
         glEnable(GL_TEXTURE_2D);
+
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // Zeichnen der UV-Test-Textur im Hintergrund
+        glColor4f(1.0f, 1.0f, 1.0f, 0.1f);
+        glBindTexture(GL_TEXTURE_2D, uvTest.textureProperties.texture);
+        glBegin(GL_QUADS);
+
+        // Bottom-left corner
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex2f(-1.0f, -1.0f);
+
+        // Bottom-right corner
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex2f(1.0f, -1.0f);
+
+        // Top-right corner
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex2f(1.0f, 1.0f);
+
+        // Top-left corner
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex2f(-1.0f, 1.0f);
+
+        glEnd();
+
         glBindTexture(GL_TEXTURE_2D, currentAnimation->textureProperties.texture);
 
         // Mit den Texturfarben färben
@@ -160,27 +193,29 @@ int main() {
 
         // Vergrößert in der Mitte zeichnen
         glBegin(GL_QUADS);
+
         glTexCoord2f(currentAnimation->texturePosition[0], currentAnimation->texturePosition[1]);
-        glVertex2f(-0.5f, 0.5f);
+        glVertex2f(-0.5f, -0.5f);
 
         glTexCoord2f(currentAnimation->texturePosition[2], currentAnimation->texturePosition[3]);
-        glVertex2f(0.5f, 0.5f);
-
-        glTexCoord2f(currentAnimation->texturePosition[4], currentAnimation->texturePosition[5]);
         glVertex2f(0.5f, -0.5f);
 
+        glTexCoord2f(currentAnimation->texturePosition[4], currentAnimation->texturePosition[5]);
+        glVertex2f(0.5f, 0.5f);
+
         glTexCoord2f(currentAnimation->texturePosition[6], currentAnimation->texturePosition[7]);
-        glVertex2f(-0.5f, -0.5f);
+        glVertex2f(-0.5f, 0.5f);
+
         glEnd();
         glDisable(GL_TEXTURE_2D);
-
         glDisable(GL_BLEND);
+
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         float yPos = 0.9f;
         for (const auto &instruction: instructions) {
             textManager.write(instruction, Fonts::IntroDescription, false, 1.3f, -0.9f, yPos);
             yPos -= 0.07f;
         }
-
 
         std::string textureName;
         switch (currentTexture) {
@@ -198,15 +233,15 @@ int main() {
                 break;
         }
 
-        std::string statusText = "Aktuelle Textur: " + textureName;
+        std::string statusText = "Current Texture: " + textureName;
         textManager.write(statusText, Fonts::Menu, true, 0.8f, 0.0f, -0.7f);
 
-        std::string animationStatus = animationPaused ? "Animation: Pausiert" : "Animation: Aktiv";
+        std::string animationStatus = animationPaused ? "Animation: paused" : "Animation: running";
         textManager.write(animationStatus, Fonts::Menu, true, 0.7f, 0.0f, -0.8f);
-        SDL_Delay(13);
+
         SDL_GL_SwapWindow(display.sdlWindow);
     }
-
+    glDeleteTextures(1, &uvTest.textureProperties.texture);
     glDeleteTextures(1, &spriteSheetAnimation1.textureProperties.texture);
     glDeleteTextures(1, &spriteSheetAnimation2.textureProperties.texture);
     glDeleteTextures(1, &spriteSheetAnimation3.textureProperties.texture);

@@ -52,14 +52,14 @@ TEST_TARGETS := \
     settings-test \
     test-background \
     test-display \
-    spritesheet-test \
+    test-spritesheet \
     test-paddle \
     theme-test \
     test-text \
     sound-test \
     test-ball \
     effect-test \
-    texture-test \
+    test-texture \
     test-collision \
 
 AUTO_TEST_TARGETS := texture-automatic-test event-automatic-test collision-automatic-test
@@ -187,8 +187,8 @@ SPRITESHEET_TEST_SOURCES := $(MANUAL_TEST_DIR)SpriteSheetAnimation_Tests.cpp \
 
 SPRITESHEET_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SPRITESHEET_TEST_SOURCES:.cpp=.o)))
 
-spritesheet-test: $(SPRITESHEET_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(SPRITESHEET_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)spritesheet-test
+test-spritesheet: $(SPRITESHEET_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(SPRITESHEET_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-spritesheet
 
 $(BUILD_DIR)SpriteSheetAnimation_Tests.o: $(MANUAL_TEST_DIR)SpriteSheetAnimation_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
@@ -355,8 +355,8 @@ TEXTURE_MANAGER_TEST_SOURCES := $(MANUAL_TEST_DIR)TextureManager_Tests.cpp \
 
 TEXTURE_MANAGER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXTURE_MANAGER_TEST_SOURCES:.cpp=.o)))
 
-texture-test: $(TEXTURE_MANAGER_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(TEXTURE_MANAGER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)texture-test
+test-texture: $(TEXTURE_MANAGER_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(TEXTURE_MANAGER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-texture
 
 $(BUILD_DIR)TextureManager_Tests.o: $(MANUAL_TEST_DIR)TextureManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@

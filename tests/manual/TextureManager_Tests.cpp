@@ -3,6 +3,10 @@
 #include "TextureManager.h"
 #include "Display.hpp"
 
+// Test theme loading
+// next:
+// SpriteSheetAnimation *TextureManager::getBrickTexture(BrickTexture type)
+// render all textures, except backgrounds
 int main() {
     Display display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
@@ -13,20 +17,19 @@ int main() {
     TextureManager textureManager;
     const std::filesystem::path themePath = "../themes/default";
 
-    // Textur laden
     if (!textureManager.setSpriteTheme(themePath)) {
         SDL_Log("Fehler beim Laden der Textur: %s", themePath.c_str());
         return EXIT_FAILURE;
     }
 
     SpriteSheetAnimation spriteSheetAnimation = *textureManager.getBallTexture(BallTexture::Fireball);
-    // Animation aktivieren
+
     spriteSheetAnimation.playing = true;
     spriteSheetAnimation.textureProperties.playing = true;
 
     Uint32 lastTime = SDL_GetTicks();
     bool running = true;
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     while (running) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -40,7 +43,6 @@ int main() {
             }
             if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_t) {
-                    // do something
                 }
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     running = false;
@@ -71,24 +73,25 @@ int main() {
             spriteSheetAnimation.textureProperties.glTexColorInfo[3]
         );
 
-        // Ein Rechteck mit der Textur zeichnen
         glBegin(GL_QUADS);
+
         glTexCoord2f(spriteSheetAnimation.texturePosition[0], spriteSheetAnimation.texturePosition[1]);
-        glVertex2f(-0.5f, 0.5f);
+        glVertex2f(-0.5f, -0.5f);
 
         glTexCoord2f(spriteSheetAnimation.texturePosition[2], spriteSheetAnimation.texturePosition[3]);
-        glVertex2f(0.5f, 0.5f);
-
-        glTexCoord2f(spriteSheetAnimation.texturePosition[4], spriteSheetAnimation.texturePosition[5]);
         glVertex2f(0.5f, -0.5f);
 
+        glTexCoord2f(spriteSheetAnimation.texturePosition[4], spriteSheetAnimation.texturePosition[5]);
+        glVertex2f(0.5f, 0.5f);
+
         glTexCoord2f(spriteSheetAnimation.texturePosition[6], spriteSheetAnimation.texturePosition[7]);
-        glVertex2f(-0.5f, -0.5f);
+        glVertex2f(-0.5f, 0.5f);
+
         glEnd();
 
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);
-        SDL_Delay(13);
+
         SDL_GL_SwapWindow(display.sdlWindow);
     }
     textureManager.clearTheme();
