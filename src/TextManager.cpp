@@ -163,11 +163,11 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Ya);
         glVertex3f(-sX + drawPosX, -sY, 0.0f); // Früher +sY, jetzt -sY
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Ya);
-        glVertex3f(sX + drawPosX, -sY, 0.0f);  // Früher +sY, jetzt -sY
+        glVertex3f(sX + drawPosX, -sY, 0.0f); // Früher +sY, jetzt -sY
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xb, fontInfo[fontIndex].ch[c].Yb);
-        glVertex3f(sX + drawPosX, sY, 0.0f);   // Früher -sY, jetzt +sY
+        glVertex3f(sX + drawPosX, sY, 0.0f); // Früher -sY, jetzt +sY
         glTexCoord2f(fontInfo[fontIndex].ch[c].Xa, fontInfo[fontIndex].ch[c].Yb);
-        glVertex3f(-sX + drawPosX, sY, 0.0f);  // Früher -sY, jetzt +sY
+        glVertex3f(-sX + drawPosX, sY, 0.0f); // Früher -sY, jetzt +sY
         glEnd();
         drawPosX += sX;
     }

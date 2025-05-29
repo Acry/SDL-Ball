@@ -11,7 +11,7 @@ namespace TextureUtils {
      * @param surface Die Quell-Surface, die invertiert werden soll
      * @return Eine neue, Y-invertierte Surface oder nullptr bei Fehlern
      */
-    SDL_Surface* invertSurfaceY(const SDL_Surface* surface);
+    SDL_Surface *invertSurfaceY(const SDL_Surface *surface);
 
     /**
      * Erstellt eine OpenGL-Textur aus einer SDL-Surface mit einheitlichen Parametern
@@ -21,5 +21,5 @@ namespace TextureUtils {
      * @param useClampMode True für GL_CLAMP Wrapping, False für Standard
      * @return True bei Erfolg, False bei Fehler
      */
-    bool createGLTextureFromSurface(const SDL_Surface* surface, GLuint& textureId, bool useClampMode = false);
+    bool createGLTextureFromSurface(const SDL_Surface *surface, GLuint &textureId, bool useClampMode = false);
 }
