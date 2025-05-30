@@ -27,7 +27,11 @@ enum class GameEvent {
     UpdateTracer,
     UpdateTracerColor,
     UpdateTracerSize,
-    RemoveTracer
+    RemoveTracer,
+
+    PaddleCreated,
+    PaddleMoved,
+    PaddleDestroyed,
 };
 
 struct EventData {

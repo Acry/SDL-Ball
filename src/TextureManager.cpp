@@ -65,22 +65,21 @@ bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnim
         SDL_FreeSurface(tempSurface);
         return false;
     }
-    SDL_Surface *invertedSurface = TextureUtils::invertSurfaceY(tempSurface);
-    if (!invertedSurface) {
+
+    if (TextureUtilities::SDL_FlipSurfaceVertical(tempSurface)) {
         SDL_Log("Error: could not invert surface for texture: %s", pathName.c_str());
         SDL_FreeSurface(tempSurface);
         return false;
     }
-    SDL_FreeSurface(tempSurface);
 
-    if (!TextureUtils::createGLTextureFromSurface(invertedSurface, tex.textureProperties.texture, true)) {
-        SDL_FreeSurface(invertedSurface);
+    if (!TextureUtilities::createGLTextureFromSurface(tempSurface, tex.textureProperties.texture, true)) {
+        SDL_FreeSurface(tempSurface);
         return false;
     }
 
-    tex.textureProperties.pxw = invertedSurface->w;
-    tex.textureProperties.pxh = invertedSurface->h;
-    SDL_FreeSurface(invertedSurface);
+    tex.textureProperties.pxw = tempSurface->w;
+    tex.textureProperties.pxh = tempSurface->h;
+    SDL_FreeSurface(tempSurface);
 
     return true;
 }
@@ -192,7 +191,6 @@ bool TextureManager::readTextureProperties(const std::filesystem::path &pathName
             SDL_Log("Error parsing property '%s' in '%s': %s", key.c_str(), pathName.c_str(), e.what());
         }
     }
-
     return true;
 }
 

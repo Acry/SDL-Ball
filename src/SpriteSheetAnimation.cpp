@@ -3,8 +3,8 @@
 SpriteSheetAnimation::SpriteSheetAnimation() : age(10000),
                                                direction(false),
                                                lastFrame(1000),
-                                               frame(1),
-                                               firstFrame(true) {
+                                               frame(1), playing(false),
+                                               firstFrame(true), texturePosition{}, textureProperties() {
 }
 
 void SpriteSheetAnimation::play(const float deltaTime) {

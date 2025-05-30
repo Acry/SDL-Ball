@@ -135,7 +135,7 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     SDL_Log("Font atlas surface gespeichert: %s", surfaceFileName);
 #endif
 
-    TextureUtils::SDL_FlipSurfaceVertical(targetSurface);
+    TextureUtilities::SDL_FlipSurfaceVertical(targetSurface);
 
 #if DEBUG_ATLAS
     // Speichere die inverted Surface vor der Texturerstellung
@@ -148,7 +148,7 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     SDL_Log("Font atlas inverted surface gespeichert: %s", invertedSurfaceFileName);
 #endif
 
-    if (!TextureUtils::createGLTextureFromSurface(targetSurface, fontInfo[fontIndex].texture)) {
+    if (!TextureUtilities::createGLTextureFromSurface(targetSurface, fontInfo[fontIndex].texture)) {
         SDL_FreeSurface(targetSurface);
         TTF_CloseFont(ttfFont);
         return false;
