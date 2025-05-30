@@ -134,7 +134,6 @@ int main() {
                     case SDLK_KP_MINUS:
                         currentSpeed = std::max(0.05f, ball.velocity - 0.05f);
                         ball.setSpeed(currentSpeed, DifficultySettings::MaxBallSpeed::HARD);
-                        SDL_Log("Ballgeschwindigkeit verringert: %.2f", ball.velocity);
                         break;
                     // k kill ball
                     default: ;

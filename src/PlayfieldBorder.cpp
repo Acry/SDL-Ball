@@ -11,15 +11,14 @@ PlayfieldBorder::PlayfieldBorder(Side side, const SpriteSheetAnimation &tex, Eve
 }
 
 void PlayfieldBorder::init() {
-    // Initialisiere die Grundeigenschaften basierend auf der Seite
     if (side == Side::Left) {
-        pos_x = PLAYFIELD_LEFT_BORDER;
-        pos_y = 0.0f;
+        pos_x = -1.0f;
+        pos_y = -1.0f;
         width = PILLAR_WIDTH;
         height = 2.0f;
     } else if (side == Side::Right) {
-        pos_x = PLAYFIELD_RIGHT_BORDER;
-        pos_y = 0.0f;
+        pos_x = 1.0f - PILLAR_WIDTH;
+        pos_y = -1.0f;
         width = PILLAR_WIDTH;
         height = 2.0f;
     } else if (side == Side::Top) {
@@ -85,39 +84,67 @@ void PlayfieldBorder::createDisplayList() {
 
     dl = glGenLists(1);
     glNewList(dl, GL_COMPILE);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);  // Rot (R,G,B,A)
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
+    glColor4f(texture.textureProperties.glTexColorInfo[0],
+              texture.textureProperties.glTexColorInfo[1],
+              texture.textureProperties.glTexColorInfo[2],
+              texture.textureProperties.glTexColorInfo[3]);
     glBegin(GL_QUADS);
 
     if (side == Side::Left) {
-        // Linker Rand, Position stimmt mit PLAYFIELD_LEFT_BORDER überein
+        // Bottom-left corner.
         glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(-1.0f, -1.0f, 0.1f);
+
+        // Bottom-right corner.
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(-1.0f + PILLAR_WIDTH, -1.0f, 0.1f);
+
+        // Top-right corner.
+        glTexCoord2f(1.0f, -1.0f);
+        glVertex3f(-1.0f + PILLAR_WIDTH, 1.0f, 0.1f);
+
+        // Top-left corner.
+        glTexCoord2f(0.0f, -1.0f);
         glVertex3f(-1.0f, 1.0f, 0.1f);
+    } else if (side == Side::Right) {
+        // Bottom-left corner.
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(1.0f - PILLAR_WIDTH, -1.0f, 0.1f);
+
+        // Bottom-right corner.
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(1.0f, -1.0f, 0.1f);
+
+        // Top-right corner.
+        glTexCoord2f(0.0f, -1.0f);
+        glVertex3f(1.0f, +1.0f, 0.1f);
+
+        // Top-left corner.
+        glTexCoord2f(1.0f, -1.0f);
+        glVertex3f(1.0f - PILLAR_WIDTH, +1.0f, 0.1f);
+    } else if (side == Side::Top) {
+        // Bottom-left corner.
         glTexCoord2f(1.0f, 0.0f);
         glVertex3f(-1.0f + PILLAR_WIDTH, 1.0f, 0.1f);
-        glTexCoord2f(1.0f, -1.0f);
-        glVertex3f(-1.0f + PILLAR_WIDTH, -1.0f, 0.1f);
-        glTexCoord2f(0.0f, -1.0f);
-        glVertex3f(-1.0f, -1.0f, 0.1f);
-    } else if (side == Side::Right) {
-        // Rechter Rand, Position stimmt mit PLAYFIELD_RIGHT_BORDER überein
+
+        // Bottom-right corner.
         glTexCoord2f(1.0f, 0.0f);
         glVertex3f(1.0f - PILLAR_WIDTH, 1.0f, 0.1f);
+
+        // Top-right corner.
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(1.0f - PILLAR_WIDTH, 1.0f + PILLAR_WIDTH, 0.1f);
+
+        // Top-left corner.
         glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(1.0f, 1.0f, 0.1f);
-        glTexCoord2f(0.0f, -1.0f);
-        glVertex3f(1.0f, -1.0f, 0.1f);
-        glTexCoord2f(1.0f, -1.0f);
-        glVertex3f(1.0f - PILLAR_WIDTH, -1.0f, 0.1f);
-    } else if (side == Side::Top) {
-        // Oberer Rand wird für Kollision verwendet, aber nicht gerendert,
-        // da er außerhalb des sichtbaren Bereichs liegt
-        // Bei Bedarf könnte hier noch ein alternativer Render-Code eingefügt werden
+        glVertex3f(-1.0f + PILLAR_WIDTH, 1.0f + PILLAR_WIDTH, 0.1f);
     }
 
     glEnd();
+
     glDisable(GL_TEXTURE_2D);
     glEndList();
 }

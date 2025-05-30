@@ -2,12 +2,34 @@
 #include <cmath>
 #include "CollisionManager.h"
 
+//        +1
+//         ^
+//         |
+// -1 <----+----> +1
+//         |
+//        -1
+// In OpenGL, texture coordinates (u, v) typically have (0, 0) at the bottom-left of the texture
+// (0, 1) ------- (1, 1)
+//   |              |
+//   |              |
+//   |              |
+// (0, 0) ------- (1, 0)
+
+
 bool CollisionManager::checkCollision(const ICollideable &obj1, const ICollideable &obj2) {
-    // Einfache AABB-Kollisionserkennung für rechteckige Objekte
-    return (obj1.getPosX() - obj1.getWidth() < obj2.getPosX() + obj2.getWidth() &&
-            obj1.getPosX() + obj1.getWidth() > obj2.getPosX() - obj2.getWidth() &&
-            obj1.getPosY() - obj1.getHeight() < obj2.getPosY() + obj2.getHeight() &&
-            obj1.getPosY() + obj1.getHeight() > obj2.getPosY() - obj2.getHeight());
+    //                               LB,               PAD
+    const bool horizontalCollision = obj1.getPosX() + obj1.getWidth() > obj2.getPosX() &&
+                                     //    RB,               PAD
+                                     obj1.getPosX() < obj2.getPosX() + obj2.getWidth();
+    // return horizontalCollision;
+
+    //                              B                                   TK
+    const bool verticalOverlap = obj1.getPosY() + obj1.getHeight() > obj2.getPosY() &&
+                                 //     B                     PAD
+                                 obj1.getPosY() < obj2.getPosY() + obj2.getHeight();
+    // return verticalOverlap;
+
+    return horizontalCollision && verticalOverlap;
 }
 
 bool CollisionManager::checkCollision(const ICollideable &obj1, const ICollideable &obj2,
@@ -68,31 +90,4 @@ void CollisionManager::processCollisions(const std::vector<ICollideable *> &obje
             }
         }
     }
-}
-
-bool CollisionManager::checkCollisionWithBorder(
-    const ICollideable &movingObject,
-    const ICollideable &border,
-    float &hitX,
-    float &hitY) {
-    if (!movingObject.isActive() || !border.isActive() ||
-        !checkCollision(movingObject, border))
-        return false;
-
-    bool collision = false;
-
-    if (const int borderType = border.getCollisionType(); borderType == static_cast<int>(CollisionType::BorderLeft)) {
-        collision = movingObject.getPosX() <= border.getPosX() + border.getWidth();
-        hitX = border.getPosX() + border.getWidth();
-        hitY = movingObject.getPosY();
-    } else if (borderType == static_cast<int>(CollisionType::BorderRight)) {
-        collision = movingObject.getPosX() + movingObject.getWidth() >= border.getPosX();
-        hitX = border.getPosX();
-        hitY = movingObject.getPosY();
-    } else if (borderType == static_cast<int>(CollisionType::BorderTop)) {
-        collision = movingObject.getPosY() >= border.getPosY() - border.getHeight();
-        hitX = movingObject.getPosX();
-        hitY = border.getPosY() - border.getHeight();
-    }
-    return collision;
 }
