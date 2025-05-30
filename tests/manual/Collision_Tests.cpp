@@ -36,6 +36,9 @@ int main() {
     if (!textureManager.loadTextureWithProperties("../themes/default/gfx/ball/normal", ball.texture)) {
         SDL_Log("Fehler beim Laden der Ball-Textur");
     }
+    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/ball/fireball", ball.fireTex)) {
+        SDL_Log("Fehler beim Laden der Explosive-Ball-Textur");
+    }
 
     Paddle paddle(&eventManager);
     if (!textureManager.loadTextureWithProperties("../themes/default/gfx/paddle/base", paddle.texture)) {
@@ -199,11 +202,11 @@ int main() {
                 ball.yvel = -ball.yvel;
             } else if (CollisionManager::checkCollision(ball, paddle)) {
                 ball.pos_y = paddle.getPosY() + paddle.height;
-                float relativeIntersectX = (ball.pos_x + ball.width/2.0f) - (paddle.pos_x + paddle.width/2.0f);
-                float normalizedIntersect = relativeIntersectX / (paddle.width/2.0f);
-                             // Winkelbereich zwischen -60° und 60° (in Radiant)
-                float angle = normalizedIntersect * (M_PI/3.0f);
-                             // Geschwindigkeit beibehalten, aber Richtung ändern
+                float relativeIntersectX = (ball.pos_x + ball.width / 2.0f) - (paddle.pos_x + paddle.width / 2.0f);
+                float normalizedIntersect = relativeIntersectX / (paddle.width / 2.0f);
+                // Winkelbereich zwischen -60° und 60° (in Radiant)
+                float angle = normalizedIntersect * (M_PI / 3.0f);
+                // Geschwindigkeit beibehalten, aber Richtung ändern
                 ball.xvel = ball.velocity * sin(angle);
                 ball.yvel = ball.velocity * cos(angle);
             }
@@ -237,7 +240,7 @@ int main() {
                 }
 
                 // Paddlemitte zur vorhergesagten Ballposition bewegen, mit kleinem Fehler
-                float target = (predictedX + ball.width/2.0f + errorOffset) - paddle.getWidth()/2.0f;
+                float target = (predictedX + ball.width / 2.0f + errorOffset) - paddle.getWidth() / 2.0f;
 
                 // Auf Spielfeldgrenzen beschränken
                 if (target < -1.0f) target = -1.0f;
@@ -245,7 +248,7 @@ int main() {
 
                 // Sanfte Bewegung zum Ziel
                 float currentX = paddle.pos_x;
-                float moveSpeed = 0.7f; // Anpassbarer Wert - höher = schnellere Reaktion
+                float moveSpeed = 1.5f; // Anpassbarer Wert - höher = schnellere Reaktion
                 float newX = currentX + (target - currentX) * moveSpeed * deltaTime * 10.0f;
 
                 paddle.moveTo(newX, deltaTime);
@@ -254,7 +257,7 @@ int main() {
             // LEFT
             if (CollisionManager::checkCollision(leftBorder, paddle)) {
                 paddle.pos_x = leftBorder.getPosX() + leftBorder.getWidth();
-            // RIGHT
+                // RIGHT
             } else if (CollisionManager::checkCollision(paddle, rightBorder)) {
                 paddle.pos_x = rightBorder.getPosX() - paddle.getWidth();
             }
