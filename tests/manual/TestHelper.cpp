@@ -138,8 +138,8 @@ void TestHelper::renderInstructions(const float deltaTime, const std::vector<std
     float yPos = 0.9f;
     constexpr auto currentFont = Fonts::Menu;
     const auto height = m_textManager.getHeight(currentFont);
-    const auto offest = height;
     for (const auto &instruction: instructions) {
+        constexpr auto offest = 0.02f;
         m_textManager.write(instruction, currentFont, true, 1.0f, 0.0f, yPos);
         yPos -= height + offest;
     }

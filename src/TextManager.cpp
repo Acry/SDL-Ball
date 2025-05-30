@@ -25,6 +25,19 @@ TextManager::TextManager() : fontInfo{} {
     TTF_Init();
 }
 
+bool isUtf8StartByte(unsigned char byte) {
+    // 0xC0 = 11000000, prüft auf führendes Bit-Muster 11xxxxxx
+    return (byte & 0xC0) == 0xC0;
+}
+
+int getUtf8ByteCount(unsigned char byte) {
+    if ((byte & 0x80) == 0) return 1; // 0xxxxxxx - ASCII (1 Byte)
+    if ((byte & 0xE0) == 0xC0) return 2; // 110xxxxx - 2 Bytes (z.B. ö)
+    if ((byte & 0xF0) == 0xE0) return 3; // 1110xxxx - 3 Bytes
+    if ((byte & 0xF8) == 0xF0) return 4; // 11110xxx - 4 Bytes
+    return 0; // Ungültiges UTF-8-Byte
+}
+
 bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize, const Fonts font) {
     const std::string fullPath = currentTheme + "/" + "font/" + TTFfontName;
 
@@ -49,13 +62,13 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     constexpr int surfaceDim = 1024; // Size of the surface to render the font to
     SDL_Surface *targetSurface = SDL_CreateRGBSurfaceWithFormat(0, surfaceDim, surfaceDim, 32, SDL_PIXELFORMAT_RGBA32);
 
-    dst.x = 1;
-    dst.y = 1;
+    dst.x = 0;
+    dst.y = 0;
 
     fontInfo[fontIndex].height = 0.0f;
     float highestCharacter = 0.0f;
-
     for (int i = 32; i < 128; i++) {
+        constexpr float referenceWidth = 1024.0f;
         constexpr SDL_Color white = {255, 255, 255, 255};
         tempChar[0] = static_cast<char>(i);
 
@@ -88,15 +101,14 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         fontInfo[fontIndex].ch[i].vTop = 1.0f - static_cast<float>(dst.y) / surfaceDim;
         fontInfo[fontIndex].ch[i].vBottom = 1.0f - static_cast<float>(dst.y + characterHeight) / surfaceDim;
 
-        fontInfo[fontIndex].ch[i].width = characterWidth / static_cast<float>(surfaceDim);
+        fontInfo[fontIndex].ch[i].width = characterWidth / (referenceWidth / 2.0f);
 
         dst.w = characterWidth;
         dst.h = characterHeight;
 
-        // Blit the character onto the target surface
         SDL_BlitSurface(character, &src, targetSurface, &dst);
 
-        dst.x += characterWidth + 2;
+        dst.x += characterWidth;
 
         SDL_FreeSurface(character);
     }
@@ -104,7 +116,9 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     fontInfo[fontIndex].ascent = static_cast<float>(ascent) / static_cast<float>(surfaceDim);
     fontInfo[fontIndex].descent = static_cast<float>(descent) / static_cast<float>(surfaceDim);
     fontInfo[fontIndex].lineSkip = static_cast<float>(lineSkip) / static_cast<float>(surfaceDim);
-    fontInfo[fontIndex].height = highestCharacter / static_cast<float>(surfaceDim);
+    // Normalisiere die Höhe relativ zur Referenzauflösung (z.B. 768 Pixel Höhe)
+    constexpr float referenceHeight = 768.0f;
+    fontInfo[fontIndex].height = highestCharacter / (referenceHeight / 2.0f);
 
 #if DEBUG_ATLAS
     // Speichere die Surface
@@ -182,13 +196,14 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
                         const GLfloat x,
                         const GLfloat y) const {
     const int fontIndex = static_cast<int>(font);
-    unsigned char c;
+    unsigned char characterIndex;
     GLfloat sX, posX = 0;
+
     // Berechne die Breite für zentrierten Text
     if (center) {
         for (unsigned int i = 0; i < text.length(); i++) {
-            c = static_cast<unsigned char>(text[i]);
-            sX = fontInfo[fontIndex].ch[c].width * scale;
+            characterIndex = static_cast<unsigned char>(text[i]);
+            sX = fontInfo[fontIndex].ch[characterIndex].width * scale;
             posX += sX;
         }
         posX *= -0.5f; // Halbiere für echte Zentrierung
@@ -199,24 +214,38 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glPushMatrix();
-    glTranslatef(posX, y, 0.0f);
+    glTranslatef(posX, y - fontInfo[fontIndex].height * scale, 0.0f);
     glScalef(scale, scale, 0.0f);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, fontInfo[fontIndex].tex);
 
     GLfloat drawPosX = 0;
-    for (unsigned char i = 0; i < text.length(); i++) {
-        c = static_cast<unsigned char>(text[i]);
-        if (c < 32 || c >= 128) c = '?';
-        if (c >= std::size(fontInfo[fontIndex].ch)) {
-            c = '?';
+
+    unsigned int i = 0;
+    while (i < text.length()) {
+        constexpr unsigned char FALLBACK_CHAR = 127;
+        const auto byte = static_cast<unsigned char>(text[i]);
+        characterIndex = static_cast<unsigned char>(text[i]);
+        if ((byte & 0x80) != 0) {
+            // Multi-byte-chars
+            const int byteCount = getUtf8ByteCount(byte);
+            characterIndex = FALLBACK_CHAR;
+            i += byteCount > 0 ? byteCount : 1; // Überspringe alle Bytes des Zeichens
+        } else {
+            // One-byte-Chars (ASCII)
+            if (characterIndex < 32 || characterIndex > 127)
+                characterIndex = FALLBACK_CHAR;
         }
-        sX = fontInfo[fontIndex].ch[c].width;
+        i++;
+
+        sX = fontInfo[fontIndex].ch[characterIndex].width;
 
         // Baseline-Position verwenden statt fester Höhe
         const GLfloat baseline = fontInfo[fontIndex].ascent;
-        const GLfloat descent = fontInfo[fontIndex].descent;
+
+        // TODO: Descent berücksichtigen
+        // const GLfloat descent = fontInfo[fontIndex].descent;
         const GLfloat charHeight = fontInfo[fontIndex].height;
 
         glBegin(GL_QUADS);
@@ -238,19 +267,19 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
         // V = vertical texture coordinate
 
         // Texturkoordinate (uLeft, vBottom) -> Vertex-Position unten links
-        glTexCoord2f(fontInfo[fontIndex].ch[c].uLeft, fontInfo[fontIndex].ch[c].vBottom);
+        glTexCoord2f(fontInfo[fontIndex].ch[characterIndex].uLeft, fontInfo[fontIndex].ch[characterIndex].vBottom);
         glVertex3f(drawPosX, -baseline, 0.0f); // Unten links relativ zur Baseline
 
         // Texturkoordinate (uRight, vBottom) -> Vertex-Position unten rechts
-        glTexCoord2f(fontInfo[fontIndex].ch[c].uRight, fontInfo[fontIndex].ch[c].vBottom);
+        glTexCoord2f(fontInfo[fontIndex].ch[characterIndex].uRight, fontInfo[fontIndex].ch[characterIndex].vBottom);
         glVertex3f(drawPosX + sX, -baseline, 0.0f); // Unten rechts relativ zur Baseline
 
         // Texturkoordinate (uRight, vTop) -> Vertex-Position oben rechts
-        glTexCoord2f(fontInfo[fontIndex].ch[c].uRight, fontInfo[fontIndex].ch[c].vTop);
+        glTexCoord2f(fontInfo[fontIndex].ch[characterIndex].uRight, fontInfo[fontIndex].ch[characterIndex].vTop);
         glVertex3f(drawPosX + sX, charHeight - baseline, 0.0f); // Oben rechts relativ zur Baseline
 
         // Texturkoordinate (uLeft, vTop) -> Vertex-Position oben links
-        glTexCoord2f(fontInfo[fontIndex].ch[c].uLeft, fontInfo[fontIndex].ch[c].vTop);
+        glTexCoord2f(fontInfo[fontIndex].ch[characterIndex].uLeft, fontInfo[fontIndex].ch[characterIndex].vTop);
         glVertex3f(drawPosX, charHeight - baseline, 0.0f); // Oben links relativ zur Baseline
 
         glEnd();
@@ -450,6 +479,7 @@ void TextAnnouncement::update(const float deltaTime) {
 }
 
 void TextAnnouncement::draw(const float deltaTime) const {
+    glLoadIdentity();
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -458,28 +488,32 @@ void TextAnnouncement::draw(const float deltaTime) const {
     totalTime += deltaTime; // Zeit akkumulieren
 
     // Erhöhter Skalierungsfaktor für bessere Sichtbarkeit
-    float baseScale = 0.8f;
+    const float baseScale = 0.8f;
 
     // Pulsieren als visuellen Effekt basierend auf deltaTime hinzufügen
-    float pulseEffect = sin(totalTime * 2.0f) * 0.15f;
+    const float pulseEffect = sin(totalTime * 2.0f) * 0.15f;
 
     // Mehrere Ebenen mit verschiedenen Farben für den Schatteneffekt
     float s = zoom * baseScale * (0.85f + pulseEffect);
     glColor4f(1.0f, 0.0f, 0.0f, fade);
-    textManager->write(message, font, true, s, 0.0f, 0.0f);
+
+    const GLfloat fontHeight = textManager->getHeight(font);
+    const float yPos = 0.0f + fontHeight;
+
+    textManager->write(message, font, true, s, 0.0f, yPos);
 
     s = zoom * baseScale * (0.90f + pulseEffect);
     glColor4f(0.0f, 1.0f, 0.0f, fade);
-    textManager->write(message, font, true, s, 0.0f, 0.0f);
+    textManager->write(message, font, true, s, 0.0f, yPos);
 
     s = zoom * baseScale * (0.95f + pulseEffect);
     glColor4f(0.0f, 0.0f, 1.0f, fade);
-    textManager->write(message, font, true, s, 0.0f, 0.0f);
+    textManager->write(message, font, true, s, 0.0f, yPos);
 
     // Haupttext
     s = zoom * baseScale * (1.0f + pulseEffect);
     glColor4f(1.0f, 1.0f, 1.0f, fade);
-    textManager->write(message, font, true, s, 0.0f, 0.0f);
+    textManager->write(message, font, true, s, 0.0f, yPos);
 
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);

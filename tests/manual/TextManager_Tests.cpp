@@ -31,15 +31,16 @@ int main() {
     }
 
     TestHelper testHelper(textManager);
-
+    constexpr float yPos = 0.0f;
+    constexpr float offset = 0.2f;
     const std::vector<TextTest> tests = {
-        {"FONT HIGHSCORE", Fonts::Highscore, false, 1.0f, -0.9f, 0.1f}, // 80
-        {"FONT ANNOUNCE_GOOD", Fonts::AnnounceGood, false, 1.0f, -0.9f, 0.45f - 0.5f}, // 60
-        {"FONT ANNOUNCE_BAD", Fonts::AnnounceBad, false, 1.0f, -0.9f, 0.35f - 0.5f}, // 60
-        {"FONT INTROHIGHSCORE", Fonts::IntroHighscore, false, 1.0f, -0.9f, 0.25f - 0.5f}, // 40
-        {"FONT MENU", Fonts::Menu, false, 1.0f, -0.9f, 0.15f - 0.5f}, // 30
-        {"FONT MENUHIGHSCORE", Fonts::MenuHighscore, false, 1.0f, -0.9f, 0.05f - 0.5f}, // 28
-        {"FONT INTRODESCRIPTION", Fonts::IntroDescription, false, 1.0f, -0.9f, -0.05f - 0.5f} // 12
+        {"ABC ö ghj ?", Fonts::Highscore, false, 1.0f, -0.95f, yPos}, // 80
+        {"ABC ö ghj ?", Fonts::AnnounceGood, false, 1.0f, -0.95f, yPos - offset * 1}, // 60
+        {"ABC ö ghj ?", Fonts::AnnounceBad, false, 1.0f, -0.95f, yPos - offset * 1.75f}, // 60
+        {"ABC ö ghj ?", Fonts::IntroHighscore, false, 1.0f, -0.95f, yPos - offset * 2.5f}, // 40
+        {"ABC ö ghj ?", Fonts::Menu, false, 1.0f, -0.95f, yPos - offset * 3.0f}, // 30
+        {"ABC ö ghj ?", Fonts::MenuHighscore, false, 1.0f, -0.95f, yPos - offset * 3.5f}, // 28
+        {"ABC ö ghj ?", Fonts::IntroDescription, false, 1.0f, -0.95f, yPos - offset * 4.0f} // 12
     };
 
     const std::vector<std::string> instructions = {
@@ -113,7 +114,7 @@ int main() {
         for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
             std::string heightInfo = "Font " + std::to_string(i) + " height: " +
                                      std::to_string(textManager.getHeight(static_cast<Fonts>(i)));
-            textManager.write(heightInfo, Fonts::IntroDescription, false, 2.0f, 0.25f, 0.6 - 0.5f - i * 0.08f);
+            textManager.write(heightInfo, Fonts::IntroDescription, false, 2.0f, 0.25f, yPos - i * 0.08f);
         }
         // render theme fonts
         glColor4f(1.0f, 0.98f, 0.94f, 1.0f);
