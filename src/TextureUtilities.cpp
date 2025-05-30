@@ -18,17 +18,48 @@ bool TextureUtilities::createGLTextureFromSurface(const SDL_Surface *surface, GL
         return false;
     }
 
-    // GL-Format basierend auf der Surface bestimmen
     GLenum format;
+    GLenum type = GL_UNSIGNED_BYTE;
     switch (surface->format->format) {
+        // 32-Bit RGBA Formate
         case SDL_PIXELFORMAT_RGBA8888:
         case SDL_PIXELFORMAT_ABGR8888:
+        case SDL_PIXELFORMAT_ARGB8888:
+        case SDL_PIXELFORMAT_BGRA8888:
             format = GL_RGBA;
             break;
+
+        // 24-Bit RGB Formate
         case SDL_PIXELFORMAT_RGB888:
         case SDL_PIXELFORMAT_BGR888:
+        case SDL_PIXELFORMAT_RGB24:
             format = GL_RGB;
             break;
+
+        // 16-Bit Formate
+        case SDL_PIXELFORMAT_RGB565:
+        case SDL_PIXELFORMAT_BGR565:
+            format = GL_RGB;
+            type = GL_UNSIGNED_SHORT_5_6_5;
+            break;
+
+        case SDL_PIXELFORMAT_RGBA4444:
+        case SDL_PIXELFORMAT_ARGB4444:
+            format = GL_RGBA;
+            type = GL_UNSIGNED_SHORT_4_4_4_4;
+            break;
+
+        case SDL_PIXELFORMAT_RGBA5551:
+        case SDL_PIXELFORMAT_ARGB1555:
+            format = GL_RGBA;
+            type = GL_UNSIGNED_SHORT_5_5_5_1;
+            break;
+
+        // 8-Bit Format
+        case SDL_PIXELFORMAT_INDEX8:
+            format = GL_RED;  // Oder GL_LUMINANCE in älterem OpenGL
+            break;
+
         default:
             SDL_Log("Error: unknown pixelformat: %s", SDL_GetPixelFormatName(surface->format->format));
             return false;
@@ -54,7 +85,7 @@ bool TextureUtilities::createGLTextureFromSurface(const SDL_Surface *surface, GL
 
     // Textur-Daten laden
     glTexImage2D(GL_TEXTURE_2D, 0, format, surface->w, surface->h, 0,
-                 format, GL_UNSIGNED_BYTE, surface->pixels);
+                 format, type, surface->pixels);
 
     // Mipmap generieren
     // TODO: Mipmap-Generierung ist nicht immer notwendig (z.B. für UI-Elemente) - füge einen optionalen Parameter hinzu
