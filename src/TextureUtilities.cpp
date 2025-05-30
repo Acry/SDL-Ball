@@ -57,7 +57,7 @@ bool TextureUtilities::createGLTextureFromSurface(const SDL_Surface *surface, GL
 
         // 8-Bit Format
         case SDL_PIXELFORMAT_INDEX8:
-            format = GL_RED;  // Oder GL_LUMINANCE in älterem OpenGL
+            format = GL_RED; // Oder GL_LUMINANCE in älterem OpenGL
             break;
 
         default:
