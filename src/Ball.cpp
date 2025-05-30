@@ -227,7 +227,7 @@ void Ball::launchFromPaddle() {
 
     // Setze einen Standardwinkel für den Start (nach oben gerichtet)
     // Mit leichter Abweichung für besseres Spielgefühl
-    const float launchAngle = M_PI/2 + (rand() % 40 - 20) * 0.01f;  // π/2 ± kleine Zufallsabweichung
+    const float launchAngle = M_PI / 2 + (rand() % 40 - 20) * 0.01f; // π/2 ± kleine Zufallsabweichung
 
     // Aktualisiere xvel und yvel basierend auf velocity und dem Winkel
     xvel = velocity * cos(launchAngle);

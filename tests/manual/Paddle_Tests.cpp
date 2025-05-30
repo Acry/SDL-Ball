@@ -113,7 +113,7 @@ int main() {
         paddle.update(deltaTime);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (paddle.pos_x + paddle.width > +1.0f ) {
+        if (paddle.pos_x + paddle.width > +1.0f) {
             paddle.pos_x = 1.0f - paddle.width;
         }
         paddle.draw(deltaTime);

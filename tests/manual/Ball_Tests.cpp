@@ -177,7 +177,6 @@ int main() {
                 ball.pos_y = 1.0f - ball.height; // An obere Grenze zurücksetzen
                 ball.yvel = -ball.yvel; // Geschwindigkeit umkehren mit leichtem Energieverlust
             }
-
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
