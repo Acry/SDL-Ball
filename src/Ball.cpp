@@ -8,8 +8,8 @@ Ball::Ball(EventManager *eventMgr) : eventManager(eventMgr) {
 
 void Ball::init() {
     // GameObject
-    width = 0.05f;
-    height = 0.05f;
+    width = 0.03f;
+    height = 0.03f;
     active = true;
     pos_x = 0.0f;
     pos_y = 0.0f;

@@ -109,7 +109,7 @@
 
 // Breite der Säulen (Pfeiler) am Spielfeldrand
 
-#define PILLAR_WIDTH 0.038f
+#define PILLAR_WIDTH 0.033f
 // Von -1 bis +1 in NDC, direkt Stein an Stein
 // glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection, flipping bottom and top for SDL2
 //         +1

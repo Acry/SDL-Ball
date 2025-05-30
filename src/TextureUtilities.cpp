@@ -66,7 +66,7 @@ bool TextureUtilities::createGLTextureFromSurface(const SDL_Surface *surface, GL
     }
 
 #if DEBUG_TEXTURE_FORMAT
-        SDL_Log("Pixelformat: %s", SDL_GetPixelFormatName(surface->format->format));
+    SDL_Log("Pixelformat: %s", SDL_GetPixelFormatName(surface->format->format));
 #endif
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     // Textur erstellen
