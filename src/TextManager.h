@@ -1,11 +1,13 @@
 // TextManager.h
 #pragma once
 
+#include <epoxy/gl.h>
 #include <list>
 #include <map>
 #include <string>
-#include <epoxy/gl.h>
 
+// PRINTABLE_CHARS =  96; // 128 - 32 = 96 characters
+constexpr Uint32 CHARS = 128; // 0-127 ASCII characters
 enum class Fonts {
     Menu,
     AnnounceGood,
@@ -19,14 +21,14 @@ enum class Fonts {
 
 class TextAnnouncement;
 
-struct glCharInfo_struct {
+struct characterUvCoordinates {
     GLfloat uLeft, vTop, uRight, vBottom, width;
 };
 
-struct glFontInfo_struct {
-    GLuint tex;
-    GLfloat height;
-    glCharInfo_struct ch[255];
+struct fontInfo {
+    GLuint texture;
+    GLfloat height; // Maximalhöhe der Schriftart in OpenGL-normalisierten Werten (0.0-1.0)
+    characterUvCoordinates uv[CHARS];
     int ascent;    // Obere Höhe über der Baseline
     int descent;   // Untere Höhe unter der Baseline
     int lineSkip;  // Empfohlener Zeilenabstand
@@ -50,7 +52,7 @@ class TextManager {
 
     void clearTheme();
 
-    glFontInfo_struct fontInfo[static_cast<int>(Fonts::Count)];
+    fontInfo fontInfo[static_cast<int>(Fonts::Count)];
     std::list<TextAnnouncement> announcements;
 
 public:
