@@ -8,7 +8,11 @@
 #include "ICollideable.h"
 
 class Ball final : public MovingObject, public GrowableObject, public ICollideable {
-    GLfloat rad;
+    void drawBase() const;
+
+    void drawExplosiveLayer() const;
+
+    GLfloat rad{};
     EventManager *eventManager;
 
     mutable std::vector<float> collisionPoints;

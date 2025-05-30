@@ -6,11 +6,10 @@
 #include "Display.hpp"
 #include "PlayfieldBorder.h"
 #include "MockEventManager.h"
+#include "TestHelper.h"
 #include "TextManager.h"
 
 #define DEBUG_DRAW_PADDLE_BOUNDING_BOXES 0
-
-GLfloat normalizedMouseX, normalizedMouseY;
 
 int main() {
     Display display(0, 1024, 768, false);
@@ -23,74 +22,43 @@ int main() {
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
+    TestHelper testHelper(textManager);
     MockEventManager eventManager;
     Paddle paddle(&eventManager);
     const TextureManager textureManager;
 
-    // Basis-Textur für das Paddle laden
-    const std::filesystem::path texturePath = "../themes/default/gfx/paddle/base.png";
-    const std::filesystem::path propsPath = "../themes/default/gfx/paddle/base.txt";
-
-    if (!textureManager.load(texturePath, paddle.texture)) {
-        SDL_Log("Fehler beim Laden der Paddle-Textur: %s", texturePath.c_str());
-        return EXIT_FAILURE;
+    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/paddle/base", paddle.texture)) {
+        SDL_Log("Fehler beim Laden der Paddle-Textur");
     }
-    textureManager.readTextureProperties(propsPath, paddle.texture);
 
-    // Zusätzliche Texturen für die Layer (Glue und Gun)
     paddle.layerTex = new SpriteSheetAnimation[2];
 
-    // Glue-Layer laden
-    const std::filesystem::path glueTexPath = "../themes/default/gfx/paddle/glue.png";
-    const std::filesystem::path gluePropsPath = "../themes/default/gfx/paddle/glue.txt";
-    if (!textureManager.load(glueTexPath, paddle.layerTex[0])) {
+    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/paddle/glue", paddle.layerTex[0])) {
         SDL_Log("Fehler beim Laden der Glue-Textur");
-    } else {
-        textureManager.readTextureProperties(gluePropsPath, paddle.layerTex[0]);
     }
 
-    // Gun-Layer laden
-    const std::filesystem::path gunTexPath = "../themes/default/gfx/paddle/gun.png";
-    const std::filesystem::path gunPropsPath = "../themes/default/gfx/paddle/gun.txt";
-    if (!textureManager.load(gunTexPath, paddle.layerTex[1])) {
+    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/paddle/gun", paddle.layerTex[1])) {
         SDL_Log("Fehler beim Laden der Gun-Textur");
-    } else {
-        textureManager.readTextureProperties(gunPropsPath, paddle.layerTex[1]);
     }
-
-    // PlayfieldBorder-Textur laden
-    SpriteSheetAnimation texBorder;
-    const std::filesystem::path borderTexPath = "../themes/default/gfx/border.png";
-    const std::filesystem::path borderPropsPath = "../themes/default/gfx/border.txt";
-    if (!textureManager.load(borderTexPath, texBorder)) {
-        SDL_Log("Fehler beim Laden der Border-Textur: %s", borderTexPath.c_str());
-        return EXIT_FAILURE;
-    }
-    textureManager.readTextureProperties(borderPropsPath, texBorder);
-
-    // PlayfieldBorder-Objekte erzeugen
-    PlayfieldBorder leftBorder(PlayfieldBorder::Side::Left, texBorder, &eventManager);
-    PlayfieldBorder rightBorder(PlayfieldBorder::Side::Right, texBorder, &eventManager);
 
     std::vector<std::string> instructions = {
         "1: Set Paddle Glue Layer",
         "2: Set Paddle Gun Layer",
         "g: Paddle grow",
         "s: Paddle shrink",
-        "<-: Padle move left",
+        "<-: Paddle move left",
         "->: Paddle move right",
         "Mouse: Move Paddle",
+        "m: Toggle Mouse Coordinates",
         "ESC: Quit"
     };
 
     SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
     SDL_SetRelativeMouseMode(SDL_TRUE);
     Uint32 lastTime = SDL_GetTicks();
+    GLfloat normalizedMouseX, normalizedMouseY;
     bool running = true;
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-
     while (running) {
-        // Zeit für Animation und Update aktualisieren
         Uint32 currentTime = SDL_GetTicks();
         float deltaTime = (currentTime - lastTime) / 1000.0f;
         lastTime = currentTime;
@@ -116,67 +84,63 @@ int main() {
                     case SDLK_RIGHT:
                         paddle.moveTo(paddle.pos_x + moveStep, deltaTime);
                         break;
-                    case SDLK_g: // Paddle wachsen lassen
+                    case SDLK_g:
                         paddle.grow(paddle.getWidth() * 1.5f);
                         break;
-                    case SDLK_s: // Paddle verkleinern
+                    case SDLK_s:
                         paddle.grow(paddle.getWidth() * 0.7f);
+                    case SDLK_m:
+                        testHelper.m_showMouseCoords = !testHelper.m_showMouseCoords;
                         break;
-                    case SDLK_1: // Glue aktivieren/deaktivieren
+                    case SDLK_1:
                         paddle.setGlueLayer(!paddle.hasGlueLayer);
                         break;
-                    case SDLK_2: // Gun aktivieren/deaktivieren
+                    case SDLK_2:
                         paddle.setGunLayer(!paddle.hasGunLayer);
                         break;
                     default: ;
                 }
             }
             if (event.type == SDL_MOUSEMOTION) {
-                normalizedMouseX = (event.motion.x - display.currentW / 2.0f);
-                normalizedMouseY = (event.motion.y - display.currentH / 2.0f) * -1;
                 normalizedMouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) * (
                                        2.0f / display.viewportW);
                 normalizedMouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 * (
                                        2.0f / display.viewportH);
-                normalizedMouseX = std::max(-1.0f, std::min(1.0f, normalizedMouseX));
-                normalizedMouseY = std::max(-1.0f, std::min(1.0f, normalizedMouseY));
                 paddle.moveTo(normalizedMouseX, deltaTime);
             }
         }
+        testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
         paddle.update(deltaTime);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        leftBorder.draw(deltaTime);
-        rightBorder.draw(deltaTime);
-
+        if (paddle.pos_x + paddle.width > +1.0f ) {
+            paddle.pos_x = 1.0f - paddle.width;
+        }
         paddle.draw(deltaTime);
 #if DEBUG_DRAW_PADDLE_BOUNDING_BOXES
         GLfloat oldColor[4];
         glGetFloatv(GL_CURRENT_COLOR, oldColor);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glColor4f(1.0f, 1.0f, 1.0f, 0.1f); // Weiß für die Paddle-Farbe
+        glColor4f(0.0f, 0.0f, 0.0f, 0.1f);
+
         glBegin(GL_QUADS);
-        // unten links
-        glVertex3f(paddle.pos_x, paddle.pos_y + paddle.height, 0.0f);
-        // unten rechts
-        glVertex3f(paddle.pos_x + paddle.width, paddle.pos_y + paddle.height, 0.0f);
-        // oben rechts
-        glVertex3f(paddle.pos_x + paddle.width, paddle.pos_y, 0.0f);
-        // oben links
+
+        // Bottom-left corner.
         glVertex3f(paddle.pos_x, paddle.pos_y, 0.0f);
+        // Bottom-right corner.
+        glVertex3f(paddle.pos_x + paddle.width, paddle.pos_y, 0.0f);
+        // Top-right corner.
+        glVertex3f(paddle.pos_x + paddle.width, paddle.pos_y + paddle.height, 0.0f);
+        // Top-left corner.
+        glVertex3f(paddle.pos_x, paddle.pos_y + paddle.height, 0.0f);
+
         glEnd();
+
         glDisable(GL_BLEND);
         glColor4fv(oldColor);
 #endif
-        float yPos = 0.9f;
-        constexpr auto currentFont = Fonts::Menu;
-        const auto height = textManager.getHeight(currentFont);
-        const auto offest = height;
-        for (const auto &instruction: instructions) {
-            textManager.write(instruction, currentFont, true, 1.0f, 0.0f, yPos);
-            yPos -= height + offest;
-        }
+        testHelper.renderInstructions(deltaTime, instructions);
         // Red lines
         glDisable(GL_LINE_SMOOTH);
         glDisable(GL_BLEND);
@@ -202,10 +166,13 @@ int main() {
         glVertex3f(0.0f, -1.0f, 0.0f);
         glEnd();
         glPopMatrix();
+        testHelper.drawMouseCoordinates();
+        char tempText3[64];
+        sprintf(tempText3, "P: %.2f, %.2f", paddle.pos_x, paddle.pos_y);
+        textManager.write(tempText3, Fonts::IntroDescription, false, 1.0f, paddle.pos_x, paddle.pos_y);
         SDL_GL_SwapWindow(display.sdlWindow);
     }
 
-    // Aufräumen
     delete[] paddle.layerTex;
 
     return EXIT_SUCCESS;

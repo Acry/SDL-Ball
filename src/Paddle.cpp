@@ -1,5 +1,6 @@
-#include "Paddle.h"
 #include <epoxy/gl.h>
+
+#include "Paddle.h"
 
 Paddle::Paddle(EventManager *eventMgr) : MovingObject() {
     // eventManager direkt zuweisen entfällt, da es jetzt durch GameObject verwaltet wird
@@ -28,94 +29,8 @@ void Paddle::init() {
     onSizeChanged();
 }
 
-void Paddle::drawBase() const {
-    glLoadIdentity();
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-    glColor4f(texture.textureProperties.glTexColorInfo[0],
-              texture.textureProperties.glTexColorInfo[1],
-              texture.textureProperties.glTexColorInfo[2],
-              texture.textureProperties.glTexColorInfo[3]);
-    glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
-    glBegin(GL_QUADS);
-    // unten links
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(pos_x, pos_y + height, 0.0f);
-    // unten rechts
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(pos_x + width, pos_y + height, 0.0f);
-    // oben rechts
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(pos_x + width, pos_y, 0.0f);
-    // oben links
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(pos_x, pos_y, 0.0f);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
-}
-
-void Paddle::drawGlueLayer() const {
-    glLoadIdentity();
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-
-    glColor4f(layerTex[0].textureProperties.glTexColorInfo[0],
-              layerTex[0].textureProperties.glTexColorInfo[1],
-              layerTex[0].textureProperties.glTexColorInfo[2],
-              layerTex[0].textureProperties.glTexColorInfo[3]);
-    glBindTexture(GL_TEXTURE_2D, layerTex[0].textureProperties.texture);
-    glBegin(GL_QUADS);
-    // unten links
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex3f(pos_x, pos_y + height, 0.0f);
-    // unten rechts
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex3f(pos_x + width, pos_y + height, 0.0f);
-    // oben rechts
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex3f(pos_x + width, pos_y, 0.0f);
-    // oben links
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex3f(pos_x, pos_y, 0.0f);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
-}
-
-void Paddle::drawGunLayer() const {
-    glLoadIdentity();
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-    glColor4f(layerTex[1].textureProperties.glTexColorInfo[0],
-              layerTex[1].textureProperties.glTexColorInfo[1],
-              layerTex[1].textureProperties.glTexColorInfo[2],
-              layerTex[1].textureProperties.glTexColorInfo[3]);
-    glBindTexture(GL_TEXTURE_2D, layerTex[1].textureProperties.texture);
-    glBegin(GL_QUADS);
-    // unten links
-    glTexCoord2f(layerTex[1].texturePosition[0], layerTex[1].texturePosition[1]);
-    glVertex3f(pos_x, pos_y + height * 2.0f, 0.0f);
-    // unten rechts
-    glTexCoord2f(layerTex[1].texturePosition[2], layerTex[1].texturePosition[3]);
-    glVertex3f(pos_x + width, pos_y + height * 2.0f, 0.0f);
-    // oben rechts
-    glTexCoord2f(layerTex[1].texturePosition[4], layerTex[1].texturePosition[5] - 0.01f);
-    glVertex3f(pos_x + width, pos_y + height, 0.0f);
-    // oben links
-    glTexCoord2f(layerTex[1].texturePosition[6], layerTex[1].texturePosition[7] - 0.01f);
-    glVertex3f(pos_x, pos_y + height, 0.0f);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
-}
-
 void Paddle::draw(const float deltaTime) {
     if (!active) return;
-
 
     texture.play(deltaTime);
     drawBase();
@@ -129,6 +44,113 @@ void Paddle::draw(const float deltaTime) {
         layerTex[1].play(deltaTime);
         drawGunLayer();
     }
+}
+
+void Paddle::drawBase() const {
+    glLoadIdentity();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
+    glColor4f(texture.textureProperties.glTexColorInfo[0],
+              texture.textureProperties.glTexColorInfo[1],
+              texture.textureProperties.glTexColorInfo[2],
+              texture.textureProperties.glTexColorInfo[3]);
+
+    glBegin(GL_QUADS);
+
+    // Bottom-left corner.
+    glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
+    glVertex3f(pos_x, pos_y, 0.0f);
+
+    // Bottom-right corner.
+    glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
+    glVertex3f(pos_x + width, pos_y, 0.0f);
+
+    // Top-right corner.
+    glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
+    glVertex3f(pos_x + width, pos_y + height, 0.0f);
+
+    // Top-left corner.
+    glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
+    glVertex3f(pos_x, pos_y + height, 0.0f);
+
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
+}
+
+void Paddle::drawGlueLayer() const {
+    glLoadIdentity();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, layerTex[0].textureProperties.texture);
+    glColor4f(layerTex[0].textureProperties.glTexColorInfo[0],
+              layerTex[0].textureProperties.glTexColorInfo[1],
+              layerTex[0].textureProperties.glTexColorInfo[2],
+              layerTex[0].textureProperties.glTexColorInfo[3]);
+
+    glBegin(GL_QUADS);
+
+    // Bottom-left corner.
+    glTexCoord2f(layerTex[0].texturePosition[0], texture.texturePosition[1]);
+    glVertex3f(pos_x, pos_y, 0.0f);
+
+    // Bottom-right corner.
+    glTexCoord2f(layerTex[0].texturePosition[2], texture.texturePosition[3]);
+    glVertex3f(pos_x + width, pos_y, 0.0f);
+
+    // Top-right corner.
+    glTexCoord2f(layerTex[0].texturePosition[4], texture.texturePosition[5]);
+    glVertex3f(pos_x + width, pos_y + height, 0.0f);
+
+    // Top-left corner.
+    glTexCoord2f(layerTex[0].texturePosition[6], texture.texturePosition[7]);
+    glVertex3f(pos_x, pos_y + height, 0.0f);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
+}
+
+void Paddle::drawGunLayer() const {
+    glLoadIdentity();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, layerTex[1].textureProperties.texture);
+    glColor4f(layerTex[1].textureProperties.glTexColorInfo[0],
+              layerTex[1].textureProperties.glTexColorInfo[1],
+              layerTex[1].textureProperties.glTexColorInfo[2],
+              layerTex[1].textureProperties.glTexColorInfo[3]);
+
+    glBegin(GL_QUADS);
+
+    // Renders on top of paddle
+    const float offset = height;
+
+    // Bottom-left corner.
+    glTexCoord2f(layerTex[1].texturePosition[0], layerTex[1].texturePosition[1]);
+    glVertex3f(pos_x, pos_y + offset, 0.0f);
+
+    // Bottom-right corner.
+    glTexCoord2f(layerTex[1].texturePosition[2], layerTex[1].texturePosition[3]);
+    glVertex3f(pos_x + width, pos_y + offset, 0.0f);
+
+    // Top-right corner.
+    glTexCoord2f(layerTex[1].texturePosition[4], layerTex[1].texturePosition[5]);
+    glVertex3f(pos_x + width, pos_y + height + offset, 0.0f);
+
+    // Top-left corner.
+    glTexCoord2f(layerTex[1].texturePosition[6], layerTex[1].texturePosition[7]);
+    glVertex3f(pos_x, pos_y + height + offset, 0.0f);
+
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
 }
 
 void Paddle::setGlueLayer(const bool enabled) {
@@ -229,4 +251,10 @@ void Paddle::onCollision(ICollideable *other, float hitX, float hitY) {
 
 int Paddle::getCollisionType() const {
     return static_cast<int>(CollisionType::Paddle);
+}
+
+Paddle::~Paddle() {
+    EventData data;
+    data.sender = this;
+    eventManager->emit(GameEvent::PaddleDestroyed, data);
 }

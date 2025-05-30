@@ -19,9 +19,9 @@ protected:
     void onSizeChanged() override;
 
 public:
-    bool hasGlueLayer;
-    bool hasGunLayer;
-    SpriteSheetAnimation *layerTex;
+    bool hasGlueLayer{};
+    bool hasGunLayer{};
+    SpriteSheetAnimation *layerTex{};
     float centerX{0.0f};
 
     explicit Paddle(EventManager *eventMgr);
@@ -55,4 +55,6 @@ public:
     void onCollision(ICollideable *other, float hitX, float hitY) override;
 
     [[nodiscard]] int getCollisionType() const override;
+
+    ~Paddle();
 };

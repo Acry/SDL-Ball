@@ -7,9 +7,8 @@
 #include "difficulty_settings.h"
 #include "PlayfieldBorder.h"
 #include "MockEventManager.h"
+#include "TestHelper.h"
 #include "TextManager.h"
-
-GLfloat normalizedMouseX, normalizedMouseY;
 
 int main() {
     Display display(0, 1024, 768, false);
@@ -21,7 +20,9 @@ int main() {
     TextManager textManager;
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
+        return EXIT_FAILURE;
     }
+    TestHelper testHelper(textManager);
     MockEventManager eventManager;
     const TextureManager textureManager;
     SpriteSheetAnimation tex;
@@ -45,50 +46,27 @@ int main() {
         textureManager.readTextureProperties(firePropsPath, ball.fireTex);
     }
 
-    Paddle paddle(&eventManager);
-    const std::filesystem::path texturePath = "../themes/default/gfx/paddle/base.png";
-    const std::filesystem::path propsPath = "../themes/default/gfx/paddle/base.txt";
-
-    if (!textureManager.load(texturePath, paddle.texture)) {
-        SDL_Log("Fehler beim Laden der Paddle-Textur: %s", texturePath.c_str());
-        return EXIT_FAILURE;
-    }
-    textureManager.readTextureProperties(propsPath, paddle.texture);
-
-    // PlayfieldBorder-Textur laden
-    SpriteSheetAnimation texBorder;
-    const std::filesystem::path borderTexPath = "../themes/default/gfx/border.png";
-    const std::filesystem::path borderPropsPath = "../themes/default/gfx/border.txt";
-    if (!textureManager.load(borderTexPath, texBorder)) {
-        SDL_Log("Fehler beim Laden der Border-Textur: %s", borderTexPath.c_str());
-        return EXIT_FAILURE;
-    }
-    textureManager.readTextureProperties(borderPropsPath, texBorder);
-
-    // PlayfieldBorder-Objekte erzeugen
-    PlayfieldBorder leftBorder(PlayfieldBorder::Side::Left, texBorder, &eventManager);
-    PlayfieldBorder rightBorder(PlayfieldBorder::Side::Right, texBorder, &eventManager);
-    PlayfieldBorder topBorder(PlayfieldBorder::Side::Top, texBorder, &eventManager);
-
     std::vector<std::string> instructions = {
         "1: Ball speed EASY",
         "2: Ball speed NORMAL",
         "3: Ball speed HARD",
         "e: Explosive ball",
-        "r: Reset ball",
         "g: Ball grow",
-        "s: Ball shrink",
-        "m: max ball speed",
+        "m: Toggle Mouse Coordinates",
         "p: Log ball speed",
+        "r: Reset ball",
+        "s: Ball shrink",
+        "x: max ball speed",
         "ESC: Quit"
     };
 
     SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
     SDL_SetRelativeMouseMode(SDL_TRUE);
     Uint32 lastTime = SDL_GetTicks();
+    GLfloat normalizedMouseX = 0.0f, normalizedMouseY = 0.0f;
     bool running = true;
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
+    float currentSpeed;
     while (running) {
         // Zeit für Animation und Update aktualisieren
         Uint32 currentTime = SDL_GetTicks();
@@ -106,7 +84,6 @@ int main() {
             }
             if (event.type == SDL_MOUSEBUTTONDOWN) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    // Ball vom Paddle lösen wenn geklebt
                     if (ball.glued) {
                         ball.launchFromPaddle();
                     }
@@ -116,27 +93,17 @@ int main() {
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     running = false;
                 }
-                float moveStep = 0.09f; // Konstanter, kleiner Wert für Tastatureingabe
                 switch (event.key.keysym.sym) {
-                    case SDLK_LEFT:
-                        paddle.moveTo(paddle.pos_x - moveStep, deltaTime);
-                        break;
-                    case SDLK_RIGHT:
-                        paddle.moveTo(paddle.pos_x + moveStep, deltaTime);
-                        break;
-                    // Für Taste 1: EASY-Einstellungen
                     case SDLK_1:
                         ball.setSpeed(DifficultySettings::BallSpeed::EASY, DifficultySettings::MaxBallSpeed::EASY);
                         SDL_Log("Ballgeschwindigkeit: EASY (%.2f/%.2f)", ball.velocity,
                                 DifficultySettings::MaxBallSpeed::EASY);
                         break;
-                    // Für Taste 2: NORMAL-Einstellungen
                     case SDLK_2:
                         ball.setSpeed(DifficultySettings::BallSpeed::NORMAL, DifficultySettings::MaxBallSpeed::NORMAL);
                         SDL_Log("Ballgeschwindigkeit: NORMAL (%.2f/%.2f)", ball.velocity,
                                 DifficultySettings::MaxBallSpeed::NORMAL);
                         break;
-                    // Für Taste 3: HARD-Einstellungen
                     case SDLK_3:
                         ball.setSpeed(DifficultySettings::BallSpeed::HARD, DifficultySettings::MaxBallSpeed::HARD);
                         SDL_Log("Ballgeschwindigkeit: HARD (%.2f/%.2f)", ball.velocity,
@@ -151,70 +118,74 @@ int main() {
                     case SDLK_s:
                         ball.grow(ball.getWidth() * 0.7f);
                         break;
-                    case SDLK_m: // Maximalgeschwindigkeit testen
+                    case SDLK_m:
+                        testHelper.m_showMouseCoords = !testHelper.m_showMouseCoords;
+                        break;
+                    case SDLK_x: // Maximalgeschwindigkeit testen
                         // Sehr hohen Wert setzen, der die Maximalgeschwindigkeit überschreiten sollte
                         ball.setSpeed(DifficultySettings::MaxBallSpeed::HARD, DifficultySettings::MaxBallSpeed::HARD);
                         // Dieser Wert sollte auf die maximale Geschwindigkeit begrenzt werden
                         SDL_Log("Ballgeschwindigkeit auf Maximum gesetzt: %.2f", ball.velocity);
                         break;
-                    case SDLK_p: // Aktuelle Geschwindigkeit ausgeben
-                        SDL_Log("Aktuelle Ballgeschwindigkeit: %.2f", ball.velocity);
+                    case SDLK_p:
+                        currentSpeed = std::sqrt(ball.xvel * ball.xvel + ball.yvel * ball.yvel);
+                        SDL_Log("Aktuelle Ballgeschwindigkeit: %.2f", currentSpeed);
                         break;
-                    case SDLK_r: // reset ball
+                    case SDLK_r:
                         ball.init();
                         break;
+                    case SDLK_PLUS:
+                    case SDLK_KP_PLUS:
+                        // Erhöhe die Geschwindigkeit um einen kleinen Wert
+                        currentSpeed = ball.velocity + 0.05f;
+                        ball.setSpeed(currentSpeed, DifficultySettings::MaxBallSpeed::HARD);
+                        break;
+                    case SDLK_MINUS:
+                    case SDLK_KP_MINUS:
+                        currentSpeed = std::max(0.05f, ball.velocity - 0.05f);
+                        ball.setSpeed(currentSpeed, DifficultySettings::MaxBallSpeed::HARD);
+                        SDL_Log("Ballgeschwindigkeit verringert: %.2f", ball.velocity);
+                        break;
+                    // k kill ball
                     default: ;
                 }
             }
             if (event.type == SDL_MOUSEMOTION) {
-                normalizedMouseX = (event.motion.x - display.currentW / 2.0f);
-                normalizedMouseY = (event.motion.y - display.currentH / 2.0f) * -1;
                 normalizedMouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) * (
                                        2.0f / display.viewportW);
                 normalizedMouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 * (
                                        2.0f / display.viewportH);
-                normalizedMouseX = std::max(-1.0f, std::min(1.0f, normalizedMouseX));
-                normalizedMouseY = std::max(-1.0f, std::min(1.0f, normalizedMouseY));
-                paddle.moveTo(normalizedMouseX, deltaTime);
             }
         }
+        testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
+
         if (ball.active) {
             ball.update(deltaTime);
-        }
-        if (paddle.active) {
-            paddle.update(deltaTime);
-        }
-        if (ball.glued) {
-            ball.pos_y = paddle.pos_y + paddle.height;
-            ball.pos_x = paddle.pos_x + paddle.getWidth() / 2.0f - ball.getWidth() / 2.0f;
-        }
+            // Horizontale Grenzen
+            if (ball.pos_x < -1.0f) {
+                ball.pos_x = -1.0f; // An linke Grenze zurücksetzen
+                ball.xvel = -ball.xvel; // Geschwindigkeit umkehren mit leichtem Energieverlust
+            } else if (ball.pos_x + ball.width > 1.0f) {
+                ball.pos_x = 1.0f - ball.width; // An rechte Grenze zurücksetzen
+                ball.xvel = -ball.xvel; // Geschwindigkeit umkehren mit leichtem Energieverlust
+            }
+            // Vertikale Grenzen
+            if (ball.pos_y < -1.0f) {
+                ball.pos_y = -1.0f; // An untere Grenze zurücksetzen
+                ball.yvel = -ball.yvel; // Geschwindigkeit umkehren mit leichtem Energieverlust
+            } else if (ball.pos_y + ball.height > 1.0f) {
+                ball.pos_y = 1.0f - ball.height; // An obere Grenze zurücksetzen
+                ball.yvel = -ball.yvel; // Geschwindigkeit umkehren mit leichtem Energieverlust
+            }
 
-        if (paddle.hasGlueLayer) {
-            ball.glued = true;
         }
-
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Spielfeldränder zeichnen
-        leftBorder.draw(deltaTime);
-        rightBorder.draw(deltaTime);
-        topBorder.draw(deltaTime); // should not be visible
-        if (paddle.active) {
-            paddle.draw(deltaTime);
-        }
 
         if (ball.active) {
             ball.draw(deltaTime);
         }
-        float yPos = 0.9f;
-        constexpr auto currentFont = Fonts::Menu;
-        const auto height = textManager.getHeight(currentFont);
-        const auto offest = height;
-        for (const auto &instruction: instructions) {
-            textManager.write(instruction, currentFont, true, 1.0f, 0.0f, yPos);
-            yPos -= height + offest;
-        }
+        testHelper.renderInstructions(deltaTime, instructions);
+
         // Red lines
         glDisable(GL_LINE_SMOOTH);
         glDisable(GL_BLEND);
@@ -240,6 +211,11 @@ int main() {
         glVertex3f(0.0f, -1.0f, 0.0f);
         glEnd();
         glPopMatrix();
+
+        char tempText2[64];
+        sprintf(tempText2, "B: %.2f, %.2f", ball.pos_x, ball.pos_y);
+        textManager.write(tempText2, Fonts::IntroDescription, false, 1.0f, ball.pos_x, ball.pos_y);
+        testHelper.drawMouseCoordinates();
         SDL_GL_SwapWindow(display.sdlWindow);
     }
     return EXIT_SUCCESS;

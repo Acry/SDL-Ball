@@ -1,5 +1,5 @@
 file=ball/fireball.png
-ticks=25
+ticks=200
 cols=4
 rows=4
 xoffset=0.25

@@ -219,6 +219,7 @@ $(BUILD_DIR)MockEventManager.o: $(MANUAL_TEST_DIR)MockEventManager.cpp
 ###############################################################################
 # Paddle
 PADDLE_TEST_SOURCES := $(MANUAL_TEST_DIR)Paddle_Tests.cpp \
+                       $(MANUAL_TEST_DIR)TestHelper.cpp \
                        $(MANUAL_TEST_DIR)MockEventManager.cpp \
                        $(SOURCE_DIR)Paddle.cpp \
                        $(SOURCE_DIR)GameObject.cpp \
@@ -230,7 +231,6 @@ PADDLE_TEST_SOURCES := $(MANUAL_TEST_DIR)Paddle_Tests.cpp \
                        $(SOURCE_DIR)TextureManager.cpp \
                        $(SOURCE_DIR)TextureUtilities.cpp \
                        $(SOURCE_DIR)CollisionManager.cpp \
-                       $(SOURCE_DIR)PlayfieldBorder.cpp \
                        $(SOURCE_DIR)EventManager.cpp
 
 PADDLE_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(PADDLE_TEST_SOURCES:.cpp=.o)))
@@ -290,6 +290,7 @@ $(BUILD_DIR)SoundManager_Tests.o: $(MANUAL_TEST_DIR)SoundManager_Tests.cpp
 ###############################################################################
 # Ball
 BALL_TEST_SOURCES := $(MANUAL_TEST_DIR)Ball_Tests.cpp \
+                     $(MANUAL_TEST_DIR)TestHelper.cpp \
                      $(MANUAL_TEST_DIR)MockEventManager.cpp \
                      $(SOURCE_DIR)Ball.cpp \
                      $(SOURCE_DIR)Paddle.cpp \
@@ -302,7 +303,6 @@ BALL_TEST_SOURCES := $(MANUAL_TEST_DIR)Ball_Tests.cpp \
                      $(SOURCE_DIR)TextureManager.cpp \
                      $(SOURCE_DIR)TextureUtilities.cpp \
                      $(SOURCE_DIR)CollisionManager.cpp \
-                     $(SOURCE_DIR)PlayfieldBorder.cpp \
                      $(SOURCE_DIR)EventManager.cpp
 
 BALL_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BALL_TEST_SOURCES:.cpp=.o)))

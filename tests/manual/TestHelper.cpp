@@ -11,7 +11,7 @@ TestHelper::TestHelper(TextManager &textManager, const float gridSpacing, const 
       m_mouseY(0.0f),
       m_textManager(textManager),
       m_showMouseCoords(false) {
-    glClearColor(GL_DARK_BLUE);
+    glClearColor(GL_LIGHT_BLUE);
     m_mouseText[0] = '\0';
 }
 
@@ -134,14 +134,14 @@ void TestHelper::drawMouseCoordinates() const {
 void TestHelper::renderInstructions(const float deltaTime, const std::vector<std::string> &instructions) const {
     GLfloat oldColor[4];
     glGetFloatv(GL_CURRENT_COLOR, oldColor);
-    glColor4f(GL_ORANGE);
-    float yPos = 0.9f;
+    glColor4f(GL_DEEP_ORANGE);
+    float yPos = 0.95f;
     constexpr auto currentFont = Fonts::Menu;
     const auto height = m_textManager.getHeight(currentFont);
     for (const auto &instruction: instructions) {
-        constexpr auto offest = 0.02f;
-        m_textManager.write(instruction, currentFont, true, 1.0f, 0.0f, yPos);
-        yPos -= height + offest;
+        constexpr auto offest = 0.05f;
+        m_textManager.write(instruction, currentFont, true, 0.5f, 0.0f, yPos);
+        yPos -= offest;
     }
     if (m_textManager.getAnnouncementCount() > 0) {
         m_textManager.updateAnnouncements(deltaTime);
