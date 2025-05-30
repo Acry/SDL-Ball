@@ -2,6 +2,7 @@
 #pragma once
 
 #include <epoxy/gl.h>
+#include <SDL2/SDL_stdinc.h>
 #include <list>
 #include <map>
 #include <string>

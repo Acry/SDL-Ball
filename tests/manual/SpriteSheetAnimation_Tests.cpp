@@ -194,15 +194,19 @@ int main() {
         // Vergrößert in der Mitte zeichnen
         glBegin(GL_QUADS);
 
+        // Bottom-left corner
         glTexCoord2f(currentAnimation->texturePosition[0], currentAnimation->texturePosition[1]);
         glVertex2f(-0.5f, -0.5f);
 
+        // Bottom-right corner
         glTexCoord2f(currentAnimation->texturePosition[2], currentAnimation->texturePosition[3]);
         glVertex2f(0.5f, -0.5f);
 
+        // Top-right corner
         glTexCoord2f(currentAnimation->texturePosition[4], currentAnimation->texturePosition[5]);
         glVertex2f(0.5f, 0.5f);
 
+        // Top-left corner
         glTexCoord2f(currentAnimation->texturePosition[6], currentAnimation->texturePosition[7]);
         glVertex2f(-0.5f, 0.5f);
 

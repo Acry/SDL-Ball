@@ -37,7 +37,7 @@ bool TextureUtilities::createGLTextureFromSurface(const SDL_Surface *surface, GL
 #if DEBUG_TEXTURE_FORMAT
         SDL_Log("Pixelformat: %s", SDL_GetPixelFormatName(surface->format->format));
 #endif
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Keine zusätzliche Ausrichtung
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     // Textur erstellen
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);
@@ -59,8 +59,6 @@ bool TextureUtilities::createGLTextureFromSurface(const SDL_Surface *surface, GL
     // Mipmap generieren
     // TODO: Mipmap-Generierung ist nicht immer notwendig (z.B. für UI-Elemente) - füge einen optionalen Parameter hinzu
     glGenerateMipmap(GL_TEXTURE_2D);
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 0); // Keine zusätzliche Ausrichtung
 
     if (const GLenum error = glGetError(); error != GL_NO_ERROR) {
         SDL_Log("GL-Error during texture generation: %d", error);
