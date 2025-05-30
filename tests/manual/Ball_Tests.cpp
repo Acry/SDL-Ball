@@ -28,22 +28,12 @@ int main() {
     SpriteSheetAnimation tex;
 
     Ball ball(&eventManager);
-    const std::filesystem::path ballTexPath = "../themes/default/gfx/ball/normal.png";
-    const std::filesystem::path ballPropsPath = "../themes/default/gfx/ball/normal.txt";
-
-    if (!textureManager.load(ballTexPath, ball.texture)) {
-        SDL_Log("Fehler beim Laden der Ball-Textur: %s", ballTexPath.c_str());
-        return EXIT_FAILURE;
+    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/ball/normal", ball.texture)) {
+        SDL_Log("Fehler beim Laden der Ball-Textur");
     }
-    textureManager.readTextureProperties(ballPropsPath, ball.texture);
 
-    // Feuertextur für explosiven Ball laden
-    const std::filesystem::path fireTexPath = "../themes/default/gfx/ball/fireball.png";
-    const std::filesystem::path firePropsPath = "../themes/default/gfx/ball/fireball.txt";
-    if (!textureManager.load(fireTexPath, ball.fireTex)) {
+    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/ball/fireball", ball.fireTex)) {
         SDL_Log("Fehler beim Laden der Feuer-Textur");
-    } else {
-        textureManager.readTextureProperties(firePropsPath, ball.fireTex);
     }
 
     std::vector<std::string> instructions = {
@@ -163,19 +153,19 @@ int main() {
             ball.update(deltaTime);
             // Horizontale Grenzen
             if (ball.pos_x < -1.0f) {
-                ball.pos_x = -1.0f; // An linke Grenze zurücksetzen
-                ball.xvel = -ball.xvel; // Geschwindigkeit umkehren mit leichtem Energieverlust
+                ball.pos_x = -1.0f;
+                ball.xvel = -ball.xvel;
             } else if (ball.pos_x + ball.width > 1.0f) {
-                ball.pos_x = 1.0f - ball.width; // An rechte Grenze zurücksetzen
-                ball.xvel = -ball.xvel; // Geschwindigkeit umkehren mit leichtem Energieverlust
+                ball.pos_x = 1.0f - ball.width;
+                ball.xvel = -ball.xvel;
             }
             // Vertikale Grenzen
             if (ball.pos_y < -1.0f) {
-                ball.pos_y = -1.0f; // An untere Grenze zurücksetzen
-                ball.yvel = -ball.yvel; // Geschwindigkeit umkehren mit leichtem Energieverlust
+                ball.pos_y = -1.0f;
+                ball.yvel = -ball.yvel;
             } else if (ball.pos_y + ball.height > 1.0f) {
-                ball.pos_y = 1.0f - ball.height; // An obere Grenze zurücksetzen
-                ball.yvel = -ball.yvel; // Geschwindigkeit umkehren mit leichtem Energieverlust
+                ball.pos_y = 1.0f - ball.height;
+                ball.yvel = -ball.yvel;
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

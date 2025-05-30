@@ -364,6 +364,7 @@ $(BUILD_DIR)TextureManager_Tests.o: $(MANUAL_TEST_DIR)TextureManager_Tests.cpp
 ###############################################################################
 # CollisionManager
 COLLISION_TEST_SOURCES := $(MANUAL_TEST_DIR)Collision_Tests.cpp \
+                          $(MANUAL_TEST_DIR)TestHelper.cpp \
                           $(SOURCE_DIR)Ball.cpp \
                           $(SOURCE_DIR)Paddle.cpp \
                           $(SOURCE_DIR)GameObject.cpp \

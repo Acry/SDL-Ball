@@ -423,6 +423,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
     if (std::filesystem::exists(propsPath)) {
         hasProps = true;
         if (!readTextureProperties(propsPath, animation)) {
+            hasProps = false;
             SDL_Log("Warning: no properties '%s'", propsPath.c_str());
         }
 
@@ -474,10 +475,9 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
         return false;
     }
 
-    // ja, ich weiß nicht. das hat hier nichts zu suchen. mal sehen
     // 5. Standard-Eigenschaften setzen, wenn keine Eigenschaften geladen wurden
     if (!hasProps) {
-        SDL_Log("Hinweis: Keine Eigenschaftsdatei für '%s' gefunden", actualImagePath.c_str());
+        SDL_Log("Warning: no properties '%s'", actualImagePath.c_str());
 
         // Standardwerte für Textureigenschaften setzen
         animation.textureProperties.ticks = 1000;
@@ -495,8 +495,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
             animation.textureProperties.glTexColorInfo[i] = 1.0f;
             animation.textureProperties.glParColorInfo[i] = 1.0f;
         }
-        animation.textureProperties.glTexColorInfo[3] = 1.0f; // Alpha = 1.0
+        animation.textureProperties.glTexColorInfo[3] = 1.0f;
     }
-
     return true;
 }
