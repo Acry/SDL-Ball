@@ -25,21 +25,32 @@ public:
 
     // Getter/Setter
     void setScore(int value);
+
     [[nodiscard]] int getScore() const;
+
     void setDestroyToWin(bool value);
+
     [[nodiscard]] bool mustDestroyToWin() const;
+
     void setPowerup(char value);
+
     [[nodiscard]] char getPowerup() const;
+
     void setType(char value);
+
     [[nodiscard]] char getType() const;
 
     // Gameplay Methoden
     void hit();
+
     void makeExplosive();
+
     [[nodiscard]] bool hasNeighbor(int direction) const;
+
     void updateGridPosition(int gridIndex);
 
     static void resetGrid();
+
     static void updateGrid();
 
 private:
