@@ -112,14 +112,14 @@ collisionManager.processCollisions(gameObjects);
     }
 }
 
-void CollisionManager::handleBallBricksCollisions(Ball& ball, std::vector<Brick>& bricks) {
-    for (auto& brick : bricks) {
+void CollisionManager::handleBallBricksCollisions(Ball &ball, std::vector<Brick> &bricks) {
+    for (auto &brick: bricks) {
         if (brick.isActive() && checkCollision(ball, brick)) {
             // Kollisionsrichtung bestimmen
             const float overlapX = std::min(ball.pos_x + ball.width, brick.getPosX() + brick.getWidth()) -
-                            std::max(ball.pos_x, brick.getPosX());
+                                   std::max(ball.pos_x, brick.getPosX());
             const float overlapY = std::min(ball.pos_y + ball.height, brick.getPosY() + brick.getHeight()) -
-                            std::max(ball.pos_y, brick.getPosY());
+                                   std::max(ball.pos_y, brick.getPosY());
 
             // Ball-Physik aktualisieren
             if (overlapX < overlapY) {
@@ -132,15 +132,14 @@ void CollisionManager::handleBallBricksCollisions(Ball& ball, std::vector<Brick>
             brick.onCollision(&ball, 0, 0);
 
             //break;
-
         }
     }
 }
 
-void CollisionManager::handleBallBorderCollisions(Ball& ball,
-                                                 const PlayfieldBorder& leftBorder,
-                                                 const PlayfieldBorder& rightBorder,
-                                                 const PlayfieldBorder& topBorder) {
+void CollisionManager::handleBallBorderCollisions(Ball &ball,
+                                                  const PlayfieldBorder &leftBorder,
+                                                  const PlayfieldBorder &rightBorder,
+                                                  const PlayfieldBorder &topBorder) {
     if (checkCollision(ball, rightBorder)) {
         ball.pos_x = rightBorder.getPosX() - ball.width;
         ball.xvel = -ball.xvel;
@@ -155,7 +154,7 @@ void CollisionManager::handleBallBorderCollisions(Ball& ball,
     }
 }
 
-void CollisionManager::handleBallPaddleCollision(Ball& ball, const Paddle& paddle) {
+void CollisionManager::handleBallPaddleCollision(Ball &ball, const Paddle &paddle) {
     if (checkCollision(ball, paddle)) {
         ball.pos_y = paddle.getPosY() + paddle.height;
         float relativeIntersectX = (ball.pos_x + ball.width / 2.0f) - (paddle.pos_x + paddle.width / 2.0f);
@@ -168,9 +167,9 @@ void CollisionManager::handleBallPaddleCollision(Ball& ball, const Paddle& paddl
     }
 }
 
-void CollisionManager::handlePaddleBorderCollisions(Paddle& paddle,
-                                                   const PlayfieldBorder& leftBorder,
-                                                   const PlayfieldBorder& rightBorder) {
+void CollisionManager::handlePaddleBorderCollisions(Paddle &paddle,
+                                                    const PlayfieldBorder &leftBorder,
+                                                    const PlayfieldBorder &rightBorder) {
     if (checkCollision(leftBorder, paddle)) {
         paddle.pos_x = leftBorder.getPosX() + leftBorder.getWidth();
     } else if (checkCollision(paddle, rightBorder)) {

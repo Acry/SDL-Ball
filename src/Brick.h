@@ -29,13 +29,16 @@ public:
     float getWidth() const override { return width; }
     float getHeight() const override { return height; }
     bool isActive() const override { return GameObject::isActive(); }
+
     void onCollision(ICollideable *other, float hitX, float hitY) override {
         // Verhalten bei Kollision
         if (other->getCollisionType() == static_cast<int>(CollisionType::Ball)) {
             active = false; // Brick wird deaktiviert bei Kollision mit Ball
         }
     }
+
     ~Brick() override;
+
     void setPosition(const float x, const float y) {
         pos_x = x;
         pos_y = y;

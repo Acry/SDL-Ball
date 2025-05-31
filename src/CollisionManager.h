@@ -25,17 +25,16 @@ public:
     // Prüfe alle Kollisionen zwischen Objekten und leite Events weiter
     static void processCollisions(const std::vector<ICollideable *> &objects);
 
-    static void handleBallBricksCollisions(Ball& ball, std::vector<Brick>& bricks);
+    static void handleBallBricksCollisions(Ball &ball, std::vector<Brick> &bricks);
 
-    static void handleBallBorderCollisions(Ball& ball,
-                                      const PlayfieldBorder& leftBorder,
-                                      const PlayfieldBorder& rightBorder,
-                                      const PlayfieldBorder& topBorder);
+    static void handleBallBorderCollisions(Ball &ball,
+                                           const PlayfieldBorder &leftBorder,
+                                           const PlayfieldBorder &rightBorder,
+                                           const PlayfieldBorder &topBorder);
 
-    static void handleBallPaddleCollision(Ball& ball, const Paddle& paddle);
+    static void handleBallPaddleCollision(Ball &ball, const Paddle &paddle);
 
-    static void handlePaddleBorderCollisions(Paddle& paddle,
-                                            const PlayfieldBorder& leftBorder,
-                                            const PlayfieldBorder& rightBorder);
-
+    static void handlePaddleBorderCollisions(Paddle &paddle,
+                                             const PlayfieldBorder &leftBorder,
+                                             const PlayfieldBorder &rightBorder);
 };
