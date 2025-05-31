@@ -4,6 +4,7 @@
 
 #include "Ball.h"
 #include "Paddle.h"
+#include "Brick.h"
 #include "TextureManager.h"
 #include "Display.hpp"
 #include "CollisionManager.h"
@@ -31,6 +32,25 @@ int main() {
 
     const TextureManager textureManager;
     SpriteSheetAnimation tex;
+
+    // Brick brick;
+    std::vector<Brick> bricks;
+    constexpr int BRICK_ROWS = 3;
+    // Bricks initialisieren
+    for (int row = 0; row < BRICK_ROWS; row++) {
+        const int BRICK_COLS = 7;
+        for (int col = 0; col < BRICK_COLS; col++) {
+            Brick brick(&eventManager);
+            // Positionen berechnen (Anpassung nach Bedarf)
+            float x = -0.8f + col * 0.25f;
+            float y = 0.5f - row * 0.12f;
+            brick.setPosition(x, y);
+            if (!textureManager.loadTextureWithProperties("../themes/default/gfx/brick/base", brick.texture)) {
+                SDL_Log("Fehler beim Laden der Brick-Textur");
+            }
+            bricks.push_back(brick);
+        }
+    }
 
     Ball ball(&eventManager);
     if (!textureManager.loadTextureWithProperties("../themes/default/gfx/ball/normal", ball.texture)) {
@@ -190,26 +210,6 @@ int main() {
             if (ball.active) {
                 ball.update(deltaTime);
             }
-            if (CollisionManager::checkCollision(ball, rightBorder)) {
-                ball.pos_x = rightBorder.getPosX() - ball.width;
-                ball.xvel = -ball.xvel;
-            } else if (CollisionManager::checkCollision(ball, leftBorder)) {
-                ball.pos_x = leftBorder.getPosX() + leftBorder.getWidth();
-                ball.xvel = -ball.xvel;
-            }
-            if (CollisionManager::checkCollision(ball, topBorder)) {
-                ball.pos_y = topBorder.getPosY() - ball.height;
-                ball.yvel = -ball.yvel;
-            } else if (CollisionManager::checkCollision(ball, paddle)) {
-                ball.pos_y = paddle.getPosY() + paddle.height;
-                float relativeIntersectX = (ball.pos_x + ball.width / 2.0f) - (paddle.pos_x + paddle.width / 2.0f);
-                float normalizedIntersect = relativeIntersectX / (paddle.width / 2.0f);
-                // Winkelbereich zwischen -60° und 60° (in Radiant)
-                float angle = normalizedIntersect * (M_PI / 3.0f);
-                // Geschwindigkeit beibehalten, aber Richtung ändern
-                ball.xvel = ball.velocity * sin(angle);
-                ball.yvel = ball.velocity * cos(angle);
-            }
             paddle.update(deltaTime);
 
             // Auto-Paddle-Mechanik
@@ -254,24 +254,27 @@ int main() {
                 paddle.moveTo(newX, deltaTime);
             }
 
-            // LEFT
-            if (CollisionManager::checkCollision(leftBorder, paddle)) {
-                paddle.pos_x = leftBorder.getPosX() + leftBorder.getWidth();
-                // RIGHT
-            } else if (CollisionManager::checkCollision(paddle, rightBorder)) {
-                paddle.pos_x = rightBorder.getPosX() - paddle.getWidth();
-            }
-
             if (ball.glued) {
                 ball.pos_y = paddle.pos_y + paddle.height;
                 ball.pos_x = paddle.pos_x + paddle.getWidth() / 2.0f - ball.getWidth() / 2.0f;
             }
+
+            // Kollisionen prüfen und behandeln
+            collisionManager.handleBallBorderCollisions(ball, leftBorder, rightBorder, topBorder);
+            collisionManager.handleBallPaddleCollision(ball, paddle);
+            collisionManager.handlePaddleBorderCollisions(paddle, leftBorder, rightBorder);
+            collisionManager.handleBallBricksCollisions(ball, bricks);
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (ball.active) {
             paddle.draw(deltaTime);
             ball.draw(deltaTime);
+        }
+        for (auto &brick: bricks) {
+            if (brick.isActive()) {
+                brick.draw(deltaTime);
+            }
         }
         leftBorder.draw(deltaTime);
         rightBorder.draw(deltaTime);

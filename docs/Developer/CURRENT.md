@@ -1,4 +1,23 @@
-# Extracting Powerup and PowerupManager from Main
+In einer guten Spielarchitektur sollte die Kollisionsbehandlung auf folgende Weise aufgeteilt werden:
+
+CollisionManager:
+
+- Erkennt Kollisionen zwischen Objekten (checkCollision)
+- Berechnet Kollisionsrichtungen und Überlappungen
+- Ruft die onCollision-Methoden der beteiligten Objekte auf
+
+Die Objekte selbst (über ICollideable):
+-Implementieren ihre spezifische Reaktion auf Kollisionen
+-Beispiel: Ein Brick deaktiviert sich beim Treffer
+
+EventManager:
+Verbreitet Kollisionsereignisse an interessierte Komponenten
+Beispiel: Punkte vergeben, Soundeffekte abspielen
+
+GameManager:
+Reagiert auf höherer Ebene (Level abgeschlossen wenn alle Bricks zerstört)
+
+## Extracting Powerup and PowerupManager from Main
 
 Ich denke, ich nähere mich einer sauberen Lösung, die das Singleton-Prinzip vermeidet und die Komponenten entkoppelt.
 

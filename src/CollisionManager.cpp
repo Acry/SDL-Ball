@@ -1,6 +1,10 @@
 // CollisionManager.cpp
 #include <cmath>
 #include "CollisionManager.h"
+#include "Ball.h"
+#include "Brick.h"
+#include "Paddle.h"
+#include "PlayfieldBorder.h"
 
 //        +1
 //         ^
@@ -14,7 +18,6 @@
 //   |              |
 //   |              |
 // (0, 0) ------- (1, 0)
-
 
 bool CollisionManager::checkCollision(const ICollideable &obj1, const ICollideable &obj2) {
     //                               LB,               PAD
@@ -71,6 +74,23 @@ bool CollisionManager::checkCollision(const ICollideable &obj1, const ICollideab
 }
 
 void CollisionManager::processCollisions(const std::vector<ICollideable *> &objects) {
+    /*
+     Im GameManager oder in der Hauptschleife
+std::vector<ICollideable*> gameObjects;
+gameObjects.push_back(&ball);
+gameObjects.push_back(&paddle);
+gameObjects.push_back(&leftBorder);
+gameObjects.push_back(&rightBorder);
+gameObjects.push_back(&topBorder);
+
+// Alle Bricks hinzufügen
+for (auto& brick : bricks) {
+    gameObjects.push_back(&brick);
+}
+
+// Eine einzige Kollisionsprüfung für alles
+collisionManager.processCollisions(gameObjects);
+    */
     // Alle Objekte miteinander auf Kollisionen prüfen
     const size_t objectCount = objects.size();
 
@@ -89,5 +109,71 @@ void CollisionManager::processCollisions(const std::vector<ICollideable *> &obje
                 obj2->onCollision(obj1, hitX, hitY);
             }
         }
+    }
+}
+
+void CollisionManager::handleBallBricksCollisions(Ball& ball, std::vector<Brick>& bricks) {
+    for (auto& brick : bricks) {
+        if (brick.isActive() && checkCollision(ball, brick)) {
+            // Kollisionsrichtung bestimmen
+            const float overlapX = std::min(ball.pos_x + ball.width, brick.getPosX() + brick.getWidth()) -
+                            std::max(ball.pos_x, brick.getPosX());
+            const float overlapY = std::min(ball.pos_y + ball.height, brick.getPosY() + brick.getHeight()) -
+                            std::max(ball.pos_y, brick.getPosY());
+
+            // Ball-Physik aktualisieren
+            if (overlapX < overlapY) {
+                ball.xvel = -ball.xvel;
+            } else {
+                ball.yvel = -ball.yvel;
+            }
+
+            // Kollision dem Brick mitteilen
+            brick.onCollision(&ball, 0, 0);
+
+            //break;
+
+        }
+    }
+}
+
+void CollisionManager::handleBallBorderCollisions(Ball& ball,
+                                                 const PlayfieldBorder& leftBorder,
+                                                 const PlayfieldBorder& rightBorder,
+                                                 const PlayfieldBorder& topBorder) {
+    if (checkCollision(ball, rightBorder)) {
+        ball.pos_x = rightBorder.getPosX() - ball.width;
+        ball.xvel = -ball.xvel;
+    } else if (checkCollision(ball, leftBorder)) {
+        ball.pos_x = leftBorder.getPosX() + leftBorder.getWidth();
+        ball.xvel = -ball.xvel;
+    }
+
+    if (checkCollision(ball, topBorder)) {
+        ball.pos_y = topBorder.getPosY() - ball.height;
+        ball.yvel = -ball.yvel;
+    }
+}
+
+void CollisionManager::handleBallPaddleCollision(Ball& ball, const Paddle& paddle) {
+    if (checkCollision(ball, paddle)) {
+        ball.pos_y = paddle.getPosY() + paddle.height;
+        float relativeIntersectX = (ball.pos_x + ball.width / 2.0f) - (paddle.pos_x + paddle.width / 2.0f);
+        float normalizedIntersect = relativeIntersectX / (paddle.width / 2.0f);
+        // Winkelbereich zwischen -60° und 60° (in Radiant)
+        float angle = normalizedIntersect * (M_PI / 3.0f);
+        // Geschwindigkeit beibehalten, aber Richtung ändern
+        ball.xvel = ball.velocity * sin(angle);
+        ball.yvel = ball.velocity * cos(angle);
+    }
+}
+
+void CollisionManager::handlePaddleBorderCollisions(Paddle& paddle,
+                                                   const PlayfieldBorder& leftBorder,
+                                                   const PlayfieldBorder& rightBorder) {
+    if (checkCollision(leftBorder, paddle)) {
+        paddle.pos_x = leftBorder.getPosX() + leftBorder.getWidth();
+    } else if (checkCollision(paddle, rightBorder)) {
+        paddle.pos_x = rightBorder.getPosX() - paddle.getWidth();
     }
 }

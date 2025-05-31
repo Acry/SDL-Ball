@@ -19,6 +19,7 @@ AUTOMATIC_TEST_DIR := tests/automatic/
 SOURCES := $(addprefix $(SOURCE_DIR), \
     BackgroundManager.cpp \
     Ball.cpp \
+    Brick.cpp \
     CollisionManager.cpp \
     ConfigFileManager.cpp \
     Display.cpp \
@@ -367,6 +368,7 @@ COLLISION_TEST_SOURCES := $(MANUAL_TEST_DIR)Collision_Tests.cpp \
                           $(MANUAL_TEST_DIR)TestHelper.cpp \
                           $(SOURCE_DIR)Ball.cpp \
                           $(SOURCE_DIR)Paddle.cpp \
+                          $(SOURCE_DIR)Brick.cpp \
                           $(SOURCE_DIR)GameObject.cpp \
                           $(SOURCE_DIR)MovingObject.cpp \
                           $(SOURCE_DIR)GrowableObject.cpp \

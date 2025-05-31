@@ -1,65 +1,43 @@
 #pragma once
-#include <GL/gl.h>
+#include <epoxy/gl.h>
 #include "GameObject.h"
-#include <array>
+#include "ICollideable.h"
+#include "EventManager.h"
 
-// nasty fix to a problem
-int nbrick[23][26];
-int updated_nbrick[23][26];
+class Brick : public GameObject, public ICollideable {
+    void drawBase() const;
 
-/*
-    Beispiel
-    Brick::resetGrid(); // Grid initialisieren
+    GLfloat health{1.0f}; // Health of the brick, 1.0 means full health
+    bool isDestroyed{false}; // Flag to check if the brick is destroyed
+    EventManager *eventManager;
 
-    Brick brick;
-    brick.setType('1');
-    brick.updateGridPosition(42); // Setzt Position im Grid
-*/
-
-class Brick : public GameObject {
 public:
-    static constexpr int ROWS = 23;
-    static constexpr int COLS = 26;
+    void draw(float deltaTime) override;
 
-    Brick();
+    explicit Brick(EventManager *eventMgr);
 
-    // Getter/Setter
-    void setScore(int value);
-    [[nodiscard]] int getScore() const;
-    void setDestroyToWin(bool value);
-    [[nodiscard]] bool mustDestroyToWin() const;
-    void setPowerup(char value);
-    [[nodiscard]] char getPowerup() const;
-    void setType(char value);
-    [[nodiscard]] char getType() const;
+    void init() override;
 
-    // Gameplay Methoden
-    void hit();
-    void makeExplosive();
-    [[nodiscard]] bool hasNeighbor(int direction) const;
-    void updateGridPosition(int gridIndex);
+    int getCollisionType() const override;
 
-    static void resetGrid();
-    static void updateGrid();
+    void update(float deltaTime) override {
+        // Bricks haben kein spezielles Update-Verhalten
+    }
 
-private:
-    int score;
-    bool destroytowin;
-    char powerup;
-    char type;
-    GLfloat fade;
-    GLfloat fadespeed;
-    GLfloat zoomspeed;
-    GLfloat zoom;
-    bool isdyingnormally;
-    bool isexploding;
-    int row;
-    int bricknum;
-    int hitsLeft;
-    bool justBecomeExplosive;
-
-    static std::array<std::array<int, COLS>, ROWS> grid;
-    static std::array<std::array<int, COLS>, ROWS> updatedGrid;
+    float getPosX() const override { return pos_x; }
+    float getPosY() const override { return pos_y; }
+    float getWidth() const override { return width; }
+    float getHeight() const override { return height; }
+    bool isActive() const override { return GameObject::isActive(); }
+    void onCollision(ICollideable *other, float hitX, float hitY) override {
+        // Verhalten bei Kollision
+        if (other->getCollisionType() == static_cast<int>(CollisionType::Ball)) {
+            active = false; // Brick wird deaktiviert bei Kollision mit Ball
+        }
+    }
+    ~Brick() override;
+    void setPosition(const float x, const float y) {
+        pos_x = x;
+        pos_y = y;
+    }
 };
-
-

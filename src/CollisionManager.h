@@ -3,6 +3,11 @@
 
 #include "ICollideable.h"
 
+class Paddle;
+class PlayfieldBorder;
+class Ball;
+class Brick;
+
 struct CollisionPoint {
     float x;
     float y;
@@ -20,9 +25,17 @@ public:
     // Prüfe alle Kollisionen zwischen Objekten und leite Events weiter
     static void processCollisions(const std::vector<ICollideable *> &objects);
 
-    static bool checkCollisionWithBorder(
-        const ICollideable &movingObject,
-        const ICollideable &border,
-        float &hitX,
-        float &hitY);
+    static void handleBallBricksCollisions(Ball& ball, std::vector<Brick>& bricks);
+
+    static void handleBallBorderCollisions(Ball& ball,
+                                      const PlayfieldBorder& leftBorder,
+                                      const PlayfieldBorder& rightBorder,
+                                      const PlayfieldBorder& topBorder);
+
+    static void handleBallPaddleCollision(Ball& ball, const Paddle& paddle);
+
+    static void handlePaddleBorderCollisions(Paddle& paddle,
+                                            const PlayfieldBorder& leftBorder,
+                                            const PlayfieldBorder& rightBorder);
+
 };

@@ -497,5 +497,22 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
         }
         animation.textureProperties.glTexColorInfo[3] = 1.0f;
     }
+
+    // 6. check colors and set fallback if not set
+    bool hasColor = false;
+    for (int i = 0; i < 4; i++) {
+        if (animation.textureProperties.glTexColorInfo[i] > 0.0f) {
+            hasColor = true;
+            break;
+        }
+    }
+    if (!hasColor) {
+        SDL_Log("Warning: No texture color set in '%s', using white", basePath.c_str());
+        for (int i = 0; i < 3; i++) {
+            animation.textureProperties.glTexColorInfo[i] = 1.0f;
+            animation.textureProperties.glParColorInfo[i] = 1.0f;
+        }
+        animation.textureProperties.glTexColorInfo[3] = 1.0f;
+    }
     return true;
 }
