@@ -9,11 +9,14 @@
 class EventManager;
 
 struct sampleQueuedItem {
-    int s, p, num;
+    int s; // Sound-Index
+    int p; // Panning
+    int volume{MIX_MAX_VOLUME}; // Lautstärke basierend auf y-Position
+    int num{1}; // Anzahl der Wiederholungen
 };
 
 class SoundManager {
-    EventManager* eventManager = nullptr;
+    EventManager *eventManager = nullptr;
     Mix_Chunk *sample[USED_SOUND_SAMPLES];
     std::vector<sampleQueuedItem> q;
 
@@ -30,13 +33,13 @@ public:
 
     void play();
 
-    void queueSound(int i, GLfloat x);
+    void queueSound(int i, GLfloat x, GLfloat y);
 
     bool setSoundTheme(const std::string &fontFilePath);
 
     void clearSoundTheme();
 
-    void registerEvents(EventManager* evManager);
+    void registerEvents(EventManager *evManager);
 
     ~SoundManager();
 };

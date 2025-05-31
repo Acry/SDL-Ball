@@ -48,12 +48,24 @@ bool SoundManager::loadSample(const char *SampleName, const int sampleNum) {
     return true;
 }
 
-/* This function puts a sample in the queue for playing */
-void SoundManager::queueSound(const int i, const GLfloat x) {
+void SoundManager::queueSound(const int i, const GLfloat x, const GLfloat y = 0.0f) {
+    // Panning berechnen (links/rechts basierend auf x)
     const int p = (255.0 / 3.2) * (x + 1.0);
+
+    // Minimale Lautstärke (50% des Maximums)
+    constexpr float MIN_VOLUME_PERCENTAGE = 0.5f;
+
+    // Lautstärke mit Mindestpegel berechnen
+    // y=-1.0 (Paddle): 100% Lautstärke
+    // y=+1.0 (oberer Rand): 50% Lautstärke
+    const float normalizedY = (y + 1.0f) / 2.0f;
+    const int volume = MIX_MAX_VOLUME * (MIN_VOLUME_PERCENTAGE +
+                                         (1.0f - MIN_VOLUME_PERCENTAGE) * (1.0f - normalizedY));
+
     sampleQueuedItem qt;
-    qt.s = i;
-    qt.p = p;
+    qt.s = i; // Sound-Index
+    qt.p = p; // Panning
+    qt.volume = volume; // Neue Eigenschaft für Lautstärke
     q.push_back(qt);
 }
 
@@ -99,80 +111,81 @@ bool SoundManager::setSoundTheme(const std::string &soundTheme) {
     return allSamplesLoaded;
 }
 
-/* This function is called only when drawing a frame, and plays the queue of samples,
-   It will average the x/stereo position of a sample if it is queued more than once */
 void SoundManager::play() {
-    //Playlist (lol, imagination for the win...)
+    // Playlist für zusammengefasste Sounds
     std::vector<sampleQueuedItem> pl;
-    std::vector<sampleQueuedItem>::iterator plIt;
-    bool same = false;
-    int freeChannel = -1; //The channel we will use for this sample
 
-    //Loop through queue and find samples thare are the same, average their position and put in a new vector
+    // Queue durchlaufen und gleiche Samples zusammenfassen
     for (auto &it: q) {
-        //Loop thrugh the playlist to see find out if this allready exist
-        same = false;
-        for (plIt = pl.begin(); plIt != pl.end(); ++plIt) {
+        bool same = false;
+        for (auto plIt = pl.begin(); plIt != pl.end(); ++plIt) {
             if (plIt->s == it.s) {
                 same = true;
                 plIt->num++;
                 plIt->p += it.p;
+                plIt->volume += it.volume;
             }
         }
 
-        //this sample is not yet in the playlist
+        // Sample noch nicht in der Playlist
         if (!same) {
             pl.push_back(it);
-            plIt = pl.end();
-            --plIt;
-            plIt->num = 1;
+            pl.back().num = 1;
         }
     }
     q.clear();
 
-    //Play the actual samples :)
-    for (plIt = pl.begin(); plIt != pl.end(); ++plIt) {
-        //Find a free channel:
+    // Aktuelle Samples abspielen
+    for (auto &item: pl) {
+        int freeChannel = -1;
+
+        // Freien Kanal suchen
         for (int i = 0; i < currentChannels; i++) {
             if (!Mix_Playing(i)) {
                 freeChannel = i;
                 break;
             }
         }
-        plIt->p /= plIt->num;
-        Mix_SetPanning(freeChannel, 255 - plIt->p, plIt->p);
 
-        if (plIt->s == SND_NORM_BRICK_BREAK) {
-            switch (breakSoundIndex) {
-                //Case 0 = SND_NORM_BREAK(a)
-                case 1:
-                    plIt->s = SND_NORM_BRICK_BREAKB;
-                    break;
-                case 2:
-                    plIt->s = SND_NORM_BRICK_BREAKC;
-                    break;
-                case 3:
-                    plIt->s = SND_NORM_BRICK_BREAKD;
-                    break;
-                case 4:
-                    plIt->s = SND_NORM_BRICK_BREAKE;
-                    break;
-                default: ;
-            }
-
-            breakSoundIndex++;
-            if (breakSoundIndex == 5)
-                breakSoundIndex = 0;
+        // Kein freier Kanal gefunden
+        if (freeChannel == -1) {
+            SDL_Log("Kein freier Audiokanal verfügbar für Sound %i", item.s);
+            continue;
         }
 
-        if (Mix_PlayChannel(freeChannel, sample[plIt->s], 0) == -1) {
-            printf("Sample %i: %s\n", plIt->s, Mix_GetError());
+        // Soundvarianten für normale Brick-Breaks
+        if (item.s == SND_NORM_BRICK_BREAK) {
+            switch (breakSoundIndex) {
+                case 1: item.s = SND_NORM_BRICK_BREAKB;
+                    break;
+                case 2: item.s = SND_NORM_BRICK_BREAKC;
+                    break;
+                case 3: item.s = SND_NORM_BRICK_BREAKD;
+                    break;
+                case 4: item.s = SND_NORM_BRICK_BREAKE;
+                    break;
+                default: ; // Case 0 = SND_NORM_BREAK(a)
+            }
+
+            breakSoundIndex = (breakSoundIndex + 1) % 5;
+        }
+
+        // Durchschnittswerte berechnen
+        item.p /= item.num;
+        item.volume /= item.num;
+
+        // Audio-Eigenschaften setzen
+        Mix_SetPanning(freeChannel, 255 - item.p, item.p);
+        Mix_VolumeChunk(sample[item.s], item.volume);
+
+        if (Mix_PlayChannel(freeChannel, sample[item.s], 0) == -1) {
+            SDL_Log("Error: Sample %i: %s", item.s, Mix_GetError());
         }
     }
 }
 
 SoundManager::~SoundManager() {
-        if (eventManager) {
+    if (eventManager) {
         // Alle Event-Listener entfernen
         eventManager->removeListener(GameEvent::BallHitLeftBorder, this);
         eventManager->removeListener(GameEvent::BallHitRightBorder, this);
@@ -192,35 +205,35 @@ void SoundManager::clearSoundTheme() {
     }
 }
 
-void SoundManager::registerEvents(EventManager* evManager) {
+void SoundManager::registerEvents(EventManager *evManager) {
     if (!evManager) return;
 
     eventManager = evManager;
 
     // Kollisions-Events mit Sounds verknüpfen
-    eventManager->addListener(GameEvent::BallHitLeftBorder, [this](const EventData& data) {
-        this->queueSound(SND_BALL_HIT_BORDER, data.posX);
+    eventManager->addListener(GameEvent::BallHitLeftBorder, [this](const EventData &data) {
+        this->queueSound(SND_BALL_HIT_BORDER, data.posX, data.posY);
     }, this);
 
-    eventManager->addListener(GameEvent::BallHitRightBorder, [this](const EventData& data) {
-        this->queueSound(SND_BALL_HIT_BORDER, data.posX);
+    eventManager->addListener(GameEvent::BallHitRightBorder, [this](const EventData &data) {
+        this->queueSound(SND_BALL_HIT_BORDER, data.posX, data.posY);
     }, this);
 
-    eventManager->addListener(GameEvent::BallHitTopBorder, [this](const EventData& data) {
-        this->queueSound(SND_BALL_HIT_BORDER, data.posX);
+    eventManager->addListener(GameEvent::BallHitTopBorder, [this](const EventData &data) {
+        this->queueSound(SND_BALL_HIT_BORDER, data.posX, data.posY);
     }, this);
 
-    eventManager->addListener(GameEvent::BallHitPaddle, [this](const EventData& data) {
-        this->queueSound(SND_BALL_HIT_PADDLE, data.posX);
+    eventManager->addListener(GameEvent::BallHitPaddle, [this](const EventData &data) {
+        this->queueSound(SND_BALL_HIT_PADDLE, data.posX, data.posY);
     }, this);
 
-    eventManager->addListener(GameEvent::BrickDestroyed, [this](const EventData& data) {
-        this->queueSound(SND_NORM_BRICK_BREAK, data.posX);
+    eventManager->addListener(GameEvent::BrickDestroyed, [this](const EventData &data) {
+        this->queueSound(SND_NORM_BRICK_BREAK, data.posX, data.posY);
     }, this);
 
     // FIXME
     eventManager->addListener(GameEvent::BallHitBrick, [this](const EventData &data) {
-        this->queueSound(SND_NORM_BRICK_BREAK, data.posX);
+        this->queueSound(SND_NORM_BRICK_BREAK, data.posX, data.posY);
     }, this);
     // Weitere Event-Listener hinzufügen...
 }
