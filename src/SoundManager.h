@@ -9,8 +9,8 @@
 class EventManager;
 
 struct sampleQueuedItem {
-    int s; // Sound-Index
-    int p; // Panning
+    int s{}; // Sound-Index
+    int p{}; // Panning
     int volume{MIX_MAX_VOLUME}; // Lautstärke basierend auf y-Position
     int num{1}; // Anzahl der Wiederholungen
 };

@@ -6,9 +6,11 @@
 #include <tuple>
 //#include <SDL2/SDL.h>
 
+#include "LevelManager.h"
+#include "config.h"
 //#include "game_state.h"
 #include "ThemeManager.h"
-#include "settings_manager.h"
+#include "SettingsManager.h"
 
 using LevelOffset = std::tuple<std::streampos, std::streampos>;
 extern ThemeManager themeManager;
@@ -277,6 +279,8 @@ bool set_up_bricks_for_level(const size_t level, brick bricks[], texture texLvl[
     for (int row = 0; row < 23; row++) {
         for (int brick = 0; brick < 26; brick++) {
             // todo: säulen links und rechts berücksichtigen
+            // config.h left and right border
+            // PLAYFIELD_LEFT_BORDER PLAYFIELD_RIGHT_BORDER PLAYFIELD_TOP_BORDER
             bricks[i].posx = -1.0f + (brick + 0.5f) * BRICK_WIDTH;
             bricks[i].posy = 1.0f - (row + 0.5f) * BRICK_HEIGHT;
 

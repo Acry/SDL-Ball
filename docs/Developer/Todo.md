@@ -154,6 +154,8 @@ ___
 
 ### Gameplay
 
+- [ ] tiled backrounds
+- [ ] animated backgrounds (spritsheet oder colors)
 - [ ] make BackgroundManager-Shader responsive to events
 - [ ] setting titleScreenShow
 - [ ] implement the tainting of the background, with a reasonable mix (blend) function and settings
@@ -167,7 +169,7 @@ ___
 - [ ] Make the game playable without datafiles (random levels, no samplers)
 - [ ] simple GPU-Sounds?
 - [ ] create reandom levels
-
+- [ ] mod support for music and samples
 - [X] make game playable with keys
 - [ ] fix projection for submenus
 - [ ] change difficulty
@@ -178,12 +180,17 @@ ___
 - [ ] use sdl2 highperformance timer, see: [Timing](Physics%20&%20Timing/Timing.md)
 - [ ] credits scene
 - [ ] save game should save the state of the game, not just the level
-- [ ] Fade in Paddle
-- [ ] Fade in Ball
+- [ ] Fade in Paddle?
+- [ ] Fade in Ball?
 - [ ] Animate Paddle texture
 - [ ] Animate Glue layer
+  Blocker: play animation once
 - [ ] [SpriteSheetAnimation](misc/SpriteSheetAnimation.md) einmaliges Abspielen implementieren
 
+Themes
+
+- [Arkanoid ](Themes/Araknoid.md) smalle playfield
+- Retro [Theme](Themes/Retro.md)
 #### Tracer
 
 - [ ] Tracer, to EffectManager

@@ -1,58 +1,103 @@
 # TextureManager
 
-Ich denke, wir sollten zuerst die Properties auslesen und dann die Textur laden.
-Denn überlicherweise steht dort die Datei, die geladen werden soll.
+## Konzept
 
-[ ] Wenn ein Textur-Theme nicht in ordnung ist, default-Thema nutzen
-[ ] Embedded Thema
+Ablauf:
 
-    const std::filesystem::path texturePath = "../themes/default/gfx/paddle/base.png";
-    const std::filesystem::path propsPath = "../themes/default/gfx/paddle/base.txt";
+SETTING:
+TextureManager::setTheme - highest level, loads all themes
 
-Machen wir nicht. Wir lassen die Endung weg. Dann wird versucht beides zu laden.
+    TextureManager::setSpriteTheme
+        TextureManager::setBallTheme
+        TextureManager::setPaddleTheme
+        TextureManager::setBrickTheme
+    TextureManager::setPowerupTheme
+    TextureManager::setBgTheme
+    TextureManager::setEffectsTheme
+    TextureManager::setMiscTheme
+    TextureManager::setHudTheme
+    TextureManager::setMenuTheme
 
-Test für brick/glass.png und brick/glass.txt
+LOADING:
+TextureManager::loadAllGameTextures -> TextureManager::loadAndCacheTexture -> TextureManager::loadTextureWithProperties
 
-file=brick/glass.png
-ticks=1000
-cols=1
-rows=2
-xoffset=1.0
-yoffset=0.5
-frames=2
-playing=0
-bidir=0
-padding=0
-texcolor=FFFFFFA0
-parcolor=FFFFFF
+GETTING:
+getAllTextures
+getBallTexture
+getPaddleTexture
+aso.
+getTexture
 
-Test für brick/green.txt
+## Thoughts
 
-Fehler: Keine Bilddatei für...
-Ein Fehler ist es erst dann, wenn file=brick/base.png a) weder bild noch textur, b) im text die property file= fehlt
-oder leer ist. oder c) die Datei nicht existiert.
+Klare Typisierung mit spezialisierten Texturklassen
+Homogenisierung des Textur-Systems mit automatischer Zuweisung
+Homogenes Rendering-Interface über die virtuelle draw-Methode
 
-## Bisher:
+ball brick und paddle mal an, die erben von Gameobject und haben GameObject:: SpriteSheetAnimation texture;
 
-Explizites Laden von Texturen und SpriteSheetAnimationen
+Ball hat zum beidpiel noch zusätzlich SpriteSheetAnimation fireTex;
 
-```c++
-"SpriteSheetAnimation.h"
-"TextureProperties.h"
+Paddle SpriteSheetAnimation *layerTex{};
 
-TextureManager textureManager
-SpriteSheetAnimation tex;
+ich würde das ergene homogenisieren.
 
-Ball ball(&eventManager);
-const std::filesystem::path ballTexPath = "../themes/default/gfx/ball/normal.png";
-const std::filesystem::path ballPropsPath = "../themes/default/gfx/ball/normal.txt";
+SpriteSheetAnimation fireTex; würde der typ SpriteSheetAnimation fireball heißen, wie im theme wäre die zuordnung
+leicht.
+sie ersetzt die bestehende textur.
 
-if (!textureManager.load(ballTexPath, ball.texture)) {
-    SDL_Log("Fehler beim Laden der Ball-Textur: %s", ballTexPath.c_str());
-    return EXIT_FAILURE;
+bei den layern ist das anders, die werden über der z oder unter der z tiefe gezeichnet
+der glue-layer, hat eine höhrere z tiefe.
+
+der gun layer, sogar einen höheren Y-wert. also eine andere art von layer
+
+wie wäre es mit typen die vom textur-typ erben.
+
+Texturhierarchie
+z.B. Texture -> SpritsheetAnimation -> ExtenderSpritsheetAnimation
+-> LayeredSpriteSheetAnimation
+-> ReplaceSpriteSheetAnimation
+
+class StaticTexture : public Texture
+class SpriteTexture : public Texture
+class LayeredTexture : public SpriteTexture
+class SwitchableTexture : public SpriteTexture
+
+setTexture<LayeredTexture>();
+auto* layeredTex = dynamic_cast<LayeredTexture*>(texture.get());
+if (layeredTex) {
+// Glue-Layer hinzufügen
+SpriteTexture glueTex;
+// glueTex konfigurieren...
+layeredTex->addLayer(glueTex);
+layeredTex->setLayerActive(0, false); // Standardmäßig deaktiviert
+
+void setGlueLayer(bool enabled) {
+hasGlueLayer = enabled;
+auto* layeredTex = dynamic_cast<LayeredTexture*>(texture.get());
+if (layeredTex) {
+layeredTex->setLayerActive(0, enabled);
 }
-textureManager.readTexProps(ballPropsPath, ball.texture);
-```
+}
+void setGunLayer(bool enabled) {
+hasGunLayer = enabled;
+auto* layeredTex = dynamic_cast<LayeredTexture*>(texture.get());
+if (layeredTex) {
+layeredTex->setLayerActive(1, enabled);
+}
+}
+void draw(float deltaTime) override {
+if (!active) return;
+
+        // Vereinfachte Zeichenroutine
+        texture->draw(pos_x, pos_y, width, height, deltaTime);
+    }
+
+## Cache rework
+
+Das Problem liegt darin, dass loadTextureWithProperties direkt vom Code aufgerufen wird, ohne den Cache zu prüfen.
+
+Eine Lösung besteht darin, alle Texturladungen über loadAndCacheTexture zu leiten.
 
 ## Verknüpfung ThemeManager - TextureManager
 

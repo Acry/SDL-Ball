@@ -54,6 +54,10 @@ TextureManager::TextureManager()
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
 }
 
+TextureManager::~TextureManager() {
+    clearTheme();
+}
+
 bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const {
     SDL_Surface *tempSurface = IMG_Load(pathName.c_str());
     if (!tempSurface) {
@@ -194,10 +198,6 @@ bool TextureManager::readTextureProperties(const std::filesystem::path &pathName
     return true;
 }
 
-TextureManager::~TextureManager() {
-    clearTheme();
-}
-
 bool TextureManager::setSpriteTheme(const std::string &themeName) {
     if (currentTheme == themeName) return true;
     if (!std::filesystem::exists(themeName)) {
@@ -245,7 +245,7 @@ SpriteSheetAnimation *TextureManager::loadAndCacheTexture(const std::string &pat
 
     auto newTexture = std::make_unique<SpriteSheetAnimation>();
 
-    std::string fullPath = currentTheme + "/" + path;
+    const std::string fullPath = currentTheme + "/" + path;
 
     if (!loadTextureWithProperties(fullPath, *newTexture)) {
         SDL_Log("Fehler: Konnte Textur nicht laden: %s", fullPath.c_str());

@@ -69,6 +69,7 @@ void SoundManager::queueSound(const int i, const GLfloat x, const GLfloat y = 0.
     q.push_back(qt);
 }
 
+// FIXME: setTheme "../themes/default" - path, theme-name
 bool SoundManager::setSoundTheme(const std::string &soundTheme) {
     clearSoundTheme();
     const std::filesystem::path path(soundTheme);
