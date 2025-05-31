@@ -14,7 +14,11 @@ struct CollisionPoint {
 };
 
 class CollisionManager {
+    EventManager *eventManager = nullptr;
+
 public:
+    explicit CollisionManager(EventManager *eventMgr);
+
     // Einfache Kollisionserkennung
     static bool checkCollision(const ICollideable &obj1, const ICollideable &obj2);
 
@@ -32,7 +36,7 @@ public:
                                            const PlayfieldBorder &rightBorder,
                                            const PlayfieldBorder &topBorder);
 
-    static void handleBallPaddleCollision(Ball &ball, const Paddle &paddle);
+    void handleBallPaddleCollision(Ball &ball, const Paddle &paddle) const;
 
     static void handlePaddleBorderCollisions(Paddle &paddle,
                                              const PlayfieldBorder &leftBorder,

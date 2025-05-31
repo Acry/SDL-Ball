@@ -6,11 +6,14 @@
 #include <epoxy/gl.h>
 #include "config.h"
 
+class EventManager;
+
 struct sampleQueuedItem {
     int s, p, num;
 };
 
 class SoundManager {
+    EventManager* eventManager = nullptr;
     Mix_Chunk *sample[USED_SOUND_SAMPLES];
     std::vector<sampleQueuedItem> q;
 
@@ -32,6 +35,8 @@ public:
     bool setSoundTheme(const std::string &fontFilePath);
 
     void clearSoundTheme();
+
+    void registerEvents(EventManager* evManager);
 
     ~SoundManager();
 };

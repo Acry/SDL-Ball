@@ -57,7 +57,7 @@ TEST_TARGETS := \
     test-paddle \
     theme-test \
     test-text \
-    sound-test \
+    test-sound \
     test-ball \
     effect-test \
     test-texture \
@@ -277,13 +277,14 @@ $(BUILD_DIR)TextManager_Tests.o: $(MANUAL_TEST_DIR)TextManager_Tests.cpp
 ###############################################################################
 # SoundManager
 SOUND_TEST_SOURCES := $(MANUAL_TEST_DIR)SoundManager_Tests.cpp \
+                      $(SOURCE_DIR)EventManager.cpp \
                       $(SOURCE_DIR)SoundManager.cpp \
                       $(SOURCE_DIR)Display.cpp
 
 SOUND_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOUND_TEST_SOURCES:.cpp=.o)))
 
-sound-test: $(SOUND_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(SOUND_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)sound-test
+test-sound: $(SOUND_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(SOUND_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-sound
 
 $(BUILD_DIR)SoundManager_Tests.o: $(MANUAL_TEST_DIR)SoundManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
@@ -379,7 +380,8 @@ COLLISION_TEST_SOURCES := $(MANUAL_TEST_DIR)Collision_Tests.cpp \
                           $(SOURCE_DIR)TextureUtilities.cpp \
                           $(SOURCE_DIR)CollisionManager.cpp \
                           $(SOURCE_DIR)PlayfieldBorder.cpp \
-                          $(SOURCE_DIR)EventManager.cpp
+                          $(SOURCE_DIR)EventManager.cpp \
+                          $(SOURCE_DIR)SoundManager.cpp \
 
 COLLISION_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(COLLISION_TEST_SOURCES:.cpp=.o)))
 

@@ -6,6 +6,8 @@
 #include <SDL_log.h>
 #include <string>
 
+#include "EventManager.h"
+
 SoundManager::SoundManager() : sample{}, q{}, soundThemePath{}, currentChannels{0}, breakSoundIndex{0} {
     // Array der Samples initialisieren
     for (auto &i: sample) {
@@ -171,6 +173,15 @@ void SoundManager::play() {
 }
 
 SoundManager::~SoundManager() {
+        if (eventManager) {
+        // Alle Event-Listener entfernen
+        eventManager->removeListener(GameEvent::BallHitLeftBorder, this);
+        eventManager->removeListener(GameEvent::BallHitRightBorder, this);
+        eventManager->removeListener(GameEvent::BallHitTopBorder, this);
+        eventManager->removeListener(GameEvent::BallHitPaddle, this);
+        eventManager->removeListener(GameEvent::BrickDestroyed, this);
+        // Weitere Events...
+    }
     clearSoundTheme();
     Mix_CloseAudio();
     Mix_Quit();
@@ -180,4 +191,33 @@ void SoundManager::clearSoundTheme() {
     for (const auto &i: sample) {
         Mix_FreeChunk(i);
     }
+}
+
+void SoundManager::registerEvents(EventManager* evManager) {
+    if (!evManager) return;
+
+    eventManager = evManager;
+
+    // Kollisions-Events mit Sounds verknüpfen
+    eventManager->addListener(GameEvent::BallHitLeftBorder, [this](const EventData& data) {
+        this->queueSound(SND_BALL_HIT_BORDER, data.posX);
+    }, this);
+
+    eventManager->addListener(GameEvent::BallHitRightBorder, [this](const EventData& data) {
+        this->queueSound(SND_BALL_HIT_BORDER, data.posX);
+    }, this);
+
+    eventManager->addListener(GameEvent::BallHitTopBorder, [this](const EventData& data) {
+        this->queueSound(SND_BALL_HIT_BORDER, data.posX);
+    }, this);
+
+    eventManager->addListener(GameEvent::BallHitPaddle, [this](const EventData& data) {
+        this->queueSound(SND_BALL_HIT_PADDLE, data.posX);
+    }, this);
+
+    eventManager->addListener(GameEvent::BrickDestroyed, [this](const EventData& data) {
+        this->queueSound(SND_NORM_BRICK_BREAK, data.posX);
+    }, this);
+
+    // Weitere Event-Listener hinzufügen...
 }

@@ -10,8 +10,13 @@
 #include "CollisionManager.h"
 #include "difficulty_settings.h"
 #include "PlayfieldBorder.h"
+#include "SoundManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
+
+#undef EASY
+#undef NORMAL
+#undef HARD
 
 #define DEBUG_DRAW_BALL_BOUNDING_BOXES 0
 
@@ -27,9 +32,14 @@ int main() {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
     TestHelper testHelper(textManager);
-    CollisionManager collisionManager;
-    EventManager eventManager;
 
+    EventManager eventManager;
+    CollisionManager collisionManager(&eventManager);
+    SoundManager soundManager;
+    if (!soundManager.setSoundTheme("../themes/default/snd/")) {
+        SDL_Log("Fehler beim Laden des Sound-Themes");
+    }
+    soundManager.registerEvents(&eventManager);
     const TextureManager textureManager;
     SpriteSheetAnimation tex;
 
@@ -38,7 +48,7 @@ int main() {
     constexpr int BRICK_ROWS = 3;
     // Bricks initialisieren
     for (int row = 0; row < BRICK_ROWS; row++) {
-        const int BRICK_COLS = 7;
+        constexpr int BRICK_COLS = 7;
         for (int col = 0; col < BRICK_COLS; col++) {
             Brick brick(&eventManager);
             // Positionen berechnen (Anpassung nach Bedarf)
@@ -264,6 +274,8 @@ int main() {
             collisionManager.handleBallPaddleCollision(ball, paddle);
             collisionManager.handlePaddleBorderCollisions(paddle, leftBorder, rightBorder);
             collisionManager.handleBallBricksCollisions(ball, bricks);
+
+            soundManager.play();
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

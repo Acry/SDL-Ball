@@ -4,6 +4,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include "Paddle.h"
+
 enum class GameEvent {
     BallHitLeftBorder, // Index 0
     BallHitRightBorder, // Index 1
@@ -39,7 +41,7 @@ struct EventData {
     float posY{0};
     int soundID{-1};
     void *sender{nullptr};
-    void *target{nullptr};
+    const Paddle *target{nullptr};
     int points{0};
     // Weitere Daten nach Bedarf
 };

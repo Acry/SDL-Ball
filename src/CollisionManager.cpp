@@ -19,6 +19,10 @@
 //   |              |
 // (0, 0) ------- (1, 0)
 
+CollisionManager::CollisionManager(EventManager *eventMgr) : eventManager(eventMgr) {
+    this->eventManager = eventMgr;
+}
+
 bool CollisionManager::checkCollision(const ICollideable &obj1, const ICollideable &obj2) {
     //                               LB,               PAD
     const bool horizontalCollision = obj1.getPosX() + obj1.getWidth() > obj2.getPosX() &&
@@ -154,16 +158,25 @@ void CollisionManager::handleBallBorderCollisions(Ball &ball,
     }
 }
 
-void CollisionManager::handleBallPaddleCollision(Ball &ball, const Paddle &paddle) {
+void CollisionManager::handleBallPaddleCollision(Ball &ball, const Paddle &paddle) const {
     if (checkCollision(ball, paddle)) {
         ball.pos_y = paddle.getPosY() + paddle.height;
-        float relativeIntersectX = (ball.pos_x + ball.width / 2.0f) - (paddle.pos_x + paddle.width / 2.0f);
-        float normalizedIntersect = relativeIntersectX / (paddle.width / 2.0f);
+        const float relativeIntersectX = (ball.pos_x + ball.width / 2.0f) - (paddle.pos_x + paddle.width / 2.0f);
+        const float normalizedIntersect = relativeIntersectX / (paddle.width / 2.0f);
         // Winkelbereich zwischen -60° und 60° (in Radiant)
-        float angle = normalizedIntersect * (M_PI / 3.0f);
+        const float angle = normalizedIntersect * (M_PI / 3.0f);
+
         // Geschwindigkeit beibehalten, aber Richtung ändern
         ball.xvel = ball.velocity * sin(angle);
         ball.yvel = ball.velocity * cos(angle);
+
+        // Event auslösen
+        EventData data;
+        data.posX = ball.pos_x;
+        data.posY = ball.pos_y;
+        data.sender = &ball;
+        data.target = &paddle;
+        eventManager->emit(GameEvent::BallHitPaddle, data);
     }
 }
 
