@@ -219,7 +219,7 @@ void SoundManager::registerEvents(EventManager* evManager) {
     }, this);
 
     // FIXME
-    eventManager->addListener(GameEvent::BallHitBrick, [this](const EventData& data) {
+    eventManager->addListener(GameEvent::BallHitBrick, [this](const EventData &data) {
         this->queueSound(SND_NORM_BRICK_BREAK, data.posX);
     }, this);
     // Weitere Event-Listener hinzufügen...

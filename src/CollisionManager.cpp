@@ -200,7 +200,7 @@ void CollisionManager::handleBallPaddleCollision(Ball &ball, const Paddle &paddl
 
 void CollisionManager::handlePaddleBorderCollisions(Paddle &paddle,
                                                     const PlayfieldBorder &leftBorder,
-                                                    const PlayfieldBorder &rightBorder) const{
+                                                    const PlayfieldBorder &rightBorder) const {
     if (checkCollision(leftBorder, paddle)) {
         paddle.pos_x = leftBorder.getPosX() + leftBorder.getWidth();
     } else if (checkCollision(paddle, rightBorder)) {

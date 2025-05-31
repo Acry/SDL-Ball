@@ -32,13 +32,13 @@ public:
     void handleBallBricksCollisions(Ball &ball, std::vector<Brick> &bricks) const;
 
     void handleBallBorderCollisions(Ball &ball,
-                                           const PlayfieldBorder &leftBorder,
-                                           const PlayfieldBorder &rightBorder,
-                                           const PlayfieldBorder &topBorder) const;
+                                    const PlayfieldBorder &leftBorder,
+                                    const PlayfieldBorder &rightBorder,
+                                    const PlayfieldBorder &topBorder) const;
 
     void handleBallPaddleCollision(Ball &ball, const Paddle &paddle) const;
 
     void handlePaddleBorderCollisions(Paddle &paddle,
-                                             const PlayfieldBorder &leftBorder,
-                                             const PlayfieldBorder &rightBorder) const;
+                                      const PlayfieldBorder &leftBorder,
+                                      const PlayfieldBorder &rightBorder) const;
 };
