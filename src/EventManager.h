@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 
+#include "Brick.h"
 #include "Paddle.h"
 
 enum class GameEvent {
@@ -40,8 +41,8 @@ struct EventData {
     float posX{0};
     float posY{0};
     int soundID{-1};
-    void *sender{nullptr};
-    const Paddle *target{nullptr};
+    GameObject *sender{nullptr};
+    const GameObject *target{nullptr};
     int points{0};
     // Weitere Daten nach Bedarf
 };

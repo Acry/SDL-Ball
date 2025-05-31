@@ -1,11 +1,10 @@
 #include <vector>
-#include <SDL2/SDL_mixer.h>
-#include "SoundManager.h"
-
 #include <filesystem>
 #include <SDL_log.h>
 #include <string>
+#include <SDL2/SDL_mixer.h>
 
+#include "SoundManager.h"
 #include "EventManager.h"
 
 SoundManager::SoundManager() : sample{}, q{}, soundThemePath{}, currentChannels{0}, breakSoundIndex{0} {
@@ -219,5 +218,9 @@ void SoundManager::registerEvents(EventManager* evManager) {
         this->queueSound(SND_NORM_BRICK_BREAK, data.posX);
     }, this);
 
+    // FIXME
+    eventManager->addListener(GameEvent::BallHitBrick, [this](const EventData& data) {
+        this->queueSound(SND_NORM_BRICK_BREAK, data.posX);
+    }, this);
     // Weitere Event-Listener hinzufügen...
 }

@@ -34,7 +34,7 @@ int main() {
     TestHelper testHelper(textManager);
 
     EventManager eventManager;
-    CollisionManager collisionManager(&eventManager);
+    const CollisionManager collisionManager(&eventManager);
     SoundManager soundManager;
     if (!soundManager.setSoundTheme("../themes/default/snd/")) {
         SDL_Log("Fehler beim Laden des Sound-Themes");

@@ -116,7 +116,7 @@ collisionManager.processCollisions(gameObjects);
     }
 }
 
-void CollisionManager::handleBallBricksCollisions(Ball &ball, std::vector<Brick> &bricks) {
+void CollisionManager::handleBallBricksCollisions(Ball &ball, std::vector<Brick> &bricks) const {
     for (auto &brick: bricks) {
         if (brick.isActive() && checkCollision(ball, brick)) {
             // Kollisionsrichtung bestimmen
@@ -135,6 +135,13 @@ void CollisionManager::handleBallBricksCollisions(Ball &ball, std::vector<Brick>
             // Kollision dem Brick mitteilen
             brick.onCollision(&ball, 0, 0);
 
+            // Event auslösen
+            EventData data;
+            data.posX = ball.pos_x;
+            data.posY = ball.pos_y;
+            data.sender = &ball;
+            data.target = &brick;
+            eventManager->emit(GameEvent::BallHitBrick, data);
             //break;
         }
     }
@@ -143,18 +150,29 @@ void CollisionManager::handleBallBricksCollisions(Ball &ball, std::vector<Brick>
 void CollisionManager::handleBallBorderCollisions(Ball &ball,
                                                   const PlayfieldBorder &leftBorder,
                                                   const PlayfieldBorder &rightBorder,
-                                                  const PlayfieldBorder &topBorder) {
+                                                  const PlayfieldBorder &topBorder) const {
+    EventData data;
+    data.posX = ball.pos_x;
+    data.posY = ball.pos_y;
+    data.sender = &ball;
+
     if (checkCollision(ball, rightBorder)) {
         ball.pos_x = rightBorder.getPosX() - ball.width;
         ball.xvel = -ball.xvel;
+        data.target = &rightBorder;
+        eventManager->emit(GameEvent::BallHitRightBorder, data);
     } else if (checkCollision(ball, leftBorder)) {
         ball.pos_x = leftBorder.getPosX() + leftBorder.getWidth();
         ball.xvel = -ball.xvel;
+        data.target = &leftBorder;
+        eventManager->emit(GameEvent::BallHitLeftBorder, data);
     }
 
     if (checkCollision(ball, topBorder)) {
         ball.pos_y = topBorder.getPosY() - ball.height;
         ball.yvel = -ball.yvel;
+        data.target = &topBorder;
+        eventManager->emit(GameEvent::BallHitTopBorder, data);
     }
 }
 
@@ -182,7 +200,7 @@ void CollisionManager::handleBallPaddleCollision(Ball &ball, const Paddle &paddl
 
 void CollisionManager::handlePaddleBorderCollisions(Paddle &paddle,
                                                     const PlayfieldBorder &leftBorder,
-                                                    const PlayfieldBorder &rightBorder) {
+                                                    const PlayfieldBorder &rightBorder) const{
     if (checkCollision(leftBorder, paddle)) {
         paddle.pos_x = leftBorder.getPosX() + leftBorder.getWidth();
     } else if (checkCollision(paddle, rightBorder)) {
