@@ -26,6 +26,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     EffectManager.cpp \
     EventManager.cpp \
     GrowableObject.cpp \
+    LevelManager.cpp \
     MathHelper.cpp \
     Paddle.cpp \
     PlayfieldBorder.cpp \
@@ -50,18 +51,19 @@ $(shell mkdir -p $(BUILD_DIR))
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 TEST_TARGETS := \
     config-test \
+    effect-test \
     settings-test \
     test-background \
-    test-display \
-    test-spritesheet \
-    test-paddle \
-    theme-test \
-    test-text \
-    test-sound \
     test-ball \
-    effect-test \
-    test-texture \
     test-collision \
+    test-display \
+    test-level \
+    test-paddle \
+    test-sound \
+    test-spritesheet \
+    test-text \
+    test-texture \
+    theme-test \
 
 AUTO_TEST_TARGETS := texture-automatic-test event-automatic-test collision-automatic-test
 TARGET=sdl-ball
@@ -392,6 +394,35 @@ $(BUILD_DIR)Collision_Tests.o: $(MANUAL_TEST_DIR)Collision_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
+# LevelManager
+LEVEL_TEST_SOURCES := $(MANUAL_TEST_DIR)LevelManager_Tests.cpp \
+                      $(MANUAL_TEST_DIR)TestHelper.cpp \
+                      $(MANUAL_TEST_DIR)LevelManager.cpp \
+                      $(SOURCE_DIR)Ball.cpp \
+                      $(SOURCE_DIR)Paddle.cpp \
+                      $(SOURCE_DIR)Brick.cpp \
+                      $(SOURCE_DIR)GameObject.cpp \
+                      $(SOURCE_DIR)MovingObject.cpp \
+                      $(SOURCE_DIR)GrowableObject.cpp \
+                      $(SOURCE_DIR)Display.cpp \
+                      $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                      $(SOURCE_DIR)TextManager.cpp \
+                      $(SOURCE_DIR)TextureManager.cpp \
+                      $(SOURCE_DIR)TextureUtilities.cpp \
+                      $(SOURCE_DIR)CollisionManager.cpp \
+                      $(SOURCE_DIR)PlayfieldBorder.cpp \
+                      $(SOURCE_DIR)EventManager.cpp \
+                      $(SOURCE_DIR)SoundManager.cpp \
+
+LEVEL_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(LEVEL_TEST_SOURCES:.cpp=.o)))
+
+test-level: $(LEVEL_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(LEVEL_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-level
+
+$(BUILD_DIR)LevelManager_Tests.o: $(MANUAL_TEST_DIR)LevelManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
 # CLEANUP
 clean:
 	rm -rf $(BUILD_DIR)*.o $(BUILD_DIR)*-test $(BUILD_DIR)$(TARGET)
@@ -402,6 +433,9 @@ clean-tests:
 
 clean-all:
 	rm -rf $(BUILD_DIR) 2>/dev/null || true
+
+# END
+###############################################################################
 
 ###############################################################################
 # AUTOMATIC TESTS - GTEST
@@ -442,4 +476,16 @@ collision-automatic-test: $(COLLISION_ATEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(COLLISION_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)collision-automatic-test
 
 $(BUILD_DIR)CollisionManager_aTests.o: $(AUTOMATIC_TEST_DIR)CollisionManager_aTests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
+###############################################################################
+# level-automatic-test
+LEVEL_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)LevelManager_aTests.cpp \
+                       $(SOURCE_DIR)LevelManager.cpp
+
+LEVEL_ATEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(LEVEL_ATEST_SOURCES:.cpp=.o)))
+
+level-automatic-test: $(LEVEL_ATEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(LEVEL_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)level-automatic-test
+
+$(BUILD_DIR)LevelManager_aTests.o: $(AUTOMATIC_TEST_DIR)LevelManager_aTests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread

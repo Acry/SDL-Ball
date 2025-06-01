@@ -3,7 +3,7 @@
 
 Brick::Brick(EventManager *eventMgr) : eventManager(eventMgr) {
     this->eventManager = eventMgr;
-    init();
+    Brick::init();
 }
 
 void Brick::init() {

@@ -69,3 +69,4 @@ void PowerupManager::trySpawnPowerup(const float posX, const float posY) {
         spawnPowerup(posX, posY);
     }
 }
+

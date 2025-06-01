@@ -1,12 +1,27 @@
-#include "gtest/gtest.h"
-#include "../../src/loadlevel.cpp"
-#include <fstream>
-#include <sstream>
+#include <filesystem>
 
-// Helper function to create a simple level file
-void createLevelFile(const std::string &filename, const std::vector<std::string> &levelData) {
-    std::ofstream file(filename);
-    if (file.is_open()) {
+#include "gtest/gtest.h"
+#include "../../src/LevelManager.h"
+#include <fstream>
+
+
+// TODO: Refactoring auf Dependency Injection mit Interfaces.
+
+// Hilfsfunktion zum Erstellen eines Verzeichnisses
+void createDirectory(const std::string &dirName) {
+    try {
+        std::filesystem::create_directories(dirName);
+    } catch (const std::exception &e) {
+        throw std::runtime_error("Verzeichnis konnte nicht erstellt werden: " + dirName + " - " + e.what());
+    }
+}
+
+// Hilfsfunktion zum Erstellen einer levels.txt-Datei in einem Theme-Verzeichnis
+void createLevelsFile(const std::string &themeDir, const std::vector<std::string> &levelData) {
+    createDirectory(themeDir);
+    std::string filename = themeDir + "/levels.txt";
+
+    if (std::ofstream file(filename); file.is_open()) {
         file << "** Start **\n";
         for (const auto &row: levelData) {
             file << row << "\n";
@@ -14,27 +29,39 @@ void createLevelFile(const std::string &filename, const std::vector<std::string>
         file << "** Stop **\n";
         file.close();
     } else {
-        throw std::runtime_error("Unable to create level file: " + filename);
+        throw std::runtime_error("Level-Datei konnte nicht erstellt werden: " + filename);
     }
 }
 
-TEST(LevelTest, InvalidFile) {
-    const std::string filename = "no_level.txt";
-    const bool result = read_levels_structure(filename);
+// Hilfsfunktion zum Aufräumen nach den Tests
+void cleanupDirectory(const std::string &dirName) {
+    try {
+        std::filesystem::remove_all(dirName);
+    } catch (const std::exception &) {
+        // Fehler beim Löschen ignorieren
+    }
+}
+
+TEST(LevelTest, InvalidDir) {
+    LevelManager levelManager;
+    const std::string dirName = "no_level_dir";
+    const bool result = levelManager.setTheme(dirName);
     ASSERT_FALSE(result);
-    ASSERT_TRUE(level_ranges.empty());
+    cleanupDirectory(dirName);
 }
 
-TEST(LevelTest, LoadEmptyLevel) {
-    std::string filename = "empty_level.txt";
-    createLevelFile(filename, {}); // Empty level data
-
-    read_levels_structure(filename);
+TEST(LevelTest, EmptyLevel) {
+    LevelManager levelManager;
+    const std::string dirName = "empty_level_dir";
+    createLevelsFile(dirName, {}); // Leere Level-Daten
+    const bool result = levelManager.setTheme(dirName);
+    ASSERT_FALSE(result);
+    cleanupDirectory(dirName);
 }
 
-TEST(LevelTest, LoadSimpleLevel) {
-    std::string filename = "simple_level.txt";
-    createLevelFile(filename, {
+TEST(LevelTest, EmptySimpleLevel) {
+    const std::string dirName = "simple_level_dir";
+    createLevelsFile(dirName, {
                         "0000000000000000000000000000000000000000000000000000",
                         "0000000000000000000000000000000000000000000000000000",
                         "0000000000000000000000000000000000000000000000000000",
@@ -60,13 +87,18 @@ TEST(LevelTest, LoadSimpleLevel) {
                         "0000000000000000000000000000000000000000000000000000"
                     });
 
-    read_levels_structure(filename);
+    LevelManager levelManager;
+    const bool result = levelManager.setTheme(dirName);
+    ASSERT_TRUE(result);
+    const auto expectedName = dirName + "/levels.txt";
+    ASSERT_EQ(levelManager.getCurrentTheme(), expectedName);
+    cleanupDirectory(dirName);
 }
 
 TEST(LevelTest, LoadLevelWithOneBrick) {
-    std::string filename = "one_brick_level.txt";
-    createLevelFile(filename, {
-                        "0000000000000000000000000000000000000000000000000000",
+    const std::string dirName = "one_brick_level_dir";
+    createLevelsFile(dirName, {
+                        "0800000000000000000000000000000000000000000000000000",
                         "0000000000000000000000000000000000000000000000000000",
                         "0000000000000000000000000000000000000000000000000000",
                         "0000000000000000000000000000000000000000000000000000",
@@ -91,5 +123,8 @@ TEST(LevelTest, LoadLevelWithOneBrick) {
                         "0000000000000000000000000000000000000000000000000000"
                     });
 
-    read_levels_structure(filename);
+    LevelManager levelManager;
+    const bool result = levelManager.setTheme(dirName);
+    ASSERT_TRUE(result);
+    cleanupDirectory(dirName);
 }

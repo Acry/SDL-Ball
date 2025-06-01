@@ -105,8 +105,6 @@ int main() {
     GLfloat normalizedMouseX, normalizedMouseY;
     bool update = true;
     bool autoPaddle = false;
-    float autoPaddleOffset = 0.0f;
-    float autoPaddleTime = 0.0f;
 
     float currentSpeed;
     while (running) {
@@ -234,8 +232,7 @@ int main() {
                 if (velY > 0) {
                     // Einfache Vorhersage: Wie weit fliegt der Ball horizontal,
                     // bis er die Paddlehöhe erreicht?
-                    float timeToReachPaddle = (paddle.pos_y - predictedY) / velY;
-                    if (timeToReachPaddle > 0) {
+                    if (float timeToReachPaddle = (paddle.pos_y - predictedY) / velY; timeToReachPaddle > 0) {
                         predictedX += velX * timeToReachPaddle;
                     }
                 }
@@ -244,7 +241,7 @@ int main() {
                 static float lastErrorTime = 0.0f;
                 static float errorOffset = 0.0f;
 
-                if (autoPaddleTime - lastErrorTime > 0.5f) {
+                if (float autoPaddleTime = 0.0f; autoPaddleTime - lastErrorTime > 0.5f) {
                     lastErrorTime = autoPaddleTime;
                     errorOffset = ((rand() % 100) / 100.0f - 0.5f) * 0.1f;
                 }

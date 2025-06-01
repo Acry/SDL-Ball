@@ -258,7 +258,7 @@ void Ball::onCollision(ICollideable *other, float hitX, float hitY) {
     data.posX = hitX;
     data.posY = hitY;
     data.sender = this;
-    data.target = other;
+    data.target = dynamic_cast<const GameObject*>(other);
 
     switch (other->getCollisionType()) {
         case static_cast<int>(CollisionType::Paddle):

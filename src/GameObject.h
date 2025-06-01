@@ -4,7 +4,7 @@
 #include <epoxy/gl.h>
 #include "SpriteSheetAnimation.h"
 
-class EventManager; // Vorwärtsdeklaration
+class EventManager;
 
 class GameObject {
 protected:
@@ -33,6 +33,6 @@ public:
     virtual void draw(float deltaTime = 0.0f) = 0;
 
     // Hilfsfunktionen
-    virtual bool isActive() const { return active; }
-    bool isVisible() const { return opacity > 0.0f; }
+    [[nodiscard]] virtual bool isActive() const { return active; }
+    [[nodiscard]] bool isVisible() const { return opacity > 0.0f; }
 };

@@ -43,7 +43,7 @@ void PlayfieldBorder::onCollision(ICollideable *other, const float hitX, const f
             data.posX = hitX;
             data.posY = hitY;
             data.sender = this;
-            data.target = other;
+            data.target = dynamic_cast<const GameObject*>(other);
 
             switch (side) {
                 case Side::Left:
@@ -64,7 +64,7 @@ void PlayfieldBorder::onCollision(ICollideable *other, const float hitX, const f
             data.posX = hitX;
             data.posY = hitY;
             data.sender = this;
-            data.target = other;
+            data.target = dynamic_cast<const GameObject*>(other);
 
             if (side == Side::Left) {
                 eventManager->emit(GameEvent::PaddleHitLeftBorder, data);

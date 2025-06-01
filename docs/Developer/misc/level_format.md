@@ -7,13 +7,33 @@ Es gibt 23 Zeilen mit grundsätzlich je 26 Spalten (52 Zeichen) pro Level.
 
 Ein Brick wird durch zwei Zeichen beschrieben:
 PB (PoweruptypBricktyp)
+P = Powerup-Typ (0-R)
+B = Brick-Typ (0-D)
+
 "00" bedeutet leerer Platz
+
+Ein normaler Brick ohne Powerup wird typischerweise als "0X" dargestellt, wobei X der Brick-Typ ist. Beispiele:
+
+01 = blauer Brick ohne Powerup
+02 = gelber Brick ohne Powerup
+08 = weißer Brick ohne Powerup
+0A = roter Brick ohne Powerup
+
+Besondere Brick-Typen
+03 = Zement/harter Brick
+04 = Glas-Brick (braucht 2 Treffer)
+09 = unsichtbarer Brick (wird erst nach dem ersten Treffer sichtbar, braucht dann 2 weitere Treffer)
+0C = Doom-Brick (erzeugt immer ein zufälliges böses Powerup)
+0D = Farbiger Brick mit anpassbarer Farbe (gefolgt von 6 Zeichen für RGB-Hexwerte)
 
 ### Spezialfall: Farbige Bricks (Typ D)
 
 Wenn der Bricktyp 'D' ist, folgen 6 zusätzliche Zeichen für RGB-Farben im Hex-Format:
 PD RRGGBB || |||||| || ||||++ Blau (00-FF) || ||++-- Grün (00-FF) || ++---- Rot (00-FF) |+------- Typ D (farbiger Brick) +-------- Powerup
 Beispiel: `0DFFFFFF` = weißer Brick ohne Powerup
+
+In den Leveldateien sehen Sie Muster wie M3, M5, etc. - dies sind Bricks mit zufälligen Powerups (M = 2% Chance) und
+verschiedenen Brick-Typen.
 
 ## Level-Steuerung
 
