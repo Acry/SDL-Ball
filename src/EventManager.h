@@ -7,7 +7,6 @@
 #include "Paddle.h"
 
 
-
 enum class GameEvent {
     BallHitLeftBorder, // Index 0
     BallHitRightBorder, // Index 1
@@ -42,7 +41,6 @@ enum class GameEvent {
 };
 
 
-
 struct EventData {
     float posX{0};
     float posY{0};
@@ -63,37 +61,37 @@ using LevelEventCallback = std::function<void(const LevelEventData &)>;
 
 class EventManager {
 private:
-    std::unordered_map<GameEvent, std::vector<EventCallback>> eventListeners;
-    std::unordered_map<GameEvent, std::vector<LevelEventCallback>> levelEventListeners;
+    std::unordered_map<GameEvent, std::vector<EventCallback> > eventListeners;
+    std::unordered_map<GameEvent, std::vector<LevelEventCallback> > levelEventListeners;
 
 public:
-    void addListener(GameEvent event, EventCallback callback, void* owner = nullptr) {
+    void addListener(GameEvent event, EventCallback callback, void *owner = nullptr) {
         eventListeners[event].push_back(std::move(callback));
     }
 
-    void addListener(GameEvent event, LevelEventCallback callback, void* owner = nullptr) {
+    void addListener(GameEvent event, LevelEventCallback callback, void *owner = nullptr) {
         levelEventListeners[event].push_back(std::move(callback));
     }
 
-    void emit(GameEvent event, const EventData& data) {
+    void emit(GameEvent event, const EventData &data) {
         auto it = eventListeners.find(event);
         if (it != eventListeners.end()) {
-            for (const auto& callback : it->second) {
+            for (const auto &callback: it->second) {
                 callback(data);
             }
         }
     }
 
-    void emit(GameEvent event, const LevelEventData& data) {
+    void emit(GameEvent event, const LevelEventData &data) {
         auto it = levelEventListeners.find(event);
         if (it != levelEventListeners.end()) {
-            for (const auto& callback : it->second) {
+            for (const auto &callback: it->second) {
                 callback(data);
             }
         }
     }
 
-    void removeListener(GameEvent event, void* owner) {
+    void removeListener(GameEvent event, void *owner) {
         // Da wir owner nicht mehr verwenden, entfernen wir einfach alle Listener für das Event
         eventListeners[event].clear();
         levelEventListeners[event].clear();
