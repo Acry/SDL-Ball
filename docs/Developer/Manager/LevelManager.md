@@ -1,6 +1,6 @@
 # LevelManager
 
-Also, was will ich?
+Einige bricks laufen in späteren rechts aus dem Bild.
 
 Der LevelManager parst das ThemeFile und stellt die Level-Informationen bereit.
 getLevel().
@@ -11,28 +11,6 @@ read_levels_structure
 set_up_bricks_for_level - soll der das machen?
 load_levels() war ein anderer Ansatz
 
-setTheme nutze ich nun.
-
-    void clearTheme();
-    bool setTheme(const std::string &fontFilePath);
-    std::string currentTheme;
-
-bool TextManager::setTheme(const std::string &themeName) {
-if (currentTheme == themeName) return true;
-if (!std::filesystem::exists(themeName)) {
-SDL_Log("Error: Could not read theme-directory: %s", themeName.c_str());
-return false;
-}
-clearTheme();
-currentTheme = themeName;
-
-    if (!loadAllFonts()) {
-        SDL_Log("Error getting font theme: %s", currentTheme.c_str());
-        return false;
-    }
-    return true;
-
-}
 
 - [levels](../misc/level.md)
 - [level_format](../misc/level_format.md)
@@ -143,12 +121,3 @@ Zusammenfassung:
 - Unten: -0.59
 
 Diese Werte definieren das Spielfeld für die Steine.
-
-## Positionierung der Steine:
-
-float startX = -1.0f + steinBreite;
-float abstand = (2.0f - 2 * steinBreite) / (anzahlSteine - 1);
-for (int i = 0; i < anzahlSteine; ++i) {
-float x = startX + i * abstand;
-// y z.B. konstant, z.B. y = 0.8f für obere Reihe
-}
