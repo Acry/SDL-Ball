@@ -4,8 +4,9 @@
 #include <vector>
 #include <unordered_map>
 
-#include "Brick.h"
 #include "Paddle.h"
+
+
 
 enum class GameEvent {
     BallHitLeftBorder, // Index 0
@@ -35,7 +36,12 @@ enum class GameEvent {
     PaddleCreated,
     PaddleMoved,
     PaddleDestroyed,
+
+    LevelChanged,
+    LevelThemeChanged,
 };
+
+
 
 struct EventData {
     float posX{0};
@@ -43,48 +49,63 @@ struct EventData {
     int soundID{-1};
     GameObject *sender{nullptr};
     const GameObject *target{nullptr};
+    // ---snip--- TODO/FIXME
     int points{0};
-    // Weitere Daten nach Bedarf
 };
 
+struct LevelEventData {
+    Uint32 currentlevel{0};
+    Uint32 maxLevel{0};
+};
+
+using EventCallback = std::function<void(const EventData &)>;
+using LevelEventCallback = std::function<void(const LevelEventData &)>;
+
 class EventManager {
-public:
-    using EventCallback = std::function<void(const EventData &)>;
-
-    struct CallbackInfo {
-        EventCallback callback;
-        void *owner = nullptr;
-
-        CallbackInfo(EventCallback cb, void *o = nullptr) : callback(cb), owner(o) {
-        }
-
-        void operator()(const EventData &data) const {
-            callback(data);
-        }
-    };
-
 private:
-    std::unordered_map<GameEvent, std::vector<CallbackInfo> > listeners;
+    std::unordered_map<GameEvent, std::vector<EventCallback>> eventListeners;
+    std::unordered_map<GameEvent, std::vector<LevelEventCallback>> levelEventListeners;
 
 public:
-    EventManager() = default;
+    void addListener(GameEvent event, EventCallback callback, void* owner = nullptr) {
+        eventListeners[event].push_back(std::move(callback));
+    }
 
-    virtual ~EventManager() = default;
+    void addListener(GameEvent event, LevelEventCallback callback, void* owner = nullptr) {
+        levelEventListeners[event].push_back(std::move(callback));
+    }
 
-    // Kein Kopieren erlauben
-    EventManager(const EventManager &) = delete;
+    void emit(GameEvent event, const EventData& data) {
+        auto it = eventListeners.find(event);
+        if (it != eventListeners.end()) {
+            for (const auto& callback : it->second) {
+                callback(data);
+            }
+        }
+    }
 
-    EventManager &operator=(const EventManager &) = delete;
+    void emit(GameEvent event, const LevelEventData& data) {
+        auto it = levelEventListeners.find(event);
+        if (it != levelEventListeners.end()) {
+            for (const auto& callback : it->second) {
+                callback(data);
+            }
+        }
+    }
 
-    // Listener-Management
-    void addListener(GameEvent event, EventCallback callback, void *owner = nullptr);
+    void removeListener(GameEvent event, void* owner) {
+        // Da wir owner nicht mehr verwenden, entfernen wir einfach alle Listener für das Event
+        eventListeners[event].clear();
+        levelEventListeners[event].clear();
+    }
 
-    virtual void emit(GameEvent event, const EventData &data);
+    void removeAllListeners(GameEvent event) {
+        eventListeners[event].clear();
+        levelEventListeners[event].clear();
+    }
 
-    // Entfernt alle Listener eines bestimmten Besitzers für ein Event
-    void removeListener(GameEvent event, void *owner);
-
-    void removeAllListeners(GameEvent event);
-
-    void clearAllListeners();
+    void clearAllListeners() {
+        eventListeners.clear();
+        levelEventListeners.clear();
+    }
 };
