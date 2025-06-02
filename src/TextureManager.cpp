@@ -10,6 +10,8 @@
 
 #include <ranges>
 
+#define DEBUG_SORT_BACKGROUNDS 0
+
 TextureProperty getPropertyFromString(const std::string &key) {
     static const std::unordered_map<std::string, TextureProperty> propertyMap = {
         {"xoffset", TextureProperty::XOffset},
@@ -545,23 +547,49 @@ bool TextureManager::loadAllBackgrounds() {
     }
     clearBackgroundTheme();
 
+    // Dateien einsammeln und nach Basename sortieren
+    std::vector<std::filesystem::directory_entry> entries;
     for (const auto &entry: std::filesystem::directory_iterator(directory)) {
         if (entry.is_regular_file()) {
             if (const std::string ext = entry.path().extension().string();
                 std::ranges::find(supportedFormats, ext) != supportedFormats.end()) {
-                const std::string filePath = entry.path().string();
-                if (!backgroundCache.contains(filePath)) {
-                    auto animation = std::make_unique<SpriteSheetAnimation>();
-                    if (load(filePath, *animation)) {
-                        backgroundTextures.push_back(animation.get());
-                        backgroundCache[filePath] = std::move(animation);
-                    } else {
-                        SDL_Log("Error: Failed to load background texture '%s'", filePath.c_str());
-                    }
-                } else {
-                    backgroundTextures.push_back(backgroundCache[filePath].get());
-                }
+                entries.push_back(entry);
             }
+        }
+    }
+    std::sort(entries.begin(), entries.end(), [](const auto &a, const auto &b) {
+        const std::string nameA = a.path().stem().string();
+        const std::string nameB = b.path().stem().string();
+
+        // Versuche zuerst numerische Konvertierung
+        try {
+            const int numA = std::stoi(nameA);
+            const int numB = std::stoi(nameB);
+            return numA < numB;
+        } catch (const std::exception&) {
+            // Falls keine Zahlen, alphabetisch sortieren
+            return nameA < nameB;
+        }
+    });
+#if DEBUG_SORT_BACKGROUNDS
+    // Debug-Ausgabe der sortierten Liste
+    SDL_Log("Sorted background files in '%s':", directory.c_str());
+    for (size_t i = 0; i < entries.size(); ++i) {
+        SDL_Log("[%zu] %s", i, entries[i].path().filename().string().c_str());
+    }
+#endif
+    for (const auto &entry : entries) {
+        const std::string filePath = entry.path().string();
+        if (!backgroundCache.contains(filePath)) {
+            auto animation = std::make_unique<SpriteSheetAnimation>();
+            if (load(filePath, *animation)) {
+                backgroundTextures.push_back(animation.get());
+                backgroundCache[filePath] = std::move(animation);
+            } else {
+                SDL_Log("Error: Failed to load background texture '%s'", filePath.c_str());
+            }
+        } else {
+            backgroundTextures.push_back(backgroundCache[filePath].get());
         }
     }
 
