@@ -1,3 +1,11 @@
+# Current issues
+
+## SpritesheetAnimation - Timing
+
+[AnimationTiming](misc/Animation-Timing.md)
+
+## CollisionManager <->  EventManager <-> GameManager
+
 In einer guten Spielarchitektur sollte die Kollisionsbehandlung auf folgende Weise aufgeteilt werden:
 
 CollisionManager:
@@ -47,7 +55,7 @@ Diese Architektur erlaubt es jedem System (Audio, Effekte, Logik), auf Events zu
 direkt kennen zu müssen. Der EventManager fungiert als zentrale Vermittlungsstelle, wodurch die Komponenten lose
 gekoppelt bleiben.
 
-## old
+## GameActorManagers <-> CollisionManager
 
 Die Frage ist, wer mit dem CollisionManager kommuniziert:
 

@@ -8,6 +8,7 @@ there are a lot of things to do.
 * GameObjects
 - [ ] BallManager
 - [ ] BrickManager
+  [ ] Dropping Levels
 - [ ] PowerupManager
 - [X] ICollideable
 
@@ -69,15 +70,15 @@ GameObjects: Balls, Paddle, Bricks, Powerups, Tracer, etc.
 - [ ] BrickManager create
 - [ ] BrickManager_Tests
 
-- [ ] Bullet, rework
-  Blockers: Bricks, (decouple -> CollisionManager, EventManager)
-- [ ] Bullet_Tests
 
 - [ ] Powerup, rework
   Blocker: BallManager
 - [ ] Powerup_Tests
 - [ ] PowerupManager, rework
 - [ ] PowerupManager_Tests
+- [ ] Bullet, rework
+  Blockers: Bricks, (decouple -> CollisionManager, EventManager)
+- [ ] Bullet_Tests
 
 - HUD (Score, Clock, Lives, Level, Speedometer, Powerups consumed (bottom), Shop (top))
   - [ ] Score
@@ -142,19 +143,20 @@ ___
 
 - [ ] check old code if border texture was used as spritesheet
 - [ ] move border checks from paddle and ball to collisionManager
-- [ ] fix DebugMouse.cpp, but text::write should just work.
+- [X] fix DebugMouse.cpp, but text::write should just work. -> TestHelper
 - [X] TextManager genFontTex to bool
 - [ ] check early game field sizes, should I go exactly 4:3 and then render the pillars outside?
   scissor rectangle needs to be expanded to the playfield plus the pillars
 - [ ] solve brick fade issue
 - [X] Paddle: use playfield constants from config.h
 - [ ] Many comments are in German
-- [ ] wird brick/doom-org.png im Spiel verwendet?
+- [X] wird brick/doom-org.png im Spiel verwendet?
+
 ## Additional things
 
 ### Gameplay
 
-- [ ] tiled backrounds
+- [ ] tiled backgrounds | [see](misc/Background.md)
 - [ ] animated backgrounds (spritsheet oder colors)
 - [ ] make BackgroundManager-Shader responsive to events
 - [ ] setting titleScreenShow
@@ -167,13 +169,13 @@ ___
 - [ ] f - autoplay
 
 - [ ] Make the game playable without datafiles (random levels, no samplers)
+- [ ] LevelManager - random level
 - [ ] simple GPU-Sounds?
-- [ ] create reandom levels
 - [ ] mod support for music and samples
 - [X] make game playable with keys
-- [ ] fix projection for submenus
-- [ ] change difficulty
-- [ ] normal Ball spritesheet
+- [ ] MenuManager
+- [ ] change difficulty in Menu
+- [ ] normal Ball spritesheet - Themes: classic/retro/arkanoid/3.1
 - [ ] rework positional sound <https://examples.libsdl.org/SDL3/audio/05-planar-data/>
 - [ ] modernize game controllers, see: https://examples.libsdl.org/SDL3/input/01-joystick-polling/
 - [ ] Play with pen? https://examples.libsdl.org/SDL3/pen/01-drawing-lines/
@@ -191,6 +193,7 @@ Themes
 
 - [Arkanoid ](Themes/Araknoid.md) smalle playfield
 - Retro [Theme](Themes/Retro.md)
+
 #### Tracer
 
 - [ ] Tracer, to EffectManager
@@ -238,9 +241,10 @@ Themes
 
 ### Tests
 
-- [ ] write used keys as help, with TextManager, if graphics are available
+- [ ] Makefile is getting huge, clion has already problems
+- [X] write used keys as help, with TextManager, if graphics are available
 - [X] move all tests to the test folder
-- [ ] seprate manual tests from automatic tests
+- [X] separate manual tests from automatic tests
 - [ ] write automatic tests
 - [ ] add Theme fixtures to tests
 - [ ] add saveGames fixtures to tests
