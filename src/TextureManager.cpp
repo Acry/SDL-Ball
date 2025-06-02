@@ -8,6 +8,8 @@
 #include "TextureUtilities.h"
 #include "TextureManager.h"
 
+#include <ranges>
+
 TextureProperty getPropertyFromString(const std::string &key) {
     static const std::unordered_map<std::string, TextureProperty> propertyMap = {
         {"xoffset", TextureProperty::XOffset},
@@ -42,7 +44,8 @@ GLuint getGLFormat(const SDL_Surface *surface) {
 }
 
 TextureManager::TextureManager()
-    : maxTexSize(0) {
+    : maxTexSize(0),
+      supportedFormats{".png", ".jpg", ".jpeg", ".tif", ".tiff", ".webp", ".jxl", ".avif"} {
     paddleTextures.fill(nullptr);
     ballTextures.fill(nullptr);
     brickTextures.fill(nullptr);
@@ -218,17 +221,33 @@ bool TextureManager::setSpriteTheme(const std::string &themeName) {
     return true;
 }
 
+bool TextureManager::setBackgroundTheme(const std::string &themeName) {
+    if (currentBackgroundTheme == themeName) return true;
+    if (!std::filesystem::exists(themeName)) {
+        SDL_Log("Error: Could not read theme-directory: %s", themeName.c_str());
+        return false;
+    }
+    clearBackgroundTheme();
+
+    currentBackgroundTheme = themeName;
+
+    if (!loadAllBackgrounds()) {
+        SDL_Log("Fehler beim Laden der Backgrounds für Theme: %s", currentTheme.c_str());
+        return false;
+    }
+
+    return true;
+}
+
 void TextureManager::clearTheme() {
-    for (auto &pair: textureCache) {
-        if (pair.second) {
-            glDeleteTextures(1, &pair.second->textureProperties.texture);
+    for (auto &val: textureCache | std::views::values) {
+        if (val) {
+            glDeleteTextures(1, &val->textureProperties.texture);
         }
     }
 
-    // Cache leeren
     textureCache.clear();
 
-    // Array-Referenzen zurücksetzen
     for (auto &tex: paddleTextures) tex = nullptr;
     for (auto &tex: ballTextures) tex = nullptr;
     for (auto &tex: brickTextures) tex = nullptr;
@@ -257,7 +276,7 @@ SpriteSheetAnimation *TextureManager::loadAndCacheTexture(const std::string &pat
     return textureCache[path].get();
 }
 
-SpriteSheetAnimation *TextureManager::getTexture(const std::string &texturePath, bool forceReload) {
+SpriteSheetAnimation *TextureManager::getTexture(const std::string &texturePath, const bool forceReload) {
     return loadAndCacheTexture(texturePath, forceReload);
 }
 
@@ -515,4 +534,53 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
         animation.textureProperties.glTexColorInfo[3] = 1.0f;
     }
     return true;
+}
+
+bool TextureManager::loadAllBackgrounds() {
+    const std::string directory = currentBackgroundTheme + "/gfx/bg/";
+
+    if (!std::filesystem::exists(directory) || !std::filesystem::is_directory(directory)) {
+        SDL_Log("Error: Background path '%s' does not exist or is not a directory", directory.c_str());
+        return false;
+    }
+    clearBackgroundTheme();
+
+    for (const auto &entry: std::filesystem::directory_iterator(directory)) {
+        if (entry.is_regular_file()) {
+            if (const std::string ext = entry.path().extension().string();
+                std::ranges::find(supportedFormats, ext) != supportedFormats.end()) {
+                const std::string filePath = entry.path().string();
+                if (!backgroundCache.contains(filePath)) {
+                    auto animation = std::make_unique<SpriteSheetAnimation>();
+                    if (load(filePath, *animation)) {
+                        backgroundTextures.push_back(animation.get());
+                        backgroundCache[filePath] = std::move(animation);
+                    } else {
+                        SDL_Log("Error: Failed to load background texture '%s'", filePath.c_str());
+                    }
+                } else {
+                    backgroundTextures.push_back(backgroundCache[filePath].get());
+                }
+            }
+        }
+    }
+
+    return !backgroundTextures.empty();
+}
+
+void TextureManager::clearBackgroundTheme() {
+    for (auto &val: backgroundCache | std::views::values) {
+        if (val) {
+            glDeleteTextures(1, &val->textureProperties.texture);
+        }
+    }
+    backgroundTextures.clear();
+    backgroundCache.clear();
+}
+
+SpriteSheetAnimation *TextureManager::getBackground(const size_t index) const {
+    if (index < backgroundTextures.size()) {
+        return backgroundTextures[index];
+    }
+    return nullptr;
 }

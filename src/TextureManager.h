@@ -81,8 +81,11 @@ enum class TitleTexture {
     Count
 };
 
+
 class TextureManager {
+    // caches
     std::unordered_map<std::string, std::unique_ptr<SpriteSheetAnimation> > textureCache;
+    std::unordered_map<std::string, std::unique_ptr<SpriteSheetAnimation> > backgroundCache;
 
     std::array<SpriteSheetAnimation *, static_cast<size_t>(PaddleTexture::Count)> paddleTextures{};
     std::array<SpriteSheetAnimation *, static_cast<size_t>(BallTexture::Count)> ballTextures{};
@@ -92,12 +95,15 @@ class TextureManager {
     std::array<SpriteSheetAnimation *, static_cast<size_t>(EffectTexture::Count)> effectTextures{};
     std::array<SpriteSheetAnimation *, static_cast<size_t>(TitleTexture::Count)> titleTextures{};
 
+    std::vector<SpriteSheetAnimation *> backgroundTextures;
+
     int maxTexSize;
     std::string currentTheme;
+    std::string currentBackgroundTheme;
+    const std::vector<std::string> supportedFormats;
 
     SpriteSheetAnimation *loadAndCacheTexture(const std::string &path, bool forceReload = false);
 
-    // create texture from image
 public:
     TextureManager();
 
@@ -109,7 +115,17 @@ public:
 
     bool setSpriteTheme(const std::string &themeName);
 
+    bool setBackgroundTheme(const std::string &themeName);
+
+    bool loadAllBackgrounds();
+
+    size_t getBackgroundCount() const { return backgroundTextures.size(); }
+
+    SpriteSheetAnimation *getBackground(const size_t index) const;
+
     void clearTheme();
+
+    void clearBackgroundTheme();
 
     SpriteSheetAnimation *getTexture(const std::string &texturePath, bool forceReload = false);
 
