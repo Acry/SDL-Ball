@@ -27,7 +27,7 @@ public:
     bool glued{false};
     GLfloat bsin[32]{}, bcos[32]{};
     bool aimdir{false};
-    SpriteSheetAnimation fireTex;
+    SpriteSheetAnimation *fireTex;
 
     void launchFromPaddle();
 

@@ -1,13 +1,12 @@
 // Paddle_Tests.cpp
 #include <cstdlib>
 
-#include "Paddle.h"
-#include "TextureManager.h"
 #include "Display.hpp"
+#include "Paddle.h"
 #include "PlayfieldBorder.h"
-#include "MockEventManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
+#include "TextureManager.h"
 
 #define DEBUG_DRAW_PADDLE_BOUNDING_BOXES 0
 
@@ -23,22 +22,31 @@ int main() {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
     TestHelper testHelper(textManager);
-    MockEventManager eventManager;
+    EventManager eventManager;
     Paddle paddle(&eventManager);
-    const TextureManager textureManager;
+    TextureManager textureManager;
+    if (!textureManager.setSpriteTheme("../themes/default")) {
+        SDL_Log("Fehler beim Laden des Texture-Themes");
+        return EXIT_FAILURE;
+    }
 
-    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/paddle/base", paddle.texture)) {
+    paddle.texture = textureManager.getPaddleTexture(PaddleTexture::Base);
+    if (!paddle.texture) {
         SDL_Log("Fehler beim Laden der Paddle-Textur");
+        return EXIT_FAILURE;
     }
 
-    paddle.layerTex = new SpriteSheetAnimation[2];
-
-    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/paddle/glue", paddle.layerTex[0])) {
+    // Array-Deklaration entfernen, da layerTex bereits als Array in der Klasse definiert ist
+    paddle.layerTex[0] = textureManager.getPaddleTexture(PaddleTexture::Glue);
+    if (!paddle.layerTex[0]) {
         SDL_Log("Fehler beim Laden der Glue-Textur");
+        return EXIT_FAILURE;
     }
 
-    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/paddle/gun", paddle.layerTex[1])) {
+    paddle.layerTex[1] = textureManager.getPaddleTexture(PaddleTexture::Gun);
+    if (!paddle.layerTex[1]) {
         SDL_Log("Fehler beim Laden der Gun-Textur");
+        return EXIT_FAILURE;
     }
 
     std::vector<std::string> instructions = {
@@ -122,7 +130,7 @@ int main() {
         glGetFloatv(GL_CURRENT_COLOR, oldColor);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glColor4f(0.0f, 0.0f, 0.0f, 0.1f);
+        glColor4f(0.0f, 0.0f, 0.0f, 0.5f);
 
         glBegin(GL_QUADS);
 
@@ -172,8 +180,5 @@ int main() {
         textManager.write(tempText3, Fonts::IntroDescription, false, 1.0f, paddle.pos_x, paddle.pos_y);
         SDL_GL_SwapWindow(display.sdlWindow);
     }
-
-    delete[] paddle.layerTex;
-
     return EXIT_SUCCESS;
 }

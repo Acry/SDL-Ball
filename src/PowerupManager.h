@@ -6,6 +6,27 @@
 #include "EventManager.h"
 #include "CollisionManager.h"
 
+//enum class PowerupType {
+//    Aim,            // Zielhilfe
+//    AimHelp,        // Zielhilfe-Hilfe
+//    BigBall,        // Großer Ball
+//    Bullet,         // Schuss
+//    Coin,           // Münze
+//    Detonate,       // Detonator
+//    Die,            // Leben verlieren
+//    Drop,           // Drop Powerup
+//    EasyBrick,      // Einfacher Brick
+//    Explosive,      // Explosiver Brick
+//    ExplosiveGrow,  // Explosiver Wachstum
+//    Glue,           // Kleber Powerup
+//    GoThrough,      // Durchgehen Powerup
+//    GrowPaddle,     // Paddle wachsen lassen
+//    Gun,            // Waffe Powerup
+//    Laser,          // Laser Powerup
+//    Life,           // Extra Leben
+//    Multiball,      // Mehrere Bälle
+//};
+
 class PowerupManager {
     std::vector<Powerup> powerups;
     EventManager *eventManager;

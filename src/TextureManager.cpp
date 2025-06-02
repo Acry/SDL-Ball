@@ -521,8 +521,8 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
 
     // 6. check colors and set fallback if not set
     bool hasColor = false;
-    for (int i = 0; i < 4; i++) {
-        if (animation.textureProperties.glTexColorInfo[i] > 0.0f) {
+    for (const float i : animation.textureProperties.glTexColorInfo) {
+        if (i > 0.0f) {
             hasColor = true;
             break;
         }
@@ -566,7 +566,7 @@ bool TextureManager::loadAllBackgrounds() {
             const int numA = std::stoi(nameA);
             const int numB = std::stoi(nameB);
             return numA < numB;
-        } catch (const std::exception&) {
+        } catch (const std::exception &) {
             // Falls keine Zahlen, alphabetisch sortieren
             return nameA < nameB;
         }
@@ -578,7 +578,7 @@ bool TextureManager::loadAllBackgrounds() {
         SDL_Log("[%zu] %s", i, entries[i].path().filename().string().c_str());
     }
 #endif
-    for (const auto &entry : entries) {
+    for (const auto &entry: entries) {
         const std::string filePath = entry.path().string();
         if (!backgroundCache.contains(filePath)) {
             auto animation = std::make_unique<SpriteSheetAnimation>();

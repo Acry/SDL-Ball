@@ -16,13 +16,14 @@ struct sampleQueuedItem {
 };
 
 class SoundManager {
+    std::string currentTheme;
     EventManager *eventManager = nullptr;
     Mix_Chunk *sample[USED_SOUND_SAMPLES];
     std::vector<sampleQueuedItem> q;
 
-    bool loadSample(const char *SampleName, int sampleNum);
+    bool loadAllSounds();
+    bool loadSample(const std::string& fullSamplePath, const int sampleNum);
 
-    std::string soundThemePath;
     int currentChannels = 0;
     int breakSoundIndex = 0;
 
@@ -35,9 +36,9 @@ public:
 
     void queueSound(int i, GLfloat x, GLfloat y);
 
-    bool setSoundTheme(const std::string &fontFilePath);
+    bool setTheme(const std::string &themeName);
 
-    void clearSoundTheme();
+    void clearTheme();
 
     void registerEvents(EventManager *evManager);
 

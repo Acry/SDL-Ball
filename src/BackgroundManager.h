@@ -5,27 +5,32 @@
 
 #include "SpriteSheetAnimation.h"
 #include "colors.h"
+#include "EventManager.h"
 
 class TextureManager;
 
 class BackgroundManager {
+    std::string currentTheme;
+    size_t maxLevel;
     GLuint backgroundDisplayList;
     // 4 colors for the background, will be set randomly
     // für einen Farbverlauf
     // Das Blending sollte bedingt nötig sein.
-    GLfloat r[4], g[4], b[4], a;
-    const TextureManager *textureMgr; // Referenz auf den TextureManager
-    SpriteSheetAnimation tex; // Textur für den Hintergrund
+    GLfloat r[4]{}, g[4]{}, b[4]{}, a;
+    const TextureManager *textureManager; // Referenz auf den TextureManager
+    EventManager *eventManager{nullptr};
+    SpriteSheetAnimation texture; // Textur für den Hintergrund
 
-    // wird für die Display-Liste benötigt
-    void drawQuad() const;
+    void drawQuad();
 
 public:
     explicit BackgroundManager(const TextureManager &texMgr);
 
     ~BackgroundManager();
 
-    bool updateBgIfNeeded(const Uint32 level, const std::filesystem::path &pathName);
+    void registerEvents(EventManager *eventManager);
+
+    bool updateBgIfNeeded(const Uint32 level);
 
     void draw() const;
 };

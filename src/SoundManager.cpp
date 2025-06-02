@@ -7,7 +7,7 @@
 #include "SoundManager.h"
 #include "EventManager.h"
 
-SoundManager::SoundManager() : sample{}, q{}, soundThemePath{}, currentChannels{0}, breakSoundIndex{0} {
+SoundManager::SoundManager() : currentTheme{}, sample{}, q{}, currentChannels{0}, breakSoundIndex{0} {
     // Array der Samples initialisieren
     for (auto &i: sample) {
         i = nullptr;
@@ -38,11 +38,10 @@ bool SoundManager::init() {
     return true;
 }
 
-bool SoundManager::loadSample(const char *SampleName, const int sampleNum) {
-    const std::string fullFontPath = soundThemePath + "/" + SampleName;
-    sample[sampleNum] = Mix_LoadWAV(fullFontPath.c_str());
+bool SoundManager::loadSample(const std::string& fullSamplePath, const int sampleNum) {
+    sample[sampleNum] = Mix_LoadWAV(fullSamplePath.c_str());
     if (!sample[sampleNum]) {
-        SDL_Log("SoundManager '%s' :%s", fullFontPath.c_str(), Mix_GetError());
+        SDL_Log("SoundManager '%s' :%s", fullSamplePath.c_str(), Mix_GetError());
         return false;
     }
     return true;
@@ -50,7 +49,7 @@ bool SoundManager::loadSample(const char *SampleName, const int sampleNum) {
 
 void SoundManager::queueSound(const int i, const GLfloat x, const GLfloat y = 0.0f) {
     // Panning berechnen (links/rechts basierend auf x)
-    const int p = (255.0 / 3.2) * (x + 1.0);
+    const int p = (255.0 / 3.2f) * (x + 1.0);
 
     // Minimale Lautstärke (50% des Maximums)
     constexpr float MIN_VOLUME_PERCENTAGE = 0.5f;
@@ -69,47 +68,20 @@ void SoundManager::queueSound(const int i, const GLfloat x, const GLfloat y = 0.
     q.push_back(qt);
 }
 
-// FIXME: setTheme "../themes/default" - path, theme-name
-bool SoundManager::setSoundTheme(const std::string &soundTheme) {
-    clearSoundTheme();
-    const std::filesystem::path path(soundTheme);
-    soundThemePath = path.parent_path().string();
-
-    // 25 Sounds -> USED_SOUND_SAMPLES
-    bool allSamplesLoaded = true;
-
-    // Samples nacheinander laden und Fehler prüfen
-    allSamplesLoaded &= loadSample("start.ogg", SND_START);
-    allSamplesLoaded &= loadSample("ball-hit-border.ogg", SND_BALL_HIT_BORDER);
-    allSamplesLoaded &= loadSample("ball-hit-paddle.ogg", SND_BALL_HIT_PADDLE);
-    allSamplesLoaded &= loadSample("norm-brick-breaka.ogg", SND_NORM_BRICK_BREAK);
-    allSamplesLoaded &= loadSample("norm-brick-breakb.ogg", SND_NORM_BRICK_BREAKB);
-    allSamplesLoaded &= loadSample("norm-brick-breakc.ogg", SND_NORM_BRICK_BREAKC);
-    allSamplesLoaded &= loadSample("norm-brick-breakd.ogg", SND_NORM_BRICK_BREAKD);
-    allSamplesLoaded &= loadSample("norm-brick-breake.ogg", SND_NORM_BRICK_BREAKE);
-    allSamplesLoaded &= loadSample("expl-brick-break.ogg", SND_EXPL_BRICK_BREAK);
-    allSamplesLoaded &= loadSample("glass-brick-hit.ogg", SND_GLASS_BRICK_HIT);
-    allSamplesLoaded &= loadSample("glass-brick-break.ogg", SND_GLASS_BRICK_BREAK);
-    allSamplesLoaded &= loadSample("invisible-brick-appear.ogg", SND_INVISIBLE_BRICK_APPEAR);
-    allSamplesLoaded &= loadSample("cement-brick-hit.ogg", SND_CEMENT_BRICK_HIT);
-    allSamplesLoaded &= loadSample("doom-brick-break.ogg", SND_DOOM_BRICK_BREAK);
-    allSamplesLoaded &= loadSample("po-hit-border.ogg", SND_PO_HIT_BORDER);
-    allSamplesLoaded &= loadSample("good-po-hit-paddle.ogg", SND_GOOD_PO_HIT_PADDLE);
-    allSamplesLoaded &= loadSample("evil-po-hit-paddle.ogg", SND_EVIL_PO_HIT_PADDLE);
-    allSamplesLoaded &= loadSample("shot.ogg", SND_SHOT);
-    allSamplesLoaded &= loadSample("die.ogg", SND_DIE);
-    allSamplesLoaded &= loadSample("nextlevel.ogg", SND_NEXTLEVEL);
-    allSamplesLoaded &= loadSample("gameover.ogg", SND_GAMEOVER);
-    allSamplesLoaded &= loadSample("highscore.ogg", SND_HIGHSCORE);
-    allSamplesLoaded &= loadSample("menuclick.ogg", SND_MENUCLICK);
-    allSamplesLoaded &= loadSample("glue-ball-hit-paddle.ogg", SND_GLUE_BALL_HIT_PADDLE);
-    allSamplesLoaded &= loadSample("buy-powerup.ogg", SND_BUY_POWERUP);
-
-    if (!allSamplesLoaded) {
-        SDL_Log("Nicht alle Samples konnten geladen werden. Theme-Wechsel unvollständig.");
+bool SoundManager::setTheme(const std::string &themeName) {
+    if (currentTheme == themeName) return true;
+    if (!std::filesystem::exists(themeName)) {
+        SDL_Log("Error: Could not read theme-directory: %s", themeName.c_str());
+        return false;
     }
+    clearTheme();
+    currentTheme = themeName;
 
-    return allSamplesLoaded;
+    if (!loadAllSounds()) {
+        SDL_Log("Error getting sound theme: %s", currentTheme.c_str());
+        return false;
+    }
+    return true;
 }
 
 void SoundManager::play() {
@@ -119,12 +91,12 @@ void SoundManager::play() {
     // Queue durchlaufen und gleiche Samples zusammenfassen
     for (auto &it: q) {
         bool same = false;
-        for (auto plIt = pl.begin(); plIt != pl.end(); ++plIt) {
-            if (plIt->s == it.s) {
+        for (auto &[s, p, volume, num] : pl) {
+            if (s == it.s) {
                 same = true;
-                plIt->num++;
-                plIt->p += it.p;
-                plIt->volume += it.volume;
+                num++;
+                p += it.p;
+                volume += it.volume;
             }
         }
 
@@ -150,7 +122,7 @@ void SoundManager::play() {
 
         // Kein freier Kanal gefunden
         if (freeChannel == -1) {
-            SDL_Log("Kein freier Audiokanal verfügbar für Sound %i", item.s);
+            SDL_Log("No free channel available for %i", item.s);
             continue;
         }
 
@@ -195,12 +167,12 @@ SoundManager::~SoundManager() {
         eventManager->removeListener(GameEvent::BrickDestroyed, this);
         // Weitere Events...
     }
-    clearSoundTheme();
+    clearTheme();
     Mix_CloseAudio();
     Mix_Quit();
 }
 
-void SoundManager::clearSoundTheme() {
+void SoundManager::clearTheme() {
     for (const auto &i: sample) {
         Mix_FreeChunk(i);
     }
@@ -237,4 +209,44 @@ void SoundManager::registerEvents(EventManager *evManager) {
         this->queueSound(SND_NORM_BRICK_BREAK, data.posX, data.posY);
     }, this);
     // Weitere Event-Listener hinzufügen...
+}
+
+bool SoundManager::loadAllSounds() {
+    const std::string fullPath = currentTheme + "/snd/";
+
+    bool allSamplesLoaded = true;
+
+    // 25 Sounds → USED_SOUND_SAMPLES
+    // Samples nacheinander laden und Fehler prüfen
+    allSamplesLoaded &= loadSample(fullPath + "start.ogg", SND_START);
+    allSamplesLoaded &= loadSample(fullPath + "ball-hit-border.ogg", SND_BALL_HIT_BORDER);
+    allSamplesLoaded &= loadSample(fullPath + "ball-hit-paddle.ogg", SND_BALL_HIT_PADDLE);
+    allSamplesLoaded &= loadSample(fullPath + "norm-brick-breaka.ogg", SND_NORM_BRICK_BREAK);
+    allSamplesLoaded &= loadSample(fullPath + "norm-brick-breakb.ogg", SND_NORM_BRICK_BREAKB);
+    allSamplesLoaded &= loadSample(fullPath + "norm-brick-breakc.ogg", SND_NORM_BRICK_BREAKC);
+    allSamplesLoaded &= loadSample(fullPath + "norm-brick-breakd.ogg", SND_NORM_BRICK_BREAKD);
+    allSamplesLoaded &= loadSample(fullPath + "norm-brick-breake.ogg", SND_NORM_BRICK_BREAKE);
+    allSamplesLoaded &= loadSample(fullPath + "expl-brick-break.ogg", SND_EXPL_BRICK_BREAK);
+    allSamplesLoaded &= loadSample(fullPath + "glass-brick-hit.ogg", SND_GLASS_BRICK_HIT);
+    allSamplesLoaded &= loadSample(fullPath + "glass-brick-break.ogg", SND_GLASS_BRICK_BREAK);
+    allSamplesLoaded &= loadSample(fullPath + "invisible-brick-appear.ogg", SND_INVISIBLE_BRICK_APPEAR);
+    allSamplesLoaded &= loadSample(fullPath + "cement-brick-hit.ogg", SND_CEMENT_BRICK_HIT);
+    allSamplesLoaded &= loadSample(fullPath + "doom-brick-break.ogg", SND_DOOM_BRICK_BREAK);
+    allSamplesLoaded &= loadSample(fullPath + "po-hit-border.ogg", SND_PO_HIT_BORDER);
+    allSamplesLoaded &= loadSample(fullPath + "good-po-hit-paddle.ogg", SND_GOOD_PO_HIT_PADDLE);
+    allSamplesLoaded &= loadSample(fullPath + "evil-po-hit-paddle.ogg", SND_EVIL_PO_HIT_PADDLE);
+    allSamplesLoaded &= loadSample(fullPath + "shot.ogg", SND_SHOT);
+    allSamplesLoaded &= loadSample(fullPath + "die.ogg", SND_DIE);
+    allSamplesLoaded &= loadSample(fullPath + "nextlevel.ogg", SND_NEXTLEVEL);
+    allSamplesLoaded &= loadSample(fullPath + "gameover.ogg", SND_GAMEOVER);
+    allSamplesLoaded &= loadSample(fullPath + "highscore.ogg", SND_HIGHSCORE);
+    allSamplesLoaded &= loadSample(fullPath + "menuclick.ogg", SND_MENUCLICK);
+    allSamplesLoaded &= loadSample(fullPath + "glue-ball-hit-paddle.ogg", SND_GLUE_BALL_HIT_PADDLE);
+    allSamplesLoaded &= loadSample(fullPath + "buy-powerup.ogg", SND_BUY_POWERUP);
+
+    if (!allSamplesLoaded) {
+        SDL_Log("Not all samples loaded. themen-change not complete.");
+    }
+
+    return allSamplesLoaded;
 }

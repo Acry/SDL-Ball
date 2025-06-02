@@ -21,7 +21,7 @@ protected:
 public:
     bool hasGlueLayer{};
     bool hasGunLayer{};
-    SpriteSheetAnimation *layerTex{};
+    SpriteSheetAnimation* layerTex[2]{nullptr, nullptr};
     float centerX{0.0f};
 
     explicit Paddle(EventManager *eventMgr);

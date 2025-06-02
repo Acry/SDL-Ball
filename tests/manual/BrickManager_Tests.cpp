@@ -1,68 +1,60 @@
-#include <cstdlib>
-
-#include "BackgroundManager.h"
+// tests/manual/BrickManager_Tests.cpp
+#include "BrickManager.h"
+#include "LevelManager.h"
 #include "Display.hpp"
 #include "TestHelper.h"
 #include "TextureManager.h"
-#include "TextManager.h"
-#include "EventManager.h"
-#include "LevelManager.h"
 
 int main() {
     Display display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
-        SDL_Log("Display konnte nicht initialisiert werden");
+        SDL_Log("Could not initialize display");
         return EXIT_FAILURE;
     }
-    SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Background Test");
-
+    SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: BrickManager Test");
     TextManager textManager;
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Error loading font theme");
         return EXIT_FAILURE;
     }
-
     TestHelper testHelper(textManager);
-
     EventManager eventManager;
+    TextureManager textureManager;
+    if (!textureManager.setSpriteTheme("../themes/default")) {
+        SDL_Log("Error loading texture theme");
+        return EXIT_FAILURE;
+    }
+
+    BrickManager brickManager(&eventManager, &textureManager);
     LevelManager levelManager(&eventManager);
     if (!levelManager.setTheme("../themes/default")) {
         SDL_Log("Error setting level theme");
+        return EXIT_FAILURE;
     }
     size_t currentLevel = 1;
+    BrickData data = levelManager.getBrickDataForLevel(currentLevel);
 
-    // render bricks, render brickswith testures, render playfield-border ?
+    brickManager.setupBricks(data);
+    auto levelCount = levelManager.getLevelCount();
+    bool running = true;
+    auto lastFrameTime = std::chrono::high_resolution_clock::now();
     const std::vector<std::string> instructions = {
-        "Rendering Background based on level",
         "S: Create Screenshot",
         "M: Toggle Mouse Coordinates",
+        "Space - advance level",
         "-> - next level",
         "<- - previous level",
         "Pos1 - first level",
         "End - last level",
         "ESC: Quit"
     };
-
-    TextureManager textureManager;
-    const std::filesystem::path themePath = "../themes/default";
-
-    if (!textureManager.setBackgroundTheme(themePath)) {
-        SDL_Log("Fehler beim Laden der Hintergründe: %s", themePath.c_str());
-        return EXIT_FAILURE;
-    }
-
-    BackgroundManager backgroundManager(textureManager);
-    backgroundManager.registerEvents(&eventManager);
-
-    levelManager.getBrickDataForLevel(currentLevel);
-
-    Uint32 lastTime = SDL_GetTicks();
-    float deltaTime = 0.0f;
-    auto levelCount = levelManager.getLevelCount();
-    bool running = true;
     GLfloat normalizedMouseX = 0.0f, normalizedMouseY = 0.0f;
     const std::filesystem::path screenshotPath = "./screenshots/";
     while (running) {
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+        lastFrameTime = currentTime;
+
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -73,14 +65,8 @@ int main() {
                     display.resize(event.window.data1, event.window.data2);
                 }
             }
-            if (event.type == SDL_MOUSEMOTION) {
-                normalizedMouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) * (
-                                       2.0f / display.viewportW);
-                normalizedMouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 * (
-                                       2.0f / display.viewportH);
-            }
             if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym) {
+               switch (event.key.keysym.sym) {
                     case SDLK_s:
                         if (!std::filesystem::exists(screenshotPath)) {
                             std::filesystem::create_directories(screenshotPath);
@@ -97,29 +83,34 @@ int main() {
                     case SDLK_SPACE:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
-                            levelManager.getBrickDataForLevel(currentLevel);
+                            data = levelManager.getBrickDataForLevel(currentLevel);
+                        brickManager.setupBricks(data);
                         }
                         break;
                     case SDLK_HOME:
                         currentLevel = 1; {
-                            levelManager.getBrickDataForLevel(currentLevel);
+                        data = levelManager.getBrickDataForLevel(currentLevel);
+                        brickManager.setupBricks(data);
                         }
                         break;
                     case SDLK_END:
                         currentLevel = levelCount; {
-                            levelManager.getBrickDataForLevel(currentLevel);
+                         data = levelManager.getBrickDataForLevel(currentLevel);
+                        brickManager.setupBricks(data);
                         }
                         break;
                     case SDLK_LEFT:
                         currentLevel--;
                         if (currentLevel < 1) currentLevel = levelCount; {
-                            levelManager.getBrickDataForLevel(currentLevel);
+                        data = levelManager.getBrickDataForLevel(currentLevel);
+                        brickManager.setupBricks(data);
                         }
                         break;
                     case SDLK_RIGHT:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
-                            levelManager.getBrickDataForLevel(currentLevel);
+                        data = levelManager.getBrickDataForLevel(currentLevel);
+                        brickManager.setupBricks(data);
                         }
                         break;
                     case SDLK_ESCAPE:
@@ -129,28 +120,31 @@ int main() {
                     default: ;
                 }
             }
+            if (event.type == SDL_MOUSEMOTION) {
+                normalizedMouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) * (
+                                       2.0f / display.viewportW);
+                normalizedMouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 * (
+                                       2.0f / display.viewportH);
+            }
         }
-        // Aktuellen Zeitpunkt abrufen
-        Uint32 currentTime = SDL_GetTicks();
-        deltaTime = (currentTime - lastTime) / 1000.0f;
-        // Alle 5 Sekunden Level erhöhen und Hintergrund aktualisieren
-        // if (currentTime - lastTime >= 5000) {
-        //     currentLevel++;
-        //     if (currentLevel > 50) currentLevel = 1; // Optional: Zurücksetzen nach Level 50
-        //     SDL_Log("Level erhöht auf: %d", currentLevel);
-        //     lastTime = currentTime;
-        // }
+
+
         testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        backgroundManager.draw();
+
+        testHelper.drawGrid();
+
+        brickManager.draw(deltaTime);
+        testHelper.drawCenterLines();
         testHelper.renderInstructions(deltaTime, instructions);
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         char tempText[64];
         sprintf(tempText, "Level: %lu", currentLevel);
         textManager.write(tempText, Fonts::Highscore, true, 1.0f, 0.0f, -0.5f);
         testHelper.drawMouseCoordinates();
-
         SDL_GL_SwapWindow(display.sdlWindow);
     }
+
     return EXIT_SUCCESS;
 }

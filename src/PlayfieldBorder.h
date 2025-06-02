@@ -6,10 +6,11 @@
 #include "ICollideable.h"
 
 class PlayfieldBorder final : public GameObject, public ICollideable {
+
 public:
     enum class Side { Left, Right, Top };
 
-    PlayfieldBorder(Side side, const SpriteSheetAnimation &tex, EventManager *eventManager);
+    PlayfieldBorder(Side side, EventManager *eventManager);
 
     void init() override;
 
@@ -29,10 +30,8 @@ public:
     int getCollisionType() const override;
 
     void onCollision(ICollideable *other, float hitX, float hitY) override;
-
+    void createDisplayList();
 private:
     Side side;
     GLuint dl = 0;
-
-    void createDisplayList();
 };

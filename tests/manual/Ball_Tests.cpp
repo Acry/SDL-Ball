@@ -1,12 +1,9 @@
 #include <cstdlib>
 
 #include "Ball.h"
-#include "Paddle.h"
 #include "TextureManager.h"
 #include "Display.hpp"
 #include "difficulty_settings.h"
-#include "PlayfieldBorder.h"
-#include "MockEventManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
 
@@ -23,17 +20,24 @@ int main() {
         return EXIT_FAILURE;
     }
     TestHelper testHelper(textManager);
-    MockEventManager eventManager;
-    const TextureManager textureManager;
-    SpriteSheetAnimation tex;
-
-    Ball ball(&eventManager);
-    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/ball/normal", ball.texture)) {
-        SDL_Log("Fehler beim Laden der Ball-Textur");
+    EventManager eventManager;
+    TextureManager textureManager;
+    if (!textureManager.setSpriteTheme("../themes/default")) {
+        SDL_Log("Fehler beim Laden des Texture-Themes");
+        return EXIT_FAILURE;
     }
 
-    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/ball/fireball", ball.fireTex)) {
+    Ball ball(&eventManager);
+    ball.texture = textureManager.getBallTexture(BallTexture::Normal);
+    if (!ball.texture) {
+        SDL_Log("Fehler beim Laden der Ball-Textur");
+        return EXIT_FAILURE;
+    }
+
+    ball.fireTex = textureManager.getBallTexture(BallTexture::Fireball);
+    if (!ball.fireTex) {
         SDL_Log("Fehler beim Laden der Feuer-Textur");
+        return EXIT_FAILURE;
     }
 
     std::vector<std::string> instructions = {

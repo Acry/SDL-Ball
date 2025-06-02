@@ -10,11 +10,19 @@ SpriteSheetAnimation::SpriteSheetAnimation() : age(10000),
 void SpriteSheetAnimation::play(const float deltaTime) {
     if (textureProperties.playing) {
         // Verwende den übergebenen deltaTime-Parameter statt der globalen Variable
-        age += deltaTime * 1000.0f; // Umwandlung in Millisekunden
+        age += deltaTime * 1000.0f;
+
+        // age = (deltaTime * 1000.0f);  // Konvertiere in Millisekunden
+        // const float frameTime = fmod(age, textureProperties.ticks);  // Zeit innerhalb eines Frames
+        // const int currentFrame = static_cast<int>(age / textureProperties.ticks) % textureProperties.frames + 1;
+//
+        // if (currentFrame != lastFrame) {
+        //     frame = currentFrame;
+        //     lastFrame = currentFrame;
+
         if (age >= textureProperties.ticks) {
             age = 0.0f;
-
-            // Rest der Methode bleibt unverändert
+        // --- snip  ---
             if (!direction) {
                 if (frame == textureProperties.frames) {
                     if (textureProperties.direction) {

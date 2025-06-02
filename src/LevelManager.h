@@ -8,27 +8,20 @@
 
 #include "Brick.h"
 
-
-// LevelData-Struktur für allgemeine Level-Informationen
-struct LevelData {
-    bool isDropping;       // Ob das Level ein "dropping level" ist
-    int dropSpeed;          // Geschwindigkeit des Drops (wenn hasDropping true ist)
-    size_t brickCount;      // Anzahl der Bricks im Level
-    std::string levelName;  // Optional: Name des Levels
-};
-
 struct BrickData {
-    std::vector<Brick> bricks{};  // Alle Bricks des Levels
-    LevelData levelInfo;        // Allgemeine Level-Informationen
+    std::vector<Brick> bricks{}; // Alle Bricks des Levels
+    bool isDropping{}; // Ob das Level ein "dropping level" ist
+    int dropSpeed{}; // Geschwindigkeit des Drops (wenn hasDropping true ist)
 };
 
+// TBD
 // PowerupData-Struktur für den PowerupManager
 struct PowerupData {
     struct PowerupInfo {
-        size_t brickIndex;      // Index des Bricks in der Brick-Liste
-        char type;              // Powerup-Typ (Buchstabencode)
-        float posX, posY;       // Position im Level für stabilere Referenzierung
-        bool active{false};     // Ist das Powerup aktiv/sichtbar?
+        size_t brickIndex; // Index des Bricks in der Brick-Liste
+        char type; // Powerup-Typ (Buchstabencode)
+        float posX, posY; // Position im Level für stabilere Referenzierung
+        bool active{false}; // Ist das Powerup aktiv/sichtbar?
     };
 
     std::vector<PowerupInfo> powerups{};
@@ -38,15 +31,15 @@ struct PowerupData {
 using LevelOffset = std::tuple<std::streampos, std::streampos>;
 
 class LevelManager {
-    EventManager* eventManager{nullptr};
+    EventManager *eventManager{nullptr};
     std::vector<LevelOffset> levelRanges{};
     std::string currentTheme;
     size_t levelCount = 0;
-
+    size_t currentLevel = 0; // Aktuelles Level, 0-basiert für interne Verwendung
 public:
-    explicit LevelManager(EventManager* evtMgr = nullptr);
+    explicit LevelManager(EventManager *evtMgr = nullptr);
 
-    ~LevelManager()= default;
+    ~LevelManager() = default;
 
     // Theme-Management
     void clearTheme();
@@ -54,7 +47,7 @@ public:
     bool setTheme(const std::string &themeName);
 
     // Gibt den aktuellen Theme-Namen zurück
-    [[nodiscard]] std::string getCurrentTheme() const{return currentTheme;};
+    [[nodiscard]] std::string getCurrentTheme() const { return currentTheme; };
 
     // Liest die Struktur der Levels-Datei und speichert Level-Bereiche
     bool readLevelsStructure();
@@ -66,5 +59,6 @@ public:
     [[nodiscard]] size_t getLevelCount() const { return levelCount; }
 
     BrickData getBrickDataForLevel(size_t level);
-    PowerupData getPowerupDataForLevel(size_t level){ return {};};
+
+    PowerupData getPowerupDataForLevel(size_t level) { return {}; };
 };

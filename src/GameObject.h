@@ -1,6 +1,7 @@
 // GameObject.h
 #pragma once
 
+#include <memory>
 #include <epoxy/gl.h>
 #include "SpriteSheetAnimation.h"
 
@@ -21,7 +22,7 @@ public:
     bool active{true};
     bool collide{true}; // Think this is not used anymore -> ICollideable interface
     bool reflect{false};
-    SpriteSheetAnimation texture;
+    SpriteSheetAnimation* texture{nullptr};
 
     // Virtuelle Methoden - Interface-Definition
     virtual ~GameObject() = default;

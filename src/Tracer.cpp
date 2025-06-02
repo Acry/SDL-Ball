@@ -18,7 +18,7 @@ void Tracer::init() {
     }
 }
 
-void Tracer::update(float deltaTime) {
+void Tracer::update(const float deltaTime) {
     // MovingObject-Update aufrufen für automatische Bewegung
     MovingObject::update(deltaTime);
 
@@ -26,7 +26,7 @@ void Tracer::update(float deltaTime) {
     updatePosition(pos_x, pos_y);
 }
 
-void Tracer::draw(float deltaTime) {
+void Tracer::draw(const float deltaTime) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     for (int i = 0; i < len; i++) {
@@ -43,26 +43,31 @@ void Tracer::draw(float deltaTime) {
                 continue;
             }
 
-            texture.play(deltaTime);
+            texture->play(deltaTime);
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
+            glBindTexture(GL_TEXTURE_2D, texture->textureProperties.texture);
             glLoadIdentity();
+            glPushMatrix();
             glTranslatef(x[i], y[i], 0.0);
 
             // Alpha zusätzlich basierend auf Index reduzieren
-            float indexBasedAlpha = a[i] * (1.0f - static_cast<float>(i) / len);
+            // TODO/FIXME check vertices order, UV coordinates are okay
+            const float indexBasedAlpha = a[i] * (1.0f - static_cast<float>(i) / len);
             glColor4f(r[i], g[i], b[i], indexBasedAlpha);
 
             glBegin(GL_QUADS);
-            glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
+
+            glTexCoord2f(texture->texturePosition[0], texture->texturePosition[1]);
             glVertex3f(-width * s[i], height * s[i], 0.00);
-            glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
+            glTexCoord2f(texture->texturePosition[2], texture->texturePosition[3]);
             glVertex3f(width * s[i], height * s[i], 0.00);
-            glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
+            glTexCoord2f(texture->texturePosition[4], texture->texturePosition[5]);
             glVertex3f(width * s[i], -height * s[i], 0.00);
-            glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
+            glTexCoord2f(texture->texturePosition[6], texture->texturePosition[7]);
             glVertex3f(-width * s[i], -height * s[i], 0.00);
+
             glEnd();
+            glPopMatrix();
             glDisable(GL_TEXTURE_2D);
         }
     }

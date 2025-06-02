@@ -27,21 +27,28 @@ int main() {
         return EXIT_FAILURE;
     }
     SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Collision Test");
+
     TextManager textManager;
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
+
     TestHelper testHelper(textManager);
 
     EventManager eventManager;
     const CollisionManager collisionManager(&eventManager);
+
     SoundManager soundManager;
-    if (!soundManager.setSoundTheme("../themes/default/snd/")) {
+    if (!soundManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Sound-Themes");
     }
     soundManager.registerEvents(&eventManager);
-    const TextureManager textureManager;
-    SpriteSheetAnimation tex;
+
+    TextureManager textureManager;
+    if (!textureManager.setSpriteTheme("../themes/default")) {
+        SDL_Log("Fehler beim Laden des Texture-Themes");
+        return EXIT_FAILURE;
+    }
 
     // Brick brick;
     std::vector<Brick> bricks;
@@ -55,40 +62,31 @@ int main() {
             float x = -0.8f + col * 0.25f;
             float y = 0.5f - row * 0.12f;
             brick.setPosition(x, y);
-            if (!textureManager.loadTextureWithProperties("../themes/default/gfx/brick/base", brick.texture)) {
-                SDL_Log("Fehler beim Laden der Brick-Textur");
-            }
+            brick.texture = textureManager.getBrickTexture(BrickTexture::Base);
             bricks.push_back(brick);
         }
     }
 
     Ball ball(&eventManager);
-    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/ball/normal", ball.texture)) {
-        SDL_Log("Fehler beim Laden der Ball-Textur");
-    }
-    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/ball/fireball", ball.fireTex)) {
-        SDL_Log("Fehler beim Laden der Explosive-Ball-Textur");
-    }
+    ball.texture = textureManager.getBallTexture(BallTexture::Normal);
 
     Paddle paddle(&eventManager);
-    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/paddle/base", paddle.texture)) {
-        SDL_Log("Fehler beim Laden der Paddle-Textur");
-    }
+    paddle.texture = textureManager.getPaddleTexture(PaddleTexture::Base);
 
-    SpriteSheetAnimation texBorder;
-    if (!textureManager.loadTextureWithProperties("../themes/default/gfx/border", texBorder)) {
-        SDL_Log("Fehler beim Laden der Border-Textur");
-    }
-
-    PlayfieldBorder leftBorder(PlayfieldBorder::Side::Left, texBorder, &eventManager);
-    PlayfieldBorder rightBorder(PlayfieldBorder::Side::Right, texBorder, &eventManager);
-    PlayfieldBorder topBorder(PlayfieldBorder::Side::Top, texBorder, &eventManager);
+    PlayfieldBorder leftBorder(PlayfieldBorder::Side::Left, &eventManager);
+    leftBorder.texture = textureManager.getMiscTexture(MiscTexture::Border);
+    leftBorder.createDisplayList();
+    PlayfieldBorder rightBorder(PlayfieldBorder::Side::Right, &eventManager);
+    rightBorder.texture = textureManager.getMiscTexture(MiscTexture::Border);
+    rightBorder.createDisplayList();
+    PlayfieldBorder topBorder(PlayfieldBorder::Side::Top, &eventManager);
+    topBorder.texture = textureManager.getMiscTexture(MiscTexture::Border);
+    topBorder.createDisplayList();
 
     std::vector<std::string> instructions = {
         "1: Ball speed EASY",
         "2: Ball speed NORMAL",
         "3: Ball speed HARD",
-        "e: Explosive ball",
         "r: Reset ball",
         "g: Ball grow",
         "s: Ball shrink",
@@ -158,9 +156,6 @@ int main() {
                         SDL_Log("Ballgeschwindigkeit: HARD (%.2f/%.2f)", ball.velocity,
                                 DifficultySettings::MaxBallSpeed::HARD);
                         break;
-                    case SDLK_e:
-                        ball.explosive = !ball.explosive;
-                        break;
                     case SDLK_g:
                         ball.grow(ball.getWidth() * 1.5f);
                         break;
@@ -204,16 +199,16 @@ int main() {
                 }
             }
             if (event.type == SDL_MOUSEMOTION) {
-                if (event.type == SDL_MOUSEMOTION) {
-                    normalizedMouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) * (
-                                           2.0f / display.viewportW);
-                    normalizedMouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 * (
-                                           2.0f / display.viewportH);
-                }
-                paddle.moveTo(normalizedMouseX, deltaTime);
+                normalizedMouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) * (
+                                       2.0f / display.viewportW);
+                normalizedMouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 * (
+                                       2.0f / display.viewportH);
             }
+            paddle.moveTo(normalizedMouseX, deltaTime);
         }
         testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
+
+#pragma region update
         if (update) {
             if (ball.active) {
                 ball.update(deltaTime);
@@ -274,6 +269,9 @@ int main() {
 
             soundManager.play();
         }
+#pragma endregion update
+
+#pragma region draw
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (ball.active) {
@@ -324,6 +322,7 @@ int main() {
         glColor4fv(oldColor2);
         testHelper.drawMouseCoordinates();
         SDL_GL_SwapWindow(display.sdlWindow);
+#pragma endregion draw
     }
     return EXIT_SUCCESS;
 }

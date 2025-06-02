@@ -32,7 +32,7 @@ int main() {
     // TextureManager erstellen
     const TextureManager textureManager;
 
-    // uv test bg
+    // UV test bg
     if (!textureManager.load("../tests/textures/UV-Test-Grid.png", uvTest)) {
         SDL_Log("Fehler beim Laden der Textur: %s", texturePath1.c_str());
         return EXIT_FAILURE;

@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <thread>
 #include <vector>
 
 #include "Display.hpp"
@@ -6,24 +7,25 @@
 #include "TestHelper.h"
 #include "TextManager.h"
 #include "Brick.h"
+#include "EventManager.h"
 
 const float colors[16][4] = {
-    {1.0f, 1.0f, 1.0f, 1.0f},   // Weiß
-    {0.0f, 0.4f, 1.0f, 1.0f},   // Blau
-    {1.0f, 1.0f, 0.0f, 1.0f},   // Gelb
-    {1.0f, 0.0f, 0.0f, 1.0f},   // Rot
-    {0.0f, 1.0f, 0.0f, 1.0f},   // Grün
-    {1.0f, 0.0f, 1.0f, 1.0f},   // Magenta
-    {0.0f, 1.0f, 1.0f, 1.0f},   // Cyan
-    {1.0f, 0.5f, 0.0f, 1.0f},   // Orange
-    {0.5f, 0.5f, 0.5f, 1.0f},   // Grau
-    {0.6f, 0.3f, 0.0f, 1.0f},   // Braun
-    {0.5f, 0.0f, 0.5f, 1.0f},   // Violett
-    {0.0f, 0.0f, 0.5f, 1.0f},   // Dunkelblau
-    {0.0f, 0.5f, 0.0f, 1.0f},   // Dunkelgrün
-    {0.5f, 0.5f, 0.0f, 1.0f},   // Oliv
-    {0.5f, 0.0f, 0.0f, 1.0f},   // Dunkelrot
-    {0.0f, 0.0f, 0.0f, 1.0f}    // Schwarz
+    {1.0f, 1.0f, 1.0f, 1.0f}, // Weiß
+    {0.0f, 0.4f, 1.0f, 1.0f}, // Blau
+    {1.0f, 1.0f, 0.0f, 1.0f}, // Gelb
+    {1.0f, 0.0f, 0.0f, 1.0f}, // Rot
+    {0.0f, 1.0f, 0.0f, 1.0f}, // Grün
+    {1.0f, 0.0f, 1.0f, 1.0f}, // Magenta
+    {0.0f, 1.0f, 1.0f, 1.0f}, // Cyan
+    {1.0f, 0.5f, 0.0f, 1.0f}, // Orange
+    {0.5f, 0.5f, 0.5f, 1.0f}, // Grau
+    {0.6f, 0.3f, 0.0f, 1.0f}, // Braun
+    {0.5f, 0.0f, 0.5f, 1.0f}, // Violett
+    {0.0f, 0.0f, 0.5f, 1.0f}, // Dunkelblau
+    {0.0f, 0.5f, 0.0f, 1.0f}, // Dunkelgrün
+    {0.5f, 0.5f, 0.0f, 1.0f}, // Oliv
+    {0.5f, 0.0f, 0.0f, 1.0f}, // Dunkelrot
+    {0.0f, 0.0f, 0.0f, 1.0f} // Schwarz
 };
 
 int main() {
@@ -45,27 +47,26 @@ int main() {
         SDL_Log("Error setting level theme");
     }
     size_t currentLevel = 1;
-    std::vector<Brick> bricks;
-    LevelData levelInfo;
-    auto [newBricks, newLevelInfo] = levelManager.getBrickDataForLevel(currentLevel);
-    bricks = std::move(newBricks);
-    levelInfo = std::move(newLevelInfo);
+    BrickData data = levelManager.getBrickDataForLevel(currentLevel);
+    auto& bricks = data.bricks;
     auto levelCount = levelManager.getLevelCount();
     const std::vector<std::string> instructions = {
         "S: Create Screenshot",
         "M: Toggle Mouse Coordinates",
-        "Space - advance level",
+        "-> - next level",
+        "<- - previous level",
         "Pos1 - first level",
         "End - last level",
-        "r - reset level",
         "ESC: Quit"
     };
     bool running = true;
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
     GLfloat normalizedMouseX = 0.0f, normalizedMouseY = 0.0f;
     const std::filesystem::path screenshotPath = "./screenshots/";
+    const std::chrono::microseconds targetFrameTime(16667); // ~60 FPS (1s/60 = 16.67ms)
     while (running) {
-        auto currentTime = std::chrono::high_resolution_clock::now();
+        auto frameStart = std::chrono::high_resolution_clock::now();
+        auto currentTime = frameStart;
         const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
         lastFrameTime = currentTime;
         SDL_Event event;
@@ -95,40 +96,42 @@ int main() {
                         break;
                     case SDLK_SPACE:
                         currentLevel++;
-                        if (currentLevel > levelCount) currentLevel = 1;
-                    {
-                        auto [newBricks, newLevelInfo] = levelManager.getBrickDataForLevel(currentLevel);
-                        bricks = std::move(newBricks);
-                        levelInfo = std::move(newLevelInfo);
-                    }
+                        if (currentLevel > levelCount) currentLevel = 1; {
+                            data = levelManager.getBrickDataForLevel(currentLevel);
+                            bricks = data.bricks;
+                        }
                         break;
                     case SDLK_HOME:
-                        currentLevel = 1;
-                    {
-                        auto [newBricks, newLevelInfo] = levelManager.getBrickDataForLevel(currentLevel);
-                        bricks = std::move(newBricks);
-                        levelInfo = std::move(newLevelInfo);
-                    }
+                        currentLevel = 1; {
+                        data = levelManager.getBrickDataForLevel(currentLevel);
+                        bricks = data.bricks;
+                        }
                         break;
                     case SDLK_END:
-                        currentLevel = levelCount;
-                    {
-                        auto [newBricks, newLevelInfo] = levelManager.getBrickDataForLevel(currentLevel);
-                        bricks = std::move(newBricks);
-                        levelInfo = std::move(newLevelInfo);
-                    }
+                        currentLevel = levelCount; {
+                         data = levelManager.getBrickDataForLevel(currentLevel);
+                        bricks = data.bricks;
+                        }
                         break;
-                    case SDLK_r:
-                    {
-                        auto [newBricks, newLevelInfo] = levelManager.getBrickDataForLevel(currentLevel);
-                        bricks = std::move(newBricks);
-                        levelInfo = std::move(newLevelInfo);
-                    }
+                    case SDLK_LEFT:
+                        currentLevel--;
+                        if (currentLevel < 1) currentLevel = levelCount; {
+                        data = levelManager.getBrickDataForLevel(currentLevel);
+                        bricks = data.bricks;
+                        }
+                        break;
+                    case SDLK_RIGHT:
+                        currentLevel++;
+                        if (currentLevel > levelCount) currentLevel = 1; {
+                        data = levelManager.getBrickDataForLevel(currentLevel);
+                        bricks = data.bricks;
+                        }
                         break;
                     case SDLK_ESCAPE:
                         // Spiel beenden
                         running = false;
                         break;
+                    default: ;
                 }
             }
             if (event.type == SDL_MOUSEMOTION) {
@@ -146,7 +149,7 @@ int main() {
         testHelper.drawGrid();
 
         int idx = 0;
-        for (auto &brick : bricks) {
+        for (auto &brick: bricks) {
             glColor4fv(colors[idx % 16]);
             glBegin(GL_QUADS);
             glVertex3f(brick.pos_x, brick.pos_y, 0.0f);
@@ -158,9 +161,19 @@ int main() {
         }
         testHelper.drawCenterLines();
         testHelper.renderInstructions(deltaTime, instructions);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        char tempText[64];
+        sprintf(tempText, "Level: %lu", currentLevel);
+        textManager.write(tempText, Fonts::Highscore, true, 1.0f, 0.0f, -0.5f);
         testHelper.drawMouseCoordinates();
 
         SDL_GL_SwapWindow(display.sdlWindow);
+        auto frameEnd = std::chrono::high_resolution_clock::now();
+        auto frameTime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
+
+        if (frameTime < targetFrameTime) {
+            std::this_thread::sleep_for(targetFrameTime - frameTime);
+        }
     }
     return EXIT_SUCCESS;
 }

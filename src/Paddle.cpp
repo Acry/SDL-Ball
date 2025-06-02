@@ -32,16 +32,16 @@ void Paddle::init() {
 void Paddle::draw(const float deltaTime) {
     if (!active) return;
 
-    texture.play(deltaTime);
+    texture->play(deltaTime);
     drawBase();
 
     if (hasGlueLayer) {
-        layerTex[0].play(deltaTime);
+        layerTex[0]->play(deltaTime);
         drawGlueLayer();
     }
 
     if (hasGunLayer) {
-        layerTex[1].play(deltaTime);
+        layerTex[1]->play(deltaTime);
         drawGunLayer();
     }
 }
@@ -51,28 +51,28 @@ void Paddle::drawBase() const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
-    glColor4f(texture.textureProperties.glTexColorInfo[0],
-              texture.textureProperties.glTexColorInfo[1],
-              texture.textureProperties.glTexColorInfo[2],
-              texture.textureProperties.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, texture->textureProperties.texture);
+    glColor4f(texture->textureProperties.glTexColorInfo[0],
+              texture->textureProperties.glTexColorInfo[1],
+              texture->textureProperties.glTexColorInfo[2],
+              texture->textureProperties.glTexColorInfo[3]);
 
     glBegin(GL_QUADS);
 
     // Bottom-left corner.
-    glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
+    glTexCoord2f(texture->texturePosition[0], texture->texturePosition[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
 
     // Bottom-right corner.
-    glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
+    glTexCoord2f(texture->texturePosition[2], texture->texturePosition[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
 
     // Top-right corner.
-    glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
+    glTexCoord2f(texture->texturePosition[4], texture->texturePosition[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
     // Top-left corner.
-    glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
+    glTexCoord2f(texture->texturePosition[6], texture->texturePosition[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
 
     glEnd();
@@ -86,28 +86,28 @@ void Paddle::drawGlueLayer() const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, layerTex[0].textureProperties.texture);
-    glColor4f(layerTex[0].textureProperties.glTexColorInfo[0],
-              layerTex[0].textureProperties.glTexColorInfo[1],
-              layerTex[0].textureProperties.glTexColorInfo[2],
-              layerTex[0].textureProperties.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, layerTex[0]->textureProperties.texture);
+    glColor4f(layerTex[0]->textureProperties.glTexColorInfo[0],
+              layerTex[0]->textureProperties.glTexColorInfo[1],
+              layerTex[0]->textureProperties.glTexColorInfo[2],
+              layerTex[0]->textureProperties.glTexColorInfo[3]);
 
     glBegin(GL_QUADS);
 
     // Bottom-left corner.
-    glTexCoord2f(layerTex[0].texturePosition[0], texture.texturePosition[1]);
+    glTexCoord2f(layerTex[0]->texturePosition[0], texture->texturePosition[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
 
     // Bottom-right corner.
-    glTexCoord2f(layerTex[0].texturePosition[2], texture.texturePosition[3]);
+    glTexCoord2f(layerTex[0]->texturePosition[2], texture->texturePosition[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
 
     // Top-right corner.
-    glTexCoord2f(layerTex[0].texturePosition[4], texture.texturePosition[5]);
+    glTexCoord2f(layerTex[0]->texturePosition[4], texture->texturePosition[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
     // Top-left corner.
-    glTexCoord2f(layerTex[0].texturePosition[6], texture.texturePosition[7]);
+    glTexCoord2f(layerTex[0]->texturePosition[6], texture->texturePosition[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
     glEnd();
 
@@ -120,11 +120,11 @@ void Paddle::drawGunLayer() const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, layerTex[1].textureProperties.texture);
-    glColor4f(layerTex[1].textureProperties.glTexColorInfo[0],
-              layerTex[1].textureProperties.glTexColorInfo[1],
-              layerTex[1].textureProperties.glTexColorInfo[2],
-              layerTex[1].textureProperties.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, layerTex[1]->textureProperties.texture);
+    glColor4f(layerTex[1]->textureProperties.glTexColorInfo[0],
+              layerTex[1]->textureProperties.glTexColorInfo[1],
+              layerTex[1]->textureProperties.glTexColorInfo[2],
+              layerTex[1]->textureProperties.glTexColorInfo[3]);
 
     glBegin(GL_QUADS);
 
@@ -132,19 +132,19 @@ void Paddle::drawGunLayer() const {
     const float offset = height;
 
     // Bottom-left corner.
-    glTexCoord2f(layerTex[1].texturePosition[0], layerTex[1].texturePosition[1]);
+    glTexCoord2f(layerTex[1]->texturePosition[0], layerTex[1]->texturePosition[1]);
     glVertex3f(pos_x, pos_y + offset, 0.0f);
 
     // Bottom-right corner.
-    glTexCoord2f(layerTex[1].texturePosition[2], layerTex[1].texturePosition[3]);
+    glTexCoord2f(layerTex[1]->texturePosition[2], layerTex[1]->texturePosition[3]);
     glVertex3f(pos_x + width, pos_y + offset, 0.0f);
 
     // Top-right corner.
-    glTexCoord2f(layerTex[1].texturePosition[4], layerTex[1].texturePosition[5]);
+    glTexCoord2f(layerTex[1]->texturePosition[4], layerTex[1]->texturePosition[5]);
     glVertex3f(pos_x + width, pos_y + height + offset, 0.0f);
 
     // Top-left corner.
-    glTexCoord2f(layerTex[1].texturePosition[6], layerTex[1].texturePosition[7]);
+    glTexCoord2f(layerTex[1]->texturePosition[6], layerTex[1]->texturePosition[7]);
     glVertex3f(pos_x, pos_y + height + offset, 0.0f);
 
     glEnd();

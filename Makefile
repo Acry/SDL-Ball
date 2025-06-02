@@ -50,20 +50,21 @@ $(shell mkdir -p $(BUILD_DIR))
 
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 TEST_TARGETS := \
-    config-test \
-    effect-test \
-    settings-test \
     test-background \
     test-ball \
+    test-brick \
     test-collision \
+    test-config \
     test-display \
+    test-effect \
     test-level \
     test-paddle \
+    test-setting \
     test-sound \
     test-spritesheet \
     test-text \
     test-texture \
-    theme-test \
+    test-theme \
 
 AUTO_TEST_TARGETS := texture-automatic-test event-automatic-test collision-automatic-test
 TARGET=sdl-ball
@@ -113,8 +114,8 @@ CONFIG_TEST_SOURCES := $(MANUAL_TEST_DIR)ConfigFileManager_Tests.cpp \
 
 CONFIG_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CONFIG_TEST_SOURCES:.cpp=.o)))
 
-config-test: $(CONFIG_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(CONFIG_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)config-test
+test-config: $(CONFIG_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(CONFIG_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)test-config
 
 $(BUILD_DIR)ConfigFileManager_Tests.o: $(MANUAL_TEST_DIR)ConfigFileManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
@@ -130,8 +131,8 @@ SETTINGS_TEST_SOURCES := $(MANUAL_TEST_DIR)SettingsManager_Tests.cpp \
 
 SETTINGS_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SETTINGS_TEST_SOURCES:.cpp=.o)))
 
-settings-test: $(SETTINGS_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(SETTINGS_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)settings-test
+test-setting: $(SETTINGS_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(SETTINGS_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)test-setting
 
 $(BUILD_DIR)SettingsManager_Tests.o: $(MANUAL_TEST_DIR)SettingsManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
@@ -161,14 +162,30 @@ $(BUILD_DIR)TestHelper.o: $(MANUAL_TEST_DIR)TestHelper.cpp
 ###############################################################################
 # BackgroundManager
 BACKGROUND_TEST_SOURCES := $(MANUAL_TEST_DIR)BackgroundManager_Tests.cpp \
-                        $(SOURCE_DIR)Display.cpp \
-                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                        $(SOURCE_DIR)TextureManager.cpp \
-                        $(SOURCE_DIR)TextureUtilities.cpp \
-                        $(SOURCE_DIR)BackgroundManager.cpp
+                           $(MANUAL_TEST_DIR)TestHelper.cpp \
+                           $(SOURCE_DIR)EventManager.cpp \
+                           $(SOURCE_DIR)LevelManager.cpp \
+                           $(SOURCE_DIR)Display.cpp \
+                           $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                           $(SOURCE_DIR)TextManager.cpp \
+                           $(SOURCE_DIR)TextureManager.cpp \
+                           $(SOURCE_DIR)Brick.cpp \
+                           $(SOURCE_DIR)GameObject.cpp \
+                           $(SOURCE_DIR)MovingObject.cpp \
+                           $(SOURCE_DIR)GrowableObject.cpp \
+                           $(SOURCE_DIR)TextureUtilities.cpp \
+                           $(SOURCE_DIR)BackgroundManager.cpp \
 
-test-background: $(BACKGROUND_TEST_SOURCES)
-	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(BACKGROUND_TEST_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)test-background
+BACKGROUND_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BACKGROUND_TEST_SOURCES:.cpp=.o)))
+
+test-background: $(BACKGROUND_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(BACKGROUND_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-background
+
+$(BUILD_DIR)%.o: $(MANUAL_TEST_DIR)%.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+$(BUILD_DIR)%.o: $(SOURCE_DIR)%.cpp
+	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
 
 $(BUILD_DIR)Texture.o: $(SOURCE_DIR)SpriteSheetAnimation.cpp
 	$(CXX) -c $(DEBUG_FLAGS) $< -o $@
@@ -223,7 +240,6 @@ $(BUILD_DIR)MockEventManager.o: $(MANUAL_TEST_DIR)MockEventManager.cpp
 # Paddle
 PADDLE_TEST_SOURCES := $(MANUAL_TEST_DIR)Paddle_Tests.cpp \
                        $(MANUAL_TEST_DIR)TestHelper.cpp \
-                       $(MANUAL_TEST_DIR)MockEventManager.cpp \
                        $(SOURCE_DIR)Paddle.cpp \
                        $(SOURCE_DIR)GameObject.cpp \
                        $(SOURCE_DIR)MovingObject.cpp \
@@ -252,8 +268,8 @@ THEME_TEST_SOURCES := $(MANUAL_TEST_DIR)ThemeManager_Tests.cpp \
 
 THEME_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(THEME_TEST_SOURCES:.cpp=.o)))
 
-theme-test: $(THEME_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(THEME_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)theme-test
+test-theme: $(THEME_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(THEME_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)test-theme
 
 $(BUILD_DIR)ThemeManager_Tests.o: $(MANUAL_TEST_DIR)ThemeManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
@@ -279,6 +295,9 @@ $(BUILD_DIR)TextManager_Tests.o: $(MANUAL_TEST_DIR)TextManager_Tests.cpp
 ###############################################################################
 # SoundManager
 SOUND_TEST_SOURCES := $(MANUAL_TEST_DIR)SoundManager_Tests.cpp \
+                      $(MANUAL_TEST_DIR)TestHelper.cpp \
+                      $(SOURCE_DIR)TextManager.cpp \
+                      $(SOURCE_DIR)TextureUtilities.cpp \
                       $(SOURCE_DIR)EventManager.cpp \
                       $(SOURCE_DIR)SoundManager.cpp \
                       $(SOURCE_DIR)Display.cpp
@@ -295,9 +314,7 @@ $(BUILD_DIR)SoundManager_Tests.o: $(MANUAL_TEST_DIR)SoundManager_Tests.cpp
 # Ball
 BALL_TEST_SOURCES := $(MANUAL_TEST_DIR)Ball_Tests.cpp \
                      $(MANUAL_TEST_DIR)TestHelper.cpp \
-                     $(MANUAL_TEST_DIR)MockEventManager.cpp \
                      $(SOURCE_DIR)Ball.cpp \
-                     $(SOURCE_DIR)Paddle.cpp \
                      $(SOURCE_DIR)GameObject.cpp \
                      $(SOURCE_DIR)MovingObject.cpp \
                      $(SOURCE_DIR)GrowableObject.cpp \
@@ -342,8 +359,8 @@ EFFECT_TEST_SOURCES := $(MANUAL_TEST_DIR)EffectManager_Tests.cpp \
 
 EFFECT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECT_TEST_SOURCES:.cpp=.o)))
 
-effect-test: $(EFFECT_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(EFFECT_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)effect-test
+test-effect: $(EFFECT_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(EFFECT_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-effect
 
 $(BUILD_DIR)EffectManager_Tests.o: $(MANUAL_TEST_DIR)EffectManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
@@ -420,6 +437,36 @@ test-level: $(LEVEL_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(LEVEL_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-level
 
 $(BUILD_DIR)LevelManager_Tests.o: $(MANUAL_TEST_DIR)LevelManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
+# BricksManager
+BRICK_TEST_SOURCES := $(MANUAL_TEST_DIR)BrickManager_Tests.cpp \
+                      $(MANUAL_TEST_DIR)TestHelper.cpp \
+                      $(MANUAL_TEST_DIR)LevelManager.cpp \
+                      $(SOURCE_DIR)Ball.cpp \
+                      $(SOURCE_DIR)Paddle.cpp \
+                      $(SOURCE_DIR)Brick.cpp \
+                      $(SOURCE_DIR)GameObject.cpp \
+                      $(SOURCE_DIR)MovingObject.cpp \
+                      $(SOURCE_DIR)GrowableObject.cpp \
+                      $(SOURCE_DIR)Display.cpp \
+                      $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                      $(SOURCE_DIR)TextManager.cpp \
+                      $(SOURCE_DIR)TextureManager.cpp \
+                      $(SOURCE_DIR)TextureUtilities.cpp \
+                      $(SOURCE_DIR)CollisionManager.cpp \
+                      $(SOURCE_DIR)PlayfieldBorder.cpp \
+                      $(SOURCE_DIR)EventManager.cpp \
+                      $(SOURCE_DIR)SoundManager.cpp \
+                      $(SOURCE_DIR)BrickManager.cpp \
+
+BRICK_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BRICK_TEST_SOURCES:.cpp=.o)))
+
+test-brick: $(BRICK_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(BRICK_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-brick
+
+$(BUILD_DIR)BrickManager_Tests.o: $(MANUAL_TEST_DIR)BrickManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################

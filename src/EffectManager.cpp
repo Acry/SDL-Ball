@@ -531,9 +531,8 @@ void EffectManager::removeTracer(int tracerId) {
 }
 
 void EffectManager::setTracerTexture(int tracerId, SpriteSheetAnimation texture) {
-    auto it = tracers.find(tracerId);
-    if (it != tracers.end()) {
-        it->second->texture = texture;
+    if (const auto it = tracers.find(tracerId); it != tracers.end()) {
+        it->second->texture = &texture;
     }
 }
 

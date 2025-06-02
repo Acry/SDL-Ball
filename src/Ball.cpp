@@ -31,21 +31,21 @@ void Ball::draw(const float deltaTime) {
     if (!active) return;
 
     if (explosive) {
-        fireTex.play(deltaTime);
+        fireTex->play(deltaTime);
         drawExplosiveLayer();
         return;
     }
-    texture.play(deltaTime);
+    texture->play(deltaTime);
     drawBase();
 
 #if 0
 } else {
     // Normaler Ball hat momentan keine Animation
-    // texture.play(deltaTime); // ---FIXME
-    glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
-    //glColor4f(texture.textureProperties.glTexColorInfo[0], texture.textureProperties.glTexColorInfo[1],
-    //          texture.textureProperties.glTexColorInfo[2],
-    //          texture.textureProperties.glTexColorInfo[3]);
+    // texture->play(deltaTime); // ---FIXME
+    glBindTexture(GL_TEXTURE_2D, texture->textureProperties.texture);
+    //glColor4f(texture->textureProperties.glTexColorInfo[0], texture->textureProperties.glTexColorInfo[1],
+    //          texture->textureProperties.glTexColorInfo[2],
+    //          texture->textureProperties.glTexColorInfo[3]);
     // Von -1 bis +1 in NDC, direkt Stein an Stein
     // glOrtho(-1, 1, -1, 1, -1, 1); // NDC projection
     //         +1
@@ -83,28 +83,28 @@ void Ball::drawBase() const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
-    glColor4f(texture.textureProperties.glTexColorInfo[0],
-              texture.textureProperties.glTexColorInfo[1],
-              texture.textureProperties.glTexColorInfo[2],
-              texture.textureProperties.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, texture->textureProperties.texture);
+    glColor4f(texture->textureProperties.glTexColorInfo[0],
+              texture->textureProperties.glTexColorInfo[1],
+              texture->textureProperties.glTexColorInfo[2],
+              texture->textureProperties.glTexColorInfo[3]);
 
     glBegin(GL_QUADS);
 
     // Bottom-left corner.
-    glTexCoord2f(texture.texturePosition[0], texture.texturePosition[1]);
+    glTexCoord2f(texture->texturePosition[0], texture->texturePosition[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
 
     // Bottom-right corner.
-    glTexCoord2f(texture.texturePosition[2], texture.texturePosition[3]);
+    glTexCoord2f(texture->texturePosition[2], texture->texturePosition[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
 
     // Top-right corner.
-    glTexCoord2f(texture.texturePosition[4], texture.texturePosition[5]);
+    glTexCoord2f(texture->texturePosition[4], texture->texturePosition[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
     // Top-left corner.
-    glTexCoord2f(texture.texturePosition[6], texture.texturePosition[7]);
+    glTexCoord2f(texture->texturePosition[6], texture->texturePosition[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
 
     glEnd();
@@ -118,27 +118,27 @@ void Ball::drawExplosiveLayer() const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, fireTex.textureProperties.texture);
-    glColor4f(fireTex.textureProperties.glTexColorInfo[0], fireTex.textureProperties.glTexColorInfo[1],
-              fireTex.textureProperties.glTexColorInfo[2],
-              fireTex.textureProperties.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, fireTex->textureProperties.texture);
+    glColor4f(fireTex->textureProperties.glTexColorInfo[0], fireTex->textureProperties.glTexColorInfo[1],
+              fireTex->textureProperties.glTexColorInfo[2],
+              fireTex->textureProperties.glTexColorInfo[3]);
 
     glBegin(GL_QUADS);
 
     // Bottom-left corner.
-    glTexCoord2f(fireTex.texturePosition[0], fireTex.texturePosition[1]);
+    glTexCoord2f(fireTex->texturePosition[0], fireTex->texturePosition[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
 
     // Bottom-right corner.
-    glTexCoord2f(fireTex.texturePosition[2], fireTex.texturePosition[3]);
+    glTexCoord2f(fireTex->texturePosition[2], fireTex->texturePosition[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
 
     // Top-right corner.
-    glTexCoord2f(fireTex.texturePosition[4], fireTex.texturePosition[5]);
+    glTexCoord2f(fireTex->texturePosition[4], fireTex->texturePosition[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
     // Top-left corner.
-    glTexCoord2f(fireTex.texturePosition[6], fireTex.texturePosition[7]);
+    glTexCoord2f(fireTex->texturePosition[6], fireTex->texturePosition[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
 
     glEnd();

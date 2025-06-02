@@ -5,81 +5,46 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+
 #include "config.h"
 #include "LevelManager.h"
 
-// ersetzt loadlevel
-//bool LevelManager::getLevelData(size_t level, brick bricks[], const std::string &filename) {
-//    if (level >= level_ranges.size()) {
-//        SDL_Log("Fehler: Level %ld existiert nicht", level);
-//        return false;
-//    }
-//
-//    std::ifstream infile(filename);
-//    if (!infile.is_open()) {
-//        SDL_Log("Fehler: Konnte Level-Datei nicht öffnen: %s", filename.c_str());
-//        return false;
-//    }
-//
-//    auto [start_pos, end_pos] = level_ranges[level];
-//    infile.seekg(start_pos);
-//
-//    std::string line;
-//    int brick_index = 0;
-//    size_t ch = 0;
-//
-//    while (infile.tellg() < end_pos && std::getline(infile, line)) {
-//        // Prüfe auf Steuerungskommandos
-//        if (line[0] == '>') {
-//            if (line.substr(0, 6) == "> down") {
-//                var.scrollInfo.dropspeed = std::atol(line.substr(7).c_str());
-//                var.scrollInfo.drop = true;
-//            }
-//            continue;
-//        }
-//
-//        // Verarbeite Brick-Daten
-//        ch = 0;
-//        while (ch < line.length()) {
-//            bricks[brick_index].powerup = line[ch];
-//            bricks[brick_index].type = line[ch + 1];
-//
-//            if (bricks[brick_index].type == 'D') {
-//                char rgb[3][5];
-//                sprintf(rgb[0], "0x%c%c", line[ch + 2], line[ch + 3]);
-//                sprintf(rgb[1], "0x%c%c", line[ch + 4], line[ch + 5]);
-//                sprintf(rgb[2], "0x%c%c", line[ch + 6], line[ch + 7]);
-//
-//                const float color_factor = 0.003921569f; // 1/255
-//                for (int i = 0; i < 3; i++) {
-//                    float color_value = color_factor * std::strtol(rgb[i], nullptr, 16);
-//                    bricks[brick_index].tex.prop.glTexColorInfo[i] = color_value;
-//                    bricks[brick_index].tex.prop.glParColorInfo[i] = color_value;
-//                }
-//                bricks[brick_index].tex.prop.glTexColorInfo[3] = 1.0f;
-//                ch += 8;
-//            } else {
-//                ch += 2;
-//            }
-//            brick_index++;
-//        }
-//    }
-//
-//    return true;
-//}
+#include "EventManager.h"
 
-LevelManager::LevelManager(EventManager* evtMgr) : eventManager(evtMgr) {}
+#define DEBUG_BRICK_COUNT 0
+
+BrickType charToBrickType(const char c) {
+    switch (c) {
+        case '1': return BrickType::Blue;
+        case '2': return BrickType::Yellow;
+        case '3': return BrickType::Cement;
+        case '4': return BrickType::Glass;
+        case '5': return BrickType::Green;
+        case '6': return BrickType::Grey;
+        case '7': return BrickType::Purple;
+        case '8': return BrickType::White;
+        case '9': return BrickType::Invisible;
+        case 'A': return BrickType::Red;
+        case 'B': return BrickType::Explosive;
+        case 'C': return BrickType::Doom;
+        case 'D': return BrickType::Base; // Custom Color
+        default: return BrickType::None; // Sicherer Default-Wert
+    }
+}
+
+LevelManager::LevelManager(EventManager *evtMgr) : eventManager(evtMgr) {
+}
 
 bool LevelManager::readLevelsStructure() {
-    // Ließt Struktur, prüft bestimmte Dinge der Levels-Datei ein und speichert die Level-Bereiche
+    // Liest Struktur, prüft bestimmte Dinge der Levels-Datei ein und speichert die Level-Bereiche
     const std::string fullPath = currentTheme;
     std::ifstream infile(fullPath);
-    // Prüfen ob Datei geöffnet werden kann
+
     if (!infile.is_open()) {
         SDL_Log("Fehler: Konnte Level-Datei nicht öffnen: %s", fullPath.c_str());
         return false;
     }
-    // Prüfen ob Datei leer ist
+
     if (infile.peek() == std::ifstream::traits_type::eof()) {
         SDL_Log("Level-Datei ist leer: %s", fullPath.c_str());
         return false;
@@ -115,14 +80,16 @@ bool LevelManager::readLevelsStructure() {
             }
 
             // Prüfe Zeilenanzahl
-            if (constexpr int EXPECTED_ROWS = NUM_BRICKS_Y; current_row != EXPECTED_ROWS) {
-                constexpr int EXPECTED_COLS = NUM_BRICKS_X * 2; // 2 Zeichen pro Stein
-                SDL_Log("Fehler: Ungültige Zeilenlänge in Level %d, Zeile %d: %zu (erwartet: %d)",
-                        level_count + 1, current_row + 1, line.length(), EXPECTED_COLS);
-                return false;
-            }
+            //if (constexpr int EXPECTED_ROWS = NUM_BRICKS_Y; current_row != EXPECTED_ROWS) {
+            //    constexpr int EXPECTED_COLS = NUM_BRICKS_X * 2; // 2 Zeichen pro Stein
+            //    SDL_Log("Fehler: Ungültige Zeilenlänge in Level %d, Zeile %d: %zu (erwartet: %d)",
+            //            level_count + 1, current_row + 1, line.length(), EXPECTED_COLS);
+            //    return false;
+            //}
 
-            levelRanges.emplace_back(start_pos, infile.tellg());
+            // Speichere die Position VOR der "** Stop **" Zeile
+            std::streampos end_pos = infile.tellg() - static_cast<std::streamoff>(line.length() + 1);
+            levelRanges.emplace_back(start_pos, end_pos);
             in_level = false;
             level_count++;
             continue;
@@ -162,6 +129,11 @@ bool LevelManager::readLevelsStructure() {
     }
     levelCount = levelRanges.size(); // ?
     SDL_Log("Level-Struktur aus %s gelesen. %d Level erkannt", fullPath.c_str(), level_count);
+
+    LevelEventData data;
+    data.currentlevel = currentLevel;
+    data.maxLevel = levelCount;
+    eventManager->emit(GameEvent::LevelThemeChanged, data);
     return true;
 }
 
@@ -171,12 +143,14 @@ bool LevelManager::loadLevels() {
         SDL_Log("Fehler: Konnte Level-Struktur nicht lesen");
         return false;
     }
+
     return true;
 }
 
 BrickData LevelManager::getBrickDataForLevel(size_t level) {
     BrickData result;
     if (level == 0) return result; // Kein Level 0 für Nutzer
+
     size_t internalLevel = level - 1;
     if (internalLevel >= levelRanges.size()) return result;
 
@@ -187,26 +161,70 @@ BrickData LevelManager::getBrickDataForLevel(size_t level) {
     infile.seekg(start_pos);
 
     std::string line;
+
     size_t row = 0;
-    while (infile.tellg() < end_pos && std::getline(infile, line) && row < NUM_BRICKS_Y) {
-        size_t col = 0;
-        for (size_t ch = 0; ch + 1 < line.length() && col < NUM_BRICKS_X; ch += 2, ++col) {
+    while (infile.tellg() < end_pos && std::getline(infile, line)) {
+        // Prüfe auf Dropping-Level Kommando
+        if (line.starts_with("> down")) {
+            result.isDropping = true;
+            result.dropSpeed = std::atoi(line.substr(7).c_str());
+            continue;
+        }
+
+        // Verarbeite normale Level-Zeilen
+        size_t ch = 0;
+
+        size_t brick_count_in_line = 0;
+        while (ch < line.length()) {
             char powerup = line[ch];
             char type = line[ch + 1];
-            if (type == '0') continue; // kein Brick
 
+            if (type == '0') {
+                ch += 2;
+                continue;
+            }
+
+            brick_count_in_line++;
             Brick brick(eventManager);
+            size_t col = ch / 2; // Position basiert auf Zeichenpaaren
             brick.pos_x = PLAYFIELD_LEFT_BORDER + col * BRICK_WIDTH;
             brick.pos_y = BRICKS_TOP_BORDER - row * BRICK_HEIGHT;
             brick.width = BRICK_WIDTH;
             brick.height = BRICK_HEIGHT;
-            // Hier ggf. weitere Brick-Attribute setzen (z.B. Typ, Powerup)
+            //brick.powerupType = powerup;
+
+            if (type == 'D' && ch + 7 < line.length()) {
+                std::string rgb = line.substr(ch + 2, 6);
+                int r = std::stoi(rgb.substr(0, 2), nullptr, 16);
+                int g = std::stoi(rgb.substr(2, 2), nullptr, 16);
+                int b = std::stoi(rgb.substr(4, 2), nullptr, 16);
+                brick.color = {
+                    static_cast<float>(r) / 255.0f,
+                    static_cast<float>(g) / 255.0f,
+                    static_cast<float>(b) / 255.0f,
+                    1.0f
+                };
+                ch += 8; // PowerupType + D + RGB
+            } else {
+                ch += 2; // PowerupType + BrickType
+            }
+
+            brick.type = charToBrickType(type);
             result.bricks.push_back(brick);
         }
+#if DEBUG_BRICK_COUNT
+            SDL_Log("Zeile %zu: %zu Bricks", row, brick_count_in_line);
+#endif
         ++row;
     }
-    result.levelInfo.brickCount = result.bricks.size();
-    // Weitere LevelInfo-Felder ggf. setzen
+#if DEBUG_BRICK_COUNT
+    SDL_Log("Level %zu enthält %zu Bricks", level, result.bricks.size());
+#endif
+    currentLevel = internalLevel;
+    LevelEventData data;
+    data.currentlevel = currentLevel;
+    data.maxLevel = levelCount;
+    eventManager->emit(GameEvent::LevelChanged, data);
     return result;
 }
 

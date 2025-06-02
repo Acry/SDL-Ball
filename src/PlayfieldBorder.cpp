@@ -1,12 +1,12 @@
+// PlayfieldBorder.cpp
 #include <epoxy/gl.h>
 #include "PlayfieldBorder.h"
 #include "EventManager.h"
 #include "config.h"
 
-PlayfieldBorder::PlayfieldBorder(Side side, const SpriteSheetAnimation &tex, EventManager *eventMgr)
+PlayfieldBorder::PlayfieldBorder(Side side, EventManager *eventMgr)
     : GameObject(eventMgr), side(side) {
     // eventMgr an GameObject-Konstruktor weitergeben
-    this->texture = tex;
     init();
 }
 
@@ -27,8 +27,6 @@ void PlayfieldBorder::init() {
         width = 2.0f - PILLAR_WIDTH * 2;
         height = PILLAR_WIDTH;
     }
-    // Erzeuge die DisplayList
-    createDisplayList();
 }
 
 void PlayfieldBorder::draw(float) {
@@ -86,11 +84,11 @@ void PlayfieldBorder::createDisplayList() {
     glNewList(dl, GL_COMPILE);
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
-    glColor4f(texture.textureProperties.glTexColorInfo[0],
-              texture.textureProperties.glTexColorInfo[1],
-              texture.textureProperties.glTexColorInfo[2],
-              texture.textureProperties.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, texture->textureProperties.texture);
+    glColor4f(texture->textureProperties.glTexColorInfo[0],
+              texture->textureProperties.glTexColorInfo[1],
+              texture->textureProperties.glTexColorInfo[2],
+              texture->textureProperties.glTexColorInfo[3]);
     glBegin(GL_QUADS);
 
     if (side == Side::Left) {

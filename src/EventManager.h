@@ -1,5 +1,6 @@
 // EventManager.h
 #pragma once
+#include <algorithm>
 #include <functional>
 #include <vector>
 #include <unordered_map>
@@ -40,7 +41,6 @@ enum class GameEvent {
     LevelThemeChanged,
 };
 
-
 struct EventData {
     float posX{0};
     float posY{0};
@@ -60,50 +60,65 @@ using EventCallback = std::function<void(const EventData &)>;
 using LevelEventCallback = std::function<void(const LevelEventData &)>;
 
 class EventManager {
-private:
-    std::unordered_map<GameEvent, std::vector<EventCallback> > eventListeners;
-    std::unordered_map<GameEvent, std::vector<LevelEventCallback> > levelEventListeners;
+    struct ListenerEntry {
+        void* owner;
+        EventCallback callback;
+    };
+
+    struct LevelListenerEntry {
+        void* owner;
+        LevelEventCallback callback;
+    };
+
+    std::unordered_map<GameEvent, std::vector<ListenerEntry>> eventListeners;
+    std::unordered_map<GameEvent, std::vector<LevelListenerEntry>> levelEventListeners;
 
 public:
-    void addListener(GameEvent event, EventCallback callback, void *owner = nullptr) {
-        eventListeners[event].push_back(std::move(callback));
+    void addListener(GameEvent event, EventCallback callback, void* owner = nullptr) {
+        eventListeners[event].push_back({owner, std::move(callback)});
     }
 
-    void addListener(GameEvent event, LevelEventCallback callback, void *owner = nullptr) {
-        levelEventListeners[event].push_back(std::move(callback));
+    void addListener(GameEvent event, LevelEventCallback callback, void* owner = nullptr) {
+        levelEventListeners[event].push_back({owner, std::move(callback)});
     }
 
-    void emit(GameEvent event, const EventData &data) {
+    void emit(GameEvent event, const EventData& data) {
         auto it = eventListeners.find(event);
         if (it != eventListeners.end()) {
-            for (const auto &callback: it->second) {
-                callback(data);
+            for (const auto& entry : it->second) {
+                entry.callback(data);
             }
         }
     }
 
-    void emit(GameEvent event, const LevelEventData &data) {
+    void emit(GameEvent event, const LevelEventData& data) {
         auto it = levelEventListeners.find(event);
         if (it != levelEventListeners.end()) {
-            for (const auto &callback: it->second) {
-                callback(data);
+            for (const auto& entry : it->second) {
+                entry.callback(data);
             }
         }
     }
 
-    void removeListener(GameEvent event, void *owner) {
-        // Da wir owner nicht mehr verwenden, entfernen wir einfach alle Listener für das Event
-        eventListeners[event].clear();
-        levelEventListeners[event].clear();
-    }
+    void removeListener(GameEvent event, void* owner) {
+        auto it = eventListeners.find(event);
+        if (it != eventListeners.end()) {
+            auto& listeners = it->second;
+            listeners.erase(
+                std::remove_if(listeners.begin(), listeners.end(),
+                    [owner](const ListenerEntry& entry) { return entry.owner == owner; }),
+                listeners.end()
+            );
+        }
 
-    void removeAllListeners(GameEvent event) {
-        eventListeners[event].clear();
-        levelEventListeners[event].clear();
-    }
-
-    void clearAllListeners() {
-        eventListeners.clear();
-        levelEventListeners.clear();
+        auto levelIt = levelEventListeners.find(event);
+        if (levelIt != levelEventListeners.end()) {
+            auto& listeners = levelIt->second;
+            listeners.erase(
+                std::remove_if(listeners.begin(), listeners.end(),
+                    [owner](const LevelListenerEntry& entry) { return entry.owner == owner; }),
+                listeners.end()
+            );
+        }
     }
 };
