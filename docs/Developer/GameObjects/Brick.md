@@ -1,3 +1,5 @@
+# Brick-Conept
+
 // Brick-Typen als Enum für bessere Lesbarkeit
 enum class BrickType : char {
 None = '0', // Kein Brick
@@ -15,3 +17,5 @@ Unused_B = 'B', // Unbenutzt
 Doom = 'C', // Doom-Brick (erzeugt immer ein zufälliges böses Powerup)
 Custom = 'D' // Farbiger Brick mit anpassbarer Farbe
 };
+
+[BrickManage](../Manager/BrickManager.md)

@@ -1,6 +1,7 @@
 Working tutorial code in GIMP Filters Development
 
-___ old
+---
+old
 you need gimptool2.0 and gimp dev libs to compile this.
 
 to compile do:
