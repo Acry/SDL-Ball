@@ -1,10 +1,13 @@
+# Arch Linux
 PREFIX?=/usr/
 
+# Arch Linux
 DATADIR?=$(PREFIX)share/sdl-ball/themes/
 BINDIR?=$(PREFIX)/bin/
 
 #append -DWITH_WIIUSE to compile with WIIUSE support!
 #append -DNOSOUND to compile WITHOUT sound support
+
 CXX?=g++
 
 CXXFLAGS+=-Wall `sdl-config --cflags` -DDATADIR="\"$(DATADIR)\""
@@ -41,4 +44,3 @@ install-data:
 
 remove:
 	rm -R ~/.config/sdl-ball
-
