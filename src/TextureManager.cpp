@@ -467,10 +467,6 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
 
     // 3. try to get image from basename, case: missing properties file or no file specified
     if (!textureLoaded) {
-        const std::vector<std::string> supportedFormats = {
-            ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".webp", ".jxl", ".avif"
-        };
-
         for (const auto &format: supportedFormats) {
             if (std::filesystem::path texturePath = basePath + format; std::filesystem::exists(texturePath)) {
                 if (load(texturePath, animation)) {
