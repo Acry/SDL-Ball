@@ -1,26 +1,31 @@
-/* ************************************************************************* * 
-    SDL-Ball - DX-Ball/Breakout remake with openGL and SDL for Linux 
-    Level editor plugin for the gimp
-    Copyright (C) 2008 DusteD.dk
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
- * ************************************************************************* */
-
 /*
-  Based on tutorial by David Neary, the excellent tutorial can be found here: 
-                      http://developer.gimp.org/writing-a-plug-in/1/index.html
-                                                                                */
+ * Das gimp-sdlball.c ist ein GIMP-Plugin für einen Level-Editor.
+ * Es analysiert ein Bild in GIMP und konvertiert es in ein Level-Format für das Spiel SDL-Ball.
+ * Hier sind die Hauptfunktionen:
+ * Das Plugin liest ein 26x23 Pixel großes Bild
+ * Es erkennt verschiedene Brick-Typen anhand ihrer Farben:
+ * Blau (BLU) -> '1'
+ * Gelb (YEL) -> '2'
+ * Zement (CEM) -> '3'
+ * Glas (GLA) -> '4'
+ * Grün (GRE) -> '5'
+ * Stahl (STE) -> '6'
+ * Lila (PUR) -> '7'
+ * Weiß (WHI) -> '8'
+ * Unsichtbar (INV) -> '9'
+ * Rot (RED) -> 'A'
+ * Explosiv (EXP) -> 'B'
+ * Tür (DOO) -> 'C'
+ * Benutzerdefinierte Farbe -> 'D' + RGB-Hex-Code
+ * Schwarz (NON) -> '0' (kein Block)
+ * Jedem nicht-leeren und nicht-Zement Block wird ein zufälliges Powerup ('L') zugewiesen
+ * Das Level wird in folgendem Format ausgegeben:
+ * ** Start **
+ * [Powerup][Blocktyp][Optional:RGB-Code]
+ * [Powerup][Blocktyp][Optional:RGB-Code]
+ * ...
+ * ** Stop **
+*/
 #include <stdio.h>
 #include <libgimp/gimp.h>
 
@@ -278,7 +283,6 @@ run (const gchar      *name,
           }
       }
     }
-    
     printf("\n\n** Start **");
     for(row=0; row < 23; row++)
     {
@@ -294,16 +298,10 @@ run (const gchar      *name,
     }
     printf("** Stop **");
 
-
     printf("\n");
 
      gimp_drawable_flush (drawable);
      
       gimp_displays_flush ();
       gimp_drawable_detach (drawable);
-    
-    
-    
-    
-    
 }
