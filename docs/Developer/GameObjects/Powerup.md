@@ -52,6 +52,69 @@ draw(): Zeichnet aktive PowerUps
 coldet(): Prüft Kollisionen mit dem Paddle
 die(): Deaktiviert PowerUps mit Effekten
 
+```c++
+struct PowerUp {
+    glm::vec2 position;
+    glm::vec2 velocity;
+    float gravity = 0.7f;         // Standardwert aus altem Code
+    bool active = false;
+    PowerupType type;
+    int score;                    // Punktewert
+};
+```
+
+Gravitation (0.7f)
+Abprallen an Wänden
+Deaktivierung beim Fallen unter den Bildschirm
+
+Paddle-Kollision aktiviert Effekte
+Wandkollision mit Sound (SND_PO_HIT_BORDER)
+
+Partikeleffekte wenn setting.eyeCandy true
+Soundeffekte (SND_GOOD_PO_HIT_PADDLE/SND_EVIL_PO_HIT_PADDLE)
+Punktevergabe und Coin-System
+PowerUp-spezifische Effekte aktivieren
+
+float width = 0.055f / 1.25f; // Aus altem Code
+float height = 0.055f / 1.25f;
+
+Spawn-System:
+Character-basierte Typ-Zuordnung ('1'-'R')
+Position und Geschwindigkeit vom zerstörten Brick
+Maximalanzahl aktiver PowerUps (MAXPOWERUPS)
+
+Speicherwerte (Coins):
+
+```c++
+enum PowerupCoins {
+    COINS_GLUE = 150,
+    COINS_BIGBALL = 30,
+    COINS_NORMALBALL = 50,
+    COINS_SMALLBALL = 10,
+    COINS_MULTIBALL = 100,
+    COINS_AIM = 50,
+    COINS_GUN = 200,
+    COINS_THRU = 300,
+    COINS_LASER = 40,
+    COINS_LIFE = 400,
+    COINS_DIE = 1,
+    COINS_BASE = 1000   // Standard für viele PowerUps
+};
+```
+
+Event-System:
+PowerUp eingesammelt
+PowerUp aktiviert
+PowerUp deaktiviert
+Score/Coins verändert
+
+Der neue PowerUpManager sollte moderner und wartbarer sein:
+Verwendet Enums statt Magic Numbers
+Event-basierte Kommunikation
+Klare Trennung von Logik und Rendering
+Bessere Kapselung der Daten
+Konfigurierbare Werte (Gravity, Sizes, etc.)
+
 '1' - PO_GROWPADDLE (Paddle vergrößern)
 '2' - PO_SHRINKPADDLE (Paddle verkleinern)
 '3' - PO_DIE (Tod)

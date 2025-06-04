@@ -105,3 +105,48 @@ Der PowerUpManager:
 - Reagiert auf Brick-Zerstörung Events
 - Verwaltet aktive PowerUps (Falling, Collection, Effects)
 - Verwendet TextureManager für PowerUp-Grafiken
+
+## old code
+
+class PowerUpManager {
+void spawn(glm::vec2 pos, glm::vec2 vel, PowerupType type);
+void update(float deltaTime);
+void handleCollision(const Paddle& paddle);
+void clear();
+void render();
+};
+
+### spawning
+
+Level-Layout und PowerUp-Zuordnung:
+bricks[brick].powerup = line[ch]; // PowerUp-Typ aus Level-Datei
+bricks[brick].type = line[ch+1]; // Brick-Typ
+
+// PowerupLoaderClass verwaltet:
+string chances[4]; // Array für verschiedene Häufigkeitsklassen:
+// Most:   ~60% Chance
+// More:   ~30% Chance  
+// Less:   ~10% Chance
+// Least:  ~1% Chance
+
+// Zufalls-PowerUps mit definierten Wahrscheinlichkeiten
+'J' - 10% Chance
+'K' - 100% Chance
+'L' - 5% Chance  
+'M' - 2% Chance
+'N' - 1% Chance
+'Q' - 100% böses PowerUp
+
+void initlevels(brick bricks[], textureClass texLvl[]) {
+powerupLoaderClass powerupLoader;
+// ...
+bricks[i].powerup = powerupLoader.randomPowerup(bricks[i].powerup);
+// ...
+}
+
+Für die Neuimplementierung bedeutet das:
+PowerUpManager muss:
+PowerUp-Chancen aus Config laden
+Zufällige PowerUp-Generierung unterstützen
+Position und Typ aus zerstörtem Brick übernehmen
+PowerUps mit unterschiedlichen Wahrscheinlichkeiten spawnen

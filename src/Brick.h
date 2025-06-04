@@ -29,8 +29,11 @@ class Brick : public GameObject, public ICollideable {
     EventManager *eventManager;
 
 public:
+    Uint32 id{0}; // Unique ID for the brick
     GLfloat health{1.0f}; // Health of the brick, 1.0 means full health
+    bool visible{true}; // Visibility of the brick
     BrickType type{BrickType::None};
+
     // Custom Color Support
     struct Color {
         float r{1.0f};
@@ -38,6 +41,7 @@ public:
         float b{1.0f};
         float a{1.0f};
     } color;
+
     void draw(float deltaTime) override;
 
     explicit Brick(EventManager *eventMgr);

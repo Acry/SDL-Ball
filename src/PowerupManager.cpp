@@ -70,3 +70,18 @@ void PowerupManager::trySpawnPowerup(const float posX, const float posY) {
     }
 }
 
+void onLevelChanged(const LevelEventData& data) {
+    for (const auto& PowerUpType : data.powerupTypes) {
+        // PowerUp-Informationen speichern
+        // Wird erst aktiv wenn der zugehörige Brick zerstört wird
+    }
+}
+
+void onBrickDestroyed(const BrickEventData& data) {
+    // PowerUp mit gegebenem Typ und Position spawnen
+    createPowerup(data.position, getPowerupTypeForBrick(data.id));
+}
+
+void PowerupManager::onLevelChanged(const LevelEventData& data) {
+    powerupData = data.powerupData;
+}

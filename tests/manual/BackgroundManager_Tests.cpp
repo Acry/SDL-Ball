@@ -54,7 +54,7 @@ int main() {
     BackgroundManager backgroundManager(textureManager);
     backgroundManager.registerEvents(&eventManager);
 
-    levelManager.getBrickDataForLevel(currentLevel);
+    levelManager.loadLevel(currentLevel);
 
     Uint32 lastTime = SDL_GetTicks();
     float deltaTime = 0.0f;
@@ -97,29 +97,29 @@ int main() {
                     case SDLK_SPACE:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
-                            levelManager.getBrickDataForLevel(currentLevel);
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_HOME:
                         currentLevel = 1; {
-                            levelManager.getBrickDataForLevel(currentLevel);
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_END:
                         currentLevel = levelCount; {
-                            levelManager.getBrickDataForLevel(currentLevel);
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_LEFT:
                         currentLevel--;
                         if (currentLevel < 1) currentLevel = levelCount; {
-                            levelManager.getBrickDataForLevel(currentLevel);
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_RIGHT:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
-                            levelManager.getBrickDataForLevel(currentLevel);
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_ESCAPE:

@@ -80,4 +80,3 @@ bool isCompleted() const; // Neue Methode
 };
 
 Die Implementierung der play()-Methode müsste dann angepasst werden, um nach einem Durchlauf die Animation zu stoppen.
-

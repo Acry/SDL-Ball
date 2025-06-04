@@ -63,5 +63,6 @@ void Brick::draw(const float deltaTime) {
 Brick::~Brick() {
     EventData data;
     data.sender = this;
+    data.brickId = id; // Die Brick-ID für das Powerup-Mapping hinzufügen
     eventManager->emit(GameEvent::BrickDestroyed, data);
 }

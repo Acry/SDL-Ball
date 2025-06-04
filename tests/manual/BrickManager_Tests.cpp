@@ -32,9 +32,8 @@ int main() {
         return EXIT_FAILURE;
     }
     size_t currentLevel = 1;
-    BrickData data = levelManager.getBrickDataForLevel(currentLevel);
+    levelManager.loadLevel(currentLevel);
 
-    brickManager.setupBricks(data);
     auto levelCount = levelManager.getLevelCount();
     bool running = true;
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
@@ -83,34 +82,29 @@ int main() {
                     case SDLK_SPACE:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
-                            data = levelManager.getBrickDataForLevel(currentLevel);
-                        brickManager.setupBricks(data);
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_HOME:
                         currentLevel = 1; {
-                        data = levelManager.getBrickDataForLevel(currentLevel);
-                        brickManager.setupBricks(data);
+                        levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_END:
                         currentLevel = levelCount; {
-                         data = levelManager.getBrickDataForLevel(currentLevel);
-                        brickManager.setupBricks(data);
+                         levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_LEFT:
                         currentLevel--;
                         if (currentLevel < 1) currentLevel = levelCount; {
-                        data = levelManager.getBrickDataForLevel(currentLevel);
-                        brickManager.setupBricks(data);
+                        levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_RIGHT:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
-                        data = levelManager.getBrickDataForLevel(currentLevel);
-                        brickManager.setupBricks(data);
+                        levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_ESCAPE:

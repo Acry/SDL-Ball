@@ -24,17 +24,18 @@ BrickTexture BrickManager::getTextureForType(BrickType type) {
 }
 
 void BrickManager::setupBricks(BrickData data) {
-    // Setze für jeden Brick die passende Textur
     bricks = std::move(data.bricks);
     for (auto& brick : bricks) {
         if (brick.type == BrickType::None) continue;
         brick.texture = textureManager->getBrickTexture(getTextureForType(brick.type));
+
         switch (brick.type) {
             case BrickType::Glass:
                 brick.health = 2.0f;
                 break;
             case BrickType::Invisible:
                 brick.health = 3.0f;
+                brick.visible = false;
                 break;
             case BrickType::Cement:
                 brick.health = 4.0f;
@@ -54,6 +55,10 @@ void BrickManager::setupBricks(BrickData data) {
 
 }
 
+void BrickManager::onLevelChanged(const LevelEventData &data) {
+    setupBricks(data.brickData);
+}
+
 void BrickManager::update(const float deltaTime) {
     // > down 10000
     // The above makes the bricks drop down once every 10 seconds.
@@ -64,10 +69,42 @@ void BrickManager::update(const float deltaTime) {
     }
 }
 
-void BrickManager::draw(float deltaTime) {
+void BrickManager::draw(const float deltaTime) {
     for (auto& Brick : bricks) {
         if (Brick.isActive()) {
             Brick.draw(deltaTime);
         }
+    }
+}
+
+void BrickManager::onBrickHit(const EventData &data) {
+    auto *brick = static_cast<Brick *>(data.target);
+
+    brick->health -= 1.0f;
+
+    switch (brick->type) {
+        case BrickType::Invisible:
+            if (!brick->visible) {
+                brick->visible = true; // Wird sichtbar nach erstem Treffer
+            }
+            break;
+
+        case BrickType::Explosive:
+            if (brick->health <= 0) {
+                //detonateExplosiveBrick(brick);
+            }
+            break;
+        default: ;
+    }
+    if (brick->health <= 0) {
+        brick->active = false;
+
+        EventData destroyData;
+        destroyData.sender = brick;
+        //destroyData.brickId = brick->id;
+        // basis Punkte
+        destroyData.posX = brick->pos_x;
+        destroyData.posY = brick->pos_y;
+        eventManager->emit(GameEvent::BrickDestroyed, destroyData);
     }
 }

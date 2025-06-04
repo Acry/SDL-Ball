@@ -1,5 +1,4 @@
 #include "Powerup.h"
-#include "Constants.h"
 #include <epoxy/gl.h>
 
 Powerup::Powerup(EventManager *eventMgr) : eventManager(eventMgr), active(false) {

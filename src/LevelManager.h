@@ -7,6 +7,7 @@
 #include <SDL_stdinc.h>
 
 #include "Brick.h"
+#include "Powerup.h"
 
 struct BrickData {
     std::vector<Brick> bricks{}; // Alle Bricks des Levels
@@ -14,20 +15,10 @@ struct BrickData {
     int dropSpeed{}; // Geschwindigkeit des Drops (wenn hasDropping true ist)
 };
 
-// TBD
-// PowerupData-Struktur für den PowerupManager
 struct PowerupData {
-    struct PowerupInfo {
-        size_t brickIndex; // Index des Bricks in der Brick-Liste
-        char type; // Powerup-Typ (Buchstabencode)
-        float posX, posY; // Position im Level für stabilere Referenzierung
-        bool active{false}; // Ist das Powerup aktiv/sichtbar?
-    };
-
-    std::vector<PowerupInfo> powerups{};
+    std::map<Uint32, PowerUpType> powerupMap{}; // Map für Brick-ID -> PowerUp-Typ
 };
 
-// Level-Offset-Typ für Start- und Endpositionen in der Levels-Datei
 using LevelOffset = std::tuple<std::streampos, std::streampos>;
 
 class LevelManager {
@@ -36,29 +27,24 @@ class LevelManager {
     std::string currentTheme;
     size_t levelCount = 0;
     size_t currentLevel = 0; // Aktuelles Level, 0-basiert für interne Verwendung
+    std::map<Uint32, PowerUpType> powerupMap{}; // Map für Brick-ID -> PowerUp-Typ
+    PowerupData powerupData{}; // Member-Variable für PowerUp-Informationen
+    BrickData brickData{};
+
 public:
     explicit LevelManager(EventManager *evtMgr = nullptr);
 
     ~LevelManager() = default;
 
-    // Theme-Management
     void clearTheme();
 
     bool setTheme(const std::string &themeName);
 
-    // Gibt den aktuellen Theme-Namen zurück
     [[nodiscard]] std::string getCurrentTheme() const { return currentTheme; };
 
-    // Liest die Struktur der Levels-Datei und speichert Level-Bereiche
-    bool readLevelsStructure();
+    bool readLevelStructure();
 
-    // Lädt alle Level und bereitet sie für das Spiel vor
-    bool loadLevels();
-
-    // Gibt die Anzahl der verfügbaren Level zurück
     [[nodiscard]] size_t getLevelCount() const { return levelCount; }
 
-    BrickData getBrickDataForLevel(size_t level);
-
-    PowerupData getPowerupDataForLevel(size_t level) { return {}; };
+    bool loadLevel(size_t level);
 };

@@ -47,7 +47,7 @@ int main() {
         SDL_Log("Error setting level theme");
     }
     size_t currentLevel = 1;
-    BrickData data = levelManager.getBrickDataForLevel(currentLevel);
+    BrickData data = levelManager.loadLevel(currentLevel);
     auto& bricks = data.bricks;
     auto levelCount = levelManager.getLevelCount();
     const std::vector<std::string> instructions = {
@@ -97,33 +97,33 @@ int main() {
                     case SDLK_SPACE:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
-                            data = levelManager.getBrickDataForLevel(currentLevel);
+                            data = levelManager.loadLevel(currentLevel);
                             bricks = data.bricks;
                         }
                         break;
                     case SDLK_HOME:
                         currentLevel = 1; {
-                        data = levelManager.getBrickDataForLevel(currentLevel);
+                        data = levelManager.loadLevel(currentLevel);
                         bricks = data.bricks;
                         }
                         break;
                     case SDLK_END:
                         currentLevel = levelCount; {
-                         data = levelManager.getBrickDataForLevel(currentLevel);
+                         data = levelManager.loadLevel(currentLevel);
                         bricks = data.bricks;
                         }
                         break;
                     case SDLK_LEFT:
                         currentLevel--;
                         if (currentLevel < 1) currentLevel = levelCount; {
-                        data = levelManager.getBrickDataForLevel(currentLevel);
+                        data = levelManager.loadLevel(currentLevel);
                         bricks = data.bricks;
                         }
                         break;
                     case SDLK_RIGHT:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
-                        data = levelManager.getBrickDataForLevel(currentLevel);
+                        data = levelManager.loadLevel(currentLevel);
                         bricks = data.bricks;
                         }
                         break;
