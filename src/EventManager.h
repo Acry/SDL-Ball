@@ -85,6 +85,7 @@ class EventManager {
     std::unordered_map<GameEvent, std::vector<ListenerEntry>> eventListeners;
     std::unordered_map<GameEvent, std::vector<LevelListenerEntry>> levelEventListeners;
     std::unordered_map<GameEvent, std::vector<LevelThemeListenerEntry> > levelThemeEventListeners;
+
 public:
     void addListener(const GameEvent event, EventCallback callback, void *owner = nullptr) {
         eventListeners[event].push_back({owner, std::move(callback)});
