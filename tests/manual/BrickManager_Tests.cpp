@@ -87,24 +87,24 @@ int main() {
                         break;
                     case SDLK_HOME:
                         currentLevel = 1; {
-                        levelManager.loadLevel(currentLevel);
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_END:
                         currentLevel = levelCount; {
-                         levelManager.loadLevel(currentLevel);
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_LEFT:
                         currentLevel--;
                         if (currentLevel < 1) currentLevel = levelCount; {
-                        levelManager.loadLevel(currentLevel);
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_RIGHT:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
-                        levelManager.loadLevel(currentLevel);
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_ESCAPE:
