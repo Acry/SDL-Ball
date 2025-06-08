@@ -1,7 +1,9 @@
 # BackgroundManager_Todo.md
 
-?
-showbg=1 zu, setting.showBg = false;
+- [ ] overlay off should respond immidiately and force recreation of display-list.
+- [ ] tiled backgrounds | [see](../misc/Background.md)
+- [ ] animated backgrounds (spritsheet oder colors)
+- [ ] make BackgroundManager-Shader responsive to events
 
 Gibt der TextureManager ein false zurück. lief irgendetwas schief und runtime-setting.showBg = false.
 Beim nächsten Update wird der BackgroundManager nicht mehr gezeichnet. Aber nach dem Level wird BGManager
@@ -12,28 +14,10 @@ Auflösung und Format sollten keine große Rolle, lediglich das AR von 4:3 ist w
 4 colors for the background, will be set randomly
 
 - [X] BackgroundManager_Tests
-- [ ] tiled backgrounds | [see](../misc/Background.md)
-- [ ] animated backgrounds (spritsheet oder colors)
-- [ ] make BackgroundManager-Shader responsive to events
+- [X] implement the tainting of the background, with a reasonable mix (blend) function and settings
+- [X] bool showBgOverlay;
+- [X] use mathHelper
+- [X] use colors.h
+- [X] use event-driven updates
 
-## BG Overlay
-
-- [ ] implement the tainting of the background, with a reasonable mix (blend) function and settings
-- [ ] bool showBgOverlay;
-
-Wir geben in den BG-Manager ein Setting, ob das Färben des Hintergrunds (original-Fassung) gewünscht ist.
-
-Den Wert `showbgOverlay` fügen wir der Config zu.
-
-Das war der alte Code:
-
-```c++
-for(int i = 0; i  < 4; i++)
-{
-    r[i] = rndflt(1,0);
-    g[i] = rndflt(1,0);
-    b[i] = rndflt(1,0);
-}
-
-a= 1;
-```
+? showbg=1 zu, setting.showBg = false; - later on I will use JSON and nested struct in settings anyway.

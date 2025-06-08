@@ -11,7 +11,7 @@
 int main() {
     Display display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
-        SDL_Log("Display konnte nicht initialisiert werden");
+        SDL_Log("Error creating SDL window: %s", SDL_GetError());
         return EXIT_FAILURE;
     }
     SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Background Test");
@@ -29,18 +29,18 @@ int main() {
     const std::filesystem::path themePath = "../themes/default";
 
     if (!textureManager.setBackgroundTheme(themePath)) {
-        SDL_Log("Fehler beim Laden der Hintergründe: %s", themePath.c_str());
+        SDL_Log("Error loading backgrounds: %s", themePath.c_str());
         return EXIT_FAILURE;
     }
+
     BackgroundManager backgroundManager(textureManager);
     backgroundManager.registerEvents(&eventManager);
+
     LevelManager levelManager(&eventManager);
     if (!levelManager.setTheme("../themes/default")) {
         SDL_Log("Error setting level theme");
     }
-    size_t currentLevel = 1;
 
-    // render bricks, render brickswith testures, render playfield-border ?
     const std::vector<std::string> instructions = {
         "Rendering Background based on level",
         "M: Toggle Mouse Coordinates",
@@ -52,6 +52,8 @@ int main() {
         "End - last level",
         "ESC: Quit"
     };
+
+    size_t currentLevel = 1;
     levelManager.loadLevel(currentLevel);
 
     Uint32 lastTime = SDL_GetTicks();
