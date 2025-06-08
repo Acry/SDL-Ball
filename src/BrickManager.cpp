@@ -3,25 +3,26 @@
 
 #include "config.h"
 
-BrickManager::BrickManager(IEventManager* evtMgr, TextureManager* texMgr)
-    : eventManager(evtMgr), textureManager(texMgr) {}
+BrickManager::BrickManager(IEventManager *evtMgr, TextureManager *texMgr)
+    : eventManager(evtMgr), textureManager(texMgr) {
+}
 
 BrickTexture BrickManager::getTextureForType(const BrickType type) {
     switch (type) {
-        case BrickType::Blue:      return BrickTexture::Blue;
-        case BrickType::Yellow:    return BrickTexture::Yellow;
-        case BrickType::Cement:    return BrickTexture::Cement;
-        case BrickType::Glass:     return BrickTexture::Glass;
-        case BrickType::Green:     return BrickTexture::Green;
-        case BrickType::Grey:      return BrickTexture::Grey;
-        case BrickType::Purple:    return BrickTexture::Purple;
-        case BrickType::White:     return BrickTexture::White;
+        case BrickType::Blue: return BrickTexture::Blue;
+        case BrickType::Yellow: return BrickTexture::Yellow;
+        case BrickType::Cement: return BrickTexture::Cement;
+        case BrickType::Glass: return BrickTexture::Glass;
+        case BrickType::Green: return BrickTexture::Green;
+        case BrickType::Grey: return BrickTexture::Grey;
+        case BrickType::Purple: return BrickTexture::Purple;
+        case BrickType::White: return BrickTexture::White;
         case BrickType::Invisible: return BrickTexture::Invisible;
-        case BrickType::Red:       return BrickTexture::Red;
+        case BrickType::Red: return BrickTexture::Red;
         case BrickType::Explosive: return BrickTexture::Explosive;
-        case BrickType::Doom:      return BrickTexture::Doom;
-        case BrickType::Base:      return BrickTexture::Base;
-        default:                   return BrickTexture::Base;
+        case BrickType::Doom: return BrickTexture::Doom;
+        case BrickType::Base: return BrickTexture::Base;
+        default: return BrickTexture::Base;
     }
 }
 
@@ -72,7 +73,7 @@ void BrickManager::onLevelLoaded(const LevelData &data) {
 void BrickManager::update(const float deltaTime) {
     // > down 10000
     // The above makes the bricks drop down once every 10 seconds.
-    for (auto& brick : bricks) {
+    for (auto &brick: bricks) {
         if (brick.isActive()) {
             brick.update(deltaTime);
         }
@@ -80,7 +81,7 @@ void BrickManager::update(const float deltaTime) {
 }
 
 void BrickManager::draw(const float deltaTime) {
-    for (auto& Brick : bricks) {
+    for (auto &Brick: bricks) {
         if (Brick.isActive()) {
             Brick.draw(deltaTime);
         }
@@ -123,7 +124,8 @@ void BrickManager::clear() {
     brickHealth.clear();
     brickTypes.clear();
 }
+
 size_t BrickManager::getActiveBrickCount() const {
     return std::count_if(bricks.begin(), bricks.end(),
-        [](const Brick& brick) { return brick.isActive(); });
+                         [](const Brick &brick) { return brick.isActive(); });
 }

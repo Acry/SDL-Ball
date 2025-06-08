@@ -9,15 +9,15 @@
 
 class BrickManager {
     std::vector<Brick> bricks;
-    IEventManager* eventManager;
-    TextureManager* textureManager;
+    IEventManager *eventManager;
+    TextureManager *textureManager;
     std::unordered_map<size_t, float> brickHealth;
     std::unordered_map<size_t, BrickType> brickTypes;
 
     static BrickTexture getTextureForType(BrickType type);
 
 public:
-    BrickManager(IEventManager* evtMgr, TextureManager* texMgr);
+    BrickManager(IEventManager *evtMgr, TextureManager *texMgr);
 
     void onCollision(size_t brickIndex, ICollideable *other, float hitX, float hitY) {
         if (other->getCollisionType() == static_cast<int>(CollisionType::Ball)) {
@@ -39,6 +39,7 @@ public:
     void onLevelLoaded(const LevelData &data);
 
     void update(float deltaTime);
+
     void draw(float deltaTime);
 
     void onBrickHit(const EventData &data);
@@ -46,5 +47,6 @@ public:
     void clear();
 
     [[nodiscard]] size_t getActiveBrickCount() const;
-    [[nodiscard]] const std::vector<Brick>& getBricks() const { return bricks; }
+
+    [[nodiscard]] const std::vector<Brick> &getBricks() const { return bricks; }
 };
