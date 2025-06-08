@@ -6,4 +6,4 @@ struct position {
     GLfloat y;
 };
 
-float random_float(const float total, const float negative);
+float randomFloat(const float total, const float negative);

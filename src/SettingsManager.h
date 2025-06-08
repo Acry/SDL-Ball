@@ -22,6 +22,7 @@ struct settings {
     bool showClock;
     bool fullscreen;
     bool showBg;
+    bool showBgOverlay;
     bool sound;
     bool stereo;
     bool eyeCandy;

@@ -166,6 +166,7 @@ BACKGROUND_TEST_SOURCES := $(MANUAL_TEST_DIR)BackgroundManager_Tests.cpp \
                            $(SOURCE_DIR)EventManager.cpp \
                            $(SOURCE_DIR)LevelManager.cpp \
                            $(SOURCE_DIR)Display.cpp \
+                           $(SOURCE_DIR)MathHelper.cpp \
                            $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                            $(SOURCE_DIR)TextManager.cpp \
                            $(SOURCE_DIR)TextureManager.cpp \

@@ -13,13 +13,11 @@ class BackgroundManager {
     std::string currentTheme;
     size_t maxLevel;
     GLuint backgroundDisplayList;
-    // 4 colors for the background, will be set randomly
-    // für einen Farbverlauf
-    // Das Blending sollte bedingt nötig sein.
-    GLfloat r[4]{}, g[4]{}, b[4]{}, a;
-    const TextureManager *textureManager; // Referenz auf den TextureManager
+    bool showBackgroundOverlay;
+    std::array<Color, 4> colors;
+    const TextureManager *textureManager;
     IEventManager *eventManager{nullptr};
-    SpriteSheetAnimation texture; // Textur für den Hintergrund
+    SpriteSheetAnimation texture;
 
     void drawQuad() const;
 
@@ -33,4 +31,7 @@ public:
     bool updateBgIfNeeded(const Uint32 level);
 
     void draw() const;
+
+    [[nodiscard]] bool isBackgroundOverlayEnabled() const { return showBackgroundOverlay; }
+    void setBackgroundOverlayEnabled(bool enabled) { showBackgroundOverlay = enabled; }
 };

@@ -140,8 +140,8 @@ TitleScreen::TitleScreen(EffectManager *m, SpriteSheetAnimation tp[], Menu *me):
     // Set the initial position and velocity of the runner
     runnerPos.x = 0.0;
     runnerPos.y = 0.66;
-    runnerVelX = random_float(2, 1) + 2;
-    runnerVelY = random_float(2, 1) + 2;
+    runnerVelX = randomFloat(2, 1) + 2;
+    runnerVelY = randomFloat(2, 1) + 2;
     runnerTime = 0;
 
     hilight = 0;

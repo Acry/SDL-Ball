@@ -1,11 +1,7 @@
 #include "SettingsManager.h"
 #include <SDL2/SDL.h>
 #include "config.h"
-#include "game_state.h"
 
-// SettingsManager settingsManager(configFileManager);
-
-// Konstruktor außerhalb der Klasse definieren
 SettingsManager::SettingsManager(ConfigFileManager &cf) : configFileManager(cf) {
     setDefaults();
     init();
@@ -17,6 +13,7 @@ void SettingsManager::setDefaults() {
     defaultSettings.lvlTheme = DEFAULT_LVL_THEME;
     defaultSettings.eyeCandy = DEFAULT_EYE_CANDY;
     defaultSettings.showBg = DEFAULT_SHOW_BG;
+    defaultSettings.showBgOverlay = DEFAULT_SHOW_BG_OVERLAY;
     defaultSettings.particleCollide = DEFAULT_PARTICLE_COLLIDE;
 
     defaultSettings.sound = DEFAULT_SOUND;
@@ -87,11 +84,12 @@ bool SettingsManager::loadSettings() {
         else if (key == "showclock") loadedSettings.showClock = std::stoi(value);
         else if (key == "fullscreen") loadedSettings.fullscreen = std::stoi(value);
         else if (key == "showbg") loadedSettings.showBg = std::stoi(value);
+        else if (key == "showbgOverlay") loadedSettings.showBgOverlay = std::stoi(value);
         else if (key == "sound") loadedSettings.sound = std::stoi(value);
         else if (key == "stereo") loadedSettings.stereo = std::stoi(value);
         else if (key == "particlecollide") loadedSettings.particleCollide = std::stoi(value);
 
-        // Controls
+            // Controls
         else if (key == "keyleft") loadedSettings.keyLeft = static_cast<SDL_Keycode>(std::stoi(value));
         else if (key == "keyright") loadedSettings.keyRight = static_cast<SDL_Keycode>(std::stoi(value));
         else if (key == "keyshoot") loadedSettings.keyShoot = static_cast<SDL_Keycode>(std::stoi(value));
@@ -99,12 +97,12 @@ bool SettingsManager::loadSettings() {
         else if (key == "keyprevpo") loadedSettings.keyPrevPo = static_cast<SDL_Keycode>(std::stoi(value));
         else if (key == "keybuypo") loadedSettings.keyBuyPo = static_cast<SDL_Keycode>(std::stoi(value));
 
-        // Control speeds
+            // Control speeds
         else if (key == "controlaccel") loadedSettings.controlAccel = std::stof(value);
         else if (key == "controlstartspeed") loadedSettings.controlStartSpeed = std::stof(value);
         else if (key == "controlmaxspeed") loadedSettings.controlMaxSpeed = std::stof(value);
 
-        // Joystick
+            // Joystick
         else if (key == "joyenabled") loadedSettings.joyEnabled = std::stoi(value);
         else if (key == "joyisdigital") loadedSettings.joyIsDigital = std::stoi(value);
         else if (key == "joyispaddle") loadedSettings.joyIsPaddle = std::stoi(value);
@@ -173,6 +171,7 @@ bool SettingsManager::writeSettings() const {
             << "showclock=" << currentSettings.showClock << "\n"
             << "fullscreen=" << currentSettings.fullscreen << "\n"
             << "showbg=" << currentSettings.showBg << "\n"
+            << "showbgOverlay=" << currentSettings.showBgOverlay << "\n"
             << "sound=" << currentSettings.sound << "\n"
             << "stereo=" << currentSettings.stereo << "\n"
             << "particlecollide=" << currentSettings.particleCollide << "\n"
@@ -236,6 +235,7 @@ bool SettingsManager::hasChanged() const {
            || currentSettings.showClock != loadedSettings.showClock
            || currentSettings.fullscreen != loadedSettings.fullscreen
            || currentSettings.showBg != loadedSettings.showBg
+           || currentSettings.showBgOverlay != loadedSettings.showBgOverlay
            || currentSettings.sound != loadedSettings.sound
            || currentSettings.stereo != loadedSettings.stereo
            || currentSettings.eyeCandy != loadedSettings.eyeCandy

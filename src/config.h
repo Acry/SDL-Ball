@@ -32,6 +32,7 @@
 
 #define DEFAULT_EYE_CANDY      1
 #define DEFAULT_SHOW_BG        1
+#define DEFAULT_SHOW_BG_OVERLAY 1
 #define DEFAULT_PARTICLE_COLLIDE 1
 
 // Default Audio Settings
