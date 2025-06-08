@@ -19,22 +19,25 @@ bool BackgroundManager::updateBgIfNeeded(Uint32 level) {
     if (bgCount == 0) {
         SDL_Log("Error: No backgrounds available in the TextureManager.");
         return false;
-    };
+    }
+
+    bool textureChanged = false;
     level += 1;
+
+    // Temporäre Textur für Vergleich
+    SpriteSheetAnimation newTexture;
+
     if (level >= maxLevel) {
         const SpriteSheetAnimation *background = textureManager->getBackground(bgCount - 1);
         if (!background) {
             SDL_Log("Error: Could not get final background texture");
             return false;
         }
-        texture = *background;
+        newTexture = *background;
     } else {
-        // Gleichmäßige Verteilung der nicht-finalen Hintergründe
-        const size_t regularBgCount = bgCount - 1; // Anzahl der regulären Hintergründe
+        const size_t regularBgCount = bgCount - 1;
         const size_t levelsPerBg = maxLevel / regularBgCount;
         const size_t bgIndex = (level - 1) / levelsPerBg;
-
-        // Sicherstellen, dass wir nicht über das Array hinausgehen
         const size_t safeBgIndex = std::min(bgIndex, regularBgCount - 1);
 
         const SpriteSheetAnimation *background = textureManager->getBackground(safeBgIndex);
@@ -42,23 +45,33 @@ bool BackgroundManager::updateBgIfNeeded(Uint32 level) {
             SDL_Log("Error: Could not get background texture for index %zu", bgIndex);
             return false;
         }
-        texture = *background;
+        newTexture = *background;
     }
-    if (backgroundDisplayList != 0) {
-        glDeleteLists(backgroundDisplayList, 1);
-    }
-    if (showBackgroundOverlay) {
-        for (auto &[r, g, b, a]: colors) {
-            r = randomFloat(1.0f, 0.0f);
-            g = randomFloat(1.0f, 0.0f);
-            b = randomFloat(1.0f, 0.0f);
-            a = 1.0f;
+
+    // Prüfen ob sich die Textur geändert hat
+    textureChanged = (texture.textureProperties.texture != newTexture.textureProperties.texture);
+
+    if (textureChanged || showBackgroundOverlay) {
+        texture = newTexture;
+
+        if (backgroundDisplayList != 0) {
+            glDeleteLists(backgroundDisplayList, 1);
         }
+
+        if (showBackgroundOverlay) {
+            for (auto &[r, g, b, a]: colors) {
+                r = randomFloat(1.0f, 0.0f);
+                g = randomFloat(1.0f, 0.0f);
+                b = randomFloat(1.0f, 0.0f);
+                a = 1.0f;
+            }
+        }
+
+        backgroundDisplayList = glGenLists(1);
+        glNewList(backgroundDisplayList, GL_COMPILE);
+        drawQuad();
+        glEndList();
     }
-    backgroundDisplayList = glGenLists(1);
-    glNewList(backgroundDisplayList, GL_COMPILE);
-    drawQuad();
-    glEndList();
 
     return true;
 }
