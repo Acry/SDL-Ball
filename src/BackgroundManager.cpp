@@ -24,7 +24,6 @@ bool BackgroundManager::updateBgIfNeeded(Uint32 level) {
     bool textureChanged = false;
     level += 1;
 
-    // Temporäre Textur für Vergleich
     SpriteSheetAnimation newTexture;
 
     if (level >= maxLevel) {
@@ -48,7 +47,6 @@ bool BackgroundManager::updateBgIfNeeded(Uint32 level) {
         newTexture = *background;
     }
 
-    // Prüfen ob sich die Textur geändert hat
     textureChanged = (texture.textureProperties.texture != newTexture.textureProperties.texture);
 
     if (textureChanged || showBackgroundOverlay) {
