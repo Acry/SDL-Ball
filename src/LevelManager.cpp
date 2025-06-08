@@ -72,7 +72,7 @@ LevelManager::LevelManager(IEventManager *evtMgr) : eventManager(evtMgr) {
     if (eventManager) {
         eventManager->addListener(
             GameEvent::LevelThemeRequested,
-            [this](const  ThemeData &data) { onLevelThemeRequested(data); },
+            [this](const ThemeData &data) { onLevelThemeRequested(data); },
             this
         );
         eventManager->addListener(

@@ -9,7 +9,7 @@
 class PowerupManager {
     std::vector<Powerup> powerups;
     IEventManager *eventManager;
-    TextureManager* textureManager;
+    TextureManager *textureManager;
     PowerupData powerupData;
 
     std::mt19937 rng;
@@ -25,11 +25,14 @@ class PowerupManager {
     PowerupType getPowerupTypeForBrick(size_t brickIndex);
 
 public:
-    PowerupManager(IEventManager* evtMgr, TextureManager* texMgr, int maxPowerupsCount = 5);
+    PowerupManager(IEventManager *evtMgr, TextureManager *texMgr, int maxPowerupsCount = 5);
+
     ~PowerupManager() = default;
 
     void init();
+
     void update(float deltaTime);
+
     void draw(float deltaTime);
 
     void onLevelLoaded(const LevelData &data);

@@ -1,12 +1,11 @@
 #include "PowerupManager.h"
 #include <chrono>
 
-PowerupManager::PowerupManager(IEventManager* evtMgr, TextureManager* texMgr, const int maxPowerupsCount)
+PowerupManager::PowerupManager(IEventManager *evtMgr, TextureManager *texMgr, const int maxPowerupsCount)
     : eventManager(evtMgr),
       textureManager(texMgr),
       maxPowerups(maxPowerupsCount),
       dropChance(0.3f) {
-
     const unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     rng = std::mt19937(seed);
     dropChanceDist = std::uniform_real_distribution<float>(0.0f, 1.0f);
@@ -72,7 +71,7 @@ void PowerupManager::onLevelLoaded(const LevelData &data) {
     powerupData = data.powerupData;
 }
 
-void PowerupManager::onBrickDestroyed(const EventData& data) {
+void PowerupManager::onBrickDestroyed(const EventData &data) {
     const float randomValue = dropChanceDist(rng);
     if (randomValue <= dropChance) {
         PowerupType type = getRandomPowerupType();
@@ -81,7 +80,7 @@ void PowerupManager::onBrickDestroyed(const EventData& data) {
 }
 
 void PowerupManager::createPowerup(float posX, float posY, PowerupType type) {
-    for (auto& powerup : powerups) {
+    for (auto &powerup: powerups) {
         if (!powerup.isActive()) {
             powerup.active = true;
             powerup.pos_x = posX;

@@ -25,7 +25,7 @@ void EventManager::addListener(GameEvent event, ThemeEventCallback callback, voi
 void EventManager::emit(GameEvent event, const EventData &data) {
     auto it = eventListeners.find(event);
     if (it != eventListeners.end()) {
-        for (const auto& entry : it->second) {
+        for (const auto &entry: it->second) {
             entry.callback(data);
         }
     }
@@ -34,7 +34,7 @@ void EventManager::emit(GameEvent event, const EventData &data) {
 void EventManager::emit(GameEvent event, const LevelData &data) {
     auto it = levelEventListeners.find(event);
     if (it != levelEventListeners.end()) {
-        for (const auto& entry : it->second) {
+        for (const auto &entry: it->second) {
             entry.callback(data);
         }
     }
@@ -43,7 +43,7 @@ void EventManager::emit(GameEvent event, const LevelData &data) {
 void EventManager::emit(GameEvent event, const LevelThemeData &data) {
     auto it = levelThemeEventListeners.find(event);
     if (it != levelThemeEventListeners.end()) {
-        for (const auto& entry : it->second) {
+        for (const auto &entry: it->second) {
             entry.callback(data);
         }
     }
@@ -52,7 +52,7 @@ void EventManager::emit(GameEvent event, const LevelThemeData &data) {
 void EventManager::emit(GameEvent event, const LevelRequestedData &data) {
     auto it = levelRequestedEventListeners.find(event);
     if (it != levelRequestedEventListeners.end()) {
-        for (const auto& entry : it->second) {
+        for (const auto &entry: it->second) {
             entry.callback(data);
         }
     }
@@ -61,20 +61,20 @@ void EventManager::emit(GameEvent event, const LevelRequestedData &data) {
 void EventManager::emit(GameEvent event, const ThemeData &data) {
     auto it = themeEventListeners.find(event);
     if (it != themeEventListeners.end()) {
-        for (const auto& entry : it->second) {
+        for (const auto &entry: it->second) {
             entry.callback(data);
         }
     }
 }
 
 void EventManager::removeListener(GameEvent event, void *owner) {
-    auto removeFromMap = [owner](auto& map, const GameEvent& evt) {
+    auto removeFromMap = [owner](auto &map, const GameEvent &evt) {
         auto it = map.find(evt);
         if (it != map.end()) {
-            auto& listeners = it->second;
+            auto &listeners = it->second;
             listeners.erase(
                 std::remove_if(listeners.begin(), listeners.end(),
-                    [owner](const auto& entry) { return entry.owner == owner; }),
+                               [owner](const auto &entry) { return entry.owner == owner; }),
                 listeners.end()
             );
         }
