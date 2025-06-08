@@ -134,7 +134,7 @@ void TestHelper::drawMouseCoordinates() const {
 void TestHelper::renderInstructions(const float deltaTime, const std::vector<std::string> &instructions) const {
     GLfloat oldColor[4];
     glGetFloatv(GL_CURRENT_COLOR, oldColor);
-    glColor4f(GL_DEEP_ORANGE);
+    glColor4f(GL_BRIGHT_ORANGE);
     float yPos = 0.95f;
     constexpr auto currentFont = Fonts::Menu;
     // const auto height = m_textManager.getHeight(currentFont);

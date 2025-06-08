@@ -17,3 +17,4 @@ struct Color {
 #define GL_ORANGE 1.0, 0.647, 0.0, 1.0
 #define GL_LIGHT_BLUE 0.0627, 0.4784, 0.6902, 1.0
 #define GL_DEEP_ORANGE 0.8, 0.333, 0.0, 1.0
+#define GL_BRIGHT_ORANGE 1.0, 0.7, 0.0, 1.0
