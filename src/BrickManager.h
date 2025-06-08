@@ -32,6 +32,7 @@ public:
     [[nodiscard]] float getWidth(size_t index) const { return bricks[index].width; }
     [[nodiscard]] float getHeight(size_t index) const { return bricks[index].height; }
     [[nodiscard]] bool isActive(size_t index) const { return bricks[index].active; }
+
     void setupBricks(std::vector<BrickInfo> data);
 
     void onLevelLoaded(const LevelData &data);

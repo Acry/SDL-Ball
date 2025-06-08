@@ -46,7 +46,6 @@ enum class GameEvent {
 };
 
 
-
 struct BrickInfo {
     BrickType type{BrickType::None};
     float x{0.0f};
@@ -83,11 +82,11 @@ struct SubThemeData {
 };
 
 struct ThemeData {
-    SubThemeData spritesTheme;        // Pfad zum Sprite-Theme
-    SubThemeData fontsTheme;          // Pfad zum Font-Theme
-    SubThemeData levelsTheme;         // Pfad zum Level-Theme
-    SubThemeData backgroundTheme;     // Pfad zum BG-Theme
-    SubThemeData soundTheme;          // Pfad zum Sound-Theme
+    SubThemeData spritesTheme; // Pfad zum Sprite-Theme
+    SubThemeData fontsTheme; // Pfad zum Font-Theme
+    SubThemeData levelsTheme; // Pfad zum Level-Theme
+    SubThemeData backgroundTheme; // Pfad zum BG-Theme
+    SubThemeData soundTheme; // Pfad zum Sound-Theme
 };
 
 struct LevelRequestedData {

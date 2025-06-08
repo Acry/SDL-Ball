@@ -30,7 +30,7 @@ void BrickManager::setupBricks(std::vector<BrickInfo> brickInfos) {
     brickHealth.clear();
     brickTypes.clear();
 
-    for (const auto& info : brickInfos) {
+    for (const auto &info: brickInfos) {
         if (info.type == BrickType::None) continue;
 
         Brick brick;
@@ -91,8 +91,8 @@ void BrickManager::draw(const float deltaTime) {
 
 void BrickManager::onBrickHit(const EventData &data) {
     const size_t index = static_cast<size_t>(data.target - &bricks[0]);
-    float& health = brickHealth[index];
-    Brick& brick = bricks[index];
+    float &health = brickHealth[index];
+    Brick &brick = bricks[index];
     const BrickType type = brickTypes[index];
     health -= 1.0f;
 

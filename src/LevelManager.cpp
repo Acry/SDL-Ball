@@ -249,7 +249,7 @@ bool LevelManager::loadLevel(size_t level) {
     return true;
 }
 
-void LevelManager::onLevelRequested(const LevelRequestedData& data) {
+void LevelManager::onLevelRequested(const LevelRequestedData &data) {
     const size_t requestedLevel = data.level;
     if (loadLevel(requestedLevel)) {
         eventManager->emit(GameEvent::LevelLoaded, currentLevelData);
@@ -258,7 +258,7 @@ void LevelManager::onLevelRequested(const LevelRequestedData& data) {
     }
 }
 
-void LevelManager::onLevelThemeRequested(const ThemeData& data) {
+void LevelManager::onLevelThemeRequested(const ThemeData &data) {
     const SubThemeData requestedTheme = data.levelsTheme;
     if (setTheme(requestedTheme.subThemePath)) {
         LevelThemeData oData;

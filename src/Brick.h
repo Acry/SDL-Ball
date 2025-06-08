@@ -11,8 +11,12 @@ public:
     Color color{};
 
     Brick() = default;
-    void init() override {}  // Leere Implementation
-    void update(float deltaTime) override {} // Leere Implementation
+
+    void init() override {
+    } // Leere Implementation
+    void update(float deltaTime) override {
+    } // Leere Implementation
     void draw(float deltaTime) override;
+
     ~Brick() override = default;
 };
