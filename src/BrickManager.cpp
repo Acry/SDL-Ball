@@ -40,7 +40,7 @@ void BrickManager::setupBricks(std::vector<BrickInfo> brickInfos) {
         brick.height = BRICK_HEIGHT;
         brick.texture = textureManager->getBrickTexture(getTextureForType(info.type));
 
-        float health = 1.0f;
+        float health;
         switch (info.type) {
             case BrickType::Glass:
                 health = 2.0f;
