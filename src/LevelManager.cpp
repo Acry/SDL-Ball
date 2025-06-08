@@ -280,7 +280,7 @@ bool LevelManager::setTheme(const std::string &themeName) {
         return false;
     }
     clearTheme();
-    currentTheme = currentTheme + "/" + "levels.txt";
+    currentTheme = themeName + "/" + "levels.txt";
 
     if (!readLevelStructure()) {
         SDL_Log("Error getting level theme: %s", currentTheme.c_str());
