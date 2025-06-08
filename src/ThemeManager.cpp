@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <fstream>
@@ -7,25 +8,20 @@
 
 ThemeManager::ThemeManager(const ConfigFileManager &configFileManager)
     : currentTheme(getDefaultTheme()), configFileManager(configFileManager) {
+    initThemeRoots();
     scanThemes();
     pathCache.clear();
 }
 
 void ThemeManager::scanThemes() {
     themes.clear();
-    const std::vector themeDirs = {
-        configFileManager.getUserThemeDir(),
-        ConfigFileManager::getGlobalThemeDir()
-    };
 
-    for (const auto &dir: themeDirs) {
-        DIR *pdir = opendir(dir.c_str());
-        if (pdir) {
+    for (const auto &rootDir: themeRoots) {
+        if (DIR *pdir = opendir(rootDir.c_str())) {
             dirent *pent;
             while ((pent = readdir(pdir))) {
-                std::string temp = pent->d_name;
-                if (temp[0] != '.') {
-                    std::string themePath = dir + "/" + temp;
+                if (std::string temp = pent->d_name; temp[0] != '.') {
+                    std::string themePath = rootDir + "/" + temp;
                     struct stat st{};
                     if (stat(themePath.c_str(), &st) == 0 && S_ISDIR(st.st_mode)) {
                         themeInfo ti;
@@ -52,20 +48,18 @@ std::vector<themeInfo> ThemeManager::listThemes() {
 }
 
 bool ThemeManager::themeExists(const std::string &name) const {
-    for (const auto &t: themes)
-        if (t.name == name) return true;
-    return false;
+    return std::ranges::any_of(themes,
+                               [&name](const auto &t) { return t.name == name; });
 }
 
 std::string ThemeManager::getDefaultTheme() {
     return "default";
 }
 
-// Aktuelles Theme setzen
 bool ThemeManager::setCurrentTheme(const std::string &themeName) {
     if (themeExists(themeName)) {
         currentTheme = themeName;
-        pathCache.clear(); // Cache leeren beim Theme-Wechsel
+        pathCache.clear();
         return true;
     }
     // Bei ungültigem Theme auf Default zurücksetzen
@@ -73,7 +67,6 @@ bool ThemeManager::setCurrentTheme(const std::string &themeName) {
     return false;
 }
 
-// Aktuelles Theme abrufen
 std::string ThemeManager::getCurrentTheme() const {
     return currentTheme;
 }
@@ -88,9 +81,8 @@ bool ThemeManager::themeHasResource(const std::string &path, const std::string &
 // getThemeFilePath anpassen für aktuelles Theme als Fallback
 std::string ThemeManager::getThemeFilePath(const std::string &path, const std::string &theme) const {
     // Cache prüfen
-    std::string cacheKey = (theme.empty() ? currentTheme : theme) + ":" + path;
-    auto cacheIt = pathCache.find(cacheKey);
-    if (cacheIt != pathCache.end()) {
+    const std::string cacheKey = (theme.empty() ? currentTheme : theme) + ":" + path;
+    if (const auto cacheIt = pathCache.find(cacheKey); cacheIt != pathCache.end()) {
         return cacheIt->second;
     }
 
@@ -106,7 +98,7 @@ std::string ThemeManager::getThemeFilePath(const std::string &path, const std::s
 
     struct stat st{};
     std::string name;
-    std::string themeToUse = theme.empty() ? currentTheme : theme;
+    const std::string themeToUse = theme.empty() ? currentTheme : theme;
 
     if (themeToUse != "default") {
         name = join(configFileManager.getUserThemeDir(), themeToUse + "/" + path);
@@ -114,13 +106,13 @@ std::string ThemeManager::getThemeFilePath(const std::string &path, const std::s
             pathCache[cacheKey] = name;
             return name;
         }
-        name = join(configFileManager.getGlobalThemeDir(), themeToUse + "/" + path);
+        name = join(ConfigFileManager::getGlobalThemeDir(), themeToUse + "/" + path);
         if (stat(name.c_str(), &st) == 0) {
             pathCache[cacheKey] = name;
             return name;
         }
     }
-    name = join(configFileManager.getGlobalThemeDir(), "default/" + path);
+    name = join(ConfigFileManager::getGlobalThemeDir(), "default/" + path);
     if (stat(name.c_str(), &st) == 0) {
         pathCache[cacheKey] = name;
         return name;
@@ -128,4 +120,37 @@ std::string ThemeManager::getThemeFilePath(const std::string &path, const std::s
 
     SDL_Log("File Error: Could not find '%s' in theme '%s'", path.c_str(), themeToUse.c_str());
     return "";
+}
+
+void ThemeManager::initThemeRoots() {
+    themeRoots.clear();
+
+    // Root-Verzeichnis (aus Constructor)
+    themeRoots.push_back(configFileManager.getProgramRoot() + "/themes");
+
+    // XDG_CONFIG_HOME
+    if (const char *configHome = getenv("XDG_CONFIG_HOME")) {
+        themeRoots.push_back(std::string(configHome) + "/sdl-ball/themes");
+    } else if (const char *home = getenv("HOME")) {
+        themeRoots.push_back(std::string(home) + "/.config/sdl-ball/themes");
+    }
+
+    // XDG_DATA_HOME
+    if (const char *dataHome = getenv("XDG_DATA_HOME")) {
+        themeRoots.push_back(std::string(dataHome) + "/sdl-ball/themes");
+    } else if (const char *home = getenv("HOME")) {
+        themeRoots.push_back(std::string(home) + "/.local/share/sdl-ball/themes");
+    }
+
+    // System-weites Verzeichnis
+    themeRoots.push_back("/usr/share/sdl-ball/themes");
+
+    // Build-Verzeichnis (für Entwicklung)
+    themeRoots.push_back(DATADIR);
+
+    // Ungültige Verzeichnisse entfernen
+    std::erase_if(themeRoots,
+                  [](const std::string &dir) {
+                      return !ConfigFileManager::checkDir(dir);
+                  });
 }

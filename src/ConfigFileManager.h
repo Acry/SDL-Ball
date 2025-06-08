@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 /**
  * @brief Handles configuration file paths and directory management
@@ -16,7 +15,6 @@ class ConfigFileManager {
     std::string settingsFile;
     std::string highScoreFile;
     std::string screenshotDir;
-    std::vector<std::string> themeRoots;
 
 public:
     /**
@@ -34,10 +32,6 @@ public:
      * @return true if initialization successful, false otherwise
      */
     bool init();
-
-    [[nodiscard]] const std::vector<std::string> &getThemeRoots() const { return themeRoots; }
-
-    void initThemeRoots();
 
     /**
      * @brief Checks if directory exists and creates it if necessary
