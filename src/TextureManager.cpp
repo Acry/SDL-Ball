@@ -517,7 +517,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
 
     // 6. check colors and set fallback if not set
     bool hasColor = false;
-    for (const float i : animation.textureProperties.glTexColorInfo) {
+    for (const float i: animation.textureProperties.glTexColorInfo) {
         if (i > 0.0f) {
             hasColor = true;
             break;
@@ -553,19 +553,53 @@ bool TextureManager::loadAllBackgrounds() {
             }
         }
     }
+    // Natürliche Sortierung (natural sort)
     std::sort(entries.begin(), entries.end(), [](const auto &a, const auto &b) {
-        const std::string nameA = a.path().stem().string();
-        const std::string nameB = b.path().stem().string();
+        std::string nameA = a.path().stem().string();
+        std::string nameB = b.path().stem().string();
 
-        // Versuche zuerst numerische Konvertierung
-        try {
-            const int numA = std::stoi(nameA);
-            const int numB = std::stoi(nameB);
-            return numA < numB;
-        } catch (const std::exception &) {
-            // Falls keine Zahlen, alphabetisch sortieren
-            return nameA < nameB;
+        // Zu Kleinbuchstaben konvertieren für case-insensitive Sortierung
+        std::transform(nameA.begin(), nameA.end(), nameA.begin(), ::tolower);
+        std::transform(nameB.begin(), nameB.end(), nameB.begin(), ::tolower);
+
+        auto compareChunks = [](const std::string &a, const std::string &b) {
+            if (std::isdigit(a[0]) && std::isdigit(b[0])) {
+                // Numerischer Vergleich
+                return std::stoi(a) < std::stoi(b);
+            }
+            // Alphabetischer Vergleich
+            return a < b;
+        };
+
+        size_t posA = 0, posB = 0;
+        while (posA < nameA.length() && posB < nameB.length()) {
+            std::string chunkA, chunkB;
+
+            // Extrahiere numerische oder alphabetische Chunks
+            if (std::isdigit(nameA[posA]) && std::isdigit(nameB[posB])) {
+                // Sammle Ziffern
+                while (posA < nameA.length() && std::isdigit(nameA[posA])) {
+                    chunkA += nameA[posA++];
+                }
+                while (posB < nameB.length() && std::isdigit(nameB[posB])) {
+                    chunkB += nameB[posB++];
+                }
+            } else {
+                // Sammle Buchstaben
+                while (posA < nameA.length() && !std::isdigit(nameA[posA])) {
+                    chunkA += nameA[posA++];
+                }
+                while (posB < nameB.length() && !std::isdigit(nameB[posB])) {
+                    chunkB += nameB[posB++];
+                }
+            }
+
+            if (chunkA != chunkB) {
+                return compareChunks(chunkA, chunkB);
+            }
         }
+
+        return nameA.length() < nameB.length();
     });
 #if DEBUG_SORT_BACKGROUNDS
     // Debug-Ausgabe der sortierten Liste
