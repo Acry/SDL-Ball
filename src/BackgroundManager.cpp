@@ -30,7 +30,7 @@
 // 4:3 kann auch einfach der Mitte genommen werden.
 // Die Anzahl der Hintergründe wird gelesen. Sollte es ein Final.jpg wird das berücksichtigt.
 // Also sollten wir den Texture Manager als Abhängigkeit haben.
-BackgroundManager::BackgroundManager(const TextureManager &texMgr) : backgroundDisplayList(0) {
+BackgroundManager::BackgroundManager(const TextureManager &texMgr) : maxLevel(0), backgroundDisplayList(0) {
     textureManager = &texMgr;
     // 4 colors for the background, will be set randomly
     // Hier im Konstruktor, kann aber auch in updateBgIfNeeded
@@ -89,7 +89,7 @@ void BackgroundManager::draw() const {
     }
 }
 
-void BackgroundManager::drawQuad() {
+void BackgroundManager::drawQuad() const {
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);

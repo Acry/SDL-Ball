@@ -21,7 +21,7 @@ class BackgroundManager {
     IEventManager *eventManager{nullptr};
     SpriteSheetAnimation texture; // Textur für den Hintergrund
 
-    void drawQuad();
+    void drawQuad() const;
 
 public:
     explicit BackgroundManager(const TextureManager &texMgr);
