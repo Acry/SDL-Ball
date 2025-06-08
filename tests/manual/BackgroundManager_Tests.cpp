@@ -43,8 +43,9 @@ int main() {
     // render bricks, render brickswith testures, render playfield-border ?
     const std::vector<std::string> instructions = {
         "Rendering Background based on level",
-        "S: Create Screenshot",
         "M: Toggle Mouse Coordinates",
+        "O: Toggle Background Overlay",
+        "S: Create Screenshot",
         "-> - next level",
         "<- - previous level",
         "Pos1 - first level",
@@ -90,6 +91,9 @@ int main() {
                         break;
                     case SDLK_m:
                         testHelper.m_showMouseCoords = !testHelper.m_showMouseCoords;
+                        break;
+                    case SDLK_o:
+                        backgroundManager.setBackgroundOverlayEnabled(!backgroundManager.isBackgroundOverlayEnabled());
                         break;
                     case SDLK_SPACE:
                         currentLevel++;
@@ -141,7 +145,13 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         backgroundManager.draw();
         testHelper.renderInstructions(deltaTime, instructions);
+
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+        char tempTexto[64];
+        sprintf(tempTexto, "Overlay: %s", backgroundManager.isBackgroundOverlayEnabled() ? "ON" : "OFF");
+        textManager.write(tempTexto, Fonts::Highscore, true, 0.5f, 0.0f, -0.4f);
+
         char tempText[64];
         sprintf(tempText, "Level: %lu", currentLevel);
         textManager.write(tempText, Fonts::Highscore, true, 1.0f, 0.0f, -0.5f);
