@@ -1,5 +1,13 @@
 # CollisionManager
 
+class CollisionManager {
+public:
+void checkCollisions(Ball& ball, Paddle& paddle, const std::vector<Brick>& bricks);
+};
+
+Der CollisionManager könnte die Kollisionen erkennen und den EffectManager für die visuellen/akustischen Effekte bei
+Kollisionen benachrichtigen:
+
 1. **Interface für Kollidierbare Objekte erstellen**:
     - `ICollidable`-Interface definieren
     - `brick` und `Paddle` so anpassen, dass sie dieses Interface implementieren
@@ -34,6 +42,7 @@ public:
     }
 };
 ```
+
 ```c++
 // Im Hauptprogramm/GameLoop:
 CollisionPoint colPoint;
