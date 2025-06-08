@@ -137,7 +137,7 @@ void TestHelper::renderInstructions(const float deltaTime, const std::vector<std
     glColor4f(GL_DEEP_ORANGE);
     float yPos = 0.95f;
     constexpr auto currentFont = Fonts::Menu;
-    const auto height = m_textManager.getHeight(currentFont);
+    // const auto height = m_textManager.getHeight(currentFont);
     for (const auto &instruction: instructions) {
         constexpr auto offest = 0.05f;
         m_textManager.write(instruction, currentFont, true, 0.5f, 0.0f, yPos);
