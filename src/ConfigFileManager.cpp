@@ -1,5 +1,7 @@
 #include "ConfigFileManager.h"
 
+#include <algorithm>
+
 #include "config.h"
 #include <sys/stat.h>
 #include <cstdlib>
@@ -72,4 +74,34 @@ std::string ConfigFileManager::getUserThemeDir() const {
 
 std::string ConfigFileManager::getGlobalThemeDir() {
     return DATADIR "themes";
+}
+
+void ConfigFileManager::initThemeRoots() {
+    themeRoots.clear();
+
+    // XDG_CONFIG_HOME
+    if (const char *configHome = getenv("XDG_CONFIG_HOME")) {
+        themeRoots.push_back(std::string(configHome) + "/sdl-ball/themes");
+    } else if (const char *home = getenv("HOME")) {
+        themeRoots.push_back(std::string(home) + "/.config/sdl-ball/themes");
+    }
+
+    // XDG_DATA_HOME
+    if (const char *dataHome = getenv("XDG_DATA_HOME")) {
+        themeRoots.push_back(std::string(dataHome) + "/sdl-ball/themes");
+    } else if (const char *home = getenv("HOME")) {
+        themeRoots.push_back(std::string(home) + "/.local/share/sdl-ball/themes");
+    }
+
+    // System-weites Verzeichnis
+    themeRoots.push_back("/usr/share/sdl-ball/themes");
+
+    // Lokales Build-Verzeichnis (für Entwicklung)
+    themeRoots.push_back(DATADIR);
+
+    // Verzeichnisse erstellen und ungültige entfernen
+    std::erase_if(themeRoots,
+                  [this](const std::string &dir) {
+                      return !checkDir(dir);
+                  });
 }
