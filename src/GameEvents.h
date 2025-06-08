@@ -100,3 +100,5 @@ struct LevelThemeData {
 using EventCallback = std::function<void(const EventData &)>;
 using LevelEventCallback = std::function<void(const LevelData &)>;
 using LevelThemeEventCallback = std::function<void(const LevelThemeData &)>;
+using LevelRequestedEventCallback = std::function<void(const LevelRequestedData &)>;
+using ThemeEventCallback = std::function<void(const ThemeData &)>;

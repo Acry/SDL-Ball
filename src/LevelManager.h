@@ -16,7 +16,6 @@ class LevelManager {
     std::vector<LevelOffset> levelRanges{};
     std::string currentTheme;
     size_t levelCount = 0;
-    size_t currentLevel = 0;
     LevelData currentLevelData{};
 
 public:

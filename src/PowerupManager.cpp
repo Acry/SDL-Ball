@@ -1,22 +1,20 @@
 #include "PowerupManager.h"
 #include <chrono>
 
-PowerupManager::PowerupManager(EventManager *eventMgr, CollisionManager *collMgr, const int maxPowerupsCount)
-    : eventManager(eventMgr),
-      collisionManager(collMgr),
+PowerupManager::PowerupManager(IEventManager* evtMgr, TextureManager* texMgr, const int maxPowerupsCount)
+    : eventManager(evtMgr),
+      textureManager(texMgr),
       maxPowerups(maxPowerupsCount),
-      dropChance(0.3f) // 30% Standardchance
-{
-    // Initialisiere den Zufallsgenerator mit aktuellem Timestamp
+      dropChance(0.3f) {
+
     const unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     rng = std::mt19937(seed);
-    powerupDist = std::uniform_int_distribution<int>(0, POWERUP_COUNT - 1);
     dropChanceDist = std::uniform_real_distribution<float>(0.0f, 1.0f);
 
-    // Erstelle den Powerup-Pool
+    // Vorallokieren des Powerup-Pools
     powerups.reserve(maxPowerups);
     for (int i = 0; i < maxPowerups; i++) {
-        powerups.emplace_back(eventManager);
+        powerups.emplace_back();
     }
 }
 
@@ -70,18 +68,26 @@ void PowerupManager::trySpawnPowerup(const float posX, const float posY) {
     }
 }
 
-void onLevelChanged(const LevelEventData &data) {
-    for (const auto &PowerUpType: data.powerupTypes) {
-        // PowerUp-Informationen speichern
-        // Wird erst aktiv wenn der zugehörige Brick zerstört wird
+void PowerupManager::onLevelLoaded(const LevelData &data) {
+    powerupData = data.powerupData;
+}
+
+void PowerupManager::onBrickDestroyed(const EventData& data) {
+    const float randomValue = dropChanceDist(rng);
+    if (randomValue <= dropChance) {
+        PowerupType type = getRandomPowerupType();
+        createPowerup(data.posX, data.posY, type);
     }
 }
 
-void onBrickDestroyed(const BrickEventData &data) {
-    // PowerUp mit gegebenem Typ und Position spawnen
-    createPowerup(data.position, getPowerupTypeForBrick(data.id));
-}
-
-void PowerupManager::onLevelChanged(const LevelEventData &data) {
-    powerupData = data.powerupData;
+void PowerupManager::createPowerup(float posX, float posY, PowerupType type) {
+    for (auto& powerup : powerups) {
+        if (!powerup.isActive()) {
+            powerup.active = true;
+            powerup.pos_x = posX;
+            powerup.pos_y = posY;
+            powerup.texture = textureManager->getPowerupTexture(type);
+            return;
+        }
+    }
 }

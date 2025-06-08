@@ -129,20 +129,18 @@ BackgroundManager::~BackgroundManager() {
     }
 }
 
-void BackgroundManager::registerEvents(EventManager *em) {
+void BackgroundManager::registerEvents(IEventManager *em) {
     if (!em) return;
 
     eventManager = em;
 
     // Level-Change Event
-    eventManager->addListener(GameEvent::LevelChanged, [this](const LevelEventData &data) {
-        this->maxLevel = data.maxLevel;
-        this->updateBgIfNeeded(data.currentlevel);
+    eventManager->addListener(GameEvent::LevelLoaded, [this](const LevelData &data) {
+        this->updateBgIfNeeded(data.currentLevel);
     }, this);
 
     // Theme-Change Event
-    eventManager->addListener(GameEvent::LevelThemeChanged, [this](const LevelEventData &data) {
+    eventManager->addListener(GameEvent::LevelThemeChanged, [this](const LevelThemeData &data) {
         this->maxLevel = data.maxLevel;
-        this->updateBgIfNeeded(data.currentlevel);
     }, this);
 }

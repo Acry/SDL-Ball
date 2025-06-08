@@ -5,7 +5,7 @@
 
 #include "SpriteSheetAnimation.h"
 #include "colors.h"
-#include "EventManager.h"
+#include "IEventManager.h"
 
 class TextureManager;
 
@@ -18,7 +18,7 @@ class BackgroundManager {
     // Das Blending sollte bedingt nötig sein.
     GLfloat r[4]{}, g[4]{}, b[4]{}, a;
     const TextureManager *textureManager; // Referenz auf den TextureManager
-    EventManager *eventManager{nullptr};
+    IEventManager *eventManager{nullptr};
     SpriteSheetAnimation texture; // Textur für den Hintergrund
 
     void drawQuad();
@@ -28,7 +28,7 @@ public:
 
     ~BackgroundManager();
 
-    void registerEvents(EventManager *eventManager);
+    void registerEvents(IEventManager *eventManager);
 
     bool updateBgIfNeeded(const Uint32 level);
 

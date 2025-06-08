@@ -72,7 +72,7 @@ LevelManager::LevelManager(IEventManager *evtMgr) : eventManager(evtMgr) {
     if (eventManager) {
         eventManager->addListener(
             GameEvent::LevelThemeRequested,
-            [this](const EventData &data) { onLevelThemeRequested(data); },
+            [this](const  ThemeData &data) { onLevelThemeRequested(data); },
             this
         );
         eventManager->addListener(
@@ -199,7 +199,9 @@ bool LevelManager::loadLevel(size_t level) {
         }
 
         size_t ch = 0;
+#if DEBUG_BRICK_COUNT
         size_t brick_count_in_line = 0;
+#endif
         while (ch < line.length()) {
             char powerupChar = line[ch];
             char type = line[ch + 1];
@@ -208,7 +210,9 @@ bool LevelManager::loadLevel(size_t level) {
                 ch += 2;
                 continue;
             }
+#if DEBUG_BRICK_COUNT
             brick_count_in_line++;
+#endif
             BrickInfo info;
             size_t col = ch / 2; // Position basiert auf Zeichenpaaren
             info.x = PLAYFIELD_LEFT_BORDER + static_cast<float>(col) * BRICK_WIDTH;
@@ -219,7 +223,7 @@ bool LevelManager::loadLevel(size_t level) {
                 int r = std::stoi(rgb.substr(0, 2), nullptr, 16);
                 int g = std::stoi(rgb.substr(2, 2), nullptr, 16);
                 int b = std::stoi(rgb.substr(4, 2), nullptr, 16);
-                info.color = {
+                info.CustomBrickColor = {
                     static_cast<float>(r) / 255.0f,
                     static_cast<float>(g) / 255.0f,
                     static_cast<float>(b) / 255.0f,
@@ -265,7 +269,7 @@ void LevelManager::onLevelThemeRequested(const ThemeData &data) {
         oData.maxLevel = levelCount;
         eventManager->emit(GameEvent::LevelThemeChanged, oData);
     } else {
-        SDL_Log("Fehler beim Laden von Level %zu", requestedTheme);
+        SDL_Log("Fehler beim Laden des Level-Themes: %s", requestedTheme.subThemePath.c_str());
     }
 }
 
