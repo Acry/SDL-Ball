@@ -2,13 +2,13 @@
 #include <SDL2/SDL_log.h>
 #include <regex>
 #include <fstream>
-#include <string>
-#include <vector>
 #include <filesystem>
 
 #include "config.h"
+#include "BrickTypes.h"
 #include "LevelManager.h"
-#include "EventManager.h"
+#include "BrickManager.h"
+#include "PowerupManager.h"
 
 #define DEBUG_BRICK_COUNT 0
 
@@ -26,49 +26,61 @@ BrickType charToBrickType(const char c) {
         case 'A': return BrickType::Red;
         case 'B': return BrickType::Explosive;
         case 'C': return BrickType::Doom;
-        case 'D': return BrickType::Base; // Custom Color
-        default: return BrickType::None; // Sicherer Default-Wert
+        case 'D': return BrickType::Base;
+        default: return BrickType::None;
     }
 }
 
-PowerUpType charToPowerUpType(const char c) {
+PowerupType charToPowerUpType(const char c) {
     switch (c) {
-        case '1': return PowerUpType::GrowPaddle;
-        case '2': return PowerUpType::ShrinkPaddle;
-        case '3': return PowerUpType::Die;
-        case '4': return PowerUpType::Glue;
-        case '5': return PowerUpType::Multiball;
-        case '6': return PowerUpType::GoThrough;
-        case '7': return PowerUpType::Drop;
-        case '8': return PowerUpType::Detonate;
-        case '9': return PowerUpType::ExplosiveGrow;
-        case 'A': return PowerUpType::EasyBrick;
-        case 'B': return PowerUpType::Explosive;
-        case 'C': return PowerUpType::NextLevel;
-        case 'D': return PowerUpType::AimHelp;
-        case 'E': return PowerUpType::Coin;
-        case 'F': return PowerUpType::BigBall;
-        case 'G': return PowerUpType::NormalBall;
-        case 'H': return PowerUpType::SmallBall;
-        case 'I': return PowerUpType::Aim;
-        case 'O': return PowerUpType::Life;
-        case 'P': return PowerUpType::Gun;
-        case 'R': return PowerUpType::Laser;
+        case '1': return PowerupType::GrowPaddle;
+        case '2': return PowerupType::ShrinkPaddle;
+        case '3': return PowerupType::Die;
+        case '4': return PowerupType::Glue;
+        case '5': return PowerupType::Multiball;
+        case '6': return PowerupType::GoThrough;
+        case '7': return PowerupType::Drop;
+        case '8': return PowerupType::Detonate;
+        case '9': return PowerupType::ExplosiveGrow;
+        case 'A': return PowerupType::EasyBrick;
+        case 'B': return PowerupType::Explosive;
+        case 'C': return PowerupType::NextLevel;
+        case 'D': return PowerupType::AimHelp;
+        case 'E': return PowerupType::Coin;
+        case 'F': return PowerupType::BigBall;
+        case 'G': return PowerupType::NormalBall;
+        case 'H': return PowerupType::SmallBall;
+        case 'I': return PowerupType::Aim;
+        case 'O': return PowerupType::Life;
+        case 'P': return PowerupType::Gun;
+        case 'R': return PowerupType::Laser;
 
         // Spezielle Random-Powerups
-        case 'J': return PowerUpType::Random10; // 10% Chance
-        case 'K': return PowerUpType::Random100; // 100% Chance
-        case 'L': return PowerUpType::Random5; // 5% Chance
-        case 'M': return PowerUpType::Random2; // 2% Chance
-        case 'N': return PowerUpType::Random1; // 1% Chance
-        case 'Q': return PowerUpType::RandomEvil; // 100% böses PowerUp
+        case 'J': return PowerupType::Random10; // 10% Chance
+        case 'K': return PowerupType::Random100; // 100% Chance
+        case 'L': return PowerupType::Random5; // 5% Chance
+        case 'M': return PowerupType::Random2; // 2% Chance
+        case 'N': return PowerupType::Random1; // 1% Chance
+        case 'Q': return PowerupType::RandomEvil; // 100% böses PowerUp
 
         case '0':
-        default: return PowerUpType::None;
+        default: return PowerupType::None;
     }
 }
 
-LevelManager::LevelManager(EventManager *evtMgr) : eventManager(evtMgr) {
+LevelManager::LevelManager(IEventManager *evtMgr) : eventManager(evtMgr) {
+    if (eventManager) {
+        eventManager->addListener(
+            GameEvent::LevelThemeRequested,
+            [this](const EventData &data) { onLevelThemeRequested(data); },
+            this
+        );
+        eventManager->addListener(
+            GameEvent::LevelRequested,
+            [this](const LevelRequestedData &data) { onLevelRequested(data); },
+            this
+        );
+    }
 }
 
 bool LevelManager::readLevelStructure() {
@@ -152,7 +164,7 @@ bool LevelManager::readLevelStructure() {
 }
 
 bool LevelManager::loadLevel(size_t level) {
-    if (level == 0) return false; // Kein Level 0 für Nutzer
+    if (level == 0) return false; // No Level 0 for users (Hud)
 
     size_t internalLevel = level - 1;
     if (internalLevel >= levelRanges.size()) return false;
@@ -160,31 +172,33 @@ bool LevelManager::loadLevel(size_t level) {
     std::ifstream infile(currentTheme);
     if (!infile.is_open()) return false;
 
+    const auto &[startPos, endPos] = levelRanges[internalLevel];
+    infile.seekg(startPos);
 
-    auto [start_pos, end_pos] = levelRanges[internalLevel];
-    infile.seekg(start_pos);
-
-    powerupData = PowerupData{};
-    brickData = BrickData{};
+    currentLevelData = LevelData{
+        .themeName = currentTheme,
+        .bricks = {},
+        .powerupData = {},
+        .isDropping = false,
+        .dropSpeed = 0,
+        .currentLevel = internalLevel
+    };
     std::string line;
-    Uint32 currentId = 0;
     size_t row = 0;
-    while (infile.tellg() < end_pos && std::getline(infile, line)) {
+    while (infile.tellg() < endPos && std::getline(infile, line)) {
         if (line.starts_with("> down")) {
-            brickData.isDropping = true;
+            currentLevelData.isDropping = true;
             char *end;
             if (const long dropSpeed = std::strtol(line.substr(7).c_str(), &end, 10); *end != '\0' || dropSpeed <= 0) {
                 SDL_Log("Ungültige Drop-Geschwindigkeit: %s", line.substr(7).c_str());
-                brickData.dropSpeed = 1000; // Fallback, bricks drop down once every 1 second.
+                currentLevelData.dropSpeed = 1000; // Fallback, bricks drop down once every 1 second.
             } else {
-                brickData.dropSpeed = static_cast<int>(dropSpeed);
+                currentLevelData.dropSpeed = static_cast<int>(dropSpeed);
             }
             continue;
         }
 
-        // Verarbeite normale Level-Zeilen
         size_t ch = 0;
-
         size_t brick_count_in_line = 0;
         while (ch < line.length()) {
             char powerupChar = line[ch];
@@ -194,24 +208,18 @@ bool LevelManager::loadLevel(size_t level) {
                 ch += 2;
                 continue;
             }
-
             brick_count_in_line++;
-            Brick brick(eventManager);
+            BrickInfo info;
             size_t col = ch / 2; // Position basiert auf Zeichenpaaren
-            brick.pos_x = PLAYFIELD_LEFT_BORDER + static_cast<float>(col) * BRICK_WIDTH;
-            brick.pos_y = BRICKS_TOP_BORDER - static_cast<float>(row) * BRICK_HEIGHT;
-            brick.width = BRICK_WIDTH;
-            brick.height = BRICK_HEIGHT;
-            brick.id = currentId++;
-            if (PowerUpType powerupType = charToPowerUpType(powerupChar); powerupType != PowerUpType::None) {
-                powerupData.powerupMap[brick.id] = powerupType;
-            }
+            info.x = PLAYFIELD_LEFT_BORDER + static_cast<float>(col) * BRICK_WIDTH;
+            info.y = BRICKS_TOP_BORDER - static_cast<float>(row) * BRICK_HEIGHT;
+
             if (type == 'D' && ch + 7 < line.length()) {
                 std::string rgb = line.substr(ch + 2, 6);
                 int r = std::stoi(rgb.substr(0, 2), nullptr, 16);
                 int g = std::stoi(rgb.substr(2, 2), nullptr, 16);
                 int b = std::stoi(rgb.substr(4, 2), nullptr, 16);
-                brick.color = {
+                info.color = {
                     static_cast<float>(r) / 255.0f,
                     static_cast<float>(g) / 255.0f,
                     static_cast<float>(b) / 255.0f,
@@ -222,8 +230,12 @@ bool LevelManager::loadLevel(size_t level) {
                 ch += 2; // PowerupType + BrickType
             }
 
-            brick.type = charToBrickType(type);
-            brickData.bricks.push_back(brick);
+            info.type = charToBrickType(type);
+            currentLevelData.bricks.push_back(info);
+            if (PowerupType powerupType = charToPowerUpType(powerupChar);
+                powerupType != PowerupType::None) {
+                currentLevelData.powerupData.powerupMap[currentLevelData.bricks.size()] = powerupType;
+            }
         }
 #if DEBUG_BRICK_COUNT
             SDL_Log("Zeile %zu: %zu Bricks", row, brick_count_in_line);
@@ -231,15 +243,30 @@ bool LevelManager::loadLevel(size_t level) {
         ++row;
     }
 #if DEBUG_BRICK_COUNT
-    SDL_Log("Level %zu enthält %zu Bricks", level, result.bricks.size());
+    SDL_Log("Level %zu enthält %zu Bricks", level, currentLevelData.bricks.size());
 #endif
-    currentLevel = internalLevel;
-    LevelEventData data;
-    data.currentlevel = currentLevel;
-    data.brickData = brickData;
-    data.powerupData = powerupData;
-    eventManager->emit(GameEvent::LevelChanged, data);
+    eventManager->emit(GameEvent::LevelLoaded, currentLevelData);
     return true;
+}
+
+void LevelManager::onLevelRequested(const LevelRequestedData& data) {
+    const size_t requestedLevel = data.level;
+    if (loadLevel(requestedLevel)) {
+        eventManager->emit(GameEvent::LevelLoaded, currentLevelData);
+    } else {
+        SDL_Log("Fehler beim Laden von Level %zu", requestedLevel);
+    }
+}
+
+void LevelManager::onLevelThemeRequested(const ThemeData& data) {
+    const SubThemeData requestedTheme = data.levelsTheme;
+    if (setTheme(requestedTheme.subThemePath)) {
+        LevelThemeData oData;
+        oData.maxLevel = levelCount;
+        eventManager->emit(GameEvent::LevelThemeChanged, oData);
+    } else {
+        SDL_Log("Fehler beim Laden von Level %zu", requestedTheme);
+    }
 }
 
 bool LevelManager::setTheme(const std::string &themeName) {
@@ -256,9 +283,6 @@ bool LevelManager::setTheme(const std::string &themeName) {
         clearTheme();
         return false;
     }
-    LevelThemeData data; // FIXME andere Event-Datenstruktur verwenden LevelThemeChangedData
-    data.maxLevel = levelCount;
-    eventManager->emit(GameEvent::LevelThemeChanged, data);
     return true;
 }
 
@@ -266,6 +290,5 @@ void LevelManager::clearTheme() {
     levelRanges.clear();
     currentTheme.clear();
     levelCount = 0;
-    powerupData = PowerupData{};
-    brickData = BrickData{};
+    currentLevelData = LevelData{};
 }

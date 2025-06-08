@@ -3,36 +3,24 @@
 
 #include <string>
 #include <vector>
-#include <tuple>
-#include <SDL_stdinc.h>
 
-#include "Brick.h"
-#include "Powerup.h"
+#include "IEventManager.h"
 
-struct BrickData {
-    std::vector<Brick> bricks{}; // Alle Bricks des Levels
-    bool isDropping{}; // Ob das Level ein "dropping level" ist
-    int dropSpeed{}; // Geschwindigkeit des Drops (wenn hasDropping true ist)
+struct LevelOffset {
+    std::streampos startPos;
+    std::streampos endPos;
 };
-
-struct PowerupData {
-    std::map<Uint32, PowerUpType> powerupMap{}; // Map für Brick-ID -> PowerUp-Typ
-};
-
-using LevelOffset = std::tuple<std::streampos, std::streampos>;
 
 class LevelManager {
-    EventManager *eventManager{nullptr};
+    IEventManager *eventManager{nullptr};
     std::vector<LevelOffset> levelRanges{};
     std::string currentTheme;
     size_t levelCount = 0;
-    size_t currentLevel = 0; // Aktuelles Level, 0-basiert für interne Verwendung
-    std::map<Uint32, PowerUpType> powerupMap{}; // Map für Brick-ID -> PowerUp-Typ
-    PowerupData powerupData{}; // Member-Variable für PowerUp-Informationen
-    BrickData brickData{};
+    size_t currentLevel = 0;
+    LevelData currentLevelData{};
 
 public:
-    explicit LevelManager(EventManager *evtMgr = nullptr);
+    explicit LevelManager(IEventManager *evtMgr = nullptr);
 
     ~LevelManager() = default;
 
@@ -47,4 +35,8 @@ public:
     [[nodiscard]] size_t getLevelCount() const { return levelCount; }
 
     bool loadLevel(size_t level);
+
+    void onLevelRequested(const LevelRequestedData &data);
+
+    void onLevelThemeRequested(const ThemeData &data);
 };

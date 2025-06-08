@@ -1,6 +1,8 @@
 // BrickManager.cpp
 #include "BrickManager.h"
 
+#include "config.h"
+
 BrickManager::BrickManager(EventManager* evtMgr, TextureManager* texMgr)
     : eventManager(evtMgr), textureManager(texMgr) {}
 
@@ -23,40 +25,50 @@ BrickTexture BrickManager::getTextureForType(BrickType type) {
     }
 }
 
-void BrickManager::setupBricks(BrickData data) {
-    bricks = std::move(data.bricks);
-    for (auto& brick : bricks) {
-        if (brick.type == BrickType::None) continue;
-        brick.texture = textureManager->getBrickTexture(getTextureForType(brick.type));
+void BrickManager::setupBricks(std::vector<BrickInfo> brickInfos) {
+    bricks.clear();
+    brickHealth.clear();
+    brickTypes.clear();
 
-        switch (brick.type) {
+    for (const auto& info : brickInfos) {
+        if (info.type == BrickType::None) continue;
+
+        Brick brick;
+        brick.pos_x = info.x;
+        brick.pos_y = info.y;
+        brick.width = BRICK_WIDTH;
+        brick.height = BRICK_HEIGHT;
+        brick.texture = textureManager->getBrickTexture(getTextureForType(info.type));
+
+        float health = 1.0f;
+        switch (info.type) {
             case BrickType::Glass:
-                brick.health = 2.0f;
+                health = 2.0f;
                 break;
             case BrickType::Invisible:
-                brick.health = 3.0f;
+                health = 3.0f;
                 brick.visible = false;
                 break;
             case BrickType::Cement:
-                brick.health = 4.0f;
+                health = 4.0f;
                 break;
             default:
-                brick.health = 1.0f;
+                health = 1.0f;
                 break;
         }
-        // Für Base-Typ (custom color) die Farbinformationen setzen
-        //if (brick.type == BrickType::Base) {
-        //    brick.texture->textureProperties.glTexColorInfo[0] = brick.color.r;
-        //    brick.texture->textureProperties.glTexColorInfo[1] = brick.color.g;
-        //    brick.texture->textureProperties.glTexColorInfo[2] = brick.color.b;
-        //    brick.texture->textureProperties.glTexColorInfo[3] = brick.color.a;
-        //}
-    }
 
+        if (info.type == BrickType::Base) {
+            brick.color = info.CustomBrickColor;
+        }
+        const size_t index = bricks.size();
+        bricks.push_back(std::move(brick));
+        brickHealth[index] = health;
+        brickTypes[index] = info.type;
+    }
 }
 
-void BrickManager::onLevelChanged(const LevelEventData &data) {
-    setupBricks(data.brickData);
+void BrickManager::onLevelLoaded(const LevelData &data) {
+    setupBricks(data.bricks);
 }
 
 void BrickManager::update(const float deltaTime) {
@@ -78,33 +90,33 @@ void BrickManager::draw(const float deltaTime) {
 }
 
 void BrickManager::onBrickHit(const EventData &data) {
-    auto *brick = static_cast<Brick *>(data.target);
+    const size_t index = static_cast<size_t>(data.target - &bricks[0]);
+    float& health = brickHealth[index];
+    Brick& brick = bricks[index];
+    const BrickType type = brickTypes[index];
+    health -= 1.0f;
 
-    brick->health -= 1.0f;
-
-    switch (brick->type) {
+    switch (type) {
         case BrickType::Invisible:
-            if (!brick->visible) {
-                brick->visible = true; // Wird sichtbar nach erstem Treffer
+            if (!brick.visible) {
+                brick.visible = true;
             }
             break;
-
         case BrickType::Explosive:
-            if (brick->health <= 0) {
-                //detonateExplosiveBrick(brick);
+            if (health <= 0) {
+                // detonateExplosiveBrick(index);
             }
             break;
         default: ;
     }
-    if (brick->health <= 0) {
-        brick->active = false;
 
+    if (health <= 0) {
+        brick.active = false;
         EventData destroyData;
-        destroyData.sender = brick;
-        //destroyData.brickId = brick->id;
-        // basis Punkte
-        destroyData.posX = brick->pos_x;
-        destroyData.posY = brick->pos_y;
+        destroyData.sender = &brick;
+        destroyData.posX = brick.pos_x;
+        destroyData.posY = brick.pos_y;
         eventManager->emit(GameEvent::BrickDestroyed, destroyData);
     }
 }
+

@@ -1,24 +1,5 @@
-#include "config.h"
+#include <epoxy/gl.h>
 #include "Brick.h"
-#include "EventManager.h"
-
-Brick::Brick(EventManager *eventMgr) : eventManager(eventMgr) {
-    this->eventManager = eventMgr;
-    Brick::init();
-}
-
-void Brick::init() {
-    // GameObject
-    width = BRICK_WIDTH;
-    height = BRICK_HEIGHT;
-    active = true;
-    pos_x = 0.0f;
-    pos_y = 0.0f;
-}
-
-int Brick::getCollisionType() const {
-    return static_cast<int>(CollisionType::Brick);
-}
 
 void Brick::drawBase() const {
     glLoadIdentity();
@@ -58,11 +39,4 @@ void Brick::draw(const float deltaTime) {
     if (!active) return;
     texture->play(deltaTime);
     drawBase();
-}
-
-Brick::~Brick() {
-    EventData data;
-    data.sender = this;
-    data.brickId = id; // Die Brick-ID für das Powerup-Mapping hinzufügen
-    eventManager->emit(GameEvent::BrickDestroyed, data);
 }

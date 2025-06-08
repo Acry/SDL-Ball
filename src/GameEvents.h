@@ -1,0 +1,103 @@
+// GameEvents.h
+#pragma once
+#include <functional>
+#include <map>
+
+#include "BrickTypes.h"
+#include "colors.h"
+#include "GameObject.h"
+#include "PowerupTypes.h"
+
+enum class GameEvent {
+    BallHitLeftBorder, // Index 0
+    BallHitRightBorder, // Index 1
+    BallHitTopBorder, // Index 2
+    BallLost, // Index 3
+    BallHitPaddle, // Index 4
+    BrickDestroyed, // Index 5
+    PowerUpCollected, // Index 6
+    BallHitBrick, // Index 7
+    PaddleHitLeftBorder, // Index 8
+    PaddleHitRightBorder, // Index 9
+
+    // Ball-Events für Tracer
+    BallCreated,
+    BallMoved,
+    BallDestroyed,
+
+    // Neue Tracer-bezogene Events
+    CreateTracer,
+    TracerCreated,
+    UpdateTracer,
+    UpdateTracerColor,
+    UpdateTracerSize,
+    RemoveTracer,
+
+    PaddleCreated,
+    PaddleMoved,
+    PaddleDestroyed,
+
+    LevelRequested,
+    LevelChanged,
+    LevelThemeRequested,
+    LevelThemeChanged,
+    LevelLoaded,
+    LevelStarted,
+};
+
+
+
+struct BrickInfo {
+    BrickType type{BrickType::None};
+    float x{0.0f};
+    float y{0.0f};
+    Color CustomBrickColor{};
+};
+
+struct PowerupData {
+    std::map<size_t, PowerupType> powerupMap{}; // Index -> PowerUp-Typ
+};
+
+struct LevelData {
+    std::string themeName; // Name des aktuellen Themes
+    std::vector<BrickInfo> bricks; // Alle Bricks des Levels
+    PowerupData powerupData; // PowerUp-Daten für das Level
+    bool isDropping{false}; // Ob das Level ein "dropping level" ist
+    int dropSpeed{0}; // Geschwindigkeit des Drops (wenn isDropping true ist)
+    size_t currentLevel{0};
+};
+
+struct EventData {
+    float posX{0};
+    float posY{0};
+    int soundID{-1};
+    GameObject *sender{nullptr};
+    const GameObject *target{nullptr};
+    // ---snip--- TODO/FIXME
+    int points{0};
+};
+
+struct SubThemeData {
+    std::string subThemeName; // Name des Unterthemas, z.B. "default",
+    std::string subThemePath; // Pfad zum Sprite-Untertitel
+};
+
+struct ThemeData {
+    SubThemeData spritesTheme;        // Pfad zum Sprite-Theme
+    SubThemeData fontsTheme;          // Pfad zum Font-Theme
+    SubThemeData levelsTheme;         // Pfad zum Level-Theme
+    SubThemeData backgroundTheme;     // Pfad zum BG-Theme
+    SubThemeData soundTheme;          // Pfad zum Sound-Theme
+};
+
+struct LevelRequestedData {
+    size_t level{0}; // Angeforderte Level-Nummer
+};
+
+struct LevelThemeData {
+    size_t maxLevel{};
+};
+
+using EventCallback = std::function<void(const EventData &)>;
+using LevelEventCallback = std::function<void(const LevelData &)>;
+using LevelThemeEventCallback = std::function<void(const LevelThemeData &)>;

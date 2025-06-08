@@ -2,6 +2,7 @@
 #pragma once
 
 #include <memory>
+#include "colors.h"
 #include <epoxy/gl.h>
 #include "SpriteSheetAnimation.h"
 
