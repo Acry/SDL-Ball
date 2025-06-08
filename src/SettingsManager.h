@@ -11,6 +11,7 @@
 // - Video
 // - Steuerung
 // - Gameplay
+// Will use json for settings version 3.1 anymways
 struct settings {
     std::string sndTheme, gfxTheme, lvlTheme;
     bool cfgRes[2];
