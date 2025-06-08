@@ -25,6 +25,15 @@ int main() {
     TestHelper testHelper(textManager);
 
     EventManager eventManager;
+    TextureManager textureManager;
+    const std::filesystem::path themePath = "../themes/default";
+
+    if (!textureManager.setBackgroundTheme(themePath)) {
+        SDL_Log("Fehler beim Laden der Hintergründe: %s", themePath.c_str());
+        return EXIT_FAILURE;
+    }
+    BackgroundManager backgroundManager(textureManager);
+    backgroundManager.registerEvents(&eventManager);
     LevelManager levelManager(&eventManager);
     if (!levelManager.setTheme("../themes/default")) {
         SDL_Log("Error setting level theme");
@@ -42,18 +51,6 @@ int main() {
         "End - last level",
         "ESC: Quit"
     };
-
-    TextureManager textureManager;
-    const std::filesystem::path themePath = "../themes/default";
-
-    if (!textureManager.setBackgroundTheme(themePath)) {
-        SDL_Log("Fehler beim Laden der Hintergründe: %s", themePath.c_str());
-        return EXIT_FAILURE;
-    }
-
-    BackgroundManager backgroundManager(textureManager);
-    backgroundManager.registerEvents(&eventManager);
-
     levelManager.loadLevel(currentLevel);
 
     Uint32 lastTime = SDL_GetTicks();

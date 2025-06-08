@@ -11,6 +11,7 @@
 #include "PowerupManager.h"
 
 #define DEBUG_BRICK_COUNT 0
+#define DEBUG_LEVEL_STRUCTURE 0
 
 BrickType charToBrickType(const char c) {
     switch (c) {
@@ -158,8 +159,9 @@ bool LevelManager::readLevelStructure() {
         return false;
     }
     levelCount = levelRanges.size();
+#if DEBUG_LEVEL_STRUCTURE
     SDL_Log("Level-structure %s parsed. count: %d", fullPath.c_str(), level_count);
-
+#endif
     return true;
 }
 
@@ -264,11 +266,7 @@ void LevelManager::onLevelRequested(const LevelRequestedData &data) {
 
 void LevelManager::onLevelThemeRequested(const ThemeData &data) {
     const SubThemeData requestedTheme = data.levelsTheme;
-    if (setTheme(requestedTheme.subThemePath)) {
-        LevelThemeData oData;
-        oData.maxLevel = levelCount;
-        eventManager->emit(GameEvent::LevelThemeChanged, oData);
-    } else {
+    if (!setTheme(requestedTheme.subThemePath)) {
         SDL_Log("Fehler beim Laden des Level-Themes: %s", requestedTheme.subThemePath.c_str());
     }
 }
@@ -287,6 +285,9 @@ bool LevelManager::setTheme(const std::string &themeName) {
         clearTheme();
         return false;
     }
+    LevelThemeData oData;
+    oData.maxLevel = levelCount;
+    eventManager->emit(GameEvent::LevelThemeChanged, oData);
     return true;
 }
 
