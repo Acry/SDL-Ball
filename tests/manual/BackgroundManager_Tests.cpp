@@ -16,9 +16,11 @@ int main() {
     }
     SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Background Test");
 
+    const std::filesystem::path themePath = "../themes/default";
+
     TextManager textManager;
-    if (!textManager.setTheme("../themes/default")) {
-        SDL_Log("Error loading font theme");
+    if (!textManager.setTheme(themePath)) {
+        SDL_Log("Error loading font theme %s", themePath.c_str());
         return EXIT_FAILURE;
     }
 
@@ -26,7 +28,6 @@ int main() {
 
     EventManager eventManager;
     TextureManager textureManager;
-    const std::filesystem::path themePath = "../themes/default";
 
     if (!textureManager.setBackgroundTheme(themePath)) {
         SDL_Log("Error loading backgrounds: %s", themePath.c_str());
@@ -37,8 +38,8 @@ int main() {
     backgroundManager.registerEvents(&eventManager);
 
     LevelManager levelManager(&eventManager);
-    if (!levelManager.setTheme("../themes/default")) {
-        SDL_Log("Error setting level theme");
+    if (!levelManager.setTheme(themePath)) {
+        SDL_Log("Error setting level theme %s", themePath.c_str());
     }
 
     const std::vector<std::string> instructions = {
@@ -46,6 +47,7 @@ int main() {
         "M: Toggle Mouse Coordinates",
         "O: Toggle Background Overlay",
         "S: Create Screenshot",
+        "T: Toggle Theme",
         "-> - next level",
         "<- - previous level",
         "Pos1 - first level",
@@ -97,6 +99,22 @@ int main() {
                     case SDLK_o:
                         backgroundManager.setBackgroundOverlayEnabled(!backgroundManager.isBackgroundOverlayEnabled());
                         break;
+                    case SDLK_t: {
+                        static bool useDefaultTheme = false;
+                        const std::filesystem::path newTheme = useDefaultTheme
+                                                                   ? "../themes/default"
+                                                                   : "../tests/themes/test";
+
+                        if (!textureManager.setBackgroundTheme(newTheme)) {
+                            textManager.addAnnouncement("Error changing theme", 1500, Fonts::AnnounceBad);
+                        } else {
+                            textManager.addAnnouncement("Theme changed", 1500, Fonts::AnnounceGood);
+                            // levelManager.loadLevel(currentLevel);
+                        }
+
+                        useDefaultTheme = !useDefaultTheme;
+                        break;
+                    }
                     case SDLK_SPACE:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
