@@ -3,12 +3,13 @@
 
 #include <vector>
 #include "Brick.h"
+#include "ICollideable.h"
 #include "TextureManager.h"
 #include "IEventManager.h"
 
 class BrickManager {
     std::vector<Brick> bricks;
-    EventManager* eventManager;
+    IEventManager* eventManager;
     TextureManager* textureManager;
     std::unordered_map<size_t, float> brickHealth;
     std::unordered_map<size_t, BrickType> brickTypes;
@@ -16,7 +17,7 @@ class BrickManager {
     static BrickTexture getTextureForType(BrickType type);
 
 public:
-    BrickManager(EventManager* evtMgr, TextureManager* texMgr);
+    BrickManager(IEventManager* evtMgr, TextureManager* texMgr);
 
     void onCollision(size_t brickIndex, ICollideable *other, float hitX, float hitY) {
         if (other->getCollisionType() == static_cast<int>(CollisionType::Ball)) {
@@ -33,7 +34,7 @@ public:
     [[nodiscard]] float getHeight(size_t index) const { return bricks[index].height; }
     [[nodiscard]] bool isActive(size_t index) const { return bricks[index].active; }
 
-    void setupBricks(std::vector<BrickInfo> data);
+    void setupBricks(const std::vector<BrickInfo> &data);
 
     void onLevelLoaded(const LevelData &data);
 
@@ -41,8 +42,6 @@ public:
     void draw(float deltaTime);
 
     void onBrickHit(const EventData &data);
-
-    void onBrickDestroyed(const EventData &data);
 
     void clear();
 

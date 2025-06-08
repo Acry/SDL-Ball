@@ -3,10 +3,10 @@
 
 #include "config.h"
 
-BrickManager::BrickManager(EventManager* evtMgr, TextureManager* texMgr)
+BrickManager::BrickManager(IEventManager* evtMgr, TextureManager* texMgr)
     : eventManager(evtMgr), textureManager(texMgr) {}
 
-BrickTexture BrickManager::getTextureForType(BrickType type) {
+BrickTexture BrickManager::getTextureForType(const BrickType type) {
     switch (type) {
         case BrickType::Blue:      return BrickTexture::Blue;
         case BrickType::Yellow:    return BrickTexture::Yellow;
@@ -25,10 +25,8 @@ BrickTexture BrickManager::getTextureForType(BrickType type) {
     }
 }
 
-void BrickManager::setupBricks(std::vector<BrickInfo> brickInfos) {
-    bricks.clear();
-    brickHealth.clear();
-    brickTypes.clear();
+void BrickManager::setupBricks(const std::vector<BrickInfo> &brickInfos) {
+    clear();
 
     for (const auto &info: brickInfos) {
         if (info.type == BrickType::None) continue;
@@ -120,3 +118,12 @@ void BrickManager::onBrickHit(const EventData &data) {
     }
 }
 
+void BrickManager::clear() {
+    bricks.clear();
+    brickHealth.clear();
+    brickTypes.clear();
+}
+size_t BrickManager::getActiveBrickCount() const {
+    return std::count_if(bricks.begin(), bricks.end(),
+        [](const Brick& brick) { return brick.isActive(); });
+}
