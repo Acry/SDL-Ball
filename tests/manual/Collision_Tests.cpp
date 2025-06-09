@@ -261,11 +261,6 @@ int main() {
                 ball.pos_x = paddle.pos_x + paddle.getWidth() / 2.0f - ball.getWidth() / 2.0f;
             }
 
-            // Kollisionen prüfen und behandeln
-            collisionManager.handleBallBorderCollisions(ball, leftBorder, rightBorder, topBorder);
-            collisionManager.handleBallPaddleCollision(ball, paddle);
-            collisionManager.handlePaddleBorderCollisions(paddle, leftBorder, rightBorder);
-            collisionManager.handleBallBricksCollisions(ball, bricks);
 
             soundManager.play();
         }

@@ -2,11 +2,7 @@
 #pragma once
 
 #include "ICollideable.h"
-
-class Paddle;
-class PlayfieldBorder;
-class Ball;
-class Brick;
+#include "IEventManager.h"
 
 struct CollisionPoint {
     float x;
@@ -14,31 +10,16 @@ struct CollisionPoint {
 };
 
 class CollisionManager {
-    EventManager *eventManager = nullptr;
-
 public:
-    explicit CollisionManager(EventManager *eventMgr);
+    explicit CollisionManager(IEventManager *eventMgr);
 
     // Einfache Kollisionserkennung
-    static bool checkCollision(const ICollideable &obj1, const ICollideable &obj2);
+    [[nodiscard]] bool checkCollision(const ICollideable &obj1, const ICollideable &obj2) const;
 
     // Spezialisierte Kollisionserkennung mit Kollisionspunkt
-    static bool checkCollision(const ICollideable &obj1, const ICollideable &obj2,
-                               float &hitX, float &hitY);
+    bool checkCollision(const ICollideable &obj1, const ICollideable &obj2,
+                               float &hitX, float &hitY) const;
 
-    // Prüfe alle Kollisionen zwischen Objekten und leite Events weiter
-    static void processCollisions(const std::vector<ICollideable *> &objects);
-
-    void handleBallBricksCollisions(Ball &ball, std::vector<Brick> &bricks) const;
-
-    void handleBallBorderCollisions(Ball &ball,
-                                    const PlayfieldBorder &leftBorder,
-                                    const PlayfieldBorder &rightBorder,
-                                    const PlayfieldBorder &topBorder) const;
-
-    void handleBallPaddleCollision(Ball &ball, const Paddle &paddle) const;
-
-    void handlePaddleBorderCollisions(Paddle &paddle,
-                                      const PlayfieldBorder &leftBorder,
-                                      const PlayfieldBorder &rightBorder) const;
+private:
+    IEventManager *eventManager;
 };

@@ -6,6 +6,7 @@
 #include "BrickTypes.h"
 #include "colors.h"
 #include "GameObject.h"
+#include "ICollideable.h"
 #include "PowerupTypes.h"
 
 enum class GameEvent {
@@ -66,6 +67,13 @@ struct LevelData {
     size_t currentLevel{0};
 };
 
+struct CollisionData {
+    const ICollideable *object1{nullptr};
+    const ICollideable *object2{nullptr};
+    float hitX{0.0f};
+    float hitY{0.0f};
+};
+
 struct EventData {
     float posX{0};
     float posY{0};
@@ -102,3 +110,4 @@ using LevelEventCallback = std::function<void(const LevelData &)>;
 using LevelThemeEventCallback = std::function<void(const LevelThemeData &)>;
 using LevelRequestedEventCallback = std::function<void(const LevelRequestedData &)>;
 using ThemeEventCallback = std::function<void(const ThemeData &)>;
+using CollisionEventCallback = std::function<void(const CollisionData &)>;
