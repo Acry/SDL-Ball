@@ -1,3 +1,4 @@
+// LevelManager_Tests.cpp
 #include <cstdlib>
 #include <thread>
 #include <vector>
@@ -6,8 +7,8 @@
 #include "LevelManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
-#include "Brick.h"
 #include "EventManager.h"
+#include "config.h"
 
 const float colors[16][4] = {
     {1.0f, 1.0f, 1.0f, 1.0f}, // Weiß
@@ -28,6 +29,12 @@ const float colors[16][4] = {
     {0.0f, 0.0f, 0.0f, 1.0f} // Schwarz
 };
 
+std::vector<BrickInfo> bricks;
+
+void onLevelLoaded(const LevelData &data) {
+    bricks = data.bricks;
+}
+
 int main() {
     Display display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
@@ -35,20 +42,29 @@ int main() {
         return EXIT_FAILURE;
     }
     SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Level Test");
+
+    const std::filesystem::path themePath = "../themes/default";
+
     TextManager textManager;
-    if (!textManager.setTheme("../themes/default")) {
-        SDL_Log("Error loading font theme");
+    if (!textManager.setTheme(themePath)) {
+        SDL_Log("Error loading font theme %s", themePath.c_str());
         return EXIT_FAILURE;
     }
+
     TestHelper testHelper(textManager);
+
     EventManager eventManager;
+    eventManager.addListener(GameEvent::LevelLoaded,
+                             [](const LevelData &data) { onLevelLoaded(data); }, nullptr);
+
     LevelManager levelManager(&eventManager);
-    if (!levelManager.setTheme("../themes/default")) {
-        SDL_Log("Error setting level theme");
+    if (!levelManager.setTheme(themePath)) {
+        SDL_Log("Error setting level theme %s", themePath.c_str());
     }
+
     size_t currentLevel = 1;
-    BrickData data = levelManager.loadLevel(currentLevel);
-    auto& bricks = data.bricks;
+    levelManager.loadLevel(currentLevel);
+
     auto levelCount = levelManager.getLevelCount();
     const std::vector<std::string> instructions = {
         "S: Create Screenshot",
@@ -97,38 +113,32 @@ int main() {
                     case SDLK_SPACE:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
-                            data = levelManager.loadLevel(currentLevel);
-                            bricks = data.bricks;
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_HOME:
                         currentLevel = 1; {
-                        data = levelManager.loadLevel(currentLevel);
-                        bricks = data.bricks;
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_END:
                         currentLevel = levelCount; {
-                         data = levelManager.loadLevel(currentLevel);
-                        bricks = data.bricks;
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_LEFT:
                         currentLevel--;
                         if (currentLevel < 1) currentLevel = levelCount; {
-                        data = levelManager.loadLevel(currentLevel);
-                        bricks = data.bricks;
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_RIGHT:
                         currentLevel++;
                         if (currentLevel > levelCount) currentLevel = 1; {
-                        data = levelManager.loadLevel(currentLevel);
-                        bricks = data.bricks;
+                            levelManager.loadLevel(currentLevel);
                         }
                         break;
                     case SDLK_ESCAPE:
-                        // Spiel beenden
                         running = false;
                         break;
                     default: ;
@@ -152,10 +162,10 @@ int main() {
         for (auto &brick: bricks) {
             glColor4fv(colors[idx % 16]);
             glBegin(GL_QUADS);
-            glVertex3f(brick.pos_x, brick.pos_y, 0.0f);
-            glVertex3f(brick.pos_x + brick.width, brick.pos_y, 0.0f);
-            glVertex3f(brick.pos_x + brick.width, brick.pos_y + brick.height, 0.0f);
-            glVertex3f(brick.pos_x, brick.pos_y + brick.height, 0.0f);
+            glVertex3f(brick.x, brick.y, 0.0f);
+            glVertex3f(brick.x + BRICK_WIDTH, brick.y, 0.0f);
+            glVertex3f(brick.x + BRICK_WIDTH, brick.y + BRICK_HEIGHT, 0.0f);
+            glVertex3f(brick.x, brick.y + BRICK_HEIGHT, 0.0f);
             glEnd();
             ++idx;
         }

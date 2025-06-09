@@ -416,21 +416,12 @@ $(BUILD_DIR)Collision_Tests.o: $(MANUAL_TEST_DIR)Collision_Tests.cpp
 LEVEL_TEST_SOURCES := $(MANUAL_TEST_DIR)LevelManager_Tests.cpp \
                       $(MANUAL_TEST_DIR)TestHelper.cpp \
                       $(MANUAL_TEST_DIR)LevelManager.cpp \
-                      $(SOURCE_DIR)Ball.cpp \
-                      $(SOURCE_DIR)Paddle.cpp \
-                      $(SOURCE_DIR)Brick.cpp \
-                      $(SOURCE_DIR)GameObject.cpp \
-                      $(SOURCE_DIR)MovingObject.cpp \
-                      $(SOURCE_DIR)GrowableObject.cpp \
                       $(SOURCE_DIR)Display.cpp \
                       $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                       $(SOURCE_DIR)TextManager.cpp \
                       $(SOURCE_DIR)TextureManager.cpp \
                       $(SOURCE_DIR)TextureUtilities.cpp \
-                      $(SOURCE_DIR)CollisionManager.cpp \
-                      $(SOURCE_DIR)PlayfieldBorder.cpp \
                       $(SOURCE_DIR)EventManager.cpp \
-                      $(SOURCE_DIR)SoundManager.cpp \
 
 LEVEL_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(LEVEL_TEST_SOURCES:.cpp=.o)))
 
