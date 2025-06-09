@@ -2,27 +2,27 @@
 #include "EventManager.h"
 #include <algorithm>
 
-void EventManager::addListener(GameEvent event, EventCallback callback, void *owner) {
+void EventManager::addListener(const GameEvent event, EventCallback callback, void *owner) {
     eventListeners[event].push_back({owner, std::move(callback)});
 }
 
-void EventManager::addListener(GameEvent event, LevelEventCallback callback, void *owner) {
+void EventManager::addListener(const GameEvent event, LevelEventCallback callback, void *owner) {
     levelEventListeners[event].push_back({owner, std::move(callback)});
 }
 
-void EventManager::addListener(GameEvent event, LevelThemeEventCallback callback, void *owner) {
+void EventManager::addListener(const GameEvent event, LevelThemeEventCallback callback, void *owner) {
     levelThemeEventListeners[event].push_back({owner, std::move(callback)});
 }
 
-void EventManager::addListener(GameEvent event, LevelRequestedEventCallback callback, void *owner) {
+void EventManager::addListener(const GameEvent event, LevelRequestedEventCallback callback, void *owner) {
     levelRequestedEventListeners[event].push_back({owner, std::move(callback)});
 }
 
-void EventManager::addListener(GameEvent event, ThemeEventCallback callback, void *owner) {
+void EventManager::addListener(const GameEvent event, ThemeEventCallback callback, void *owner) {
     themeEventListeners[event].push_back({owner, std::move(callback)});
 }
 
-void EventManager::emit(GameEvent event, const EventData &data) {
+void EventManager::emit(const GameEvent event, const EventData &data) {
     auto it = eventListeners.find(event);
     if (it != eventListeners.end()) {
         for (const auto &entry: it->second) {
@@ -31,7 +31,7 @@ void EventManager::emit(GameEvent event, const EventData &data) {
     }
 }
 
-void EventManager::emit(GameEvent event, const LevelData &data) {
+void EventManager::emit(const GameEvent event, const LevelData &data) {
     auto it = levelEventListeners.find(event);
     if (it != levelEventListeners.end()) {
         for (const auto &entry: it->second) {
@@ -40,7 +40,7 @@ void EventManager::emit(GameEvent event, const LevelData &data) {
     }
 }
 
-void EventManager::emit(GameEvent event, const LevelThemeData &data) {
+void EventManager::emit(const GameEvent event, const LevelThemeData &data) {
     auto it = levelThemeEventListeners.find(event);
     if (it != levelThemeEventListeners.end()) {
         for (const auto &entry: it->second) {
@@ -49,7 +49,7 @@ void EventManager::emit(GameEvent event, const LevelThemeData &data) {
     }
 }
 
-void EventManager::emit(GameEvent event, const LevelRequestedData &data) {
+void EventManager::emit(const GameEvent event, const LevelRequestedData &data) {
     auto it = levelRequestedEventListeners.find(event);
     if (it != levelRequestedEventListeners.end()) {
         for (const auto &entry: it->second) {
@@ -58,7 +58,7 @@ void EventManager::emit(GameEvent event, const LevelRequestedData &data) {
     }
 }
 
-void EventManager::emit(GameEvent event, const ThemeData &data) {
+void EventManager::emit(const GameEvent event, const ThemeData &data) {
     auto it = themeEventListeners.find(event);
     if (it != themeEventListeners.end()) {
         for (const auto &entry: it->second) {
@@ -67,7 +67,7 @@ void EventManager::emit(GameEvent event, const ThemeData &data) {
     }
 }
 
-void EventManager::removeListener(GameEvent event, void *owner) {
+void EventManager::removeListener(const GameEvent event, void *owner) {
     auto removeFromMap = [owner](auto &map, const GameEvent &evt) {
         auto it = map.find(evt);
         if (it != map.end()) {

@@ -37,15 +37,15 @@ class EventManager : public IEventManager {
     std::unordered_map<GameEvent, std::vector<ThemeListenerEntry> > themeEventListeners;
 
 public:
-    void addListener(GameEvent event, EventCallback callback, void *owner = nullptr) override;
+    void addListener(GameEvent event, EventCallback callback, void *owner) override;
 
-    void addListener(GameEvent event, LevelEventCallback callback, void *owner = nullptr) override;
+    void addListener(GameEvent event, LevelEventCallback callback, void *owner) override;
 
-    void addListener(GameEvent event, LevelThemeEventCallback callback, void *owner = nullptr) override;
+    void addListener(GameEvent event, LevelThemeEventCallback callback, void *owner) override;
 
-    void addListener(GameEvent event, LevelRequestedEventCallback callback, void *owner = nullptr) override;
+    void addListener(GameEvent event, LevelRequestedEventCallback callback, void *owner) override;
 
-    void addListener(GameEvent event, ThemeEventCallback callback, void *owner = nullptr) override;
+    void addListener(GameEvent event, ThemeEventCallback callback, void *owner) override;
 
     void emit(GameEvent event, const EventData &data) override;
 
