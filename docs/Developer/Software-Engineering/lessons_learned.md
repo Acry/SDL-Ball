@@ -1,17 +1,17 @@
-# refactoring - lessons learned
+# Refactoring - lessons learned
 
-spot singletons
-manager classes are usually the once
-
+Should have kept the original code structure buildable all the time.
 
 # classes
 
 pull out classes as a cpp file
-    see which dependencies are missing.
-    include the file at the place where it was, to make it work
+see which dependencies are missing.
+include the file at the place where it was, to make it work
 
-## opengl
+## CG
 
-### change projection
+### opengl
+
+#### change projection
 
 get calculation for 

@@ -1,45 +1,16 @@
 # New structure
 
+## Settings
+
 - default aus config.h - compileTime settings
 - loaded - gespeicherte Settings des Spielers
 - current - und die runtime settings
 
-```text
-Game
-├── Init
-│   ├── ConfigFileManager - LoadConfig
-│   ├── SDL_Init - Displaymanager, CreateWindow, Create GL Context and State, resize
-│   ├── TTF_Init - TtfLegacyGl
-│   ├── Mix_Init - SoundManager - LoadSounds
-│   └── IMG_Init - TextureManager - LoadTextures
-│
-├── Init GameManager
-│   │   └── Settingsmanager -> Talks to ConfigFileManager, 
-│   └── Init GameObjects
-│       ├── LevelManager
-│       ├── init Player
-│       └── BallManager
-│       ThemeManager
-│
-├── GameLoop / GameState
-│   ├── ProcessInput()
-│   │   └── HandleEvents (SDL_Events)
-│   ├── Update()
-│   │   ├── m_player.Update()
-│   │   ├── m_ball.Update()
-│   │   │   ├── Collision Detection
-│   │   │   └── Position Update
-│   │   └── m_bonus.Update()
-│   └── Draw()
-│       ├── RenderLevel
-│       ├── RenderBricks
-│       ├── RenderPlayer
-│       └── RenderBall
-```
+## Managers
 
-[Managers](../Managers.md)
+[Managers](Managers.md)
 
-## old
+## Option 1
 
 Texturen sind grundlegende Ressourcen des Rendering-Systems -> core
 
@@ -88,4 +59,39 @@ src/
     ├── theme_manager.hpp/.cpp # Theme-Verwaltung
     ├── theme_loader.hpp/.cpp  # Laden der Themes
     └── theme_data.hpp/.cpp    # Theme-Datenstrukturen
+```
+
+## Option 2
+
+```text
+Game
+├── Init
+│   ├── ConfigFileManager - LoadConfig
+│   ├── SDL_Init - Displaymanager, CreateWindow, Create GL Context and State, resize
+│   ├── TTF_Init - TtfLegacyGl
+│   ├── Mix_Init - SoundManager - LoadSounds
+│   └── IMG_Init - TextureManager - LoadTextures
+│
+├── Init GameManager
+│   │   └── Settingsmanager -> Talks to ConfigFileManager, 
+│   └── Init GameObjects
+│       ├── LevelManager
+│       ├── init Player
+│       └── BallManager
+│       ThemeManager
+│
+├── GameLoop / GameState
+│   ├── ProcessInput()
+│   │   └── HandleEvents (SDL_Events)
+│   ├── Update()
+│   │   ├── m_player.Update()
+│   │   ├── m_ball.Update()
+│   │   │   ├── Collision Detection
+│   │   │   └── Position Update
+│   │   └── m_bonus.Update()
+│   └── Draw()
+│       ├── RenderLevel
+│       ├── RenderBricks
+│       ├── RenderPlayer
+│       └── RenderBall
 ```

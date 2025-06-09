@@ -1,6 +1,88 @@
 # Current issues
 
-## SpritesheetAnimation - Timing
+Ich habe die Archtiektur gerade wieder grundlegend verändert, um die Manager-Klassen zu entkoppeln und event getriebenes
+verhalten zu implementieren.
+
+Was ein Fehler gewesen sein könnte, war das Entfernen von ICollideable in Brick. In Ball und Paddle ist er noch
+implementiert.
+
+Das möchte ich nun genauer prüfen.
+
+Es war nicht geplant, dass die GameObjects, wie Brick, Paddle, Powerup, Ball oder playfield-border den Colission-Manager
+kennen, deshalb habe ich ICollideable implementiert. Und ich möchte nicht, dass die GameObjects den EventManager kennen.
+Die Kollisionen sollten die Manager-Klassen übernehmen.
+
+Wir könnten ICollideable auf die grundlegenden geometrischen Eigenschaften reduzieren und die Kollisionslogik in die
+Manager verschieben.
+
+Brick
+
+```c++
+// Brick.h
+#pragma once
+#include "GameObject.h"
+#include "ICollideable.h"
+
+class Brick final : public GameObject, public ICollideable {
+    void drawBase() const;
+
+public:
+    bool visible{true};
+    Color color{};
+
+    // ICollideable Implementation
+    float getPosX() const override { return pos_x; }
+    float getPosY() const override { return pos_y; }
+    float getWidth() const override { return width; }
+    float getHeight() const override { return height; }
+    bool isActive() const override { return visible; }
+
+    void draw(float deltaTime) override;
+};
+```
+
+BrickManager
+
+```c++
+// BrickManager.h
+class BrickManager {
+    // ... bestehender Code ...
+
+    void handleCollision(size_t brickIndex, const ICollideable* other) {
+        if (auto* ball = dynamic_cast<const Ball*>(other)) {
+            EventData data;
+            data.target = &bricks[brickIndex];
+            onBrickHit(data);
+        }
+    }
+};
+```
+
+Allerdings konnte ich deren ManagerKlassen nicht ohne weiteres, völlig akstrakt entwickeln, das hat meine kognitiven
+Fähigkeiten überfordert.
+
+Die volle Funktionalität von Powerups und Powerupmanager ist noch nicht implementiert, aber ich bin einen guten Schritt
+weiter.
+
+Auch ist nun klar, welcher teil des codes den Abluaf steurt. Der CodeMananger initiert alle anderen Manager und steuert
+den Ablauf.
+Er spricht direkt mit dem SettingsManager, dem Theme-Manager und dem configfileManager. Der EventManager ist die
+zentrale kommunkationsschnittstelle.
+
+Der SceneManager ist noch nicht implementiert, er steuert die Szenen, also die verschiedenen Spielzustände (z.B. Titel,
+Autoplay, Credits Hauptmenü, Spiel, Pause, Game Over).
+
+Interagiert der Nutzer mit dem Programm, feuert der EventManager und der gameManager übernimmt, solange bis das Spiel
+beendet ist oder angehalten wird.
+Pause, GameOver, Menu, sind Szenen, die der SceneManager steuert.
+
+GameManager, CollisionManager, EventManager, AudioManager, EffectManager,
+BackgroundManager, PowerupManager, BallManager, PlayerManager, LevelManager
+HudManager: clock, leben, score, level
+
+SaveGameManager, HighScoreManager, MenuManager
+
+## SpritesheetAnimation - kumuliertes Timing
 
 [AnimationTiming](misc/Animation-Timing.md)
 
