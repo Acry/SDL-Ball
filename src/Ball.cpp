@@ -1,5 +1,6 @@
 #include "Ball.h"
 #include "config.h"
+#include "EventManager.h"
 
 Ball::Ball(EventManager *eventMgr) : eventManager(eventMgr) {
     this->eventManager = eventMgr;
@@ -258,7 +259,7 @@ void Ball::onCollision(ICollideable *other, float hitX, float hitY) {
     data.posX = hitX;
     data.posY = hitY;
     data.sender = this;
-    data.target = dynamic_cast<const GameObject*>(other);
+    data.target = dynamic_cast<const GameObject *>(other);
 
     switch (other->getCollisionType()) {
         case static_cast<int>(CollisionType::Paddle):

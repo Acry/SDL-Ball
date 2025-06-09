@@ -2,7 +2,6 @@
 #include <epoxy/gl.h>
 #include <vector>
 
-#include "EventManager.h"
 #include "MovingObject.h"
 #include "GrowableObject.h"
 #include "ICollideable.h"
