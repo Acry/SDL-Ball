@@ -2,10 +2,16 @@
 
 I want to keep this project as close as possbile to the original game, but I also want to refactor it to make it more
 maintainable and easier to work with.
-To understand what is going on, one should start understanding test-background.
+
+I dont see any point of branches or squashes right now, not even clean and concise commits.
+As soon as somebody picks this up, I would adapt my behaviour.
+
+To understand what is going on, one should start
+understanding [BackgroundManager_Tests.cpp](../../tests/manual/BackgroundManager_Tests.cpp).
+
 Ich versuche die Struktur und von zwei Seiten her anzugehen. Bottom-up, um die Basis zu verstehen und top-down, um die
-Struktur zu verbessern.
-Je nachdem, wie es um den Stand steht, arbeite ich an der Dokumentation oder an der Code-Qualität.
+Struktur zu verbessern. Je nachdem, wie es um den Stand steht, arbeite ich an der Dokumentation oder an der
+Code-Qualität.
 
 I highly doubt anyone will pick this up; nowadays nobody likes to do things without payment.
 It is a fun project and a nice game, the refactoring is challenging.
@@ -34,10 +40,8 @@ beschäftigt.
 Wie gesagt, nicht jeder Code läuft, bei jedem Commit. Momentan sind die manuellen Tests die Art wie der Code getrieben
 wird.
 Desktop UI's und Games sind nicht so einfach zu testen, wie command line tools, libraries oder statische/dynamische
-Webseiten.
-Dinge wie pupeteer, selenium, playwright sind im open-source bereich nicht vorhanden.
-
-Für die automatischen Tests, möchte ich gtest nutzen. Je enger die Kopplung, desto schwieriger gestaltet sich das.
+Webseiten. Dinge wie pupeteer, selenium, playwright sind im open-source bereich nicht vorhanden. Für die automatischen
+Tests möchte ich gtest nutzen. Je enger die Kopplung, desto schwieriger gestaltet sich das.
 
 Zwischenziele sind also Interfaces und dependency injection, um die Kopplung zu lockern.
 Danach ist das mocken von Klassen einfacher und die Tests können geschrieben, bzw. lauffähig werden.

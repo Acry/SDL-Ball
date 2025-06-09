@@ -24,17 +24,20 @@ I am currently working on a refactoring of the code to make it more modern and m
 Current Target is OpenGL 4.6 and SDL3.
 Probably I have time on weekends to work on it. Feel free to commit pull requests.
 
-See: [get started](docs/Developer/get_started.md)
+See: [get started](docs/Developer/GetInvolved.md)
 or
 See: [Todo](docs/Developer/Todo.md)
 
 ## Significant changes
 
+- Theming is more versatile
+- Event driven architecture
 - Projection change to 2D-Orthographic
 - Using OpenGL 3.1 compatibility profile See: [Projection](docs/Developer/OpenGL/Projection.md)
 - no Windows support (macOS should be easy to add)
-- no WiiMote support
+- no WiiMote support (currently)
 - sound always enabled
+- positional sound does recognize the Y-axis
 
 The config is now in `.config/SDL-Ball`, not `sdl-ball` anymore.
 You can copy the files from the old folder to the new one, should just work.
