@@ -5,6 +5,13 @@
 
 BrickManager::BrickManager(IEventManager *evtMgr, TextureManager *texMgr)
     : eventManager(evtMgr), textureManager(texMgr) {
+    eventManager->addListener(GameEvent::BallHitBrick,
+                              [this](const CollisionData &data) { onBallHitBrick(data); },
+                              this);
+
+    eventManager->addListener(GameEvent::LevelLoaded,
+                              [this](const LevelData &data) { onLevelLoaded(data); },
+                              this);
 }
 
 BrickTexture BrickManager::getTextureForType(const BrickType type) {
@@ -29,24 +36,24 @@ BrickTexture BrickManager::getTextureForType(const BrickType type) {
 void BrickManager::setupBricks(const std::vector<BrickInfo> &brickInfos) {
     clear();
 
-    for (const auto &info: brickInfos) {
-        if (info.type == BrickType::None) continue;
+    for (const auto &[type, x, y, CustomBrickColor]: brickInfos) {
+        if (type == BrickType::None) continue;
 
         Brick brick;
-        brick.pos_x = info.x;
-        brick.pos_y = info.y;
+        brick.pos_x = x;
+        brick.pos_y = y;
         brick.width = BRICK_WIDTH;
         brick.height = BRICK_HEIGHT;
-        brick.texture = textureManager->getBrickTexture(getTextureForType(info.type));
+        brick.texture = textureManager->getBrickTexture(getTextureForType(type));
 
         float health;
-        switch (info.type) {
+        switch (type) {
             case BrickType::Glass:
                 health = 2.0f;
                 break;
             case BrickType::Invisible:
                 health = 3.0f;
-                brick.visible = false;
+                brick.setVisible(false);
                 break;
             case BrickType::Cement:
                 health = 4.0f;
@@ -56,13 +63,13 @@ void BrickManager::setupBricks(const std::vector<BrickInfo> &brickInfos) {
                 break;
         }
 
-        if (info.type == BrickType::Base) {
-            brick.color = info.CustomBrickColor;
+        if (type == BrickType::Base) {
+            brick.customColor = CustomBrickColor;
         }
         const size_t index = bricks.size();
         bricks.push_back(std::move(brick));
         brickHealth[index] = health;
-        brickTypes[index] = info.type;
+        brickTypes[index] = type;
     }
 }
 
@@ -81,36 +88,39 @@ void BrickManager::update(const float deltaTime) {
 }
 
 void BrickManager::draw(const float deltaTime) {
-    for (auto &Brick: bricks) {
-        if (Brick.isActive()) {
-            Brick.draw(deltaTime);
+    for (auto &brick: bricks) {
+        if (brick.isActive() && brick.isVisible()) {
+            brick.draw(deltaTime);
         }
     }
 }
 
-void BrickManager::onBrickHit(const EventData &data) {
-    const size_t index = static_cast<size_t>(data.target - &bricks[0]);
+void BrickManager::onBallHitBrick(const CollisionData &data) {
+    const auto *hitBrick = static_cast<const Brick *>(data.object2);
+    const auto index = static_cast<size_t>(hitBrick - &bricks[0]);
+
     float &health = brickHealth[index];
-    Brick &brick = bricks[index];
+    auto &brick = bricks[index];
     const BrickType type = brickTypes[index];
     health -= 1.0f;
 
     switch (type) {
         case BrickType::Invisible:
-            if (!brick.visible) {
-                brick.visible = true;
+            if (!brick.isVisible()) {
+                brick.setVisible(true);
             }
             break;
         case BrickType::Explosive:
             if (health <= 0) {
                 // detonateExplosiveBrick(index);
+                // Emit explosion event x , y
             }
             break;
         default: ;
     }
 
     if (health <= 0) {
-        brick.active = false;
+        brick.setActive(false);
         EventData destroyData;
         destroyData.sender = &brick;
         destroyData.posX = brick.pos_x;
@@ -128,4 +138,11 @@ void BrickManager::clear() {
 size_t BrickManager::getActiveBrickCount() const {
     return std::count_if(bricks.begin(), bricks.end(),
                          [](const Brick &brick) { return brick.isActive(); });
+}
+
+BrickManager::~BrickManager() {
+    if (eventManager) {
+        eventManager->removeListener(GameEvent::BallHitBrick, this);
+        eventManager->removeListener(GameEvent::LevelLoaded, this);
+    }
 }

@@ -1,6 +1,5 @@
 // CollisionManager.cpp
 #include "CollisionManager.h"
-
 #include "GameEvents.h"
 
 //        +1
@@ -36,7 +35,6 @@ bool CollisionManager::checkCollision(const ICollideable &obj1, const ICollideab
     if (collision) {
         GameEvent eventType = {};
 
-        // Bestimme Event-Typ basierend auf Kollisionstypen
         const auto type1 = obj1.getCollisionType();
         const auto type2 = obj2.getCollisionType();
 

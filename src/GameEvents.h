@@ -21,12 +21,10 @@ enum class GameEvent {
     PaddleHitLeftBorder, // Index 8
     PaddleHitRightBorder, // Index 9
 
-    // Ball-Events für Tracer
     BallCreated,
     BallMoved,
     BallDestroyed,
 
-    // Neue Tracer-bezogene Events
     CreateTracer,
     TracerCreated,
     UpdateTracer,

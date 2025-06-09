@@ -13,7 +13,7 @@ class CollisionManager {
 public:
     explicit CollisionManager(IEventManager *eventMgr);
 
-    // Einfache Kollisionserkennung
+    // AABB (Axis-Aligned Bounding Box)
     [[nodiscard]] bool checkCollision(const ICollideable &obj1, const ICollideable &obj2) const;
 
     // Spezialisierte Kollisionserkennung mit Kollisionspunkt

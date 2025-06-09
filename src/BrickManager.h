@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "Brick.h"
-#include "ICollideable.h"
 #include "TextureManager.h"
 #include "IEventManager.h"
 
@@ -19,20 +18,7 @@ class BrickManager {
 public:
     BrickManager(IEventManager *evtMgr, TextureManager *texMgr);
 
-    void onCollision(size_t brickIndex, ICollideable *other, float hitX, float hitY) {
-        if (other->getCollisionType() == static_cast<int>(CollisionType::Ball)) {
-            EventData data;
-            data.target = &bricks[brickIndex];
-            onBrickHit(data);
-        }
-    }
-
-    // Kollisionshilfs-Methoden
-    [[nodiscard]] float getPosX(size_t index) const { return bricks[index].pos_x; }
-    [[nodiscard]] float getPosY(size_t index) const { return bricks[index].pos_y; }
-    [[nodiscard]] float getWidth(size_t index) const { return bricks[index].width; }
-    [[nodiscard]] float getHeight(size_t index) const { return bricks[index].height; }
-    [[nodiscard]] bool isActive(size_t index) const { return bricks[index].active; }
+    ~BrickManager();
 
     void setupBricks(const std::vector<BrickInfo> &data);
 
@@ -42,7 +28,7 @@ public:
 
     void draw(float deltaTime);
 
-    void onBrickHit(const EventData &data);
+    void onBallHitBrick(const CollisionData &data);
 
     void clear();
 

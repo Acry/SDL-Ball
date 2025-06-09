@@ -36,7 +36,6 @@ void Brick::drawBase() const {
 }
 
 void Brick::draw(const float deltaTime) {
-    if (!active) return;
     texture->play(deltaTime);
     drawBase();
 }

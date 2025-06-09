@@ -2,7 +2,6 @@
 #pragma once
 
 #include <epoxy/gl.h>
-
 #include "GameObject.h"
 
 class MovingObject : public GameObject {
@@ -13,6 +12,7 @@ public:
         : GameObject(eventMgr) {
     }
 
-    // Bewegungsupdates als virtuelle Methode deklarieren
+    // FIXME: stinks, because all GameObjects have Type SpritesheetAnimation
+    // which needs update anyway
     void update(const float deltaTime) override;
 };

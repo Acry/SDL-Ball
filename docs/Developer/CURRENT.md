@@ -1,19 +1,50 @@
 # Current issues
 
-Ich habe die Archtiektur gerade wieder grundlegend verändert, um die Manager-Klassen zu entkoppeln und event getriebenes
-verhalten zu implementieren.
+BricksManager_Tests läuft wieder.
+Aus GameObject sollte ich bald den eventManager und die init methode entfernen.
+
+___
+
+Ich habe die Architektur gerade wieder grundlegend verändert, um die Manager-Klassen zu entkoppeln und event getriebenes
+Verhalten zu implementieren.
+
+Anhand der Klasse Brick möchte ich die neue Architektur implementieren.
+Zu berücksichtigen ist der CollisionManager, das IEventManager, der EventManager, der BrickManager, ICollideable,
+GameObject und MovingObject (Powerup, Ball, Paddle).
+
+Die Init-Methode ist in den Actors m.E. nicht nötig. Von Beginn an war im Hinterkopf, dass die GameObjects/Actors
+so wenig wie möglich Logik enthalten, weil die Manager-Klassen die Logik übernehmen sollen.
+
+Es war nicht geplant, dass die GameObjects, wie Brick, Paddle, Powerup, Ball oder playfield-border den Collision-Manager
+kennen, deshalb habe ich ICollideable implementiert. Und ich möchte nicht, dass die GameObjects den EventManager kennen.
+Die Kollisionen sollten die Manager-Klassen übernehmen.
 
 Was ein Fehler gewesen sein könnte, war das Entfernen von ICollideable in Brick. In Ball und Paddle ist er noch
 implementiert.
 
 Das möchte ich nun genauer prüfen.
 
-Es war nicht geplant, dass die GameObjects, wie Brick, Paddle, Powerup, Ball oder playfield-border den Colission-Manager
-kennen, deshalb habe ich ICollideable implementiert. Und ich möchte nicht, dass die GameObjects den EventManager kennen.
-Die Kollisionen sollten die Manager-Klassen übernehmen.
-
 Wir könnten ICollideable auf die grundlegenden geometrischen Eigenschaften reduzieren und die Kollisionslogik in die
 Manager verschieben.
+
+GameObject und MovingObject.
+
+```c++
+// ICollideable.h
+#pragma once
+
+class ICollideable {
+public:
+    virtual ~ICollideable() = default;
+
+    // Nur grundlegende Geometrie
+    virtual float getPosX() const = 0;
+    virtual float getPosY() const = 0;
+    virtual float getWidth() const = 0;
+    virtual float getHeight() const = 0;
+    virtual bool isActive() const = 0;
+};
+```
 
 Brick
 
@@ -58,16 +89,15 @@ class BrickManager {
 };
 ```
 
-Allerdings konnte ich deren ManagerKlassen nicht ohne weiteres, völlig akstrakt entwickeln, das hat meine kognitiven
+Allerdings konnte ich deren ManagerKlassen nicht ohne weiteres, völlig abstrakt entwickeln, das hat meine kognitiven
 Fähigkeiten überfordert.
 
-Die volle Funktionalität von Powerups und Powerupmanager ist noch nicht implementiert, aber ich bin einen guten Schritt
+Die volle Funktionalität von Powerups und PowerupManager ist noch nicht implementiert, aber ich bin einen guten Schritt
 weiter.
 
-Auch ist nun klar, welcher teil des codes den Abluaf steurt. Der CodeMananger initiert alle anderen Manager und steuert
-den Ablauf.
-Er spricht direkt mit dem SettingsManager, dem Theme-Manager und dem configfileManager. Der EventManager ist die
-zentrale kommunkationsschnittstelle.
+Auch ist nun klar, welcher teil des codes den Ablauf steuert. Der CodeManager instanziiert alle anderen Manager und
+steuert den Ablauf. Er spricht direkt mit dem SettingsManager, dem Theme-Manager und dem configfileManager.
+Der EventManager ist die zentrale Kommunikationsschnittstelle.
 
 Der SceneManager ist noch nicht implementiert, er steuert die Szenen, also die verschiedenen Spielzustände (z.B. Titel,
 Autoplay, Credits Hauptmenü, Spiel, Pause, Game Over).

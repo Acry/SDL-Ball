@@ -4,6 +4,7 @@
 #include "Display.hpp"
 #include "TestHelper.h"
 #include "TextureManager.h"
+#include "EventManager.h"
 
 int main() {
     Display display(0, 1024, 768, false);
@@ -12,31 +13,37 @@ int main() {
         return EXIT_FAILURE;
     }
     SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: BrickManager Test");
+
+    const std::filesystem::path themePath = "../themes/default";
+
     TextManager textManager;
-    if (!textManager.setTheme("../themes/default")) {
-        SDL_Log("Error loading font theme");
+    if (!textManager.setTheme(themePath)) {
+        SDL_Log("Error loading font theme %s", themePath.c_str());
         return EXIT_FAILURE;
     }
+
     TestHelper testHelper(textManager);
+
     EventManager eventManager;
+
     TextureManager textureManager;
     if (!textureManager.setSpriteTheme("../themes/default")) {
         SDL_Log("Error loading texture theme");
         return EXIT_FAILURE;
     }
 
-    BrickManager brickManager(&eventManager, &textureManager);
+
     LevelManager levelManager(&eventManager);
     if (!levelManager.setTheme("../themes/default")) {
         SDL_Log("Error setting level theme");
         return EXIT_FAILURE;
     }
+    BrickManager brickManager(&eventManager, &textureManager);
+
     size_t currentLevel = 1;
     levelManager.loadLevel(currentLevel);
 
     auto levelCount = levelManager.getLevelCount();
-    bool running = true;
-    auto lastFrameTime = std::chrono::high_resolution_clock::now();
     const std::vector<std::string> instructions = {
         "S: Create Screenshot",
         "M: Toggle Mouse Coordinates",
@@ -47,6 +54,9 @@ int main() {
         "End - last level",
         "ESC: Quit"
     };
+    bool running = true;
+    auto lastFrameTime = std::chrono::high_resolution_clock::now();
+
     GLfloat normalizedMouseX = 0.0f, normalizedMouseY = 0.0f;
     const std::filesystem::path screenshotPath = "./screenshots/";
     while (running) {
@@ -65,7 +75,7 @@ int main() {
                 }
             }
             if (event.type == SDL_KEYDOWN) {
-               switch (event.key.keysym.sym) {
+                switch (event.key.keysym.sym) {
                     case SDLK_s:
                         if (!std::filesystem::exists(screenshotPath)) {
                             std::filesystem::create_directories(screenshotPath);
@@ -108,7 +118,6 @@ int main() {
                         }
                         break;
                     case SDLK_ESCAPE:
-                        // Spiel beenden
                         running = false;
                         break;
                     default: ;

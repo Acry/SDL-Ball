@@ -44,3 +44,37 @@ SceneManager - handles the scenes, loads the scene file and applies it to the ga
 [UIManager](Manager/UIManager.md) - handles the UI, loads the UI file and applies it to the game (HUD)
 
 See: [Structure](Software-Engineering/Structure.md)
+
+___
+
+Das System entwickelt sich gut und folgt jetzt einem klaren Event-basierten Design:
+
+1. `EventManager`:
+
+- Verwaltet verschiedene Event-Typen mit entsprechenden Callbacks
+- Generische Implementierung durch Template-basierte Maps
+- Saubere Trennung zwischen Event-Emission und -Handling
+
+2. `CollisionManager`:
+
+- Erkennt Kollisionen (AABB)
+- Emittiert spezifische Collision-Events
+- Berechnet Kollisionspunkte
+
+3. `BrickManager`:
+
+- Reagiert auf Events (BallHitBrick, LevelLoaded)
+- Verwaltet Brick-Zustände und -Typen
+
+4. `LevelManager`:
+
+- Lädt Level-Daten
+- Verarbeitet Level- und Theme-Requests
+- Kommuniziert über Events
+
+Die Kommunikation läuft jetzt durchgängig über das Event-System statt direkter Methodenaufrufe. Das macht das System:
+
+- Modularer
+- Besser testbar
+- Leichter erweiterbar
+- Lose gekoppelt
