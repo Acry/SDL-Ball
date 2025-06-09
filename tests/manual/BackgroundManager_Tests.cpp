@@ -42,6 +42,9 @@ int main() {
         SDL_Log("Error setting level theme %s", themePath.c_str());
     }
 
+    size_t currentLevel = 1;
+    levelManager.loadLevel(currentLevel);
+
     const std::vector<std::string> instructions = {
         "Rendering Background based on level",
         "M: Toggle Mouse Coordinates",
@@ -54,9 +57,6 @@ int main() {
         "End - last level",
         "ESC: Quit"
     };
-
-    size_t currentLevel = 1;
-    levelManager.loadLevel(currentLevel);
 
     Uint32 lastTime = SDL_GetTicks();
     float deltaTime = 0.0f;
@@ -144,7 +144,6 @@ int main() {
                         }
                         break;
                     case SDLK_ESCAPE:
-                        // Spiel beenden
                         running = false;
                         break;
                     default: ;
