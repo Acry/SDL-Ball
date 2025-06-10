@@ -1,9 +1,6 @@
 // DisplayManager.cpp
 #include <iostream>
-
 #include "Display.hpp"
-
-using namespace std;
 
 Display::Display(const int display, const int width, const int height, const bool fullscreen) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -41,10 +38,6 @@ Display::Display(const int display, const int width, const int height, const boo
         return;
     }
     resize(currentW, currentH);
-}
-
-bool Display::updateForMenu() {
-    return true;
 }
 
 void Display::resize(const int width, const int height) {
@@ -163,7 +156,7 @@ void Display::resize(const int width, const int height) {
     glLoadIdentity();
 }
 
-bool Display::screenshot(const filesystem::path &pathName) const {
+bool Display::screenshot(const std::filesystem::path &pathName) const {
     static constexpr size_t MAX_FILENAME = 256;
     static constexpr size_t TGA_HEADER_SIZE = 12;
     static constexpr size_t TGA_INFO_SIZE = 6;
