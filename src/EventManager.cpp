@@ -38,6 +38,14 @@ void EventManager::addListener(const GameEvent event, KeyboardEventCallback call
     keyboardEventListeners[event].push_back({owner, std::move(callback)});
 }
 
+void EventManager::addListener(const GameEvent event, ViewportEventCallback callback, void *owner) {
+    viewportEventListeners[event].push_back({owner, std::move(callback)});
+}
+
+void EventManager::addListener(const GameEvent event, MouseCoordinatesNormalizedEventCallback callback, void *owner) {
+    mouseCoordinatesNormalizedEventListeners[event].push_back({owner, std::move(callback)});
+}
+
 void EventManager::emit(const GameEvent event, const EventData &data) {
     auto it = eventListeners.find(event);
     if (it != eventListeners.end()) {
@@ -110,6 +118,23 @@ void EventManager::emit(const GameEvent event, const KeyboardEventData &data) {
 
 void EventManager::emit(const GameEvent event, const MouseEventData &data) {
     if (const auto it = mouseEventListeners.find(event); it != mouseEventListeners.end()) {
+        for (const auto &[owner, callback]: it->second) {
+            callback(data);
+        }
+    }
+}
+
+void EventManager::emit(const GameEvent event, const ViewportEventData &data) {
+    if (const auto it = viewportEventListeners.find(event); it != viewportEventListeners.end()) {
+        for (const auto &[owner, callback]: it->second) {
+            callback(data);
+        }
+    }
+}
+
+void EventManager::emit(const GameEvent event, const MouseCoordinatesNormalizedEventData &data) {
+    if (const auto it = mouseCoordinatesNormalizedEventListeners.find(event);
+        it != mouseCoordinatesNormalizedEventListeners.end()) {
         for (const auto &[owner, callback]: it->second) {
             callback(data);
         }

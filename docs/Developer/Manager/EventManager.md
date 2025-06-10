@@ -2,23 +2,31 @@
 
 Der EventManager verwaltet die Callbacks durch seine generischen Event-Handling-Methoden:
 Der EventManager speichert Callbacks in seinen Maps:
+
+```c++
 std::unordered_map<GameEvent, std::vector<CollisionEventListenerEntry> > collisionEventListeners;
+```
+
 Du registrierst einfach deine Callback-Methode über addListener:
 
+```c++
 eventManager->addListener(GameEvent::BallHitBrick,
 [this](const CollisionData& data) { onBallHitBrick(data); },
 this);
+```
 
 Der EventManager ruft dann automatisch die registrierten Callbacks auf, wenn ein Event emittiert wird:
 
+```c++
 void EventManager::emit(const GameEvent event, const CollisionData &data) {
-auto it = collisionEventListeners.find(event);
-if (it != collisionEventListeners.end()) {
-for (const auto &entry: it->second) {
-entry.callback(data);
+   auto it = collisionEventListeners.find(event);
+   if (it != collisionEventListeners.end()) {
+      for (const auto &entry: it->second) {
+        entry.callback(data);
+      }
+   }
 }
-}
-}
+```
 
 Dein EventManager folgt dem Observer-Pattern für ereignisbasierte Kommunikation.
 

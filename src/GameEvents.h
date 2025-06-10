@@ -2,7 +2,7 @@
 #pragma once
 #include <functional>
 #include <map>
-#include <SDL_keycode.h>
+#include <SDL2/SDL_keycode.h>
 
 #include "BrickTypes.h"
 #include "colors.h"
@@ -47,10 +47,20 @@ enum class GameEvent {
     KeyPressed,
     KeyReleased,
     MouseMoved,
+    MouseCoordinatesNormalized,
     MouseButtonPressed,
     MouseButtonReleased,
     WindowResized,
     QuitRequested,
+
+    ViewportResized,
+};
+
+struct ViewportEventData {
+    int viewportX{0};
+    int viewportY{0};
+    int viewportW{0};
+    int viewportH{0};
 };
 
 struct WindowEventData {
@@ -58,13 +68,14 @@ struct WindowEventData {
     int height{0};
 };
 
+struct MouseCoordinatesNormalizedEventData {
+    float x{0.0f};
+    float y{0.0f};
+};
+
 struct MouseEventData {
     float x{0.0f};
     float y{0.0f};
-    // float viewportX{0.0f};
-    // float viewportY{0.0f};
-    // float viewportW{0.0f};
-    // float viewportH{0.0f};
 };
 
 struct KeyboardEventData {
@@ -106,7 +117,7 @@ struct EventData {
     GameObject *sender{nullptr};
     const GameObject *target{nullptr};
     // ---snip--- TODO/FIXME
-    int points{0}; // to brick destroyed data
+    int points{0}; // to BrickManager: brick destroyed data
 };
 
 struct SubThemeData {
@@ -140,4 +151,7 @@ using CollisionEventCallback = std::function<void(const CollisionData &)>;
 // Input event callbacks
 using KeyboardEventCallback = std::function<void(const KeyboardEventData &)>;
 using MouseEventCallback = std::function<void(const MouseEventData &)>;
+using MouseCoordinatesNormalizedEventCallback = std::function<void(const MouseCoordinatesNormalizedEventData &)>;
+
 using WindowEventCallback = std::function<void(const WindowEventData &)>;
+using ViewportEventCallback = std::function<void(const ViewportEventData &)>;

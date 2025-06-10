@@ -4,15 +4,28 @@
 #include "colors.h"
 #include "TestHelper.h"
 
-TestHelper::TestHelper(TextManager &textManager, const float gridSpacing, const float gridExtent)
+#include <SDL_log.h>
+
+TestHelper::TestHelper(TextManager &textManager, IEventManager *eventManager, const float gridSpacing,
+                       const float gridExtent)
     : m_gridSpacing(gridSpacing),
       m_gridExtent(gridExtent),
       m_mouseX(0.0f),
       m_mouseY(0.0f),
-      m_textManager(textManager),
+      m_textManager(textManager), m_eventManager(eventManager),
       m_showMouseCoords(false) {
     glClearColor(GL_LIGHT_BLUE);
     m_mouseText[0] = '\0';
+
+    m_eventManager->addListener(GameEvent::MouseCoordinatesNormalized,
+                                [this](const MouseCoordinatesNormalizedEventData &data) {
+                                    this->handleMouseCoordinatesNormalized(data);
+                                }, this);
+
+    m_eventManager->addListener(GameEvent::KeyPressed,
+                                [this](const KeyboardEventData &data) {
+                                    this->handleKeyPress(data);
+                                }, this);
 }
 
 float TestHelper::getSpacing() const {
@@ -70,7 +83,7 @@ void TestHelper::drawCenterLines() const {
     glColor4f(GL_FULL_RED);
     glBegin(GL_LINES);
 
-    // horzontal
+    // horizontal
     glVertex3f(-m_gridExtent, 0.0f, 0.1f);
     glVertex3f(m_gridExtent, 0.0f, 0.1f);
 
@@ -83,13 +96,18 @@ void TestHelper::drawCenterLines() const {
     glEnable(GL_MULTISAMPLE);
 }
 
-void TestHelper::updateMousePosition(float x, float y) {
+void TestHelper::updateMousePosition(const float x, const float y) {
     m_mouseX = x;
     m_mouseY = y;
-    sprintf(m_mouseText, "%.2f, %.2f", m_mouseX, m_mouseY);
+    snprintf(m_mouseText, sizeof(m_mouseText), "x: %.2f, y: %.2f", m_mouseX, m_mouseY);
+    // SDL_Log("Mouse Position: (%.2f, %.2f)", m_mouseX, m_mouseY);
 }
 
-void TestHelper::toggleMouseCoordinates(bool show) {
+void TestHelper::handleMouseCoordinatesNormalized(const MouseCoordinatesNormalizedEventData &data) {
+    updateMousePosition(data.x, data.y);
+}
+
+void TestHelper::toggleMouseCoordinates(const bool show) {
     m_showMouseCoords = show;
 }
 
@@ -148,4 +166,111 @@ void TestHelper::renderInstructions(const float deltaTime, const std::vector<std
         m_textManager.drawAnnouncements(deltaTime);
     }
     glColor4fv(oldColor);
+}
+
+TestHelper::~TestHelper() {
+    m_eventManager->removeListener(GameEvent::MouseCoordinatesNormalized, this);
+    m_eventManager->removeListener(GameEvent::KeyPressed, this);
+}
+
+void TestHelper::handleKeyPress(const KeyboardEventData &data) {
+    if (data.key == SDLK_m) {
+        m_showMouseCoords = !m_showMouseCoords;
+    }
+    if (data.key == SDLK_s) {
+        if (!std::filesystem::exists(screenshotPath)) {
+            std::filesystem::create_directories(screenshotPath);
+        }
+        if (screenshot()) {
+            m_textManager.addAnnouncement("Screenshot saved.", 1500, Fonts::AnnounceGood);
+        } else {
+            m_textManager.addAnnouncement("Screenshot not created.", 1500, Fonts::AnnounceBad);
+        }
+    }
+    // Hier können weitere Tasten (auch test-spezifisch) behandelt werden
+}
+
+bool TestHelper::screenshot() const {
+    static constexpr size_t MAX_FILENAME = 256;
+    static constexpr size_t TGA_HEADER_SIZE = 12;
+    static constexpr size_t TGA_INFO_SIZE = 6;
+    static constexpr size_t CHANNELS = 3; // BGR
+
+    char fileName[MAX_FILENAME];
+    int fileIndex = 0;
+
+    // Finde freien Dateinamen
+    while (fileIndex < 9999) {
+        const int result = snprintf(fileName, MAX_FILENAME, "%s/sdl-ball-test-%04d.tga",
+                                    screenshotPath.c_str(), fileIndex);
+
+        if (result < 0 || static_cast<size_t>(result) >= MAX_FILENAME) {
+            SDL_Log("Filename too long");
+            return false;
+        }
+
+        FILE *test = fopen(fileName, "rb");
+        if (!test) break;
+        fclose(test);
+        fileIndex++;
+    }
+
+    if (fileIndex == 9999) {
+        SDL_Log("No free filename found");
+        return false;
+    }
+
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    const GLint vpX = viewport[0];
+    const GLint vpY = viewport[1];
+    const GLint vpW = viewport[2];
+    const GLint vpH = viewport[3];
+
+    // Alloziere Pixel Buffer
+    const size_t pixelCount = vpW * vpH * CHANNELS;
+    const auto pixels = std::make_unique<GLubyte[]>(pixelCount);
+    if (!pixels) {
+        SDL_Log("Memory allocation failed");
+        return false;
+    }
+
+    // Öffne Ausgabedatei
+    FILE *outFile = fopen(fileName, "wb");
+    if (!outFile) {
+        SDL_Log("Could not create file '%s'", fileName);
+        return false;
+    }
+
+    // Lese Framebuffer
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadPixels(vpX, vpY, vpW, vpH, GL_BGR, GL_UNSIGNED_BYTE, pixels.get());
+
+    if (glGetError() != GL_NO_ERROR) {
+        SDL_Log("Failed reading OpenGL framebuffer.");
+        fclose(outFile);
+        return false;
+    }
+
+    // Schreibe TGA Header
+    const unsigned char tgaHeader[TGA_HEADER_SIZE] = {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    const unsigned char tgaInfo[TGA_INFO_SIZE] = {
+        static_cast<unsigned char>(vpW & 0xFF),
+        static_cast<unsigned char>(vpW >> 8 & 0xFF),
+        static_cast<unsigned char>(vpH & 0xFF),
+        static_cast<unsigned char>(vpH >> 8 & 0xFF),
+        24, 0
+    };
+
+    if (fwrite(tgaHeader, 1, TGA_HEADER_SIZE, outFile) != TGA_HEADER_SIZE ||
+        fwrite(tgaInfo, 1, TGA_INFO_SIZE, outFile) != TGA_INFO_SIZE ||
+        fwrite(pixels.get(), 1, pixelCount, outFile) != pixelCount) {
+        SDL_Log("Failed writing TGA file");
+        fclose(outFile);
+        return false;
+    }
+
+    fclose(outFile);
+    //SDL_Log("Screenshot saved as '%s'", fileName);
+    return true;
 }

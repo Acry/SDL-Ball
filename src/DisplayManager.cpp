@@ -1,6 +1,8 @@
 // DisplayManager.cpp
 #include <iostream>
 #include "DisplayManager.hpp"
+#include "TextureUtilities.h"
+#include <SDL2/SDL_image.h>
 
 DisplayManager::DisplayManager(IEventManager *eventMgr): eventManager(eventMgr), currentW(0), currentH(0),
                                                          numOfDisplays(0),
@@ -69,18 +71,18 @@ void DisplayManager::resize(const int width, const int height) {
 
     window_ratio = static_cast<double>(currentW) / static_cast<double>(currentH);
 
-    // Ziel-Seitenverhältnis 4:3
+    // Target Aspect-Ratio: 4:3
     constexpr double target_ratio = 4.0f / 3.0f;
     int vpW, vpH;
 
     if (window_ratio >= target_ratio) {
-        // Fenster ist breiter als 4:3 -> Höhe begrenzt
+        // Fenster ist breiter als 4:3 → Höhe begrenzt
         vpH = height;
-        vpW = height * target_ratio;
+        vpW = static_cast<int>(height * target_ratio);
     } else {
-        // Fenster ist schmaler als 4:3 -> Breite begrenzt
+        // Fenster ist schmaler als 4:3 → Breite begrenzt
         vpW = width;
-        vpH = width / target_ratio;
+        vpH = static_cast<int>(width / target_ratio);
     }
 
     viewportX = (width - vpW) / 2;
@@ -97,12 +99,6 @@ void DisplayManager::resize(const int width, const int height) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    // NOTE: I accidentally did not flip y-axis projection as intended.
-
-    // That means many Texture Coordinates are flipped.
-
-    // I am currently resolving this. The Y-axis is OpenGL default axis.
-    // I want the UV coordinates to be OpenGL-default as well.
 
     // NDC projection: OpenGL
     // Von -1 bis +1 in NDC
@@ -142,114 +138,76 @@ void DisplayManager::resize(const int width, const int height) {
     // (1, 1): Top-right corner.
     // (0, 1): Top-left corner.
 
-    // flipped y-axis projection
-
-    //        -1
-    //         ^
-    //         |
-    // -1 <----+----> +1
-    //         |
-    //        +1
-
-    // glOrtho(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
-
-    // (0, 0) ------ ( 1, 0)
-    //   |              |
-    //   |              |
-    //   |              |
-    // (0, 1) ------ (1, 1)
-
-    // (0, 1): Bottom-left corner.
-    // (1, 1): Bottom-right corner.
-    // (1, 0): Top-right corner.
-    // (0, 0): Top-left corner.
-
-    // When using SDL2 with OpenGL and you don’t flip the y-axis in the projection
-    // (e.g., using glOrtho(1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f) for standard OpenGL NDC where positive y is up),
-    // you will likely need to flip the v-coordinates of your texture coordinates to align SDL-loaded textures
-    // correctly. This is because SDL and OpenGL have different conventions
-    // For texture origins:
-    // SDL: Assumes the texture/image origin (0, 0) is at the top-left, with positive y extending downward.
-    // OpenGL: Defines texture coordinates with (u, v) = (0, 0) at the bottom-left, with positive v extending upward.
-
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    ViewportEventData data;
+    data.viewportX = viewportX;
+    data.viewportY = viewportY;
+    data.viewportW = viewportW;
+    data.viewportH = viewportH;
+    eventManager->emit(GameEvent::ViewportResized, data);
 }
 
 bool DisplayManager::screenshot(const std::filesystem::path &pathName) const {
     static constexpr size_t MAX_FILENAME = 256;
-    static constexpr size_t TGA_HEADER_SIZE = 12;
-    static constexpr size_t TGA_INFO_SIZE = 6;
-    static constexpr size_t CHANNELS = 3; // BGR
+    static constexpr int CHANNELS = 3; // RGB
 
     char fileName[MAX_FILENAME];
     int fileIndex = 0;
 
-    // Finde freien Dateinamen
+    // Find free filename
     while (fileIndex < 9999) {
-        const int result = snprintf(fileName, MAX_FILENAME, "%s/sdl-ball_%04d.tga",
+        const int result = snprintf(fileName, MAX_FILENAME, "%s/sdl-ball_%04d.png", // FIXME: use gameNAME from config
                                     pathName.c_str(), fileIndex);
-
         if (result < 0 || static_cast<size_t>(result) >= MAX_FILENAME) {
             SDL_Log("Filename too long");
             return false;
         }
-
         FILE *test = fopen(fileName, "rb");
         if (!test) break;
         fclose(test);
         fileIndex++;
     }
-
     if (fileIndex == 9999) {
         SDL_Log("No free filename found");
         return false;
     }
 
-    // Alloziere Pixel Buffer
-    const size_t pixelCount = currentW * currentH * CHANNELS;
-    const auto pixels = std::make_unique<GLubyte[]>(pixelCount);
-    if (!pixels) {
-        SDL_Log("Memory allocation failed");
-        return false;
-    }
+    // read viewport pixels
+    const size_t pixelCount = viewportW * viewportH * CHANNELS;
+    std::vector<Uint8> pixels(pixelCount);
 
-    // Öffne Ausgabedatei
-    FILE *outFile = fopen(fileName, "wb");
-    if (!outFile) {
-        SDL_Log("Could not create file '%s'", fileName);
-        return false;
-    }
-
-    // Lese Framebuffer
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(0, 0, currentW, currentH, GL_BGR, GL_UNSIGNED_BYTE, pixels.get());
+    glReadPixels(viewportX, viewportY, viewportW, viewportH, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
 
     if (glGetError() != GL_NO_ERROR) {
         SDL_Log("Failed reading OpenGL framebuffer.");
-        fclose(outFile);
         return false;
     }
 
-    // Schreibe TGA Header
-    const unsigned char tgaHeader[TGA_HEADER_SIZE] = {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    const unsigned char tgaInfo[TGA_INFO_SIZE] = {
-        static_cast<unsigned char>(currentW & 0xFF),
-        static_cast<unsigned char>(currentW >> 8 & 0xFF),
-        static_cast<unsigned char>(currentH & 0xFF),
-        static_cast<unsigned char>(currentH >> 8 & 0xFF),
-        24, 0
-    };
-
-    if (fwrite(tgaHeader, 1, TGA_HEADER_SIZE, outFile) != TGA_HEADER_SIZE ||
-        fwrite(tgaInfo, 1, TGA_INFO_SIZE, outFile) != TGA_INFO_SIZE ||
-        fwrite(pixels.get(), 1, pixelCount, outFile) != pixelCount) {
-        SDL_Log("Failed writing TGA file");
-        fclose(outFile);
+    SDL_Surface *surface = SDL_CreateRGBSurfaceFrom(
+        pixels.data(), viewportW, viewportH, 24, viewportW * CHANNELS,
+        0x0000FF, 0x00FF00, 0xFF0000, 0
+    );
+    if (!surface) {
+        SDL_Log("Could not create SDL_Surface: %s", SDL_GetError());
         return false;
     }
 
-    fclose(outFile);
+    if (TextureUtilities::SDL_FlipSurfaceVertical(surface) != 0) {
+        SDL_Log("Failed to flip surface vertically");
+        SDL_FreeSurface(surface);
+        return false;
+    }
+
+    if (IMG_SavePNG(surface, fileName) != 0) {
+        SDL_Log("Failed writing PNG file: %s", IMG_GetError());
+        SDL_FreeSurface(surface);
+        return false;
+    }
+
+    SDL_FreeSurface(surface);
     return true;
 }
 
@@ -331,7 +289,5 @@ bool DisplayManager::initOpenGL(const unsigned int flags) {
 DisplayManager::~DisplayManager() {
     SDL_DestroyWindow(sdlWindow);
     SDL_GL_DeleteContext(glcontext);
-    // TODO: MouseManager
-    SDL_SetRelativeMouseMode(SDL_FALSE);
     SDL_Quit();
 }

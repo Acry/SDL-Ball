@@ -24,10 +24,13 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     ConfigFileManager.cpp \
     DisplayManager.cpp \
     EffectManager.cpp \
+    EventDispatcher.cpp \
     EventManager.cpp \
     GrowableObject.cpp \
+    InputManager.cpp \
     LevelManager.cpp \
     MathHelper.cpp \
+    MouseManager.cpp \
     Paddle.cpp \
     PlayfieldBorder.cpp \
     SaveGameManager.cpp \
@@ -148,6 +151,8 @@ DISPLAY_TEST_SOURCES := $(MANUAL_TEST_DIR)DisplayManager_Tests.cpp \
                         $(SOURCE_DIR)TextManager.cpp \
                         $(SOURCE_DIR)TextureUtilities.cpp \
                         $(SOURCE_DIR)EventManager.cpp \
+                        $(SOURCE_DIR)EventDispatcher.cpp \
+                        $(SOURCE_DIR)MouseManager.cpp \
 
 DISPLAY_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(DISPLAY_TEST_SOURCES:.cpp=.o)))
 

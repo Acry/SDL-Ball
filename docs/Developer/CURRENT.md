@@ -1,6 +1,6 @@
 # Current issues
 
-TexTureManager_Tests: show current theme, spriteclass and move through textures
+TextureManager_Tests: show current theme, sprite class and move through textures
 SoundManager: use enum, no define
 Sound test: write current sound
 ___
@@ -9,17 +9,19 @@ SpriteSheetAnimation: AnimationTiming, no shared timing
 gameobjects: Bricks destroyed, active, visible -Fade->or shrink?
 ___
 use InputManager
-use DisplayManager as injection for TestHelper with Title
+use DisplayManager as injection for TestHelper with Title?
 use testFontTheme in tests
+
 to TestHelper:
+
+```c++
 TextManager textManager;
-if (!textManager.setTheme("../themes/default")) {
-SDL_Log("Error loading font theme");
-return EXIT_FAILURE;
+if (!textManager.setTheme("../tests/themes/default")) {
+    SDL_Log("Error loading font theme");
+    return EXIT_FAILURE;
 }
-___
-DisplayManager events
-ja, ich denke, es ist an der Zeit display.resize über den eventManager reagieren lassen
+```
+
 ___
 Ball, Paddle brauchen Manager
 BrickTests: InvisibleBricks rot umranden.

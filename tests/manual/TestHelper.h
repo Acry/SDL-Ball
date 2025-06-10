@@ -1,27 +1,32 @@
 // TestHelper.h
 #pragma once
+#include <filesystem>
 #include <vector>
-
-#include "colors.h"
+#include "IEventManager.h"
 #include "TextManager.h"
 
 class TestHelper {
     float m_gridSpacing;
     float m_gridExtent;
 
-    char m_mouseText[16];
+    char m_mouseText[64]{};
     float m_mouseX;
     float m_mouseY;
     TextManager &m_textManager;
+    IEventManager *m_eventManager;
+    const std::filesystem::path screenshotPath = "./screenshots/";
 
 public:
-    explicit TestHelper(TextManager &textManager, float gridSpacing = 0.1f, float gridExtent = 1.0f);
+    explicit TestHelper(TextManager &textManager, IEventManager *eventManager, float gridSpacing = 0.1f,
+                        float gridExtent = 1.0f);
 
-    float getSpacing() const;
+    ~TestHelper();
+
+    [[nodiscard]] float getSpacing() const;
 
     void setSpacing(float spacing);
 
-    float getExtent() const;
+    [[nodiscard]] float getExtent() const;
 
     void setExtent(float extent);
 
@@ -31,9 +36,15 @@ public:
 
     void updateMousePosition(float x, float y);
 
+    void handleMouseCoordinatesNormalized(const MouseCoordinatesNormalizedEventData &data);
+
     void toggleMouseCoordinates(bool show);
 
     void drawMouseCoordinates() const;
+
+    void handleKeyPress(const KeyboardEventData &data);
+
+    bool screenshot() const;
 
     bool m_showMouseCoords;
 

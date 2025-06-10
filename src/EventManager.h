@@ -5,50 +5,23 @@
 #include "IEventManager.h"
 
 class EventManager : public IEventManager {
-    struct ListenerEntry {
-        void *owner;
-        EventCallback callback;
+    template<typename CallbackType>
+    struct ListenerEntryBase {
+        void *owner{nullptr};
+        CallbackType callback{};
     };
 
-    struct LevelListenerEntry {
-        void *owner;
-        LevelEventCallback callback;
-    };
-
-    struct LevelThemeListenerEntry {
-        void *owner;
-        LevelThemeEventCallback callback;
-    };
-
-    struct LevelRequestedListenerEntry {
-        void *owner;
-        LevelRequestedEventCallback callback;
-    };
-
-    struct ThemeListenerEntry {
-        void *owner;
-        ThemeEventCallback callback;
-    };
-
-    struct CollisionEventListenerEntry {
-        void *owner;
-        CollisionEventCallback callback;
-    };
-
-    struct WindowEventListenerEntry {
-        void *owner;
-        WindowEventCallback callback;
-    };
-
-    struct KeyboardEventListenerEntry {
-        void *owner;
-        KeyboardEventCallback callback;
-    };
-
-    struct MouseEventListenerEntry {
-        void *owner;
-        MouseEventCallback callback;
-    };
+    using ListenerEntry = ListenerEntryBase<EventCallback>;
+    using LevelListenerEntry = ListenerEntryBase<LevelEventCallback>;
+    using LevelThemeListenerEntry = ListenerEntryBase<LevelThemeEventCallback>;
+    using LevelRequestedListenerEntry = ListenerEntryBase<LevelRequestedEventCallback>;
+    using ThemeListenerEntry = ListenerEntryBase<ThemeEventCallback>;
+    using CollisionEventListenerEntry = ListenerEntryBase<CollisionEventCallback>;
+    using WindowEventListenerEntry = ListenerEntryBase<WindowEventCallback>;
+    using KeyboardEventListenerEntry = ListenerEntryBase<KeyboardEventCallback>;
+    using MouseEventListenerEntry = ListenerEntryBase<MouseEventCallback>;
+    using ViewportEventListenerEntry = ListenerEntryBase<ViewportEventCallback>;
+    using MouseCoordinatesNormalizedEventListenerEntry = ListenerEntryBase<MouseCoordinatesNormalizedEventCallback>;
 
     std::unordered_map<GameEvent, std::vector<ListenerEntry> > eventListeners;
     std::unordered_map<GameEvent, std::vector<LevelListenerEntry> > levelEventListeners;
@@ -59,6 +32,9 @@ class EventManager : public IEventManager {
     std::unordered_map<GameEvent, std::vector<WindowEventListenerEntry> > windowEventListeners;
     std::unordered_map<GameEvent, std::vector<MouseEventListenerEntry> > mouseEventListeners;
     std::unordered_map<GameEvent, std::vector<KeyboardEventListenerEntry> > keyboardEventListeners;
+    std::unordered_map<GameEvent, std::vector<ViewportEventListenerEntry> > viewportEventListeners;
+    std::unordered_map<GameEvent, std::vector<MouseCoordinatesNormalizedEventListenerEntry> >
+    mouseCoordinatesNormalizedEventListeners;
 
 public:
     void addListener(GameEvent event, EventCallback callback, void *owner) override;
@@ -79,6 +55,10 @@ public:
 
     void addListener(GameEvent event, KeyboardEventCallback callback, void *owner) override;
 
+    void addListener(GameEvent event, ViewportEventCallback callback, void *owner) override;
+
+    void addListener(GameEvent event, MouseCoordinatesNormalizedEventCallback callback, void *owner) override;
+
     void emit(GameEvent event, const EventData &data) override;
 
     void emit(GameEvent event, const LevelData &data) override;
@@ -96,6 +76,10 @@ public:
     void emit(GameEvent event, const MouseEventData &data) override;
 
     void emit(GameEvent event, const KeyboardEventData &data) override;
+
+    void emit(GameEvent event, const ViewportEventData &data) override;
+
+    void emit(GameEvent event, const MouseCoordinatesNormalizedEventData &data) override;
 
     void removeListener(GameEvent event, void *owner) override;
 };

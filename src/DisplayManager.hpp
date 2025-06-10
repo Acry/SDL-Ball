@@ -31,8 +31,6 @@ public:
     GLfloat playfield_ratio;
     GLdouble window_ratio;
 
-    // FIXME: Use TGA format only for Development and testing purposes.
-    // Use AVIF for single images or JPEG XL for short sequences.
     [[nodiscard]] bool screenshot(const std::filesystem::path &pathName) const;
 
     void resize(int, int);
