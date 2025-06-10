@@ -187,6 +187,8 @@ BACKGROUND_TEST_SOURCES := $(MANUAL_TEST_DIR)BackgroundManager_Tests.cpp \
                            $(SOURCE_DIR)GrowableObject.cpp \
                            $(SOURCE_DIR)TextureUtilities.cpp \
                            $(SOURCE_DIR)BackgroundManager.cpp \
+                           $(SOURCE_DIR)MouseManager.cpp \
+                           $(SOURCE_DIR)EventDispatcher.cpp \
 
 BACKGROUND_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BACKGROUND_TEST_SOURCES:.cpp=.o)))
 

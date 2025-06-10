@@ -20,7 +20,7 @@ public:
     explicit TestHelper(TextManager &textManager, IEventManager *eventManager, float gridSpacing = 0.1f,
                         float gridExtent = 1.0f);
 
-    ~TestHelper();
+    virtual ~TestHelper();
 
     [[nodiscard]] float getSpacing() const;
 
@@ -42,7 +42,7 @@ public:
 
     void drawMouseCoordinates() const;
 
-    void handleKeyPress(const KeyboardEventData &data);
+    virtual void handleKeyPress(const KeyboardEventData &data);
 
     bool screenshot() const;
 

@@ -158,7 +158,7 @@ void TestHelper::renderInstructions(const float deltaTime, const std::vector<std
     // const auto height = m_textManager.getHeight(currentFont);
     for (const auto &instruction: instructions) {
         constexpr auto offest = 0.05f;
-        m_textManager.write(instruction, currentFont, true, 0.5f, 0.0f, yPos);
+        m_textManager.write(instruction, currentFont, true, 0.7f, 0.0f, yPos);
         yPos -= offest;
     }
     if (m_textManager.getAnnouncementCount() > 0) {
@@ -174,20 +174,24 @@ TestHelper::~TestHelper() {
 }
 
 void TestHelper::handleKeyPress(const KeyboardEventData &data) {
-    if (data.key == SDLK_m) {
-        m_showMouseCoords = !m_showMouseCoords;
+    switch (data.key) {
+        case SDLK_m:
+            m_showMouseCoords = !m_showMouseCoords;
+            break;
+        case SDLK_s:
+            if (!std::filesystem::exists(screenshotPath)) {
+                std::filesystem::create_directories(screenshotPath);
+            }
+            if (screenshot()) {
+                m_textManager.addAnnouncement("Screenshot saved.", 1500, Fonts::AnnounceGood);
+            } else {
+                m_textManager.addAnnouncement("Screenshot not created.", 1500, Fonts::AnnounceBad);
+            }
+            break;
+        // Weitere Tastenbelegungen hier ergänzen
+        default:
+            break;
     }
-    if (data.key == SDLK_s) {
-        if (!std::filesystem::exists(screenshotPath)) {
-            std::filesystem::create_directories(screenshotPath);
-        }
-        if (screenshot()) {
-            m_textManager.addAnnouncement("Screenshot saved.", 1500, Fonts::AnnounceGood);
-        } else {
-            m_textManager.addAnnouncement("Screenshot not created.", 1500, Fonts::AnnounceBad);
-        }
-    }
-    // Hier können weitere Tasten (auch test-spezifisch) behandelt werden
 }
 
 bool TestHelper::screenshot() const {

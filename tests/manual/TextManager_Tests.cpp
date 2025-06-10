@@ -28,21 +28,21 @@ int main() {
     SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Text Test");
 
     TextManager textManager;
-    if (!textManager.setTheme("../themes/default")) {
+    if (!textManager.setTheme("../tests/themes/test")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
 
-    TestHelper testHelper(textManager);
-    constexpr float yPos = 0.0f;
-    constexpr float offset = 0.2f;
+    TestHelper testHelper(textManager, &eventManager);
+    constexpr float yPos = 0.6f;
+    constexpr float offset = 0.3f;
     const std::vector<TextTest> tests = {
-        {"ABC ö ghj ?", Fonts::Highscore, false, 1.0f, -0.95f, yPos}, // 80
-        {"ABC ö ghj ?", Fonts::AnnounceGood, false, 1.0f, -0.95f, yPos - offset * 1}, // 60
-        {"ABC ö ghj ?", Fonts::AnnounceBad, false, 1.0f, -0.95f, yPos - offset * 1.75f}, // 60
-        {"ABC ö ghj ?", Fonts::IntroHighscore, false, 1.0f, -0.95f, yPos - offset * 2.5f}, // 40
-        {"ABC ö ghj ?", Fonts::Menu, false, 1.0f, -0.95f, yPos - offset * 3.0f}, // 30
-        {"ABC ö ghj ?", Fonts::MenuHighscore, false, 1.0f, -0.95f, yPos - offset * 3.5f}, // 28
-        {"ABC ö ghj ?", Fonts::IntroDescription, false, 1.0f, -0.95f, yPos - offset * 4.0f} // 12
+        {"ABC ö ghj ? 12345", Fonts::Highscore, false, 1.0f, -0.95f, yPos}, // 80
+        {"ABC ö ghj ? 12345", Fonts::AnnounceGood, false, 1.0f, -0.95f, yPos - offset * 1}, // 60
+        {"ABC ö ghj ? 12345", Fonts::AnnounceBad, false, 1.0f, -0.95f, yPos - offset * 1.75f}, // 60
+        {"ABC ö ghj ? 12345", Fonts::IntroHighscore, false, 1.0f, -0.95f, yPos - offset * 2.5f}, // 40
+        {"ABC ö ghj ? 12345", Fonts::Menu, false, 1.0f, -0.95f, yPos - offset * 3.0f}, // 30
+        {"ABC ö ghj ? 12345", Fonts::MenuHighscore, false, 1.0f, -0.95f, yPos - offset * 3.5f}, // 28
+        {"ABC ö ghj ? 12345", Fonts::IntroDescription, false, 1.0f, -0.95f, yPos - offset * 4.0f} // 12
     };
 
     const std::vector<std::string> instructions = {
@@ -71,7 +71,7 @@ int main() {
                     if (event.key.keysym.sym == SDLK_ESCAPE)
                         running = false;
                     else if (event.key.keysym.sym == SDLK_1) {
-                        textManager.addAnnouncement("Well Done!", 1500, Fonts::AnnounceGood);
+                        textManager.addAnnouncement("Well Done!", 2500, Fonts::AnnounceGood);
                     } else if (event.key.keysym.sym == SDLK_2) {
                         textManager.addAnnouncement("GAME OVER!", 10000, Fonts::AnnounceBad);
                     } else if (event.key.keysym.sym == SDLK_m) {
@@ -117,7 +117,7 @@ int main() {
         for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
             std::string heightInfo = "Font " + std::to_string(i) + " height: " +
                                      std::to_string(textManager.getHeight(static_cast<Fonts>(i)));
-            textManager.write(heightInfo, Fonts::IntroDescription, false, 2.0f, 0.25f, yPos - i * 0.08f);
+            textManager.write(heightInfo, Fonts::MenuHighscore, false, 1.0f, 0.25f, 0.0 - i * 0.08f);
         }
         // render theme fonts
         glColor4f(1.0f, 0.98f, 0.94f, 1.0f);
