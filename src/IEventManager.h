@@ -20,6 +20,10 @@ public:
 
     virtual void emit(GameEvent event, const WindowEventData &data) = 0;
 
+    virtual void emit(GameEvent event, const MouseEventData &data) = 0;
+
+    virtual void emit(GameEvent event, const KeyboardEventData &data) = 0;
+
     virtual void addListener(GameEvent event, EventCallback callback, void *owner) = 0;
 
     virtual void addListener(GameEvent event, LevelEventCallback callback, void *owner) = 0;
@@ -33,6 +37,10 @@ public:
     virtual void addListener(GameEvent event, CollisionEventCallback callback, void *owner) = 0;
 
     virtual void addListener(GameEvent event, WindowEventCallback callback, void *owner) = 0;
+
+    virtual void addListener(GameEvent event, MouseEventCallback callback, void *owner) = 0;
+
+    virtual void addListener(GameEvent event, KeyboardEventCallback callback, void *owner) = 0;
 
     virtual void removeListener(GameEvent event, void *owner) = 0;
 };

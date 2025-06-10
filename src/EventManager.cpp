@@ -30,6 +30,13 @@ void EventManager::addListener(const GameEvent event, WindowEventCallback callba
     windowEventListeners[event].push_back({owner, std::move(callback)});
 }
 
+void EventManager::addListener(const GameEvent event, MouseEventCallback callback, void *owner) {
+    mouseEventListeners[event].push_back({owner, std::move(callback)});
+}
+
+void EventManager::addListener(const GameEvent event, KeyboardEventCallback callback, void *owner) {
+    keyboardEventListeners[event].push_back({owner, std::move(callback)});
+}
 void EventManager::emit(const GameEvent event, const EventData &data) {
     auto it = eventListeners.find(event);
     if (it != eventListeners.end()) {
@@ -86,6 +93,22 @@ void EventManager::emit(const GameEvent event, const CollisionData &data) {
 
 void EventManager::emit(const GameEvent event, const WindowEventData &data) {
     if (const auto it = windowEventListeners.find(event); it != windowEventListeners.end()) {
+        for (const auto &[owner, callback]: it->second) {
+            callback(data);
+        }
+    }
+}
+
+void EventManager::emit(const GameEvent event, const KeyboardEventData &data) {
+    if (const auto it = keyboardEventListeners.find(event); it != keyboardEventListeners.end()) {
+        for (const auto &[owner, callback]: it->second) {
+            callback(data);
+        }
+    }
+}
+
+void EventManager::emit(const GameEvent event, const MouseEventData &data) {
+    if (const auto it = mouseEventListeners.find(event); it != mouseEventListeners.end()) {
         for (const auto &[owner, callback]: it->second) {
             callback(data);
         }
