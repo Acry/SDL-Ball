@@ -8,9 +8,10 @@
 // SpriteSheetAnimation *TextureManager::getBrickTexture(BrickTexture type)
 // render all textures, except backgrounds
 int main() {
-    DisplayManager display(0, 1024, 768, false);
-    if (display.sdlWindow == nullptr) {
-        SDL_Log("Display konnte nicht initialisiert werden");
+    EventManager eventManager;
+    DisplayManager displayManager(&eventManager);
+    if (!displayManager.init(0, 1024, 768, false)) {
+        SDL_Log("Could not initialize display");
         return EXIT_FAILURE;
     }
 
@@ -38,7 +39,7 @@ int main() {
             }
             if (event.type == SDL_WINDOWEVENT) {
                 if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    display.resize(event.window.data1, event.window.data2);
+                    displayManager.resize(event.window.data1, event.window.data2);
                 }
             }
             if (event.type == SDL_KEYDOWN) {
@@ -92,7 +93,7 @@ int main() {
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);
 
-        SDL_GL_SwapWindow(display.sdlWindow);
+        SDL_GL_SwapWindow(displayManager.sdlWindow);
     }
     textureManager.clearTheme();
     return EXIT_SUCCESS;

@@ -1,7 +1,6 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <epoxy/gl.h>
-#include <variant>
 
 #include "MathHelper.h"
 #include "TextureManager.h"

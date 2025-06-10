@@ -1,8 +1,6 @@
 // BackgroundManager.h
 #pragma once
 
-#include <filesystem>
-
 #include "SpriteSheetAnimation.h"
 #include "colors.h"
 #include "IEventManager.h"

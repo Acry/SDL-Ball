@@ -9,12 +9,13 @@
 #include "LevelManager.h"
 
 int main() {
-    DisplayManager display(0, 1024, 768, false);
-    if (display.sdlWindow == nullptr) {
-        SDL_Log("Error creating SDL window: %s", SDL_GetError());
+    EventManager eventManager;
+    DisplayManager displayManager(&eventManager);
+    if (!displayManager.init(0, 1024, 768, false)) {
+        SDL_Log("Could not initialize display");
         return EXIT_FAILURE;
     }
-    SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Background Test");
+    SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Background Test");
 
     const std::filesystem::path themePath = "../themes/default";
 
@@ -26,7 +27,6 @@ int main() {
 
     TestHelper testHelper(textManager);
 
-    EventManager eventManager;
     TextureManager textureManager;
 
     if (!textureManager.setBackgroundTheme(themePath)) {
@@ -72,14 +72,15 @@ int main() {
             }
             if (event.type == SDL_WINDOWEVENT) {
                 if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    display.resize(event.window.data1, event.window.data2);
+                    displayManager.resize(event.window.data1, event.window.data2);
                 }
             }
             if (event.type == SDL_MOUSEMOTION) {
-                normalizedMouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) * (
-                                       2.0f / display.viewportW);
-                normalizedMouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 * (
-                                       2.0f / display.viewportH);
+                normalizedMouseX = (event.motion.x - displayManager.viewportX - displayManager.viewportW / 2.0f) * (
+                                       2.0f / displayManager.viewportW);
+                normalizedMouseY = (event.motion.y - displayManager.viewportY - displayManager.viewportH / 2.0f) * -1 *
+                                   (
+                                       2.0f / displayManager.viewportH);
             }
             if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
@@ -87,7 +88,7 @@ int main() {
                         if (!std::filesystem::exists(screenshotPath)) {
                             std::filesystem::create_directories(screenshotPath);
                         }
-                        if (display.screenshot(screenshotPath)) {
+                        if (displayManager.screenshot(screenshotPath)) {
                             textManager.addAnnouncement("Screenshot saved.", 1500, Fonts::AnnounceGood);
                         } else {
                             textManager.addAnnouncement("Screenshot not created.", 1500, Fonts::AnnounceBad);
@@ -176,7 +177,7 @@ int main() {
         textManager.write(tempText, Fonts::Highscore, true, 1.0f, 0.0f, -0.5f);
         testHelper.drawMouseCoordinates();
 
-        SDL_GL_SwapWindow(display.sdlWindow);
+        SDL_GL_SwapWindow(displayManager.sdlWindow);
     }
     return EXIT_SUCCESS;
 }

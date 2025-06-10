@@ -35,12 +35,18 @@ class EventManager : public IEventManager {
         CollisionEventCallback callback;
     };
 
+    struct WindowEventListenerEntry {
+        void *owner;
+        WindowEventCallback callback;
+    };
+
     std::unordered_map<GameEvent, std::vector<ListenerEntry> > eventListeners;
     std::unordered_map<GameEvent, std::vector<LevelListenerEntry> > levelEventListeners;
     std::unordered_map<GameEvent, std::vector<LevelThemeListenerEntry> > levelThemeEventListeners;
     std::unordered_map<GameEvent, std::vector<LevelRequestedListenerEntry> > levelRequestedEventListeners;
     std::unordered_map<GameEvent, std::vector<ThemeListenerEntry> > themeEventListeners;
     std::map<GameEvent, std::vector<CollisionEventListenerEntry> > collisionEventListeners;
+    std::unordered_map<GameEvent, std::vector<WindowEventListenerEntry> > windowEventListeners;
 
 public:
     void addListener(GameEvent event, EventCallback callback, void *owner) override;
@@ -55,6 +61,8 @@ public:
 
     void addListener(GameEvent event, CollisionEventCallback callback, void *owner) override;
 
+    void addListener(GameEvent event, WindowEventCallback callback, void *owner) override;
+
     void emit(GameEvent event, const EventData &data) override;
 
     void emit(GameEvent event, const LevelData &data) override;
@@ -66,6 +74,8 @@ public:
     void emit(GameEvent event, const ThemeData &data) override;
 
     void emit(GameEvent event, const CollisionData &data) override;
+
+    void emit(GameEvent event, const WindowEventData &data) override;
 
     void removeListener(GameEvent event, void *owner) override;
 };

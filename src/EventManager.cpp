@@ -26,6 +26,10 @@ void EventManager::addListener(const GameEvent event, CollisionEventCallback cal
     collisionEventListeners[event].push_back({owner, std::move(callback)});
 }
 
+void EventManager::addListener(const GameEvent event, WindowEventCallback callback, void *owner) {
+    windowEventListeners[event].push_back({owner, std::move(callback)});
+}
+
 void EventManager::emit(const GameEvent event, const EventData &data) {
     auto it = eventListeners.find(event);
     if (it != eventListeners.end()) {
@@ -76,6 +80,14 @@ void EventManager::emit(const GameEvent event, const CollisionData &data) {
     if (it != collisionEventListeners.end()) {
         for (const auto &entry: it->second) {
             entry.callback(data);
+        }
+    }
+}
+
+void EventManager::emit(const GameEvent event, const WindowEventData &data) {
+    if (const auto it = windowEventListeners.find(event); it != windowEventListeners.end()) {
+        for (const auto &[owner, callback]: it->second) {
+            callback(data);
         }
     }
 }

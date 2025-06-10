@@ -5,13 +5,18 @@
 #include <SDL2/SDL.h>
 #include <filesystem>
 
+#include "EventManager.h"
+
 class DisplayManager {
+    IEventManager *eventManager;
     int displayToUse = 0;
     SDL_GLContext glcontext = nullptr;
 
     [[nodiscard]] bool initOpenGL(unsigned int flags);
 
 public:
+    explicit DisplayManager(IEventManager *eventMgr);
+
     SDL_Window *sdlWindow = nullptr;
     int currentW;
     int currentH;
@@ -19,7 +24,9 @@ public:
     GLfloat glunits_per_xpixel, glunits_per_ypixel;
     int viewportX, viewportY, viewportH, viewportW;
 
-    DisplayManager(const int display, const int width, const int height, const bool fullscreen);
+    bool init(int display, int width, int height, bool fullscreen);
+
+    void handleWindowResize(const WindowEventData &data);
 
     GLfloat playfield_ratio;
     GLdouble window_ratio;

@@ -2,10 +2,25 @@
 #include <iostream>
 #include "DisplayManager.hpp"
 
-DisplayManager::DisplayManager(const int display, const int width, const int height, const bool fullscreen) {
+DisplayManager::DisplayManager(IEventManager *eventMgr): eventManager(eventMgr), currentW(0), currentH(0),
+                                                         numOfDisplays(0),
+                                                         glunits_per_xpixel(0),
+                                                         glunits_per_ypixel(0),
+                                                         viewportX(0),
+                                                         viewportY(0), viewportH(0),
+                                                         viewportW(0),
+                                                         playfield_ratio(0),
+                                                         window_ratio(0) {
+    eventManager->addListener(GameEvent::WindowResized,
+                              [this](const WindowEventData &data) {
+                                  this->handleWindowResize(data);
+                              }, this);
+}
+
+bool DisplayManager::init(const int display, const int width, const int height, const bool fullscreen) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_Log("Fehler bei SDL Video Init: %s", SDL_GetError());
-        return;
+        return false;
     }
     // Versuche das Display aus den Settings.
     numOfDisplays = SDL_GetNumVideoDisplays();
@@ -31,13 +46,18 @@ DisplayManager::DisplayManager(const int display, const int width, const int hei
 
     if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
         SDL_Log("\nError: Unable to initialize SDL:%s\n", SDL_GetError());
-        return;
+        return false;
     }
     if (!initOpenGL(flags)) {
         SDL_Log("Error:%s", SDL_GetError());
-        return;
+        return false;
     }
     resize(currentW, currentH);
+    return true;
+}
+
+void DisplayManager::handleWindowResize(const WindowEventData &data) {
+    resize(data.width, data.height);
 }
 
 void DisplayManager::resize(const int width, const int height) {

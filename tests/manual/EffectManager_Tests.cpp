@@ -5,19 +5,18 @@
 #include "TextureManager.h"
 #include "SpriteSheetAnimation.h"
 #include "TextManager.h"
-#include "Tracer.h"
 
 int main() {
-    DisplayManager display(0, 1024, 768, false);
-    if (display.sdlWindow == nullptr) {
-        SDL_Log("Display konnte nicht initialisiert werden");
+    EventManager eventManager;
+    DisplayManager displayManager(&eventManager);
+    if (!displayManager.init(0, 1024, 768, false)) {
+        SDL_Log("Could not initialize display");
         return EXIT_FAILURE;
     }
     TextManager textManager;
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
-    EventManager eventManager;
     TextureManager textureManager;
     const std::filesystem::path themePath = "../themes/default";
     textureManager.setSpriteTheme(themePath);
@@ -63,16 +62,16 @@ int main() {
             }
             if (event.type == SDL_WINDOWEVENT) {
                 if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    display.resize(event.window.data1, event.window.data2);
+                    displayManager.resize(event.window.data1, event.window.data2);
                 }
             }
 
             if (event.type == SDL_MOUSEMOTION) {
                 // Mausposition normalisieren (-1 bis 1)
-                mouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) *
-                         (2.0f / display.viewportW);
-                mouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 *
-                         (2.0f / display.viewportH);
+                mouseX = (event.motion.x - displayManager.viewportX - displayManager.viewportW / 2.0f) *
+                         (2.0f / displayManager.viewportW);
+                mouseY = (event.motion.y - displayManager.viewportY - displayManager.viewportH / 2.0f) * -1 *
+                         (2.0f / displayManager.viewportH);
                 mouseX = std::max(-1.0f, std::min(1.0f, mouseX));
                 mouseY = std::max(-1.0f, std::min(1.0f, mouseY));
             }
@@ -205,7 +204,7 @@ int main() {
             textManager.write(instruction, Fonts::Menu, true, 0.75f, -0.0f, yPos);
             yPos -= 0.07f;
         }
-        SDL_GL_SwapWindow(display.sdlWindow);
+        SDL_GL_SwapWindow(displayManager.sdlWindow);
         int frameTime = SDL_GetTicks() - frameStartTime;
         if (frameTime < targetFrameTime) {
             SDL_Delay(targetFrameTime - frameTime);

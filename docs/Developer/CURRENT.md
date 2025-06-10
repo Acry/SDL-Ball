@@ -1,8 +1,31 @@
 # Current issues
 
-BricksManager_Tests läuft wieder.
+TexTureManager_Tests: show current theme, spriteclass and move through textures
+SoundManager: use enum, no define
+Sound test: write current sound
+___
+Fix all manual Tests
+SpriteSheetAnimation: AnimationTiming, no shared timing
+gameobjects: Bricks destroyed, active, visible -Fade->or shrink?
+___
+use InputManager
+use DisplayManager as injection for TestHelper with Title
+use testFontTheme in tests
+to TestHelper:
+TextManager textManager;
+if (!textManager.setTheme("../themes/default")) {
+SDL_Log("Error loading font theme");
+return EXIT_FAILURE;
+}
+___
+DisplayManager events
+ja, ich denke, es ist an der Zeit display.resize über den eventManager reagieren lassen
+___
+Ball, Paddle brauchen Manager
+BrickTests: InvisibleBricks rot umranden.
+PowerupManager.
+___
 Aus GameObject sollte ich bald den eventManager und die init methode entfernen.
-
 ___
 
 Ich habe die Architektur gerade wieder grundlegend verändert, um die Manager-Klassen zu entkoppeln und event getriebenes
@@ -18,11 +41,6 @@ so wenig wie möglich Logik enthalten, weil die Manager-Klassen die Logik übern
 Es war nicht geplant, dass die GameObjects, wie Brick, Paddle, Powerup, Ball oder playfield-border den Collision-Manager
 kennen, deshalb habe ich ICollideable implementiert. Und ich möchte nicht, dass die GameObjects den EventManager kennen.
 Die Kollisionen sollten die Manager-Klassen übernehmen.
-
-Was ein Fehler gewesen sein könnte, war das Entfernen von ICollideable in Brick. In Ball und Paddle ist er noch
-implementiert.
-
-Das möchte ich nun genauer prüfen.
 
 Wir könnten ICollideable auf die grundlegenden geometrischen Eigenschaften reduzieren und die Kollisionslogik in die
 Manager verschieben.

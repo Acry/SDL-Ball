@@ -18,6 +18,8 @@ public:
 
     virtual void emit(GameEvent event, const CollisionData &data) = 0;
 
+    virtual void emit(GameEvent event, const WindowEventData &data) = 0;
+
     virtual void addListener(GameEvent event, EventCallback callback, void *owner) = 0;
 
     virtual void addListener(GameEvent event, LevelEventCallback callback, void *owner) = 0;
@@ -29,6 +31,8 @@ public:
     virtual void addListener(GameEvent event, ThemeEventCallback callback, void *owner) = 0;
 
     virtual void addListener(GameEvent event, CollisionEventCallback callback, void *owner) = 0;
+
+    virtual void addListener(GameEvent event, WindowEventCallback callback, void *owner) = 0;
 
     virtual void removeListener(GameEvent event, void *owner) = 0;
 };

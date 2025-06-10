@@ -2,6 +2,7 @@
 #pragma once
 #include <functional>
 #include <map>
+#include <SDL_keycode.h>
 
 #include "BrickTypes.h"
 #include "colors.h"
@@ -42,8 +43,34 @@ enum class GameEvent {
     LevelThemeChanged,
     LevelLoaded,
     LevelStarted,
+
+    KeyPressed,
+    KeyReleased,
+    MouseMoved,
+    MouseButtonPressed,
+    MouseButtonReleased,
+    WindowResized,
+    QuitRequested,
 };
 
+struct WindowEventData {
+    int width{0};
+    int height{0};
+};
+
+struct MouseEventData {
+    float x{0.0f};
+    float y{0.0f};
+    float viewportX{0.0f};
+    float viewportY{0.0f};
+    float viewportW{0.0f};
+    float viewportH{0.0f};
+};
+
+struct InputEventData {
+    SDL_Keycode key{0};
+    bool isPressed{false};
+};
 
 struct BrickInfo {
     BrickType type{BrickType::None};
@@ -109,3 +136,7 @@ using LevelThemeEventCallback = std::function<void(const LevelThemeData &)>;
 using LevelRequestedEventCallback = std::function<void(const LevelRequestedData &)>;
 using ThemeEventCallback = std::function<void(const ThemeData &)>;
 using CollisionEventCallback = std::function<void(const CollisionData &)>;
+
+using InputEventCallback = std::function<void(const InputEventData &)>;
+using MouseEventCallback = std::function<void(const MouseEventData &)>;
+using WindowEventCallback = std::function<void(const WindowEventData &)>;

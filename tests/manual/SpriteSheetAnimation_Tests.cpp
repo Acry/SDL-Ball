@@ -5,12 +5,13 @@
 #include "TextManager.h"
 
 int main() {
-    DisplayManager display(0, 1024, 768, false);
-    if (display.sdlWindow == nullptr) {
-        SDL_Log("Display konnte nicht initialisiert werden");
+    EventManager eventManager;
+    DisplayManager displayManager(&eventManager);
+    if (!displayManager.init(0, 1024, 768, false)) {
+        SDL_Log("Could not initialize display");
         return EXIT_FAILURE;
     }
-    SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: SpriteSheet Animation Test");
+    SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: SpriteSheet Animation Test");
     TextManager textManager;
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
@@ -100,7 +101,7 @@ int main() {
             }
             if (event.type == SDL_WINDOWEVENT) {
                 if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    display.resize(event.window.data1, event.window.data2);
+                    displayManager.resize(event.window.data1, event.window.data2);
                 }
             }
             if (event.type == SDL_KEYDOWN) {
@@ -243,7 +244,7 @@ int main() {
         std::string animationStatus = animationPaused ? "Animation: paused" : "Animation: running";
         textManager.write(animationStatus, Fonts::Menu, true, 0.7f, 0.0f, -0.8f);
 
-        SDL_GL_SwapWindow(display.sdlWindow);
+        SDL_GL_SwapWindow(displayManager.sdlWindow);
     }
     glDeleteTextures(1, &uvTest.textureProperties.texture);
     glDeleteTextures(1, &spriteSheetAnimation1.textureProperties.texture);

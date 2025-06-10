@@ -211,6 +211,7 @@ SPRITESHEET_TEST_SOURCES := $(MANUAL_TEST_DIR)SpriteSheetAnimation_Tests.cpp \
                             $(SOURCE_DIR)TextManager.cpp \
                             $(SOURCE_DIR)TextureManager.cpp \
                             $(SOURCE_DIR)TextureUtilities.cpp \
+                            $(SOURCE_DIR)EventManager.cpp \
 
 SPRITESHEET_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SPRITESHEET_TEST_SOURCES:.cpp=.o)))
 
@@ -290,6 +291,7 @@ TEXT_TEST_SOURCES := $(MANUAL_TEST_DIR)TextManager_Tests.cpp \
                      $(SOURCE_DIR)DisplayManager.cpp \
                      $(SOURCE_DIR)TextureManager.cpp \
                      $(SOURCE_DIR)TextureUtilities.cpp \
+                     $(SOURCE_DIR)EventManager.cpp \
 
 TEXT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXT_TEST_SOURCES:.cpp=.o)))
 
@@ -380,6 +382,7 @@ TEXTURE_MANAGER_TEST_SOURCES := $(MANUAL_TEST_DIR)TextureManager_Tests.cpp \
                             $(SOURCE_DIR)TextManager.cpp \
                             $(SOURCE_DIR)TextureManager.cpp \
                             $(SOURCE_DIR)TextureUtilities.cpp \
+                            $(SOURCE_DIR)EventManager.cpp \
 
 TEXTURE_MANAGER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXTURE_MANAGER_TEST_SOURCES:.cpp=.o)))
 
