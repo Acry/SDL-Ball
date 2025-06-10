@@ -1,7 +1,7 @@
 // Paddle_Tests.cpp
 #include <cstdlib>
 
-#include "Display.hpp"
+#include "DisplayManager.hpp"
 #include "Paddle.h"
 #include "PlayfieldBorder.h"
 #include "TestHelper.h"
@@ -11,7 +11,7 @@
 #define DEBUG_DRAW_PADDLE_BOUNDING_BOXES 0
 
 int main() {
-    Display display(0, 1024, 768, false);
+    DisplayManager display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;

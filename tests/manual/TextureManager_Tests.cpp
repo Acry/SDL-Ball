@@ -1,14 +1,14 @@
 #include <cstdlib>
 
 #include "TextureManager.h"
-#include "Display.hpp"
+#include "DisplayManager.hpp"
 
 // Test theme loading
 // next:
 // SpriteSheetAnimation *TextureManager::getBrickTexture(BrickTexture type)
 // render all textures, except backgrounds
 int main() {
-    Display display(0, 1024, 768, false);
+    DisplayManager display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;

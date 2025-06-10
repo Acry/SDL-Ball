@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <filesystem>
 
-class Display {
+class DisplayManager {
     int displayToUse = 0;
     SDL_GLContext glcontext = nullptr;
 
@@ -19,7 +19,7 @@ public:
     GLfloat glunits_per_xpixel, glunits_per_ypixel;
     int viewportX, viewportY, viewportH, viewportW;
 
-    Display(const int display, const int width, const int height, const bool fullscreen);
+    DisplayManager(const int display, const int width, const int height, const bool fullscreen);
 
     GLfloat playfield_ratio;
     GLdouble window_ratio;
@@ -30,5 +30,5 @@ public:
 
     void resize(int, int);
 
-    ~Display();
+    ~DisplayManager();
 };

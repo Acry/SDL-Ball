@@ -22,7 +22,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     Brick.cpp \
     CollisionManager.cpp \
     ConfigFileManager.cpp \
-    Display.cpp \
+    DisplayManager.cpp \
     EffectManager.cpp \
     EventManager.cpp \
     GrowableObject.cpp \
@@ -144,7 +144,7 @@ $(BUILD_DIR)settings_manager.o: $(SOURCE_DIR)SettingsManager.cpp
 # DisplayManager
 DISPLAY_TEST_SOURCES := $(MANUAL_TEST_DIR)DisplayManager_Tests.cpp \
                         $(MANUAL_TEST_DIR)TestHelper.cpp \
-                        $(SOURCE_DIR)Display.cpp \
+                        $(SOURCE_DIR)DisplayManager.cpp \
                         $(SOURCE_DIR)TextManager.cpp \
                         $(SOURCE_DIR)TextureUtilities.cpp \
 
@@ -152,7 +152,7 @@ test-display: $(DISPLAY_TEST_SOURCES)
 	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(DISPLAY_TEST_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)test-display
 
 TEST_HELPER_SOURCES := $(MANUAL_TEST_DIR)TestHelper.cpp \
-                $(SOURCE_DIR)Display.cpp \
+                $(SOURCE_DIR)DisplayManager.cpp \
 
 TestHelper: $(TEST_HELPER_SOURCES)
 	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(TEST_HELPER_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)TestHelper
@@ -165,7 +165,7 @@ BACKGROUND_TEST_SOURCES := $(MANUAL_TEST_DIR)BackgroundManager_Tests.cpp \
                            $(MANUAL_TEST_DIR)TestHelper.cpp \
                            $(SOURCE_DIR)EventManager.cpp \
                            $(SOURCE_DIR)LevelManager.cpp \
-                           $(SOURCE_DIR)Display.cpp \
+                           $(SOURCE_DIR)DisplayManager.cpp \
                            $(SOURCE_DIR)MathHelper.cpp \
                            $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                            $(SOURCE_DIR)TextManager.cpp \
@@ -201,7 +201,7 @@ $(BUILD_DIR)BackgroundManager.o: $(SOURCE_DIR)BackgroundManager.cpp
 # SpriteSheetAnimation
 SPRITESHEET_TEST_SOURCES := $(MANUAL_TEST_DIR)SpriteSheetAnimation_Tests.cpp \
                             $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                            $(SOURCE_DIR)Display.cpp \
+                            $(SOURCE_DIR)DisplayManager.cpp \
                             $(SOURCE_DIR)TextManager.cpp \
                             $(SOURCE_DIR)TextureManager.cpp \
                             $(SOURCE_DIR)TextureUtilities.cpp \
@@ -220,7 +220,7 @@ BORDER_TEST_SOURCES := $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp \
                        $(MANUAL_TEST_DIR)MockEventManager.cpp \
                        $(SOURCE_DIR)PlayfieldBorder.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                       $(SOURCE_DIR)Display.cpp \
+                       $(SOURCE_DIR)DisplayManager.cpp \
                        $(SOURCE_DIR)TextureManager.cpp \
                        $(SOURCE_DIR)TextManager.cpp \
                        $(SOURCE_DIR)TextureUtilities.cpp \
@@ -245,7 +245,7 @@ PADDLE_TEST_SOURCES := $(MANUAL_TEST_DIR)Paddle_Tests.cpp \
                        $(SOURCE_DIR)GameObject.cpp \
                        $(SOURCE_DIR)MovingObject.cpp \
                        $(SOURCE_DIR)GrowableObject.cpp \
-                       $(SOURCE_DIR)Display.cpp \
+                       $(SOURCE_DIR)DisplayManager.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                        $(SOURCE_DIR)TextManager.cpp \
                        $(SOURCE_DIR)TextureManager.cpp \
@@ -281,7 +281,7 @@ TEXT_TEST_SOURCES := $(MANUAL_TEST_DIR)TextManager_Tests.cpp \
                      $(MANUAL_TEST_DIR)TestHelper.cpp \
                      $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                      $(SOURCE_DIR)TextManager.cpp \
-                     $(SOURCE_DIR)Display.cpp \
+                     $(SOURCE_DIR)DisplayManager.cpp \
                      $(SOURCE_DIR)TextureManager.cpp \
                      $(SOURCE_DIR)TextureUtilities.cpp \
 
@@ -301,7 +301,7 @@ SOUND_TEST_SOURCES := $(MANUAL_TEST_DIR)SoundManager_Tests.cpp \
                       $(SOURCE_DIR)TextureUtilities.cpp \
                       $(SOURCE_DIR)EventManager.cpp \
                       $(SOURCE_DIR)SoundManager.cpp \
-                      $(SOURCE_DIR)Display.cpp
+                      $(SOURCE_DIR)DisplayManager.cpp
 
 SOUND_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOUND_TEST_SOURCES:.cpp=.o)))
 
@@ -319,7 +319,7 @@ BALL_TEST_SOURCES := $(MANUAL_TEST_DIR)Ball_Tests.cpp \
                      $(SOURCE_DIR)GameObject.cpp \
                      $(SOURCE_DIR)MovingObject.cpp \
                      $(SOURCE_DIR)GrowableObject.cpp \
-                     $(SOURCE_DIR)Display.cpp \
+                     $(SOURCE_DIR)DisplayManager.cpp \
                      $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                      $(SOURCE_DIR)TextManager.cpp \
                      $(SOURCE_DIR)TextureManager.cpp \
@@ -350,7 +350,7 @@ EFFECT_TEST_SOURCES := $(MANUAL_TEST_DIR)EffectManager_Tests.cpp \
                        $(SOURCE_DIR)EffectManager.cpp \
                        $(SOURCE_DIR)EventManager.cpp \
                        $(SOURCE_DIR)MathHelper.cpp \
-                       $(SOURCE_DIR)Display.cpp \
+                       $(SOURCE_DIR)DisplayManager.cpp \
                        $(SOURCE_DIR)TextureManager.cpp \
                        $(SOURCE_DIR)TextureUtilities.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
@@ -370,7 +370,7 @@ $(BUILD_DIR)EffectManager_Tests.o: $(MANUAL_TEST_DIR)EffectManager_Tests.cpp
 # TextureManager - Themes
 TEXTURE_MANAGER_TEST_SOURCES := $(MANUAL_TEST_DIR)TextureManager_Tests.cpp \
                             $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                            $(SOURCE_DIR)Display.cpp \
+                            $(SOURCE_DIR)DisplayManager.cpp \
                             $(SOURCE_DIR)TextManager.cpp \
                             $(SOURCE_DIR)TextureManager.cpp \
                             $(SOURCE_DIR)TextureUtilities.cpp \
@@ -393,7 +393,7 @@ COLLISION_TEST_SOURCES := $(MANUAL_TEST_DIR)Collision_Tests.cpp \
                           $(SOURCE_DIR)GameObject.cpp \
                           $(SOURCE_DIR)MovingObject.cpp \
                           $(SOURCE_DIR)GrowableObject.cpp \
-                          $(SOURCE_DIR)Display.cpp \
+                          $(SOURCE_DIR)DisplayManager.cpp \
                           $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                           $(SOURCE_DIR)TextManager.cpp \
                           $(SOURCE_DIR)TextureManager.cpp \
@@ -416,7 +416,7 @@ $(BUILD_DIR)Collision_Tests.o: $(MANUAL_TEST_DIR)Collision_Tests.cpp
 LEVEL_TEST_SOURCES := $(MANUAL_TEST_DIR)LevelManager_Tests.cpp \
                       $(MANUAL_TEST_DIR)TestHelper.cpp \
                       $(MANUAL_TEST_DIR)LevelManager.cpp \
-                      $(SOURCE_DIR)Display.cpp \
+                      $(SOURCE_DIR)DisplayManager.cpp \
                       $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                       $(SOURCE_DIR)TextManager.cpp \
                       $(SOURCE_DIR)TextureManager.cpp \
@@ -438,7 +438,7 @@ BRICK_TEST_SOURCES := $(MANUAL_TEST_DIR)BrickManager_Tests.cpp \
                       $(MANUAL_TEST_DIR)LevelManager.cpp \
                       $(SOURCE_DIR)Brick.cpp \
                       $(SOURCE_DIR)GameObject.cpp \
-                      $(SOURCE_DIR)Display.cpp \
+                      $(SOURCE_DIR)DisplayManager.cpp \
                       $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                       $(SOURCE_DIR)TextManager.cpp \
                       $(SOURCE_DIR)TextureManager.cpp \

@@ -1,8 +1,8 @@
 // DisplayManager.cpp
 #include <iostream>
-#include "Display.hpp"
+#include "DisplayManager.hpp"
 
-Display::Display(const int display, const int width, const int height, const bool fullscreen) {
+DisplayManager::DisplayManager(const int display, const int width, const int height, const bool fullscreen) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_Log("Fehler bei SDL Video Init: %s", SDL_GetError());
         return;
@@ -40,7 +40,7 @@ Display::Display(const int display, const int width, const int height, const boo
     resize(currentW, currentH);
 }
 
-void Display::resize(const int width, const int height) {
+void DisplayManager::resize(const int width, const int height) {
     if (height == 0)
         return;
 
@@ -156,7 +156,7 @@ void Display::resize(const int width, const int height) {
     glLoadIdentity();
 }
 
-bool Display::screenshot(const std::filesystem::path &pathName) const {
+bool DisplayManager::screenshot(const std::filesystem::path &pathName) const {
     static constexpr size_t MAX_FILENAME = 256;
     static constexpr size_t TGA_HEADER_SIZE = 12;
     static constexpr size_t TGA_INFO_SIZE = 6;
@@ -233,7 +233,7 @@ bool Display::screenshot(const std::filesystem::path &pathName) const {
     return true;
 }
 
-bool Display::initOpenGL(const unsigned int flags) {
+bool DisplayManager::initOpenGL(const unsigned int flags) {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
@@ -308,7 +308,7 @@ bool Display::initOpenGL(const unsigned int flags) {
     return true;
 }
 
-Display::~Display() {
+DisplayManager::~DisplayManager() {
     SDL_DestroyWindow(sdlWindow);
     SDL_GL_DeleteContext(glcontext);
     // TODO: MouseManager

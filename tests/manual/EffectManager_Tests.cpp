@@ -1,6 +1,6 @@
 // EffectManager_Tests.cpp
 #include <cstdlib>
-#include "Display.hpp"
+#include "DisplayManager.hpp"
 #include "EffectManager.h"
 #include "TextureManager.h"
 #include "SpriteSheetAnimation.h"
@@ -8,7 +8,7 @@
 #include "Tracer.h"
 
 int main() {
-    Display display(0, 1024, 768, false);
+    DisplayManager display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;

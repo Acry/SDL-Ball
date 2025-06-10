@@ -6,7 +6,7 @@
 #include "Paddle.h"
 #include "Brick.h"
 #include "TextureManager.h"
-#include "Display.hpp"
+#include "DisplayManager.hpp"
 #include "CollisionManager.h"
 #include "difficulty_settings.h"
 #include "PlayfieldBorder.h"
@@ -21,7 +21,7 @@
 #define DEBUG_DRAW_BALL_BOUNDING_BOXES 0
 
 int main() {
-    Display display(0, 1024, 768, false);
+    DisplayManager display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
         SDL_Log("Display konnte nicht initialisiert werden");
         return EXIT_FAILURE;

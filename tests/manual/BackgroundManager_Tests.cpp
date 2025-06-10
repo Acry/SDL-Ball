@@ -1,7 +1,7 @@
 #include <cstdlib>
 
 #include "BackgroundManager.h"
-#include "Display.hpp"
+#include "DisplayManager.hpp"
 #include "TestHelper.h"
 #include "TextureManager.h"
 #include "TextManager.h"
@@ -9,7 +9,7 @@
 #include "LevelManager.h"
 
 int main() {
-    Display display(0, 1024, 768, false);
+    DisplayManager display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
         SDL_Log("Error creating SDL window: %s", SDL_GetError());
         return EXIT_FAILURE;

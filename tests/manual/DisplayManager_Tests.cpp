@@ -1,12 +1,12 @@
 #include <cstdlib>
 #include <vector>
 
-#include "Display.hpp"
+#include "DisplayManager.hpp"
 #include "TestHelper.h"
 #include "TextManager.h"
 
 int main() {
-    Display display(0, 1024, 768, false);
+    DisplayManager display(0, 1024, 768, false);
     if (display.sdlWindow == nullptr) {
         SDL_Log("Could not initialize display");
         return EXIT_FAILURE;
