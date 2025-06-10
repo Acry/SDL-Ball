@@ -37,6 +37,7 @@ void EventManager::addListener(const GameEvent event, MouseEventCallback callbac
 void EventManager::addListener(const GameEvent event, KeyboardEventCallback callback, void *owner) {
     keyboardEventListeners[event].push_back({owner, std::move(callback)});
 }
+
 void EventManager::emit(const GameEvent event, const EventData &data) {
     auto it = eventListeners.find(event);
     if (it != eventListeners.end()) {

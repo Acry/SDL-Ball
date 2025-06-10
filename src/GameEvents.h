@@ -61,13 +61,13 @@ struct WindowEventData {
 struct MouseEventData {
     float x{0.0f};
     float y{0.0f};
-    float viewportX{0.0f};
-    float viewportY{0.0f};
-    float viewportW{0.0f};
-    float viewportH{0.0f};
+    // float viewportX{0.0f};
+    // float viewportY{0.0f};
+    // float viewportW{0.0f};
+    // float viewportH{0.0f};
 };
 
-struct InputEventData {
+struct KeyboardEventData {
     SDL_Keycode key{0};
     bool isPressed{false};
 };
@@ -106,7 +106,7 @@ struct EventData {
     GameObject *sender{nullptr};
     const GameObject *target{nullptr};
     // ---snip--- TODO/FIXME
-    int points{0};
+    int points{0}; // to brick destroyed data
 };
 
 struct SubThemeData {
@@ -137,6 +137,7 @@ using LevelRequestedEventCallback = std::function<void(const LevelRequestedData 
 using ThemeEventCallback = std::function<void(const ThemeData &)>;
 using CollisionEventCallback = std::function<void(const CollisionData &)>;
 
-using InputEventCallback = std::function<void(const InputEventData &)>;
+// Input event callbacks
+using KeyboardEventCallback = std::function<void(const KeyboardEventData &)>;
 using MouseEventCallback = std::function<void(const MouseEventData &)>;
 using WindowEventCallback = std::function<void(const WindowEventData &)>;
