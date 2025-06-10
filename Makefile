@@ -147,9 +147,15 @@ DISPLAY_TEST_SOURCES := $(MANUAL_TEST_DIR)DisplayManager_Tests.cpp \
                         $(SOURCE_DIR)DisplayManager.cpp \
                         $(SOURCE_DIR)TextManager.cpp \
                         $(SOURCE_DIR)TextureUtilities.cpp \
+                        $(SOURCE_DIR)EventManager.cpp \
 
-test-display: $(DISPLAY_TEST_SOURCES)
-	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(DISPLAY_TEST_SOURCES) $(LDFLAGS) -o $(BUILD_DIR)test-display
+DISPLAY_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(DISPLAY_TEST_SOURCES:.cpp=.o)))
+
+test-display: $(DISPLAY_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(DISPLAY_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-display
+
+$(BUILD_DIR)DisplayManager_Tests.o: $(MANUAL_TEST_DIR)DisplayManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 TEST_HELPER_SOURCES := $(MANUAL_TEST_DIR)TestHelper.cpp \
                 $(SOURCE_DIR)DisplayManager.cpp \
