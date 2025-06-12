@@ -1,6 +1,6 @@
-#include "SpriteSheetAnimation.h"
-
 #include <SDL2/SDL_log.h>
+
+#include "SpriteSheetAnimation.h"
 
 SpriteSheetAnimation::SpriteSheetAnimation(const SpriteSheetAnimationProperties &props)
     : animationProperties(props) {
@@ -22,23 +22,32 @@ void SpriteSheetAnimation::play(const float deltaTime) {
     if (totalFrames == 0) return;
 
     if (animationProperties.bidir) {
-        SDL_Log("currentDirection: %d", currentDirection);
         if (currentDirection) {
             ++currentFrame;
             if (currentFrame + 1 >= totalFrames) {
                 currentFrame = totalFrames - 1;
-                currentDirection = false; // Richtung umkehren
+                currentDirection = false;
             }
         } else {
+            --currentFrame;
             if (currentFrame == 0) {
-                currentDirection = true; // Richtung wieder vorwärts
-                ++currentFrame;
-            } else {
-                --currentFrame;
+                if (animationProperties.playOnce) {
+                    isPlaying = false;
+                } else {
+                    currentDirection = true;
+                }
             }
         }
     } else {
-        currentFrame = (currentFrame + 1) % totalFrames;
+        ++currentFrame;
+        if (currentFrame >= totalFrames) {
+            if (!animationProperties.playOnce) {
+                currentFrame = 0;
+            } else {
+                currentFrame = totalFrames - 1;
+                isPlaying = false;
+            }
+        }
     }
     calculateTextureCoordinates();
 }
@@ -57,13 +66,13 @@ void SpriteSheetAnimation::calculateTextureCoordinates() {
     const Uint32 col = f % cols;
     Uint32 row = f / cols;
 
-    // Invertiere die Zeilenberechnung, um oben links zu starten
+    // start top left
     row = rows - 1 - row;
 
-    float x0 = animationProperties.xoffset * col;
-    float y0 = animationProperties.yoffset * row;
-    float x1 = x0 + animationProperties.xoffset;
-    float y1 = y0 + animationProperties.yoffset;
+    const float x0 = animationProperties.xoffset * col;
+    const float y0 = animationProperties.yoffset * row;
+    const float x1 = x0 + animationProperties.xoffset;
+    const float y1 = y0 + animationProperties.yoffset;
 
     currentTexturePosition[0] = x0;
     currentTexturePosition[1] = y0;

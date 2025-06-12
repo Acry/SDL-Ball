@@ -32,8 +32,8 @@ int main() {
 
     const std::filesystem::path texturePath1 = "../tests/textures/Spritesheet-Test-1";
     const std::filesystem::path texturePath2 = "../tests/textures/Spritesheet-Test-2";
-    const std::filesystem::path texturePath3 = "../themes/default/gfx/brick/explosive";
-    const std::filesystem::path texturePath4 = "../themes/default/gfx/powerup/aim";
+    const std::filesystem::path texturePath3 = "../tests/textures/Spritesheet-Test-3";
+    const std::filesystem::path texturePath4 = "../tests/textures/Spritesheet-Test-4";
     const std::filesystem::path texturePath5 = "../themes/default/gfx/powerup/gun";
 
     // TextureManager erstellen
@@ -87,8 +87,8 @@ int main() {
     std::vector<std::string> instructions = {
         "1: bidir = 0",
         "2: bidir = 1",
-        "3: Explosive brick",
-        "4: Aim Powerup",
+        "3: bidir = 0, playOnce = 1",
+        "4: bidir = 1, playOnce = 1",
         "5: Gun Powerup",
         "SPACE: Toggle Animation",
         "ESC: Quit"
@@ -242,9 +242,9 @@ int main() {
                 break;
             case 2: textureName = "bidir = 1";
                 break;
-            case 3: textureName = "Explosive Brick";
+            case 3: textureName = "bidir = 0, playOnce = 1";
                 break;
-            case 4: textureName = "Aim Powerup";
+            case 4: textureName = "bidir = 1, playOnce = 1";
                 break;
             case 5: textureName = "Gun Powerup";
                 break;

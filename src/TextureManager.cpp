@@ -34,6 +34,7 @@ AnimationProperty getAnimPropertyFromString(const std::string &key) {
         {"ticks", AnimationProperty::Ticks},
         {"frames", AnimationProperty::Frames},
         {"bidir", AnimationProperty::Bidir},
+        {"playOnce", AnimationProperty::PlayOnce},
         {"playing", AnimationProperty::Playing},
         {"padding", AnimationProperty::Padding},
         {"pxw", AnimationProperty::PixelWidth},
@@ -178,7 +179,7 @@ bool TextureManager::readTextureProperties(
                         texResource.fileName = value;
                         break;
                     case TextureProperty::Unknown:
-                        SDL_Log("Warning: '%s' hat unknown property key: '%s' with value: '%s'",
+                        SDL_Log("Warning: '%s' hat unknown texture property key: '%s' with value: '%s'",
                                 pathName.c_str(), key.c_str(), value.c_str());
                         break;
                 }
@@ -206,6 +207,9 @@ bool TextureManager::readTextureProperties(
                     case AnimationProperty::Bidir:
                         animProps.bidir = std::stoi(value) != 0;
                         break;
+                    case AnimationProperty::PlayOnce:
+                        animProps.playOnce = std::stoi(value) != 0;
+                        break;
                     case AnimationProperty::Playing:
                         animProps.playing = std::stoi(value) != 0;
                         break;
@@ -219,7 +223,7 @@ bool TextureManager::readTextureProperties(
                         animProps.pxh = std::stof(value);
                         break;
                     case AnimationProperty::Unknown:
-                        SDL_Log("Warning: '%s' hat unknown property key: '%s' with value: '%s'",
+                        SDL_Log("Warning: '%s' hat unknown anim property key: '%s' with value: '%s'",
                                 pathName.c_str(), key.c_str(), value.c_str());
                         break;
                 }
@@ -533,6 +537,8 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, text
         tex.animationProperties.yoffset = 1.0f;
         tex.animationProperties.frames = 1;
         tex.animationProperties.playing = false;
+        tex.animationProperties.bidir = false;
+        tex.animationProperties.playOnce = false;
         tex.animationProperties.padding = false;
 
         // Standardfarben setzen (weiß)

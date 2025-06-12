@@ -9,6 +9,7 @@ struct SpriteSheetAnimationProperties {
     int ticks; // Zeit pro Frame (ms)
     Uint32 frames; // Anzahl der Frames
     bool bidir; // Bidirektionale Animation
+    bool playOnce;
     bool playing; // Initial abspielen?
     bool padding; // Anti-Bleeding Padding
     float pxw;
@@ -23,6 +24,7 @@ enum class AnimationProperty {
     Ticks,
     Frames,
     Bidir,
+    PlayOnce,
     Playing,
     Padding,
     PixelWidth,
