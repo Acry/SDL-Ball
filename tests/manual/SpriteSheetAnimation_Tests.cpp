@@ -36,10 +36,9 @@ int main() {
     const std::filesystem::path texturePath4 = "../tests/textures/Spritesheet-Test-4";
     const std::filesystem::path texturePath5 = "../themes/default/gfx/powerup/gun";
 
-    // TextureManager erstellen
     TextureManager textureManager;
 
-    // UV test bg
+    // UV test grid bg
     if (!textureManager.load("../tests/textures/UV-Test-Grid.png", uvTest)) {
         SDL_Log("Fehler beim Laden der Textur: %s", texturePath1.c_str());
         return EXIT_FAILURE;
@@ -50,25 +49,21 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    // Textur 2 laden
     if (!textureManager.loadTextureWithProperties(texturePath2, spriteSheetAnimation2)) {
         SDL_Log("Fehler beim Laden der Textur: %s", texturePath2.c_str());
         return EXIT_FAILURE;
     }
 
-    // Textur 3 laden
     if (!textureManager.loadTextureWithProperties(texturePath3, spriteSheetAnimation3)) {
         SDL_Log("Fehler beim Laden der Textur: %s", texturePath3.c_str());
         return EXIT_FAILURE;
     }
 
-    // Textur 4 laden
     if (!textureManager.loadTextureWithProperties(texturePath4, spriteSheetAnimation4)) {
         SDL_Log("Fehler beim Laden der Textur: %s", texturePath4.c_str());
         return EXIT_FAILURE;
     }
 
-    // Textur 5 laden
     if (!textureManager.loadTextureWithProperties(texturePath5, spriteSheetAnimation5)) {
         SDL_Log("Fehler beim Laden der Textur: %s", texturePath5.c_str());
         return EXIT_FAILURE;
@@ -94,7 +89,6 @@ int main() {
         "ESC: Quit"
     };
 
-    // Alle Animationen starten
     anim1.isPlaying = false;
     anim2.isPlaying = false;
     anim3.isPlaying = false;

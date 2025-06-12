@@ -1,5 +1,15 @@
 # Die Rolle von SpriteSheetAnimation im Projekt
 
+```cpp
+void resetAllAnimations(std::vector<SpriteSheetAnimation*> &animations) {
+    for (auto *animation : animations) {
+        if (animation) {
+            animation->reset();
+        }
+    }
+}
+```
+
 Die Klasse `SpriteSheetAnimation` und die zugehörige Implementierung in `SpriteSheetAnimation.cpp` spielen eine zentrale
 Rolle im Texturmanagement-System des Projekts.
 Die Klasse verwaltet insbesondere animierte Texturen mit folgenden Hauptfunktionen:
@@ -103,7 +113,7 @@ Cache, aber nicht die Animationszustände (frame, age, etc.).
 
 Beispiel für eine Factory-Methode:
 
-```c++
+```cpp
 // SpriteSheetAnimationFactory.h
 #pragma once
 #include "TextureManager.h"
@@ -119,7 +129,7 @@ public:
 };
 ```
 
-```c++
+```cpp
 auto* cached = textureManager.getPaddleTexture(PaddleTexture::Base);
 SpriteSheetAnimation myAnim = SpriteSheetAnimationFactory::create(*cached);
 ```

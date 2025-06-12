@@ -43,6 +43,8 @@ public:
 
     void calculateTextureCoordinates();
 
+    void reset();
+
     Uint32 currentFrame;
     bool isPlaying;
     texPos currentTexturePosition{};

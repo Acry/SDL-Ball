@@ -96,3 +96,11 @@ void SpriteSheetAnimation::calculateTextureCoordinates() {
         currentTexturePosition[7] -= py;
     }
 }
+
+void SpriteSheetAnimation::reset() {
+    currentFrame = 0;
+    currentFrameAge = 0.0f;
+    currentDirection = animationProperties.bidir;
+    isPlaying = animationProperties.playing;
+    calculateTextureCoordinates();
+}
