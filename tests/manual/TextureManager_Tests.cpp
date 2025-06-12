@@ -25,7 +25,7 @@ int main() {
 
     SpriteSheetAnimation spriteSheetAnimation = *textureManager.getBallTexture(BallTexture::Fireball);
 
-    spriteSheetAnimation.playing = true;
+    spriteSheetAnimation.isPlaying = true;
     spriteSheetAnimation.textureProperties.playing = true;
 
     Uint32 lastTime = SDL_GetTicks();
@@ -76,16 +76,16 @@ int main() {
 
         glBegin(GL_QUADS);
 
-        glTexCoord2f(spriteSheetAnimation.texturePosition[0], spriteSheetAnimation.texturePosition[1]);
+        glTexCoord2f(spriteSheetAnimation.currentTexturePosition[0], spriteSheetAnimation.currentTexturePosition[1]);
         glVertex2f(-0.5f, -0.5f);
 
-        glTexCoord2f(spriteSheetAnimation.texturePosition[2], spriteSheetAnimation.texturePosition[3]);
+        glTexCoord2f(spriteSheetAnimation.currentTexturePosition[2], spriteSheetAnimation.currentTexturePosition[3]);
         glVertex2f(0.5f, -0.5f);
 
-        glTexCoord2f(spriteSheetAnimation.texturePosition[4], spriteSheetAnimation.texturePosition[5]);
+        glTexCoord2f(spriteSheetAnimation.currentTexturePosition[4], spriteSheetAnimation.currentTexturePosition[5]);
         glVertex2f(0.5f, 0.5f);
 
-        glTexCoord2f(spriteSheetAnimation.texturePosition[6], spriteSheetAnimation.texturePosition[7]);
+        glTexCoord2f(spriteSheetAnimation.currentTexturePosition[6], spriteSheetAnimation.currentTexturePosition[7]);
         glVertex2f(-0.5f, 0.5f);
 
         glEnd();

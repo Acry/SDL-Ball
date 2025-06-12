@@ -1,97 +1,89 @@
 #include "SpriteSheetAnimation.h"
 
+#include <SDL2/SDL_log.h>
+
 SpriteSheetAnimation::SpriteSheetAnimation(const SpriteSheetAnimationProperties &props)
     : animationProperties(props) {
-    age = 0.0f;
-    direction = props.bidir; // Umbenennung von direction zu bidir
-    lastFrame = 0;
-    frame = 1;
-    playing = props.playing;
-    firstFrame = true;
-    for (float &v: texturePosition) v = 0.0f;
+    currentFrameAge = 0.0f;
+    currentDirection = props.bidir;
+    currentFrame = 0;
+    isPlaying = props.playing;
+    for (float &v: currentTexturePosition) v = 0.0f;
     calculateTextureCoordinates();
 }
 
 void SpriteSheetAnimation::play(const float deltaTime) {
-    if (firstFrame) {
-        calculateTextureCoordinates();
-        firstFrame = false;
-    }
-    if (playing) {
-        age += deltaTime * 1000.0f;
+    if (!isPlaying) return;
+    currentFrameAge += deltaTime * 1000.0f;
+    if (currentFrameAge < animationProperties.ticks) return;
+    currentFrameAge -= animationProperties.ticks;
 
-        if (age >= animationProperties.ticks) {
-            bool frameChanged = false;
-            age = 0.0f;
-            frameChanged = true;
+    const Uint32 totalFrames = animationProperties.frames;
+    if (totalFrames == 0) return;
 
-            if (!direction) {
-                // Vorwärtsanimation
-                if (frame == animationProperties.frames) {
-                    if (animationProperties.bidir) {
-                        // Umbenennung von direction zu bidir
-                        direction = true;
-                    } else {
-                        frame = 1;
-                    }
-                } else {
-                    frame++;
-                }
+    if (animationProperties.bidir) {
+        SDL_Log("currentDirection: %d", currentDirection);
+        if (currentDirection) {
+            ++currentFrame;
+            if (currentFrame + 1 >= totalFrames) {
+                currentFrame = totalFrames - 1;
+                currentDirection = false; // Richtung umkehren
             }
-
-            if (direction) {
-                // Rückwärtsanimation
-                if (frame == 1) {
-                    direction = false;
-                    frame = 2;
-                } else {
-                    frame--;
-                }
+        } else {
+            if (currentFrame == 0) {
+                currentDirection = true; // Richtung wieder vorwärts
+                ++currentFrame;
+            } else {
+                --currentFrame;
             }
-            calculateTextureCoordinates();
         }
+    } else {
+        currentFrame = (currentFrame + 1) % totalFrames;
     }
+    calculateTextureCoordinates();
 }
 
 void SpriteSheetAnimation::calculateTextureCoordinates() {
-    int row = 0;
-    Uint32 f = 0;
-    int col = 0;
+    const int cols = animationProperties.cols;
+    const int rows = animationProperties.rows;
+    if (cols <= 0 || rows <= 0) {
+        SDL_Log("Error: cols=%d, rows=%d müssen >0 sein", cols, rows);
+        return;
+    }
 
-    // Texturkoordinaten für aktuellen Frame berechnen
-    for (row = 0; row < animationProperties.rows; row++) {
-        for (col = 0; col < animationProperties.cols; col++) {
-            f++;
-            if (f == frame) {
-                // Top left
-                texturePosition[0] = (animationProperties.xoffset * static_cast<float>(col));
-                texturePosition[1] = (animationProperties.yoffset * static_cast<float>(row));
+    const Uint32 total = animationProperties.frames;
+    const Uint32 f = currentFrame >= total ? total - 1 : currentFrame;
 
-                // Weitere Texturkoordinaten berechnen
-                texturePosition[2] = texturePosition[0] + animationProperties.xoffset;
-                texturePosition[3] = texturePosition[1];
-                texturePosition[4] = texturePosition[2];
-                texturePosition[5] = texturePosition[1] + animationProperties.yoffset;
-                texturePosition[6] = texturePosition[0];
-                texturePosition[7] = texturePosition[5];
+    const Uint32 col = f % cols;
+    Uint32 row = f / cols;
 
-                // Padding anwenden wenn nötig - pxw und pxh müssen über texture-Objekt zugegriffen werden
-                if (animationProperties.padding) {
-                    const float padOffsetX = 1.0f / animationProperties.pxw;
-                    const float padOffsetY = 1.0f / animationProperties.pxh;
+    // Invertiere die Zeilenberechnung, um oben links zu starten
+    row = rows - 1 - row;
 
-                    texturePosition[0] += padOffsetX;
-                    texturePosition[1] += padOffsetY;
-                    texturePosition[2] -= padOffsetX;
-                    texturePosition[3] += padOffsetY;
-                    texturePosition[4] -= padOffsetX;
-                    texturePosition[5] -= padOffsetY;
-                    texturePosition[6] += padOffsetX;
-                    texturePosition[7] -= padOffsetY;
-                }
+    float x0 = animationProperties.xoffset * col;
+    float y0 = animationProperties.yoffset * row;
+    float x1 = x0 + animationProperties.xoffset;
+    float y1 = y0 + animationProperties.yoffset;
 
-                return;
-            }
-        }
+    currentTexturePosition[0] = x0;
+    currentTexturePosition[1] = y0;
+    currentTexturePosition[2] = x1;
+    currentTexturePosition[3] = y0;
+    currentTexturePosition[4] = x1;
+    currentTexturePosition[5] = y1;
+    currentTexturePosition[6] = x0;
+    currentTexturePosition[7] = y1;
+
+    if (animationProperties.padding) {
+        const float px = 1.0f / animationProperties.pxw;
+        const float py = 1.0f / animationProperties.pxh;
+        currentTexturePosition[0] += px;
+        currentTexturePosition[1] += py;
+        currentTexturePosition[2] -= px;
+        currentTexturePosition[3] += py;
+        currentTexturePosition[4] -= px;
+        currentTexturePosition[5] -= py;
+        currentTexturePosition[6] += px;
+        currentTexturePosition[7] -= py;
     }
 }

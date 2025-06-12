@@ -24,15 +24,14 @@ int main() {
     texture spriteSheetAnimation4{};
     texture spriteSheetAnimation5{};
 
-    SpriteSheetAnimation anim1(uvTest.animationProperties);
-    SpriteSheetAnimation anim2(spriteSheetAnimation1.animationProperties);
-    SpriteSheetAnimation anim3(spriteSheetAnimation2.animationProperties);
-    SpriteSheetAnimation anim4(spriteSheetAnimation3.animationProperties);
-    SpriteSheetAnimation anim5(spriteSheetAnimation4.animationProperties);
-    SpriteSheetAnimation anim6(spriteSheetAnimation5.animationProperties);
+    SpriteSheetAnimation anim1(spriteSheetAnimation1.animationProperties);
+    SpriteSheetAnimation anim2(spriteSheetAnimation2.animationProperties);
+    SpriteSheetAnimation anim3(spriteSheetAnimation3.animationProperties);
+    SpriteSheetAnimation anim4(spriteSheetAnimation4.animationProperties);
+    SpriteSheetAnimation anim5(spriteSheetAnimation5.animationProperties);
 
-    const std::filesystem::path texturePath1 = "../themes/default/gfx/ball/fireball";
-    const std::filesystem::path texturePath2 = "../themes/default/gfx/brick/doom";
+    const std::filesystem::path texturePath1 = "../tests/textures/Spritesheet-Test-1";
+    const std::filesystem::path texturePath2 = "../tests/textures/Spritesheet-Test-2";
     const std::filesystem::path texturePath3 = "../themes/default/gfx/brick/explosive";
     const std::filesystem::path texturePath4 = "../themes/default/gfx/powerup/aim";
     const std::filesystem::path texturePath5 = "../themes/default/gfx/powerup/gun";
@@ -46,7 +45,6 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    // Textur 1 laden
     if (!textureManager.loadTextureWithProperties(texturePath1, spriteSheetAnimation1)) {
         SDL_Log("Fehler beim Laden der Textur: %s", texturePath1.c_str());
         return EXIT_FAILURE;
@@ -75,16 +73,20 @@ int main() {
         SDL_Log("Fehler beim Laden der Textur: %s", texturePath5.c_str());
         return EXIT_FAILURE;
     }
+    SDL_Log("   - frames=%u, cols=%d, rows=%d",
+            spriteSheetAnimation5.animationProperties.frames,
+            spriteSheetAnimation5.animationProperties.cols,
+            spriteSheetAnimation5.animationProperties.rows);
 
-    anim2 = SpriteSheetAnimation(spriteSheetAnimation1.animationProperties);
-    anim3 = SpriteSheetAnimation(spriteSheetAnimation2.animationProperties);
-    anim4 = SpriteSheetAnimation(spriteSheetAnimation3.animationProperties);
-    anim5 = SpriteSheetAnimation(spriteSheetAnimation4.animationProperties);
-    anim6 = SpriteSheetAnimation(spriteSheetAnimation5.animationProperties);
+    anim1 = SpriteSheetAnimation(spriteSheetAnimation1.animationProperties);
+    anim2 = SpriteSheetAnimation(spriteSheetAnimation2.animationProperties);
+    anim3 = SpriteSheetAnimation(spriteSheetAnimation3.animationProperties);
+    anim4 = SpriteSheetAnimation(spriteSheetAnimation4.animationProperties);
+    anim5 = SpriteSheetAnimation(spriteSheetAnimation5.animationProperties);
 
     std::vector<std::string> instructions = {
-        "1: Fireball",
-        "2: Doom brick",
+        "1: bidir = 0",
+        "2: bidir = 1",
         "3: Explosive brick",
         "4: Aim Powerup",
         "5: Gun Powerup",
@@ -93,22 +95,25 @@ int main() {
     };
 
     // Alle Animationen starten
-    anim2.playing = true;
-    anim3.playing = true;
-    anim4.playing = true;
-    anim5.playing = true;
-    anim6.playing = true;
+    anim1.isPlaying = false;
+    anim2.isPlaying = false;
+    anim3.isPlaying = false;
+    anim4.isPlaying = false;
+    anim5.isPlaying = false;
 
-    int currentTexture = 1; // Start mit Textur 1
-    bool animationPaused = false;
+    int currentTexture = 1;
 
-    // Pointer auf die aktuell aktive Animation
-    SpriteSheetAnimation *currentAnimation = &anim2;
+    SpriteSheetAnimation *currentAnimation = &anim1;
     texture *currentTextureObj = &spriteSheetAnimation1;
-    Uint32 lastTime = SDL_GetTicks();
+
     bool running = true;
+    auto lastFrameTime = std::chrono::high_resolution_clock::now();
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
     while (running) {
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+        lastFrameTime = currentTime;
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -128,31 +133,31 @@ int main() {
                             running = false;
                             break;
                         case SDLK_SPACE:
-                            animationPaused = !animationPaused;
+                            currentAnimation->isPlaying = !currentAnimation->isPlaying;
                             break;
                         case SDLK_1:
                             currentTexture = 1;
-                            currentAnimation = &anim2;
+                            currentAnimation = &anim1;
                             currentTextureObj = &spriteSheetAnimation1;
                             break;
                         case SDLK_2:
                             currentTexture = 2;
-                            currentAnimation = &anim3;
+                            currentAnimation = &anim2;
                             currentTextureObj = &spriteSheetAnimation2;
                             break;
                         case SDLK_3:
                             currentTexture = 3;
-                            currentAnimation = &anim4;
+                            currentAnimation = &anim3;
                             currentTextureObj = &spriteSheetAnimation3;
                             break;
                         case SDLK_4:
                             currentTexture = 4;
-                            currentAnimation = &anim5;
+                            currentAnimation = &anim4;
                             currentTextureObj = &spriteSheetAnimation4;
                             break;
                         case SDLK_5:
                             currentTexture = 5;
-                            currentAnimation = &anim6;
+                            currentAnimation = &anim5;
                             currentTextureObj = &spriteSheetAnimation5;
                             break;
                         default:
@@ -161,21 +166,10 @@ int main() {
                 }
             }
         }
-        // Zeit für Animation aktualisieren
-        const Uint32 currentTime = SDL_GetTicks();
-        const float deltaTime = (currentTime - lastTime) / 1000.0f; // in Sekunden
-        lastTime = currentTime;
-
-        // Animation aktualisieren
-        if (!animationPaused) {
-            anim2.play(deltaTime);
-            anim3.play(deltaTime);
-            anim4.play(deltaTime);
-            anim5.play(deltaTime);
-            anim6.play(deltaTime);
+        if (currentAnimation->isPlaying) {
+            currentAnimation->play(deltaTime);
         }
 
-        // Rendern
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Hier die Textur zeichnen
@@ -216,19 +210,19 @@ int main() {
         glBegin(GL_QUADS);
 
         // Bottom-left corner
-        glTexCoord2f(currentAnimation->texturePosition[0], currentAnimation->texturePosition[1]);
+        glTexCoord2f(currentAnimation->currentTexturePosition[0], currentAnimation->currentTexturePosition[1]);
         glVertex2f(-0.5f, -0.5f);
 
         // Bottom-right corner
-        glTexCoord2f(currentAnimation->texturePosition[2], currentAnimation->texturePosition[3]);
+        glTexCoord2f(currentAnimation->currentTexturePosition[2], currentAnimation->currentTexturePosition[3]);
         glVertex2f(0.5f, -0.5f);
 
         // Top-right corner
-        glTexCoord2f(currentAnimation->texturePosition[4], currentAnimation->texturePosition[5]);
+        glTexCoord2f(currentAnimation->currentTexturePosition[4], currentAnimation->currentTexturePosition[5]);
         glVertex2f(0.5f, 0.5f);
 
         // Top-left corner
-        glTexCoord2f(currentAnimation->texturePosition[6], currentAnimation->texturePosition[7]);
+        glTexCoord2f(currentAnimation->currentTexturePosition[6], currentAnimation->currentTexturePosition[7]);
         glVertex2f(-0.5f, 0.5f);
 
         glEnd();
@@ -244,9 +238,9 @@ int main() {
 
         std::string textureName;
         switch (currentTexture) {
-            case 1: textureName = "Fireball";
+            case 1: textureName = "bidir = 0";
                 break;
-            case 2: textureName = "Doom Brick";
+            case 2: textureName = "bidir = 1";
                 break;
             case 3: textureName = "Explosive Brick";
                 break;
@@ -261,11 +255,13 @@ int main() {
         std::string statusText = "Current Texture: " + textureName;
         textManager.write(statusText, Fonts::Menu, true, 0.8f, 0.0f, -0.7f);
 
-        std::string animationStatus = animationPaused ? "Animation: paused" : "Animation: running";
+        std::string animationStatus = currentAnimation->isPlaying ? "Animation: running" : "Animation: paused";
         textManager.write(animationStatus, Fonts::Menu, true, 0.7f, 0.0f, -0.8f);
 
+        textManager.write("A1", Fonts::IntroHighscore, false, 1.0f, -1.0f, -0.9f);
         SDL_GL_SwapWindow(displayManager.sdlWindow);
     }
+
     glDeleteTextures(1, &uvTest.textureProperties.id);
     glDeleteTextures(1, &spriteSheetAnimation1.textureProperties.id);
     glDeleteTextures(1, &spriteSheetAnimation2.textureProperties.id);

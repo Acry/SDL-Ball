@@ -31,13 +31,13 @@ void powerupDescriptionClass::draw() const {
               tex->textureProperties.glTexColorInfo[2],
               tex->textureProperties.glTexColorInfo[3]);
     glBegin(GL_QUADS);
-    glTexCoord2f(tex->texturePosition[0], tex->texturePosition[1]);
+    glTexCoord2f(tex->currentTexturePosition[0], tex->currentTexturePosition[1]);
     glVertex3f(-width + pos_x, height + pos_y, 0.00); // top left
-    glTexCoord2f(tex->texturePosition[2], tex->texturePosition[3]);
+    glTexCoord2f(tex->currentTexturePosition[2], tex->currentTexturePosition[3]);
     glVertex3f(width + pos_x, height + pos_y, 0.00); // top right
-    glTexCoord2f(tex->texturePosition[4], tex->texturePosition[5]);
+    glTexCoord2f(tex->currentTexturePosition[4], tex->currentTexturePosition[5]);
     glVertex3f(width + pos_x, -height + pos_y, 0.00); // bottom right
-    glTexCoord2f(tex->texturePosition[6], tex->texturePosition[7]);
+    glTexCoord2f(tex->currentTexturePosition[6], tex->currentTexturePosition[7]);
     glVertex3f(-width + pos_x, -height + pos_y, 0.00); // bottom left
     glEnd();
     glDisable(GL_TEXTURE_2D);

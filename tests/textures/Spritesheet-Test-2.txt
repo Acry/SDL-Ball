@@ -1,0 +1,12 @@
+file=textures/Spritesheet-Test-1.png
+ticks=1000
+cols=2
+rows=2
+xoffset=0.5
+yoffset=0.5
+frames=4
+playing=1
+bidir=1
+padding=0
+texcolor=FFFFFFFF
+parcolor=FFFFFF //no effect
