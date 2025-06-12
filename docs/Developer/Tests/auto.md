@@ -1,3 +1,5 @@
+# automatic tests
+
 // Hilfsfunktion zum Überprüfen des Vorhandenseins und Erstellens von Testverzeichnissen
 bool setupTestEnvironment(const std::string& basePath) {
 // Überprüfe, ob Basis-Testverzeichnis existiert, sonst erstelle es

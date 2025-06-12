@@ -71,7 +71,7 @@ public:
 
     void updateAnnouncements(const float deltaTime);
 
-    void drawAnnouncements(const float deltaTime);
+    void drawAnnouncements(const float deltaTime) const;
 
     size_t getAnnouncementCount() const;
 };

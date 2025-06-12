@@ -23,51 +23,33 @@ bool BackgroundManager::updateBgIfNeeded(Uint32 level) {
     bool textureChanged = false;
     level += 1;
 
-    SpriteSheetAnimation newTexture;
+    texture *newTexture = nullptr;
 
     if (level >= maxLevel) {
-        const SpriteSheetAnimation *background = textureManager->getBackground(bgCount - 1);
-        if (!background) {
+        newTexture = textureManager->getBackground(bgCount - 1);
+        if (!newTexture) {
             SDL_Log("Error: Could not get final background texture");
             return false;
         }
-        newTexture = *background;
     } else {
         const size_t regularBgCount = bgCount - 1;
         const size_t levelsPerBg = maxLevel / regularBgCount;
         const size_t bgIndex = (level - 1) / levelsPerBg;
         const size_t safeBgIndex = std::min(bgIndex, regularBgCount - 1);
 
-        const SpriteSheetAnimation *background = textureManager->getBackground(safeBgIndex);
-        if (!background) {
+        newTexture = textureManager->getBackground(safeBgIndex);
+        if (!newTexture) {
             SDL_Log("Error: Could not get background texture for index %zu", bgIndex);
             return false;
         }
-        newTexture = *background;
     }
 
-    textureChanged = (texture.textureProperties.texture != newTexture.textureProperties.texture);
+    textureChanged = (currentTexture == nullptr || currentTexture->textureProperties.id != newTexture->textureProperties
+                      .id);
 
     if (textureChanged || showBackgroundOverlay) {
-        texture = newTexture;
-
-        if (backgroundDisplayList != 0) {
-            glDeleteLists(backgroundDisplayList, 1);
-        }
-
-        if (showBackgroundOverlay) {
-            for (auto &[r, g, b, a]: colors) {
-                r = randomFloat(1.0f, 0.0f);
-                g = randomFloat(1.0f, 0.0f);
-                b = randomFloat(1.0f, 0.0f);
-                a = 1.0f;
-            }
-        }
-
-        backgroundDisplayList = glGenLists(1);
-        glNewList(backgroundDisplayList, GL_COMPILE);
-        drawQuad();
-        glEndList();
+        currentTexture = newTexture;
+        createDisplayList();
     }
 
     return true;
@@ -80,11 +62,12 @@ void BackgroundManager::draw() const {
 }
 
 void BackgroundManager::drawQuad() const {
+    if (!currentTexture) return;
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D, texture.textureProperties.texture);
+    glBindTexture(GL_TEXTURE_2D, currentTexture->textureProperties.id);
 
     glBegin(GL_QUADS);
 
@@ -137,4 +120,29 @@ void BackgroundManager::registerEvents(IEventManager *em) {
     eventManager->addListener(GameEvent::LevelThemeChanged, [this](const LevelThemeData &data) {
         this->maxLevel = data.maxLevel;
     }, this);
+}
+
+void BackgroundManager::setBackgroundOverlayEnabled(const bool enabled) {
+    showBackgroundOverlay = enabled;
+    createDisplayList();
+}
+
+void BackgroundManager::createDisplayList() {
+    if (backgroundDisplayList != 0) {
+        glDeleteLists(backgroundDisplayList, 1);
+    }
+
+    if (showBackgroundOverlay) {
+        for (auto &[r, g, b, a]: colors) {
+            r = randomFloat(1.0f, 0.0f);
+            g = randomFloat(1.0f, 0.0f);
+            b = randomFloat(1.0f, 0.0f);
+            a = 1.0f;
+        }
+    }
+
+    backgroundDisplayList = glGenLists(1);
+    glNewList(backgroundDisplayList, GL_COMPILE);
+    drawQuad();
+    glEndList();
 }

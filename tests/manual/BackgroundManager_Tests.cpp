@@ -38,7 +38,7 @@ public:
                     textManager->addAnnouncement("Error changing theme", 1500, Fonts::AnnounceBad);
                 } else {
                     textManager->addAnnouncement("Theme changed", 1500, Fonts::AnnounceGood);
-                    // levelManager.loadLevel(currentLevel);
+                    backgroundManager->updateBgIfNeeded(currentLevel);
                 }
                 useDefaultTheme = !useDefaultTheme;
                 break;
@@ -78,6 +78,7 @@ public:
 
 int main() {
     EventManager eventManager;
+
     MouseManager mouseManager(&eventManager);
     DisplayManager displayManager(&eventManager);
     if (!displayManager.init(0, 1024, 768, false)) {
@@ -88,15 +89,11 @@ int main() {
 
     const std::filesystem::path themePath = "../themes/default";
 
-    TextManager textManager;
-    if (!textManager.setTheme(themePath)) {
-        SDL_Log("Error loading font theme %s", themePath.c_str());
-        return EXIT_FAILURE;
+    textManager = new TextManager;
+    if (!textManager->setTheme("../tests/themes/test")) {
+        SDL_Log("Fehler beim Laden des Font-Themes");
     }
-
-    const EventDispatcher eventDispatcher(&eventManager);
-    const MyTestHelper testHelper(textManager, &eventManager);
-
+    const MyTestHelper testHelper(*textManager, &eventManager);
     textureManager = new TextureManager();
 
     if (!textureManager->setBackgroundTheme(themePath)) {
@@ -114,6 +111,8 @@ int main() {
 
     levelManager->loadLevel(currentLevel);
 
+    const EventDispatcher eventDispatcher(&eventManager);
+
     const std::vector<std::string> instructions = {
         "Rendering Background based on level",
         "M: Toggle Mouse Coordinates",
@@ -127,30 +126,15 @@ int main() {
         "ESC: Quit"
     };
 
-    Uint32 lastTime = SDL_GetTicks();
-    float deltaTime = 0.0f;
     levelCount = levelManager->getLevelCount();
     bool running = true;
+    auto lastFrameTime = std::chrono::high_resolution_clock::now();
     while (running) {
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+        lastFrameTime = currentTime;
         running = eventDispatcher.processEvents();
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym) {
-                    default: ;
-                }
-            }
-        }
-        // Aktuellen Zeitpunkt abrufen
-        Uint32 currentTime = SDL_GetTicks();
-        deltaTime = (currentTime - lastTime) / 1000.0f;
-        // Alle 5 Sekunden Level erhöhen und Hintergrund aktualisieren
-        // if (currentTime - lastTime >= 5000) {
-        //     currentLevel++;
-        //     if (currentLevel > 50) currentLevel = 1; // Optional: Zurücksetzen nach Level 50
-        //     SDL_Log("Level erhöht auf: %d", currentLevel);
-        //     lastTime = currentTime;
-        // }
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         backgroundManager->draw();
         testHelper.renderInstructions(deltaTime, instructions);
@@ -159,13 +143,12 @@ int main() {
 
         char tempTexto[64];
         sprintf(tempTexto, "Overlay: %s", backgroundManager->isBackgroundOverlayEnabled() ? "ON" : "OFF");
-        textManager.write(tempTexto, Fonts::Highscore, true, 0.5f, 0.0f, -0.4f);
+        textManager->write(tempTexto, Fonts::Highscore, true, 0.5f, 0.0f, -0.4f);
 
         char tempText[64];
         sprintf(tempText, "Level: %lu", currentLevel);
-        textManager.write(tempText, Fonts::Highscore, true, 1.0f, 0.0f, -0.5f);
+        textManager->write(tempText, Fonts::Highscore, true, 1.0f, 0.0f, -0.5f);
         testHelper.drawMouseCoordinates();
-
         SDL_GL_SwapWindow(displayManager.sdlWindow);
     }
     return EXIT_SUCCESS;

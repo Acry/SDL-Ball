@@ -4,7 +4,6 @@
 #include <SDL2/SDL_image.h>
 #include <filesystem>
 #include <fstream>
-#include <unordered_set>
 #include "TextureUtilities.h"
 #include "TextureManager.h"
 
@@ -14,22 +13,35 @@
 
 TextureProperty getPropertyFromString(const std::string &key) {
     static const std::unordered_map<std::string, TextureProperty> propertyMap = {
-        {"xoffset", TextureProperty::XOffset},
-        {"yoffset", TextureProperty::YOffset},
-        {"cols", TextureProperty::Cols},
-        {"rows", TextureProperty::Rows},
-        {"ticks", TextureProperty::Ticks},
-        {"frames", TextureProperty::Frames},
-        {"bidir", TextureProperty::Bidir},
-        {"playing", TextureProperty::Playing},
-        {"padding", TextureProperty::Padding},
-        {"texcolor", TextureProperty::TexColor},
-        {"parcolor", TextureProperty::ParColor},
+        {"texcolor", TextureProperty::TextureColor},
+        {"parcolor", TextureProperty::ParticleColor},
         {"file", TextureProperty::FileName}
     };
 
-    auto it = propertyMap.find(key);
-    return it != propertyMap.end() ? it->second : TextureProperty::Unknown;
+    if (const auto texIt = propertyMap.find(key); texIt != propertyMap.end()) {
+        return texIt->second;
+    }
+
+    return TextureProperty::Unknown;
+}
+
+AnimationProperty getAnimPropertyFromString(const std::string &key) {
+    static const std::unordered_map<std::string, AnimationProperty> animPropertyMap = {
+        {"xoffset", AnimationProperty::XOffset},
+        {"yoffset", AnimationProperty::YOffset},
+        {"cols", AnimationProperty::Cols},
+        {"rows", AnimationProperty::Rows},
+        {"ticks", AnimationProperty::Ticks},
+        {"frames", AnimationProperty::Frames},
+        {"bidir", AnimationProperty::Bidir},
+        {"playing", AnimationProperty::Playing},
+        {"padding", AnimationProperty::Padding},
+        {"pxw", AnimationProperty::PixelWidth},
+        {"pxh", AnimationProperty::PixelHeight}
+    };
+
+    const auto it = animPropertyMap.find(key);
+    return it != animPropertyMap.end() ? it->second : AnimationProperty::Unknown;
 }
 
 GLuint getGLFormat(const SDL_Surface *surface) {
@@ -63,7 +75,7 @@ TextureManager::~TextureManager() {
     clearTheme();
 }
 
-bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const {
+bool TextureManager::load(const std::filesystem::path &pathName, texture &tex) const {
     SDL_Surface *tempSurface = IMG_Load(pathName.c_str());
     if (!tempSurface) {
         SDL_Log("Error: no image file: %s", pathName.c_str());
@@ -81,19 +93,22 @@ bool TextureManager::load(const std::filesystem::path &pathName, SpriteSheetAnim
         return false;
     }
 
-    if (!TextureUtilities::createGLTextureFromSurface(tempSurface, tex.textureProperties.texture, true)) {
+    if (!TextureUtilities::createGLTextureFromSurface(tempSurface, tex.textureProperties.id, true)) {
         SDL_FreeSurface(tempSurface);
         return false;
     }
 
-    tex.textureProperties.pxw = tempSurface->w;
-    tex.textureProperties.pxh = tempSurface->h;
+    tex.animationProperties.pxw = tempSurface->w;
+    tex.animationProperties.pxh = tempSurface->h;
     SDL_FreeSurface(tempSurface);
 
     return true;
 }
 
-bool TextureManager::readTextureProperties(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) {
+bool TextureManager::readTextureProperties(
+    const std::filesystem::path &pathName,
+    TextureResource &texResource,
+    SpriteSheetAnimationProperties &animProps) {
     std::ifstream f(pathName);
 
     if (!f.is_open()) {
@@ -127,74 +142,87 @@ bool TextureManager::readTextureProperties(const std::filesystem::path &pathName
         value.erase(0, value.find_first_not_of(" \t"));
         value.erase(value.find_last_not_of(" \t") + 1);
 
-        TextureProperty property = getPropertyFromString(key);
-
-        // Überspringen, wenn diese Eigenschaft bereits verarbeitet wurde
-        if (std::unordered_set<TextureProperty> processedProperties; processedProperties.contains(property)) {
-            SDL_Log("Warning: Duplicate property '%s' in '%s' - ignoring", key.c_str(), pathName.c_str());
-            continue;
-        }
 
         try {
-            switch (property) {
-                case TextureProperty::XOffset:
-                    tex.textureProperties.xoffset = std::stof(value);
-                    break;
-                case TextureProperty::YOffset:
-                    tex.textureProperties.yoffset = std::stof(value);
-                    break;
-                case TextureProperty::Cols:
-                    tex.textureProperties.cols = std::stoi(value);
-                    break;
-                case TextureProperty::Rows:
-                    tex.textureProperties.rows = std::stoi(value);
-                    break;
-                case TextureProperty::Ticks:
-                    tex.textureProperties.ticks = std::stoi(value);
-                    break;
-                case TextureProperty::Frames:
-                    tex.textureProperties.frames = std::stoi(value);
-                    break;
-                case TextureProperty::Bidir:
-                    tex.textureProperties.direction = std::stoi(value) != 0;
-                    break;
-                case TextureProperty::Playing:
-                    tex.textureProperties.playing = std::stoi(value) != 0;
-                    break;
-                case TextureProperty::Padding:
-                    tex.textureProperties.padding = std::stoi(value) != 0;
-                    break;
-                case TextureProperty::TexColor:
-                    if (value.length() >= 8) {
-                        constexpr float normalizer = 1.0f / 255.0f;
-                        tex.textureProperties.glTexColorInfo[0] =
-                                static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
-                        tex.textureProperties.glTexColorInfo[1] =
-                                static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
-                        tex.textureProperties.glTexColorInfo[2] =
-                                static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
-                        tex.textureProperties.glTexColorInfo[3] =
-                                static_cast<float>(std::stoi(value.substr(6, 2), nullptr, 16)) * normalizer;
-                    }
-                    break;
-                case TextureProperty::ParColor:
-                    if (value.length() >= 6) {
-                        constexpr float normalizer = 1.0f / 255.0f;
-                        tex.textureProperties.glParColorInfo[0] =
-                                static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
-                        tex.textureProperties.glParColorInfo[1] =
-                                static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
-                        tex.textureProperties.glParColorInfo[2] =
-                                static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
-                    }
-                    break;
-                case TextureProperty::FileName:
-                    tex.textureProperties.fileName = value;
-                    break;
-                case TextureProperty::Unknown:
-                    SDL_Log("Warning: '%s' hat unknown property key: '%s' with value: '%s'",
-                            pathName.c_str(), key.c_str(), value.c_str());
-                    break;
+            // Prüfen, ob es eine TextureProperty ist
+            TextureProperty texProperty = getPropertyFromString(key);
+
+            if (texProperty != TextureProperty::Unknown) {
+                // TextureResource-Properties verarbeiten
+                switch (texProperty) {
+                    case TextureProperty::TextureColor:
+                        if (value.length() >= 8) {
+                            constexpr float normalizer = 1.0f / 255.0f;
+                            texResource.textureColor[0] =
+                                    static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
+                            texResource.textureColor[1] =
+                                    static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
+                            texResource.textureColor[2] =
+                                    static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
+                            texResource.textureColor[3] =
+                                    static_cast<float>(std::stoi(value.substr(6, 2), nullptr, 16)) * normalizer;
+                        }
+                        break;
+                    case TextureProperty::ParticleColor:
+                        if (value.length() >= 6) {
+                            constexpr float normalizer = 1.0f / 255.0f;
+                            texResource.particleColor[0] =
+                                    static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
+                            texResource.particleColor[1] =
+                                    static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
+                            texResource.particleColor[2] =
+                                    static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
+                        }
+                        break;
+                    case TextureProperty::FileName:
+                        texResource.fileName = value;
+                        break;
+                    case TextureProperty::Unknown:
+                        SDL_Log("Warning: '%s' hat unknown property key: '%s' with value: '%s'",
+                                pathName.c_str(), key.c_str(), value.c_str());
+                        break;
+                }
+            } else {
+                // AnimationProperty verarbeiten
+                switch (AnimationProperty animProperty = getAnimPropertyFromString(key)) {
+                    case AnimationProperty::XOffset:
+                        animProps.xoffset = std::stof(value);
+                        break;
+                    case AnimationProperty::YOffset:
+                        animProps.yoffset = std::stof(value);
+                        break;
+                    case AnimationProperty::Cols:
+                        animProps.cols = std::stoi(value);
+                        break;
+                    case AnimationProperty::Rows:
+                        animProps.rows = std::stoi(value);
+                        break;
+                    case AnimationProperty::Ticks:
+                        animProps.ticks = std::stoi(value);
+                        break;
+                    case AnimationProperty::Frames:
+                        animProps.frames = std::stoi(value);
+                        break;
+                    case AnimationProperty::Bidir:
+                        animProps.bidir = std::stoi(value) != 0;
+                        break;
+                    case AnimationProperty::Playing:
+                        animProps.playing = std::stoi(value) != 0;
+                        break;
+                    case AnimationProperty::Padding:
+                        animProps.padding = std::stoi(value) != 0;
+                        break;
+                    case AnimationProperty::PixelWidth:
+                        animProps.pxw = std::stof(value);
+                        break;
+                    case AnimationProperty::PixelHeight:
+                        animProps.pxh = std::stof(value);
+                        break;
+                    case AnimationProperty::Unknown:
+                        SDL_Log("Warning: '%s' hat unknown property key: '%s' with value: '%s'",
+                                pathName.c_str(), key.c_str(), value.c_str());
+                        break;
+                }
             }
         } catch (const std::exception &e) {
             SDL_Log("Error parsing property '%s' in '%s': %s", key.c_str(), pathName.c_str(), e.what());
@@ -244,7 +272,7 @@ bool TextureManager::setBackgroundTheme(const std::string &themeName) {
 void TextureManager::clearTheme() {
     for (auto &val: textureCache | std::views::values) {
         if (val) {
-            glDeleteTextures(1, &val->textureProperties.texture);
+            glDeleteTextures(1, &val->textureProperties.id);
         }
     }
 
@@ -259,12 +287,12 @@ void TextureManager::clearTheme() {
     for (auto &tex: titleTextures) tex = nullptr;
 }
 
-SpriteSheetAnimation *TextureManager::loadAndCacheTexture(const std::string &path, const bool forceReload) {
+texture *TextureManager::loadAndCacheTexture(const std::string &path, const bool forceReload) {
     if (!forceReload && textureCache.contains(path)) {
         return textureCache[path].get();
     }
 
-    auto newTexture = std::make_unique<SpriteSheetAnimation>();
+    auto newTexture = std::make_unique<texture>();
 
     const std::string fullPath = currentTheme + "/" + path;
 
@@ -278,41 +306,41 @@ SpriteSheetAnimation *TextureManager::loadAndCacheTexture(const std::string &pat
     return textureCache[path].get();
 }
 
-SpriteSheetAnimation *TextureManager::getTexture(const std::string &texturePath, const bool forceReload) {
+texture *TextureManager::getTexture(const std::string &texturePath, const bool forceReload) {
     return loadAndCacheTexture(texturePath, forceReload);
 }
 
-SpriteSheetAnimation *TextureManager::getPaddleTexture(PaddleTexture type) const {
+texture *TextureManager::getPaddleTexture(PaddleTexture type) const {
     const auto index = static_cast<size_t>(type);
     if (index >= paddleTextures.size()) return nullptr;
     return paddleTextures[index];
 }
 
-SpriteSheetAnimation *TextureManager::getBallTexture(BallTexture type) const {
+texture *TextureManager::getBallTexture(BallTexture type) const {
     const auto index = static_cast<size_t>(type);
     if (index >= ballTextures.size()) return nullptr;
     return ballTextures[index];
 }
 
-SpriteSheetAnimation *TextureManager::getBrickTexture(BrickTexture type) const {
+texture *TextureManager::getBrickTexture(BrickTexture type) const {
     const auto index = static_cast<size_t>(type);
     if (index >= brickTextures.size()) return nullptr;
     return brickTextures[index];
 }
 
-SpriteSheetAnimation *TextureManager::getPowerUpTexture(PowerUpTexture type) const {
+texture *TextureManager::getPowerUpTexture(PowerUpTexture type) const {
     const auto index = static_cast<size_t>(type);
     if (index >= powerUpTextures.size()) return nullptr;
     return powerUpTextures[index];
 }
 
-SpriteSheetAnimation *TextureManager::getEffectTexture(EffectTexture type) const {
+texture *TextureManager::getEffectTexture(EffectTexture type) const {
     const auto index = static_cast<size_t>(type);
     if (index >= effectTextures.size()) return nullptr;
     return effectTextures[index];
 }
 
-SpriteSheetAnimation *TextureManager::getMiscTexture(MiscTexture type) const {
+texture *TextureManager::getMiscTexture(MiscTexture type) const {
     const auto index = static_cast<size_t>(type);
     if (index >= miscTextures.size()) return nullptr;
     return miscTextures[index];
@@ -434,28 +462,31 @@ bool TextureManager::loadAllGameTextures() {
     return allTexturesLoaded;
 }
 
-bool TextureManager::loadTextureWithProperties(const std::string &basePath, SpriteSheetAnimation &animation) const {
+bool TextureManager::loadTextureWithProperties(const std::string &basePath, texture &tex) const {
     // 1. load properties
     const std::filesystem::path propsPath = basePath + ".txt";
+    auto animProps = std::make_unique<SpriteSheetAnimationProperties>();
+    auto texResource = std::make_unique<TextureResource>();
+
     bool hasProps = false;
     bool textureLoaded = false;
     std::filesystem::path actualImagePath;
 
     if (std::filesystem::exists(propsPath)) {
         hasProps = true;
-        if (!readTextureProperties(propsPath, animation)) {
+        if (!readTextureProperties(propsPath, *texResource, *animProps)) {
             hasProps = false;
             SDL_Log("Warning: no properties '%s'", propsPath.c_str());
         }
 
         // 2. get image from textureProperties.fileName
-        if (!animation.textureProperties.fileName.empty()) {
+        if (!tex.textureProperties.fileName.empty()) {
             const std::filesystem::path basePath_path(basePath);
             const std::filesystem::path themeRoot = basePath_path.parent_path().parent_path();
-            actualImagePath = themeRoot / animation.textureProperties.fileName;
+            actualImagePath = themeRoot / tex.textureProperties.fileName;
 
             if (std::filesystem::exists(actualImagePath)) {
-                if (load(actualImagePath, animation)) {
+                if (load(actualImagePath, tex)) {
                     textureLoaded = true;
                 } else {
                     SDL_Log("Error: the image in the property couldn't be read: '%s'",
@@ -469,7 +500,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
     if (!textureLoaded) {
         for (const auto &format: supportedFormats) {
             if (std::filesystem::path texturePath = basePath + format; std::filesystem::exists(texturePath)) {
-                if (load(texturePath, animation)) {
+                if (load(texturePath, tex)) {
                     textureLoaded = true;
                     actualImagePath = texturePath;
                     break;
@@ -480,9 +511,9 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
 
     // 4. Fehlerbehandlung nach den genannten Regeln
     if (!textureLoaded) {
-        if (hasProps && !animation.textureProperties.fileName.empty()) {
+        if (hasProps && !tex.textureProperties.fileName.empty()) {
             SDL_Log("Error: Die in der Eigenschaftsdatei angegebene Bilddatei existiert nicht: '%s'",
-                    animation.textureProperties.fileName.c_str());
+                    tex.textureProperties.fileName.c_str());
         } else if (hasProps) {
             SDL_Log("Error: Eigenschaftsdatei gefunden, aber keine 'file=' Angabe oder die Datei existiert nicht: '%s'",
                     propsPath.c_str());
@@ -497,28 +528,27 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
         SDL_Log("Warning: no properties '%s'", actualImagePath.c_str());
 
         // Standardwerte für Textureigenschaften setzen
-        animation.textureProperties.ticks = 1000;
-        animation.textureProperties.cols = 1;
-        animation.textureProperties.rows = 1;
-        animation.textureProperties.xoffset = 1.0f;
-        animation.textureProperties.yoffset = 1.0f;
-        animation.textureProperties.frames = 1;
-        animation.textureProperties.playing = false;
-        animation.textureProperties.direction = false;
-        animation.textureProperties.padding = false;
+        tex.animationProperties.ticks = 1000;
+        tex.animationProperties.cols = 1;
+        tex.animationProperties.rows = 1;
+        tex.animationProperties.xoffset = 1.0f;
+        tex.animationProperties.yoffset = 1.0f;
+        tex.animationProperties.frames = 1;
+        tex.animationProperties.playing = false;
+        tex.animationProperties.padding = false;
 
         // Standardfarben setzen (weiß)
         for (int i = 0; i < 3; i++) {
-            animation.textureProperties.glTexColorInfo[i] = 1.0f;
-            animation.textureProperties.glParColorInfo[i] = 1.0f;
+            tex.textureProperties.textureColor[i] = 1.0f;
+            tex.textureProperties.particleColor[i] = 1.0f;
         }
-        animation.textureProperties.glTexColorInfo[3] = 1.0f;
+        tex.textureProperties.textureColor[3] = 1.0f;
     }
 
     // 6. check colors and set fallback if not set
     bool hasColor = false;
-    for (const float i: animation.textureProperties.glTexColorInfo) {
-        if (i > 0.0f) {
+    for (int i = 0; i < 4; i++) {
+        if (tex.textureProperties.textureColor[i] > 0.0f) {
             hasColor = true;
             break;
         }
@@ -526,10 +556,10 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, Spri
     if (!hasColor) {
         SDL_Log("Warning: No texture color set in '%s', using white", basePath.c_str());
         for (int i = 0; i < 3; i++) {
-            animation.textureProperties.glTexColorInfo[i] = 1.0f;
-            animation.textureProperties.glParColorInfo[i] = 1.0f;
+            tex.textureProperties.textureColor[i] = 1.0f;
+            tex.textureProperties.particleColor[i] = 1.0f;
         }
-        animation.textureProperties.glTexColorInfo[3] = 1.0f;
+        tex.textureProperties.textureColor[3] = 1.0f;
     }
     return true;
 }
@@ -611,10 +641,10 @@ bool TextureManager::loadAllBackgrounds() {
     for (const auto &entry: entries) {
         const std::string filePath = entry.path().string();
         if (!backgroundCache.contains(filePath)) {
-            auto animation = std::make_unique<SpriteSheetAnimation>();
-            if (load(filePath, *animation)) {
-                backgroundTextures.push_back(animation.get());
-                backgroundCache[filePath] = std::move(animation);
+            auto tex = std::make_unique<texture>();
+            if (load(filePath, *tex)) {
+                backgroundTextures.push_back(tex.get());
+                backgroundCache[filePath] = std::move(tex);
             } else {
                 SDL_Log("Error: Failed to load background texture '%s'", filePath.c_str());
             }
@@ -629,14 +659,14 @@ bool TextureManager::loadAllBackgrounds() {
 void TextureManager::clearBackgroundTheme() {
     for (auto &val: backgroundCache | std::views::values) {
         if (val) {
-            glDeleteTextures(1, &val->textureProperties.texture);
+            glDeleteTextures(1, &val->textureProperties.id);
         }
     }
     backgroundTextures.clear();
     backgroundCache.clear();
 }
 
-SpriteSheetAnimation *TextureManager::getBackground(const size_t index) const {
+texture *TextureManager::getBackground(const size_t index) const {
     if (index < backgroundTextures.size()) {
         return backgroundTextures[index];
     }

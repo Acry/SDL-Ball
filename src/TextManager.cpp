@@ -53,13 +53,13 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     SDL_Rect src = {0, 0, 0, 0}, dst = {0, 0, 0, 0};
     const int fontIndex = static_cast<int>(font);
 
-    TTF_SetFontHinting(ttfFont, TTF_HINTING_LIGHT_SUBPIXEL);
+    //TTF_SetFontHinting(ttfFont, TTF_HINTING_LIGHT_SUBPIXEL);
 
     const int ascent = TTF_FontAscent(ttfFont); // Obere Höhe über der Baseline
     const int descent = TTF_FontDescent(ttfFont); // Untere Höhe unter der Baseline
     const int lineSkip = TTF_FontLineSkip(ttfFont); // Empfohlener Zeilenabstand
 
-    constexpr int surfaceDim = 1024; // Size of the surface to render the font to
+    constexpr int surfaceDim = 2048; // Size of the surface to render the font to
     SDL_Surface *targetSurface = SDL_CreateRGBSurfaceWithFormat(0, surfaceDim, surfaceDim, 32, SDL_PIXELFORMAT_RGBA32);
 
     dst.x = 0;
@@ -69,12 +69,15 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     float highestCharacter = 0.0f;
     // ASCII printable characters (character code 32-127) - see man ascii
     for (Uint32 i = 32; i < CHARS; i++) {
+        tempChar[0] = static_cast<char>(i);
         constexpr float referenceWidth = 1024.0f; // Reference width for normalization
         constexpr SDL_Color white = {255, 255, 255, 255};
-        tempChar[0] = static_cast<char>(i);
-
-        // Render character to surface
+#if DEBUG_ATLAS
+        constexpr SDL_Color grey = {50, 50, 50, 255};
+        SDL_Surface *character = TTF_RenderText_Shaded(ttfFont, tempChar, white, grey);
+#else
         SDL_Surface *character = TTF_RenderText_Blended(ttfFont, tempChar, white);
+#endif
         SDL_SetSurfaceAlphaMod(character, 0xFF);
         TTF_SizeText(ttfFont, tempChar, &characterWidth, &characterHeight);
 
@@ -361,8 +364,7 @@ bool TextManager::createFontTextures(const std::map<std::string, std::string> &f
         if (sizeIt == fontSizes.end()) continue;
 
         // Font-Typ ermitteln und Textur generieren
-        Fonts fontType = getFontTypeFromKey(sizeKey);
-        if (fontType != Fonts::Count) {
+        if (const Fonts fontType = getFontTypeFromKey(sizeKey); fontType != Fonts::Count) {
             if (!genFontTex(fileName, sizeIt->second, fontType)) {
                 SDL_Log("Error: generating texture %s", fileKey.c_str());
                 return false;
@@ -539,7 +541,7 @@ void TextManager::updateAnnouncements(const float deltaTime) {
     }
 }
 
-void TextManager::drawAnnouncements(const float deltaTime) {
+void TextManager::drawAnnouncements(const float deltaTime) const {
     for (const auto &announcement: announcements) {
         announcement.draw(deltaTime);
     }

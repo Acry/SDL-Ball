@@ -1,56 +1,21 @@
 #pragma once
-
 #include <SDL2/SDL_stdinc.h>
-#include <string>
-#include <epoxy/gl.h>
 
-/*
- * Die beiden Farbparameter im SpriteSheet-Konfigurationsfile haben folgende Bedeutung:
- *
- * texcolor=FFFFFFFF - Dies ist die Texturfarbe im RGBA-Format:
- *
- * Definiert eine Farbe, mit der die Textur multipliziert wird
- * Format ist Hexadezimal: RRGGBBAA (Rot, Grün, Blau, Alpha)
- * "FFFFFFFF" bedeutet Weiß mit voller Deckkraft (keine Farbänderung)
- * Wird in readTexProps() in normalisierte Gleitkommawerte (0.0-1.0) für OpenGL konvertiert
- * parcolor=FFFFFF - Dies ist die Partikelfarbe im RGB-Format:
- *
- * Definiert die Farbe für zugehörige Partikeleffekte
- * Format ist Hexadezimal: RRGGBB (Rot, Grün, Blau)
- * "FFFFFF" bedeutet Weiß
- * Der Kommentar "//no effect" deutet darauf hin, dass diese Einstellung in diesem speziellen Fall keine Auswirkung hat.
-*/
 struct SpriteSheetAnimationProperties {
-    GLuint texture;
-    GLfloat xoffset;
-    GLfloat yoffset;
-    int cols, rows; // rows and columns are in this spritesheet
-    int ticks;
-    Uint32 frames;
-    bool direction; // Does the animation loop from 0 -> X -> 0 or from 0 -> X - 0
-    bool playing; // Is the animation currently playing?
-    /*
-     * Eine Technik zur Vermeidung von Texture Bleeding, nicht alle Sprite-Sheets benötigen es. Es gibt mehrere
-     * Faktoren, die bestimmen, ob Padding notwendig ist:
-     * Samplingmethode: Bei GL_NEAREST (Point-Sampling) tritt kein Texture Bleeding auf, da exakt ein Texel ausgewählt
-     * wird. Bleeding ist hauptsächlich ein Problem bei GL_LINEAR (bilinearem Filtering).
-     * UV-Genauigkeit: Wenn die UV-Koordinaten exakt auf Texelgrenzen liegen und die mathematische Berechnung präzise
-     * ist, kann Bleeding vermieden werden.
-     * Mipmapping: Bei aktiviertem Mipmapping ist Padding besonders wichtig, da bei niedrigeren Mip-Levels benachbarte
-     * Texel stärker gemischt werden.
-     * Power-of-Two Texturen: Diese können manchmal besser mit Texturkoordinaten umgehen als Non-Power-of-Two Texturen.
-     */
-    // Bit of a nasty hack, but if a texture is padded with 1 pixel around each frame, this have to be set to 1
-    bool padding;
-    float pxw, pxh; // pixel width, and height
-
-    GLfloat glTexColorInfo[4];
-    GLfloat glParColorInfo[3]; // This and above replaced object::color and particle colors
-
-    std::string fileName; // Quite the fugly.. This will be set by readTexProps();
+    float xoffset; // Größe eines Frames im UV-Raum
+    float yoffset; // Größe eines Frames im UV-Raum
+    int cols; // Anzahl der Spalten im Spritesheet
+    int rows; // Anzahl der Zeilen im Spritesheet
+    int ticks; // Zeit pro Frame (ms)
+    Uint32 frames; // Anzahl der Frames
+    bool bidir; // Bidirektionale Animation
+    bool playing; // Initial abspielen?
+    bool padding; // Anti-Bleeding Padding
+    float pxw;
+    float pxh; // Pixel-Dimensionen für GL-Operationen
 };
 
-enum class TextureProperty {
+enum class AnimationProperty {
     XOffset,
     YOffset,
     Cols,
@@ -60,9 +25,8 @@ enum class TextureProperty {
     Bidir,
     Playing,
     Padding,
-    TexColor,
-    ParColor,
-    FileName,
+    PixelWidth,
+    PixelHeight,
     Unknown
 };
 
@@ -76,10 +40,12 @@ class SpriteSheetAnimation {
 
 public:
     void play(float deltaTime = 0.0f); // Animationslogik
+    void calculateTextureCoordinates();
+
     Uint32 frame; // Current animation frame
     bool playing; // Animation playing state
     bool firstFrame; // First frame flag
-    texPos texturePosition; // Current frame texture coordinates
-    SpriteSheetAnimationProperties textureProperties; // Texture properties
-    SpriteSheetAnimation();
+    texPos texturePosition{}; // Current frame texture coordinates
+    SpriteSheetAnimationProperties animationProperties; // Texture properties
+    explicit SpriteSheetAnimation(const SpriteSheetAnimationProperties &props);
 };

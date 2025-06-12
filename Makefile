@@ -178,13 +178,8 @@ BACKGROUND_TEST_SOURCES := $(MANUAL_TEST_DIR)BackgroundManager_Tests.cpp \
                            $(SOURCE_DIR)LevelManager.cpp \
                            $(SOURCE_DIR)DisplayManager.cpp \
                            $(SOURCE_DIR)MathHelper.cpp \
-                           $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                            $(SOURCE_DIR)TextManager.cpp \
                            $(SOURCE_DIR)TextureManager.cpp \
-                           $(SOURCE_DIR)Brick.cpp \
-                           $(SOURCE_DIR)GameObject.cpp \
-                           $(SOURCE_DIR)MovingObject.cpp \
-                           $(SOURCE_DIR)GrowableObject.cpp \
                            $(SOURCE_DIR)TextureUtilities.cpp \
                            $(SOURCE_DIR)BackgroundManager.cpp \
                            $(SOURCE_DIR)MouseManager.cpp \
@@ -461,6 +456,7 @@ BRICK_TEST_SOURCES := $(MANUAL_TEST_DIR)BrickManager_Tests.cpp \
                       $(SOURCE_DIR)TextureUtilities.cpp \
                       $(SOURCE_DIR)EventManager.cpp \
                       $(SOURCE_DIR)BrickManager.cpp \
+                      $(SOURCE_DIR)MouseManager.cpp \
 
 BRICK_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BRICK_TEST_SOURCES:.cpp=.o)))
 

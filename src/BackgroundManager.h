@@ -1,7 +1,8 @@
 // BackgroundManager.h
 #pragma once
 
-#include "SpriteSheetAnimation.h"
+#include <string>
+
 #include "colors.h"
 #include "IEventManager.h"
 
@@ -15,7 +16,7 @@ class BackgroundManager {
     std::array<Color, 4> colors;
     const TextureManager *textureManager;
     IEventManager *eventManager{nullptr};
-    SpriteSheetAnimation texture;
+    texture *currentTexture{nullptr};
 
     void drawQuad() const;
 
@@ -31,5 +32,8 @@ public:
     void draw() const;
 
     [[nodiscard]] bool isBackgroundOverlayEnabled() const { return showBackgroundOverlay; }
-    void setBackgroundOverlayEnabled(bool enabled) { showBackgroundOverlay = enabled; }
+
+    void setBackgroundOverlayEnabled(const bool enabled);
+
+    void createDisplayList();
 };

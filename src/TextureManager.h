@@ -1,11 +1,32 @@
 // TextureManager.h
 #pragma once
 
+#include <epoxy/gl.h>
 #include <filesystem>
 #include <string>
 
 #include "SpriteSheetAnimation.h"
 #include "ThemeManager.h"
+
+struct TextureResource {
+    GLuint id{0}; // OpenGL Textur-ID
+    GLfloat textureColor[4]{1.0f, 1.0f, 1.0f, 1.0f}; // RGBA-Farbmodifikator
+    GLfloat particleColor[3]{1.0f, 1.0f, 1.0f}; // RGB-Partikelfarbe
+    std::string fileName; // Pfad zur Textur
+};
+
+enum class TextureProperty {
+    TextureId, // OpenGL Textur-ID
+    TextureColor, // Für textureColor[4]
+    ParticleColor, // Für particleColor[3]
+    FileName, // Für Dateinamen
+    Unknown
+};
+
+struct texture {
+    TextureResource textureProperties; // Textur-Eigenschaften
+    SpriteSheetAnimationProperties animationProperties{}; // Animationseigenschaften
+};
 
 // HINT: in game_state.h sind noch Textur-Eigenschaften definiert.
 
@@ -83,26 +104,28 @@ enum class TitleTexture {
 
 
 class TextureManager {
+    std::unordered_map<std::string, std::unique_ptr<texture> > textures;
+
     // caches
-    std::unordered_map<std::string, std::unique_ptr<SpriteSheetAnimation> > textureCache;
-    std::unordered_map<std::string, std::unique_ptr<SpriteSheetAnimation> > backgroundCache;
+    std::unordered_map<std::string, std::unique_ptr<texture> > textureCache;
+    std::unordered_map<std::string, std::unique_ptr<texture> > backgroundCache;
 
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(PaddleTexture::Count)> paddleTextures{};
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(BallTexture::Count)> ballTextures{};
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(BrickTexture::Count)> brickTextures{};
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(PowerUpTexture::Count)> powerUpTextures{};
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(MiscTexture::Count)> miscTextures{};
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(EffectTexture::Count)> effectTextures{};
-    std::array<SpriteSheetAnimation *, static_cast<size_t>(TitleTexture::Count)> titleTextures{};
+    std::array<texture *, static_cast<size_t>(PaddleTexture::Count)> paddleTextures{};
+    std::array<texture *, static_cast<size_t>(BallTexture::Count)> ballTextures{};
+    std::array<texture *, static_cast<size_t>(BrickTexture::Count)> brickTextures{};
+    std::array<texture *, static_cast<size_t>(PowerUpTexture::Count)> powerUpTextures{};
+    std::array<texture *, static_cast<size_t>(MiscTexture::Count)> miscTextures{};
+    std::array<texture *, static_cast<size_t>(EffectTexture::Count)> effectTextures{};
+    std::array<texture *, static_cast<size_t>(TitleTexture::Count)> titleTextures{};
 
-    std::vector<SpriteSheetAnimation *> backgroundTextures;
+    std::vector<texture *> backgroundTextures;
 
     int maxTexSize;
     std::string currentTheme;
     std::string currentBackgroundTheme;
     const std::vector<std::string> supportedFormats;
 
-    SpriteSheetAnimation *loadAndCacheTexture(const std::string &path, bool forceReload = false);
+    texture *loadAndCacheTexture(const std::string &path, bool forceReload = false);
 
 public:
     TextureManager();
@@ -121,25 +144,25 @@ public:
 
     size_t getBackgroundCount() const { return backgroundTextures.size(); }
 
-    SpriteSheetAnimation *getBackground(const size_t index) const;
+    texture *getBackground(const size_t index) const;
 
     void clearTheme();
 
     void clearBackgroundTheme();
 
-    SpriteSheetAnimation *getTexture(const std::string &texturePath, bool forceReload = false);
+    texture *getTexture(const std::string &texturePath, bool forceReload = false);
 
-    SpriteSheetAnimation *getPaddleTexture(PaddleTexture type) const;
+    texture *getPaddleTexture(PaddleTexture type) const;
 
-    SpriteSheetAnimation *getBallTexture(BallTexture type) const;
+    texture *getBallTexture(BallTexture type) const;
 
-    SpriteSheetAnimation *getBrickTexture(BrickTexture type) const;
+    texture *getBrickTexture(BrickTexture type) const;
 
-    SpriteSheetAnimation *getPowerUpTexture(PowerUpTexture type) const;
+    texture *getPowerUpTexture(PowerUpTexture type) const;
 
-    SpriteSheetAnimation *getEffectTexture(EffectTexture type) const;
+    texture *getEffectTexture(EffectTexture type) const;
 
-    SpriteSheetAnimation *getMiscTexture(MiscTexture type) const;
+    texture *getMiscTexture(MiscTexture type) const;
 
     // LoadAllGameTexturesWithProperties
     bool loadAllGameTextures();
@@ -147,13 +170,13 @@ public:
     // Load SpriteTextures
     // Load BackgroundTextures
     // Load MenuTextures
-    // Load EffectsTestures
+    // Load EffectsTextures
 
     // Load image file
-    bool load(const std::filesystem::path &pathName, SpriteSheetAnimation &tex) const;
+    bool load(const std::filesystem::path &pathName, texture &tex) const;
 
-    // load property file
-    static bool readTextureProperties(const std::filesystem::path &pathName, SpriteSheetAnimation &tex);
+    static bool readTextureProperties(const std::filesystem::path &pathName, TextureResource &texResource,
+                                      SpriteSheetAnimationProperties &animProps);
 
-    bool loadTextureWithProperties(const std::string &basePath, SpriteSheetAnimation &animation) const;
+    bool loadTextureWithProperties(const std::string &basePath, texture &animation) const;
 };

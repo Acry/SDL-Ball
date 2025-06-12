@@ -1,10 +1,9 @@
 // TestHelper.cpp
 #include <epoxy/gl.h>
+#include <SDL_log.h>
 
 #include "colors.h"
 #include "TestHelper.h"
-
-#include <SDL_log.h>
 
 TestHelper::TestHelper(TextManager &textManager, IEventManager *eventManager, const float gridSpacing,
                        const float gridExtent)
@@ -155,9 +154,9 @@ void TestHelper::renderInstructions(const float deltaTime, const std::vector<std
     glColor4f(GL_BRIGHT_ORANGE);
     float yPos = 0.95f;
     constexpr auto currentFont = Fonts::Menu;
-    // const auto height = m_textManager.getHeight(currentFont);
+    const auto height = m_textManager.getHeight(currentFont);
     for (const auto &instruction: instructions) {
-        constexpr auto offest = 0.05f;
+        const auto offest = height * 0.7f; // 90% der Schriftgröße als Offset
         m_textManager.write(instruction, currentFont, true, 0.7f, 0.0f, yPos);
         yPos -= offest;
     }
@@ -183,9 +182,9 @@ void TestHelper::handleKeyPress(const KeyboardEventData &data) {
                 std::filesystem::create_directories(screenshotPath);
             }
             if (screenshot()) {
-                m_textManager.addAnnouncement("Screenshot saved.", 1500, Fonts::AnnounceGood);
+                m_textManager.addAnnouncement("Screenshot saved.", 3000, Fonts::AnnounceGood);
             } else {
-                m_textManager.addAnnouncement("Screenshot not created.", 1500, Fonts::AnnounceBad);
+                m_textManager.addAnnouncement("Screenshot not created.", 3000, Fonts::AnnounceBad);
             }
             break;
         // Weitere Tastenbelegungen hier ergänzen

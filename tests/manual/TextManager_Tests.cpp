@@ -120,7 +120,7 @@ int main() {
             textManager.write(heightInfo, Fonts::MenuHighscore, false, 1.0f, 0.25f, 0.0 - i * 0.08f);
         }
         // render theme fonts
-        glColor4f(1.0f, 0.98f, 0.94f, 1.0f);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         textManager.write("TOP-LEFT", Fonts::IntroDescription, false, 1.0f, -1.0f, 1.0f);
         for (const auto &[text, font, centered, scale, x, y]: tests) {
             textManager.write(text, font, centered, scale, x, y);
