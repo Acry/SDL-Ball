@@ -1,3 +1,4 @@
+// SpriteSheetAnimation_Tests.cpp
 #include <cstdlib>
 
 #include "TextureManager.h"
@@ -16,13 +17,19 @@ int main() {
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
-    SpriteSheetAnimation uvTest;
+    texture uvTest{};
+    texture spriteSheetAnimation1{};
+    texture spriteSheetAnimation2{};
+    texture spriteSheetAnimation3{};
+    texture spriteSheetAnimation4{};
+    texture spriteSheetAnimation5{};
 
-    SpriteSheetAnimation spriteSheetAnimation1;
-    SpriteSheetAnimation spriteSheetAnimation2;
-    SpriteSheetAnimation spriteSheetAnimation3;
-    SpriteSheetAnimation spriteSheetAnimation4;
-    SpriteSheetAnimation spriteSheetAnimation5;
+    SpriteSheetAnimation anim1(uvTest.animationProperties);
+    SpriteSheetAnimation anim2(spriteSheetAnimation1.animationProperties);
+    SpriteSheetAnimation anim3(spriteSheetAnimation2.animationProperties);
+    SpriteSheetAnimation anim4(spriteSheetAnimation3.animationProperties);
+    SpriteSheetAnimation anim5(spriteSheetAnimation4.animationProperties);
+    SpriteSheetAnimation anim6(spriteSheetAnimation5.animationProperties);
 
     const std::filesystem::path texturePath1 = "../themes/default/gfx/ball/fireball";
     const std::filesystem::path texturePath2 = "../themes/default/gfx/brick/doom";
@@ -31,7 +38,7 @@ int main() {
     const std::filesystem::path texturePath5 = "../themes/default/gfx/powerup/gun";
 
     // TextureManager erstellen
-    const TextureManager textureManager;
+    TextureManager textureManager;
 
     // UV test bg
     if (!textureManager.load("../tests/textures/UV-Test-Grid.png", uvTest)) {
@@ -69,6 +76,12 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    anim2 = SpriteSheetAnimation(spriteSheetAnimation1.animationProperties);
+    anim3 = SpriteSheetAnimation(spriteSheetAnimation2.animationProperties);
+    anim4 = SpriteSheetAnimation(spriteSheetAnimation3.animationProperties);
+    anim5 = SpriteSheetAnimation(spriteSheetAnimation4.animationProperties);
+    anim6 = SpriteSheetAnimation(spriteSheetAnimation5.animationProperties);
+
     std::vector<std::string> instructions = {
         "1: Fireball",
         "2: Doom brick",
@@ -80,16 +93,18 @@ int main() {
     };
 
     // Alle Animationen starten
-    spriteSheetAnimation1.textureProperties.playing = true;
-    spriteSheetAnimation2.textureProperties.playing = true;
-    spriteSheetAnimation3.textureProperties.playing = true;
-    spriteSheetAnimation4.textureProperties.playing = true;
-    spriteSheetAnimation5.textureProperties.playing = true;
+    anim2.playing = true;
+    anim3.playing = true;
+    anim4.playing = true;
+    anim5.playing = true;
+    anim6.playing = true;
+
     int currentTexture = 1; // Start mit Textur 1
     bool animationPaused = false;
 
     // Pointer auf die aktuell aktive Animation
-    SpriteSheetAnimation *currentAnimation = &spriteSheetAnimation1;
+    SpriteSheetAnimation *currentAnimation = &anim2;
+    texture *currentTextureObj = &spriteSheetAnimation1;
     Uint32 lastTime = SDL_GetTicks();
     bool running = true;
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -117,23 +132,28 @@ int main() {
                             break;
                         case SDLK_1:
                             currentTexture = 1;
-                            currentAnimation = &spriteSheetAnimation1;
+                            currentAnimation = &anim2;
+                            currentTextureObj = &spriteSheetAnimation1;
                             break;
                         case SDLK_2:
                             currentTexture = 2;
-                            currentAnimation = &spriteSheetAnimation2;
+                            currentAnimation = &anim3;
+                            currentTextureObj = &spriteSheetAnimation2;
                             break;
                         case SDLK_3:
                             currentTexture = 3;
-                            currentAnimation = &spriteSheetAnimation3;
+                            currentAnimation = &anim4;
+                            currentTextureObj = &spriteSheetAnimation3;
                             break;
                         case SDLK_4:
                             currentTexture = 4;
-                            currentAnimation = &spriteSheetAnimation4;
+                            currentAnimation = &anim5;
+                            currentTextureObj = &spriteSheetAnimation4;
                             break;
                         case SDLK_5:
                             currentTexture = 5;
-                            currentAnimation = &spriteSheetAnimation5;
+                            currentAnimation = &anim6;
+                            currentTextureObj = &spriteSheetAnimation5;
                             break;
                         default:
                             break;
@@ -148,11 +168,11 @@ int main() {
 
         // Animation aktualisieren
         if (!animationPaused) {
-            spriteSheetAnimation1.play(deltaTime);
-            spriteSheetAnimation2.play(deltaTime);
-            spriteSheetAnimation3.play(deltaTime);
-            spriteSheetAnimation4.play(deltaTime);
-            spriteSheetAnimation5.play(deltaTime);
+            anim2.play(deltaTime);
+            anim3.play(deltaTime);
+            anim4.play(deltaTime);
+            anim5.play(deltaTime);
+            anim6.play(deltaTime);
         }
 
         // Rendern
@@ -166,7 +186,7 @@ int main() {
 
         // Zeichnen der UV-Test-Textur im Hintergrund
         glColor4f(1.0f, 1.0f, 1.0f, 0.1f);
-        glBindTexture(GL_TEXTURE_2D, uvTest.textureProperties.texture);
+        glBindTexture(GL_TEXTURE_2D, uvTest.textureProperties.id);
         glBegin(GL_QUADS);
 
         // Bottom-left corner
@@ -187,10 +207,10 @@ int main() {
 
         glEnd();
 
-        glBindTexture(GL_TEXTURE_2D, currentAnimation->textureProperties.texture);
+        glBindTexture(GL_TEXTURE_2D, currentTextureObj->textureProperties.id);
 
         // Mit den Texturfarben färben
-        glColor4fv(currentAnimation->textureProperties.glTexColorInfo);
+        glColor4fv(currentTextureObj->textureProperties.textureColor);
 
         // Vergrößert in der Mitte zeichnen
         glBegin(GL_QUADS);
@@ -246,12 +266,12 @@ int main() {
 
         SDL_GL_SwapWindow(displayManager.sdlWindow);
     }
-    glDeleteTextures(1, &uvTest.textureProperties.texture);
-    glDeleteTextures(1, &spriteSheetAnimation1.textureProperties.texture);
-    glDeleteTextures(1, &spriteSheetAnimation2.textureProperties.texture);
-    glDeleteTextures(1, &spriteSheetAnimation3.textureProperties.texture);
-    glDeleteTextures(1, &spriteSheetAnimation4.textureProperties.texture);
-    glDeleteTextures(1, &spriteSheetAnimation5.textureProperties.texture);
+    glDeleteTextures(1, &uvTest.textureProperties.id);
+    glDeleteTextures(1, &spriteSheetAnimation1.textureProperties.id);
+    glDeleteTextures(1, &spriteSheetAnimation2.textureProperties.id);
+    glDeleteTextures(1, &spriteSheetAnimation3.textureProperties.id);
+    glDeleteTextures(1, &spriteSheetAnimation4.textureProperties.id);
+    glDeleteTextures(1, &spriteSheetAnimation5.textureProperties.id);
 
     return EXIT_SUCCESS;
 }

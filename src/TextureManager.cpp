@@ -465,8 +465,6 @@ bool TextureManager::loadAllGameTextures() {
 bool TextureManager::loadTextureWithProperties(const std::string &basePath, texture &tex) const {
     // 1. load properties
     const std::filesystem::path propsPath = basePath + ".txt";
-    auto animProps = std::make_unique<SpriteSheetAnimationProperties>();
-    auto texResource = std::make_unique<TextureResource>();
 
     bool hasProps = false;
     bool textureLoaded = false;
@@ -474,7 +472,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, text
 
     if (std::filesystem::exists(propsPath)) {
         hasProps = true;
-        if (!readTextureProperties(propsPath, *texResource, *animProps)) {
+        if (!readTextureProperties(propsPath, tex.textureProperties, tex.animationProperties)) {
             hasProps = false;
             SDL_Log("Warning: no properties '%s'", propsPath.c_str());
         }
