@@ -1,7 +1,33 @@
-# Manual Tests-Code concepts
+# Manual Tests-Code
 
-Der Sinn sollte sein, die wichtige Funktionalität sichtbar zu machen und Dinge auszublenden die im Test-Zusammenhang
-unbedeutend sind.
+`tests/manual`
+
+## manual tests
+
+- test-backgroundManager
+- test-ball
+- test-ballManager
+- test-brick
+- test-brickManager
+- test-codeManager
+- test-collisionManager
+- test-configFileManager
+- test-displayManager
+- test-effectManager
+- test-eventDispatcher
+- test-eventManager
+- test-levelManager
+- test-mouseManager
+- test-paddle
+- test-paddleManager (PlayerManager)
+- test-sceneManager
+- test-settingsManager
+- test-soundManager
+- test-spriteSheetAnimation
+- test-spriteSheetAnimationManager
+- test-textManager
+- test-textureManager
+- test-themeManager
 
 ## Global State and virtual handleKeyPress
 

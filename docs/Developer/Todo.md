@@ -9,6 +9,7 @@ there are a lot of things to do.
 
 * GameObjects
 
+- [ ] Brick to moving object, for dropping levels
 - [ ] BallManager
 - [X] BrickManager
   [X] Dropping Levels
@@ -107,7 +108,7 @@ ___
 
 - [ ] **Game should be playable again**
 
-- [ ] CodeManager
+- [X] CodeManager
 - [ ] CodeManager_Tests
 
 ___
@@ -163,7 +164,7 @@ ___
 
 ### Gameplay
 
-- [ ] setting titleScreenShow ?
+- [ ] setting titleScreenShow ? / intro-scenes, skip all. themeSwitch-scene, asked if classic, retro or current theme
 
 - [ ] a - restart level
 - [ ] r - random level
@@ -178,7 +179,7 @@ ___
 - [X] make game playable with keys
 - [ ] MenuManager
 - [ ] change difficulty in Menu
-- [ ] normal Ball spritesheet - Themes: classic/retro/arkanoid/3.1
+- [ ] normal Ball spritesheet - Themes: classic/retro/arkanoid/3.1 ?
 - [ ] rework positional sound <https://examples.libsdl.org/SDL3/audio/05-planar-data/>
 - [ ] modernize game controllers, see: https://examples.libsdl.org/SDL3/input/01-joystick-polling/
 - [ ] Play with pen? https://examples.libsdl.org/SDL3/pen/01-drawing-lines/
@@ -188,8 +189,7 @@ ___
 - [ ] Fade in Ball?
 - [ ] Animate Paddle texture
 - [ ] Animate Glue layer
-  Blocker: play animation once
-- [ ] [SpriteSheetAnimation](misc/SpriteSheetAnimation.md) einmaliges Abspielen implementieren
+- [X] [SpriteSheetAnimation](misc/SpriteSheetAnimation.md) einmaliges Abspielen implementieren
 
 Themes
 
@@ -243,6 +243,9 @@ Themes
 - [ ] ThemeManager zu cmdline, um Themes zu validieren
 
 ### Source Structure
+
+Blocker: implement all managers
+Blocker: arrange Managers in categories
 
 - [ ] move all GameObjects to GameObjects folder
 - [ ] move all Managers to Manager folder

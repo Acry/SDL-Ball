@@ -59,7 +59,6 @@ public:
 };
 
 class ObjectManager {
-
 public:
     explicit ObjectManager(SpriteSheetAnimationManager *animMgr) : animationManager(animMgr) {
     }

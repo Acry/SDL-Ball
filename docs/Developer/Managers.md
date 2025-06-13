@@ -41,6 +41,8 @@ SceneManager: verwaltet die Szenen
 [ThemeManager](Manager/ThemeManager.md) - handles the themes, loads the theme file and applies it to the game
 MenuManager - handles the menu, loads the menu file and applies it to the game
 SceneManager - handles the scenes, loads the scene file and applies it to the game
+SpriteSheetAnimationManager - handles the sprite sheet animations, calculates the uv-coordinates and applies them to the
+gameObjects
 [UIManager](Manager/UIManager.md) - handles the UI, loads the UI file and applies it to the game (HUD)
 
 See: [Structure](Software-Engineering/Structure.md)

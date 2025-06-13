@@ -5,7 +5,7 @@ SoundManager: use enum, no define
 Sound test: write current sound
 ___
 Fix all manual Tests
-SpriteSheetAnimation: AnimationTiming, no shared timing
+
 gameobjects: Bricks destroyed, active, visible -Fade->or shrink?
 ___
 use InputManager
