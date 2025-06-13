@@ -1,9 +1,10 @@
 // SpriteSheetAnimation_Tests.cpp
 #include <cstdlib>
 
-#include "TextureManager.h"
 #include "DisplayManager.hpp"
+#include "TestHelper.h"
 #include "TextManager.h"
+#include "TextureManager.h"
 
 int main() {
     EventManager eventManager;
@@ -13,10 +14,13 @@ int main() {
         return EXIT_FAILURE;
     }
     SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: SpriteSheet Animation Test");
+
     TextManager textManager;
-    if (!textManager.setTheme("../themes/default")) {
+    if (!textManager.setTheme("../tests/themes/test")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
+
+    TestHelper testHelper(textManager, &eventManager);
     texture uvTest{};
     texture spriteSheetAnimation1{};
     texture spriteSheetAnimation2{};
@@ -68,10 +72,6 @@ int main() {
         SDL_Log("Fehler beim Laden der Textur: %s", texturePath5.c_str());
         return EXIT_FAILURE;
     }
-    SDL_Log("   - frames=%u, cols=%d, rows=%d",
-            spriteSheetAnimation5.animationProperties.frames,
-            spriteSheetAnimation5.animationProperties.cols,
-            spriteSheetAnimation5.animationProperties.rows);
 
     anim1 = SpriteSheetAnimation(spriteSheetAnimation1.animationProperties);
     anim2 = SpriteSheetAnimation(spriteSheetAnimation2.animationProperties);
@@ -102,7 +102,6 @@ int main() {
 
     bool running = true;
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
     while (running) {
         auto currentTime = std::chrono::high_resolution_clock::now();
@@ -163,7 +162,6 @@ int main() {
         if (currentAnimation->isPlaying) {
             currentAnimation->play(deltaTime);
         }
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Hier die Textur zeichnen
@@ -173,7 +171,7 @@ int main() {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Zeichnen der UV-Test-Textur im Hintergrund
-        glColor4f(1.0f, 1.0f, 1.0f, 0.1f);
+        glColor4f(0.7f, 0.7f, 0.7f, 0.5f);
         glBindTexture(GL_TEXTURE_2D, uvTest.textureProperties.id);
         glBegin(GL_QUADS);
 
@@ -223,12 +221,8 @@ int main() {
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);
 
-        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        float yPos = 0.9f;
-        for (const auto &instruction: instructions) {
-            textManager.write(instruction, Fonts::IntroDescription, false, 1.3f, -0.9f, yPos);
-            yPos -= 0.07f;
-        }
+
+        testHelper.renderInstructions(deltaTime, instructions);
 
         std::string textureName;
         switch (currentTexture) {
@@ -252,7 +246,8 @@ int main() {
         std::string animationStatus = currentAnimation->isPlaying ? "Animation: running" : "Animation: paused";
         textManager.write(animationStatus, Fonts::Menu, true, 0.7f, 0.0f, -0.8f);
 
-        textManager.write("A1", Fonts::IntroHighscore, false, 1.0f, -1.0f, -0.9f);
+        textManager.write("A1", Fonts::IntroHighscore, false, 1.0f, -0.95f, -0.80f);
+
         SDL_GL_SwapWindow(displayManager.sdlWindow);
     }
 

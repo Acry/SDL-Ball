@@ -8,7 +8,6 @@ SpriteSheetAnimation::SpriteSheetAnimation(const SpriteSheetAnimationProperties 
     currentDirection = props.bidir;
     currentFrame = 0;
     isPlaying = props.playing;
-    for (float &v: currentTexturePosition) v = 0.0f;
     calculateTextureCoordinates();
 }
 
