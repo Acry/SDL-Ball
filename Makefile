@@ -39,6 +39,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     SoundManager.cpp \
     Speedometer.cpp \
     SpriteSheetAnimation.cpp \
+    SpriteSheetAnimationManager.cpp \
     TextManager.cpp \
     TextureManager.cpp \
     TextureUtilities.cpp \
@@ -65,6 +66,7 @@ TEST_TARGETS := \
     test-setting \
     test-sound \
     test-spritesheet \
+    test-spritesheet-manager \
     test-text \
     test-texture \
     test-theme \
@@ -210,6 +212,7 @@ $(BUILD_DIR)BackgroundManager.o: $(SOURCE_DIR)BackgroundManager.cpp
 SPRITESHEET_TEST_SOURCES := $(MANUAL_TEST_DIR)SpriteSheetAnimation_Tests.cpp \
                             $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                             $(SOURCE_DIR)DisplayManager.cpp \
+                            $(MANUAL_TEST_DIR)TestHelper.cpp \
                             $(SOURCE_DIR)TextManager.cpp \
                             $(SOURCE_DIR)TextureManager.cpp \
                             $(SOURCE_DIR)TextureUtilities.cpp \
@@ -221,6 +224,28 @@ test-spritesheet: $(SPRITESHEET_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(SPRITESHEET_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-spritesheet
 
 $(BUILD_DIR)SpriteSheetAnimation_Tests.o: $(MANUAL_TEST_DIR)SpriteSheetAnimation_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
+# SpriteSheetAnimationManager
+SPRITESHEETMANAGER_TEST_SOURCES := $(MANUAL_TEST_DIR)SpriteSheetAnimationManager_Tests.cpp \
+                                   $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                                   $(SOURCE_DIR)SpriteSheetAnimationManager.cpp \
+                                   $(SOURCE_DIR)DisplayManager.cpp \
+                                   $(MANUAL_TEST_DIR)TestHelper.cpp \
+                                   $(SOURCE_DIR)TextManager.cpp \
+                                   $(SOURCE_DIR)TextureManager.cpp \
+                                   $(SOURCE_DIR)TextureUtilities.cpp \
+                                   $(SOURCE_DIR)EventManager.cpp \
+                                   $(SOURCE_DIR)MouseManager.cpp \
+                                   $(SOURCE_DIR)EventDispatcher.cpp \
+
+SPRITESHEETMANAGER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SPRITESHEETMANAGER_TEST_SOURCES:.cpp=.o)))
+
+test-spritesheet-manager: $(SPRITESHEETMANAGER_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(SPRITESHEETMANAGER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-spritesheet-manager
+
+$(BUILD_DIR)SpriteSheetAnimationManager_Tests.o: $(MANUAL_TEST_DIR)SpriteSheetAnimationManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
