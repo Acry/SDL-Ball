@@ -1,8 +1,9 @@
 // DisplayManager.cpp
 #include <iostream>
+#include <SDL2/SDL_image.h>
+
 #include "DisplayManager.hpp"
 #include "TextureUtilities.h"
-#include <SDL2/SDL_image.h>
 
 DisplayManager::DisplayManager(IEventManager *eventMgr): eventManager(eventMgr), currentW(0), currentH(0),
                                                          numOfDisplays(0),
