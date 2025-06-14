@@ -5,9 +5,11 @@
 #include "TestHelper.h"
 #include "TextureManager.h"
 #include "EventManager.h"
+#include "MouseManager.h"
 
 int main() {
     EventManager eventManager;
+    // MouseManager mouseManager(&eventManager);
     DisplayManager displayManager(&eventManager);
     if (!displayManager.init(0, 1024, 768, false)) {
         SDL_Log("Could not initialize display");
@@ -23,7 +25,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    TestHelper testHelper(textManager);
+    TestHelper testHelper(textManager, &eventManager);
 
     TextureManager textureManager;
     if (!textureManager.setSpriteTheme("../themes/default")) {

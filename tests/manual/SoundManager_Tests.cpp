@@ -50,11 +50,11 @@ int main() {
     }
     SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Sound Test");
     TextManager textManager;
-    if (!textManager.setTheme("../themes/default")) {
+    if (!textManager.setTheme("../tests/themes/test")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
         return EXIT_FAILURE;
     }
-    TestHelper testHelper(textManager);
+    TestHelper testHelper(textManager, &eventManager);
     testHelper.m_showMouseCoords = true;
     SoundManager soundManager;
 

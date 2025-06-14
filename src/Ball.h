@@ -37,16 +37,16 @@ public:
     void init() override;
 
     // Implementation der virtuellen Getter/Setter aus GrowableObject
-    [[nodiscard]] GLfloat getWidth() const override { return MovingObject::width; }
-    [[nodiscard]] GLfloat getHeight() const override { return MovingObject::height; }
-    void setWidth(GLfloat w) override { MovingObject::width = w; }
-    void setHeight(GLfloat h) override { MovingObject::height = h; }
+    [[nodiscard]] GLfloat getWidth() const override { return width; }
+    [[nodiscard]] GLfloat getHeight() const override { return height; }
+    void setWidth(const GLfloat w) override { width = w; }
+    void setHeight(const GLfloat h) override { height = h; }
 
     void hit(GLfloat c[]);
 
     void update(float deltaTime) override;
 
-    void draw(float deltaTime) override;
+    void draw() const override;
 
     GLfloat getAngle();
 
@@ -59,11 +59,13 @@ public:
     // ICollideable Interface
     float getPosX() const override { return pos_x; }
     float getPosY() const override { return pos_y; }
-    bool isActive() const override { return GameObject::isActive(); }
+    bool isActive() const override { return isActive(); }
 
     const std::vector<float> *getCollisionPoints() const override;
 
-    void onCollision(ICollideable *other, float hitX, float hitY) override;
+    void onCollision(const ICollideable *other, float hitX, float hitY) override;
 
-    int getCollisionType() const override;
+    [[nodiscard]] CollisionType getCollisionType() const override {
+        return CollisionType::Ball;
+    }
 };

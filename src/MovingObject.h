@@ -6,13 +6,10 @@
 
 class MovingObject : public GameObject {
 public:
-    GLfloat xvel{0.0f}, yvel{0.0f}, velocity{0.0f};
-
-    explicit MovingObject(EventManager *eventMgr = nullptr)
-        : GameObject(eventMgr) {
+    explicit MovingObject(const texture &tex) : GameObject(tex) {
     }
 
-    // FIXME: stinks, because all GameObjects have Type SpritesheetAnimation
-    // which needs update anyway
-    void update(const float deltaTime) override;
+    GLfloat xvel{0.0f}, yvel{0.0f}, velocity{0.0f};
+
+    virtual void update(float deltaTime) = 0;
 };

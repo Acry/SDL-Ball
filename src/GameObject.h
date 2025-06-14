@@ -9,11 +9,8 @@
 class EventManager;
 
 class GameObject {
-protected:
-    EventManager *eventManager{nullptr};
-
 public:
-    GameObject(EventManager *eventMgr, const texture &tex) : eventManager(eventMgr) {
+    explicit GameObject(const texture &tex) {
         textureProperties = tex.textureProperties;
         animProps = tex.animationProperties;
     }
@@ -22,7 +19,7 @@ public:
     GLfloat width{0.0f}, height{0.0f};
 
     TextureResource textureProperties;
-    SpriteSheetAnimationProperties animProps;
+    SpriteSheetAnimationProperties animProps{};
 
     // In OpenGL, texture coordinates (u, v) typically have (0, 0) at the bottom-left of the texture
     // (0, 1) ------- (1, 1)
@@ -41,7 +38,5 @@ public:
 
     virtual void init() = 0;
 
-    virtual void update(float deltaTime) = 0;
-
-    virtual void draw() = 0;
+    virtual void draw() const = 0;
 };

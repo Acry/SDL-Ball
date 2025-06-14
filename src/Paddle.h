@@ -21,7 +21,7 @@ protected:
 public:
     bool hasGlueLayer{};
     bool hasGunLayer{};
-    SpriteSheetAnimation* layerTex[2]{nullptr, nullptr};
+    SpriteSheetAnimation *layerTex[2]{nullptr, nullptr};
     float centerX{0.0f};
 
     explicit Paddle(EventManager *eventMgr);
@@ -32,7 +32,7 @@ public:
 
     void moveTo(float targetX, float deltaTime);
 
-    void draw(float deltaTime) override;
+    void draw() const override;
 
     // Implementation der virtuellen Getter/Setter aus GrowableObject
     [[nodiscard]] GLfloat getWidth() const override { return GameObject::width; }

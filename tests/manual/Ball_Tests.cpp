@@ -2,25 +2,27 @@
 
 #include "Ball.h"
 #include "TextureManager.h"
-#include "Display.hpp"
+#include "DisplayManager.hpp"
 #include "difficulty_settings.h"
+#include "EventManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
 
 int main() {
-    Display display(0, 1024, 768, false);
-    if (display.sdlWindow == nullptr) {
-        SDL_Log("Display konnte nicht initialisiert werden");
+    EventManager eventManager;
+    DisplayManager displayManager(&eventManager);
+    if (!displayManager.init(0, 1024, 768, false)) {
+        SDL_Log("Could not initialize display");
         return EXIT_FAILURE;
     }
-    SDL_SetWindowTitle(display.sdlWindow, "SDL-Ball: Ball Test");
+    SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Ball Test");
     TextManager textManager;
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
         return EXIT_FAILURE;
     }
-    TestHelper testHelper(textManager);
-    EventManager eventManager;
+    TestHelper testHelper(textManager, &eventManager);
+
     TextureManager textureManager;
     if (!textureManager.setSpriteTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Texture-Themes");
@@ -54,7 +56,7 @@ int main() {
         "ESC: Quit"
     };
 
-    SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
+    SDL_WarpMouseInWindow(displayManager.sdlWindow, displayManager.currentW / 2, displayManager.currentH / 2);
     SDL_SetRelativeMouseMode(SDL_TRUE);
     Uint32 lastTime = SDL_GetTicks();
     GLfloat normalizedMouseX = 0.0f, normalizedMouseY = 0.0f;
@@ -73,7 +75,7 @@ int main() {
             }
             if (event.type == SDL_WINDOWEVENT) {
                 if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    display.resize(event.window.data1, event.window.data2);
+                    displayManager.resize(event.window.data1, event.window.data2);
                 }
             }
             if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -144,10 +146,11 @@ int main() {
                 }
             }
             if (event.type == SDL_MOUSEMOTION) {
-                normalizedMouseX = (event.motion.x - display.viewportX - display.viewportW / 2.0f) * (
-                                       2.0f / display.viewportW);
-                normalizedMouseY = (event.motion.y - display.viewportY - display.viewportH / 2.0f) * -1 * (
-                                       2.0f / display.viewportH);
+                normalizedMouseX = (event.motion.x - displayManager.viewportX - displayManager.viewportW / 2.0f) * (
+                                       2.0f / displayManager.viewportW);
+                normalizedMouseY = (event.motion.y - displayManager.viewportY - displayManager.viewportH / 2.0f) * -1 *
+                                   (
+                                       2.0f / displayManager.viewportH);
             }
         }
         testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
@@ -174,7 +177,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (ball.active) {
-            ball.draw(deltaTime);
+            ball.draw();
         }
         testHelper.renderInstructions(deltaTime, instructions);
 
@@ -208,7 +211,7 @@ int main() {
         sprintf(tempText2, "B: %.2f, %.2f", ball.pos_x, ball.pos_y);
         textManager.write(tempText2, Fonts::IntroDescription, false, 1.0f, ball.pos_x, ball.pos_y);
         testHelper.drawMouseCoordinates();
-        SDL_GL_SwapWindow(display.sdlWindow);
+        SDL_GL_SwapWindow(displayManager.sdlWindow);
     }
     return EXIT_SUCCESS;
 }

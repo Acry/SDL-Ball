@@ -28,15 +28,11 @@ void Ball::init() {
     onSizeChanged();
 }
 
-void Ball::draw(const float deltaTime) {
-    if (!active) return;
-
+void Ball::draw() const {
     if (explosive) {
-        fireTex->play(deltaTime);
         drawExplosiveLayer();
         return;
     }
-    texture->play(deltaTime);
     drawBase();
 
 #if 0
@@ -81,35 +77,30 @@ void Ball::draw(const float deltaTime) {
 
 void Ball::drawBase() const {
     glLoadIdentity();
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture->textureProperties.texture);
-    glColor4f(texture->textureProperties.glTexColorInfo[0],
-              texture->textureProperties.glTexColorInfo[1],
-              texture->textureProperties.glTexColorInfo[2],
-              texture->textureProperties.glTexColorInfo[3]);
-
+    glBindTexture(GL_TEXTURE_2D, textureProperties.id);
+    glColor4fv(textureProperties.textureColor);
     glBegin(GL_QUADS);
 
-    // Bottom-left corner.
-    glTexCoord2f(texture->texturePosition[0], texture->texturePosition[1]);
+    // Bottom-left corner
+    glTexCoord2f(uvCoordinates[0], uvCoordinates[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
 
-    // Bottom-right corner.
-    glTexCoord2f(texture->texturePosition[2], texture->texturePosition[3]);
+    // Bottom-right corner
+    glTexCoord2f(uvCoordinates[2], uvCoordinates[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
 
-    // Top-right corner.
-    glTexCoord2f(texture->texturePosition[4], texture->texturePosition[5]);
+    // Top-right corner
+    glTexCoord2f(uvCoordinates[4], uvCoordinates[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
-    // Top-left corner.
-    glTexCoord2f(texture->texturePosition[6], texture->texturePosition[7]);
+    // Top-left corner
+    glTexCoord2f(uvCoordinates[6], uvCoordinates[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
 
     glEnd();
-
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
 }
@@ -127,19 +118,19 @@ void Ball::drawExplosiveLayer() const {
     glBegin(GL_QUADS);
 
     // Bottom-left corner.
-    glTexCoord2f(fireTex->texturePosition[0], fireTex->texturePosition[1]);
+    glTexCoord2f(fireTex->currentTexturePosition[0], fireTex->currentTexturePosition[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
 
     // Bottom-right corner.
-    glTexCoord2f(fireTex->texturePosition[2], fireTex->texturePosition[3]);
+    glTexCoord2f(fireTex->currentTexturePosition[2], fireTex->currentTexturePosition[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
 
     // Top-right corner.
-    glTexCoord2f(fireTex->texturePosition[4], fireTex->texturePosition[5]);
+    glTexCoord2f(fireTex->currentTexturePosition[4], fireTex->currentTexturePosition[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
     // Top-left corner.
-    glTexCoord2f(fireTex->texturePosition[6], fireTex->texturePosition[7]);
+    glTexCoord2f(fireTex->currentTexturePosition[6], fireTex->currentTexturePosition[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
 
     glEnd();
@@ -188,7 +179,6 @@ void Ball::setSize(GLfloat s) {
 }
 
 void Ball::update(const float deltaTime) {
-    if (!active) return;
     if (growing || shrinking) {
         centerX = pos_x + width / 2.0f;
         centerY = pos_y + height / 2.0f;
@@ -252,7 +242,7 @@ const std::vector<float> *Ball::getCollisionPoints() const {
     return &points;
 }
 
-void Ball::onCollision(ICollideable *other, float hitX, float hitY) {
+void Ball::onCollision(const ICollideable *other, const float hitX, const float hitY) {
     if (!eventManager) return;
 
     EventData data;
@@ -279,10 +269,6 @@ void Ball::onCollision(ICollideable *other, float hitX, float hitY) {
             break;
         default: break;
     }
-}
-
-int Ball::getCollisionType() const {
-    return static_cast<int>(CollisionType::Ball);
 }
 
 Ball::~Ball() {

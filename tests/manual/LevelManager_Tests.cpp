@@ -9,6 +9,8 @@
 #include "TextManager.h"
 #include "EventManager.h"
 #include "config.h"
+#include "EventDispatcher.h"
+#include "MouseManager.h"
 
 const float colors[16][4] = {
     {1.0f, 1.0f, 1.0f, 1.0f}, // Weiß
@@ -37,6 +39,7 @@ void onLevelLoaded(const LevelData &data) {
 
 int main() {
     EventManager eventManager;
+    MouseManager mouseManager(&eventManager);
     DisplayManager displayManager(&eventManager);
     if (!displayManager.init(0, 1024, 768, false)) {
         SDL_Log("Could not initialize display");
@@ -47,12 +50,12 @@ int main() {
     const std::filesystem::path themePath = "../themes/default";
 
     TextManager textManager;
-    if (!textManager.setTheme(themePath)) {
+    if (!textManager.setTheme("../tests/themes/test")) {
         SDL_Log("Error loading font theme %s", themePath.c_str());
         return EXIT_FAILURE;
     }
-
-    TestHelper testHelper(textManager);
+    const EventDispatcher eventDispatcher(&eventManager);
+    TestHelper testHelper(textManager, &eventManager);
 
     eventManager.addListener(GameEvent::LevelLoaded,
                              [](const LevelData &data) { onLevelLoaded(data); }, nullptr);

@@ -2,34 +2,32 @@
 #include "Powerup.h"
 #include <epoxy/gl.h>
 
-void Powerup::drawBase() const {
+void Powerup::draw() const {
     glLoadIdentity();
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture->textureProperties.texture);
-    glColor4f(texture->textureProperties.glTexColorInfo[0],
-              texture->textureProperties.glTexColorInfo[1],
-              texture->textureProperties.glTexColorInfo[2],
-              texture->textureProperties.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, textureProperties.id);
+    glColor4fv(textureProperties.textureColor);
     glBegin(GL_QUADS);
 
-    glTexCoord2f(texture->texturePosition[0], texture->texturePosition[1]);
+    // Bottom-left corner
+    glTexCoord2f(uvCoordinates[0], uvCoordinates[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
-    glTexCoord2f(texture->texturePosition[2], texture->texturePosition[3]);
+
+    // Bottom-right corner
+    glTexCoord2f(uvCoordinates[2], uvCoordinates[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
-    glTexCoord2f(texture->texturePosition[4], texture->texturePosition[5]);
+
+    // Top-right corner
+    glTexCoord2f(uvCoordinates[4], uvCoordinates[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
-    glTexCoord2f(texture->texturePosition[6], texture->texturePosition[7]);
+
+    // Top-left corner
+    glTexCoord2f(uvCoordinates[6], uvCoordinates[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
 
     glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
-}
-
-void Powerup::draw(const float deltaTime) {
-    if (!active) return;
-    texture->play(deltaTime);
-    drawBase();
 }

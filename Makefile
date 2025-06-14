@@ -458,6 +458,8 @@ LEVEL_TEST_SOURCES := $(MANUAL_TEST_DIR)LevelManager_Tests.cpp \
                       $(SOURCE_DIR)TextureManager.cpp \
                       $(SOURCE_DIR)TextureUtilities.cpp \
                       $(SOURCE_DIR)EventManager.cpp \
+                      $(SOURCE_DIR)MouseManager.cpp \
+                      $(SOURCE_DIR)EventDispatcher.cpp \
 
 LEVEL_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(LEVEL_TEST_SOURCES:.cpp=.o)))
 

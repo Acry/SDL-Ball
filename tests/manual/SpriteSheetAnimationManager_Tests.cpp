@@ -14,7 +14,7 @@ std::vector<GameObject *> testObjects;
 
 class TestGameObject final : public GameObject {
 public:
-    explicit TestGameObject(const texture &tex) : GameObject(nullptr, tex) {
+    explicit TestGameObject(const texture &tex) : GameObject(tex) {
         pos_x = -1.0f;
         pos_y = 0.5f;
         width = 0.1f;
@@ -24,10 +24,7 @@ public:
     void init() override {
     }
 
-    void update(float deltaTime) override {
-    }
-
-    void draw() override {
+    void draw() const override {
         glLoadIdentity();
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);

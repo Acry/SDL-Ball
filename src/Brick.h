@@ -2,14 +2,15 @@
 #pragma once
 
 #include "colors.h"
-#include "GameObject.h"
 #include "ICollideable.h"
+#include "MovingObject.h"
 
-class Brick final : public GameObject, public ICollideable {
+class Brick final : public MovingObject, public ICollideable {
 public:
-    Color customColor{};
+    Color customColor{}; // from level data
 
-    Brick() = default;
+    explicit Brick(const texture &tex) : MovingObject(tex) {
+    }
 
     void init() override {
     }
@@ -17,7 +18,7 @@ public:
     void update(float deltaTime) override {
     }
 
-    void draw(float deltaTime) override;
+    void draw() const override;
 
     void setActive(const bool value) override { collisionActive = value; }
     void setVisible(const bool value) { visible = value; }
@@ -37,8 +38,6 @@ public:
 
 private:
     bool collisionActive{true};
-
-    void drawBase() const;
 
     bool visible{true};
 };

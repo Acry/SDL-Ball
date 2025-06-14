@@ -22,7 +22,7 @@ int main() {
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
-    TestHelper testHelper(textManager);
+    TestHelper testHelper(textManager, &eventManager);
     Paddle paddle(&eventManager);
     TextureManager textureManager;
     if (!textureManager.setSpriteTheme("../themes/default")) {
@@ -112,7 +112,8 @@ int main() {
             if (event.type == SDL_MOUSEMOTION) {
                 normalizedMouseX = (event.motion.x - displayManager.viewportX - displayManager.viewportW / 2.0f) * (
                                        2.0f / displayManager.viewportW);
-                normalizedMouseY = (event.motion.y - displayManager.viewportY - displayManager.viewportH / 2.0f) * -1 * (
+                normalizedMouseY = (event.motion.y - displayManager.viewportY - displayManager.viewportH / 2.0f) * -1 *
+                                   (
                                        2.0f / displayManager.viewportH);
                 paddle.moveTo(normalizedMouseX, deltaTime);
             }

@@ -2,9 +2,9 @@
 
 #include "Paddle.h"
 
-Paddle::Paddle(EventManager *eventMgr) : MovingObject() {
+Paddle::Paddle() : MovingObject() {
     // eventManager direkt zuweisen entfällt, da es jetzt durch GameObject verwaltet wird
-    this->eventManager = eventMgr; // Zugriff auf das geschützte Mitglied der Basisklasse
+     // Zugriff auf das geschützte Mitglied der Basisklasse
     init();
 }
 
@@ -29,57 +29,49 @@ void Paddle::init() {
     onSizeChanged();
 }
 
-void Paddle::draw(const float deltaTime) {
-    if (!active) return;
+void Paddle::draw() const {
 
-    texture->play(deltaTime);
     drawBase();
 
     if (hasGlueLayer) {
-        layerTex[0]->play(deltaTime);
         drawGlueLayer();
     }
 
     if (hasGunLayer) {
-        layerTex[1]->play(deltaTime);
         drawGunLayer();
     }
 }
 
 void Paddle::drawBase() const {
     glLoadIdentity();
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture->textureProperties.texture);
-    glColor4f(texture->textureProperties.glTexColorInfo[0],
-              texture->textureProperties.glTexColorInfo[1],
-              texture->textureProperties.glTexColorInfo[2],
-              texture->textureProperties.glTexColorInfo[3]);
-
+    glBindTexture(GL_TEXTURE_2D, textureProperties.id);
+    glColor4fv(textureProperties.textureColor);
     glBegin(GL_QUADS);
 
-    // Bottom-left corner.
-    glTexCoord2f(texture->texturePosition[0], texture->texturePosition[1]);
+    // Bottom-left corner
+    glTexCoord2f(uvCoordinates[0], uvCoordinates[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
 
-    // Bottom-right corner.
-    glTexCoord2f(texture->texturePosition[2], texture->texturePosition[3]);
+    // Bottom-right corner
+    glTexCoord2f(uvCoordinates[2], uvCoordinates[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
 
-    // Top-right corner.
-    glTexCoord2f(texture->texturePosition[4], texture->texturePosition[5]);
+    // Top-right corner
+    glTexCoord2f(uvCoordinates[4], uvCoordinates[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
-    // Top-left corner.
-    glTexCoord2f(texture->texturePosition[6], texture->texturePosition[7]);
+    // Top-left corner
+    glTexCoord2f(uvCoordinates[6], uvCoordinates[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
 
     glEnd();
-
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
 }
+
 
 void Paddle::drawGlueLayer() const {
     glLoadIdentity();
@@ -95,19 +87,19 @@ void Paddle::drawGlueLayer() const {
     glBegin(GL_QUADS);
 
     // Bottom-left corner.
-    glTexCoord2f(layerTex[0]->texturePosition[0], texture->texturePosition[1]);
+    glTexCoord2f(layerTex[0]->currentTexturePosition[0], texture->texturePosition[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
 
     // Bottom-right corner.
-    glTexCoord2f(layerTex[0]->texturePosition[2], texture->texturePosition[3]);
+    glTexCoord2f(layerTex[0]->currentTexturePosition[2], texture->texturePosition[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
 
     // Top-right corner.
-    glTexCoord2f(layerTex[0]->texturePosition[4], texture->texturePosition[5]);
+    glTexCoord2f(layerTex[0]->currentTexturePosition[4], texture->texturePosition[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
     // Top-left corner.
-    glTexCoord2f(layerTex[0]->texturePosition[6], texture->texturePosition[7]);
+    glTexCoord2f(layerTex[0]->currentTexturePosition[6], texture->texturePosition[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
     glEnd();
 
@@ -132,19 +124,19 @@ void Paddle::drawGunLayer() const {
     const float offset = height;
 
     // Bottom-left corner.
-    glTexCoord2f(layerTex[1]->texturePosition[0], layerTex[1]->texturePosition[1]);
+    glTexCoord2f(layerTex[1]->currentTexturePosition[0], layerTex[1]->currentTexturePosition[1]);
     glVertex3f(pos_x, pos_y + offset, 0.0f);
 
     // Bottom-right corner.
-    glTexCoord2f(layerTex[1]->texturePosition[2], layerTex[1]->texturePosition[3]);
+    glTexCoord2f(layerTex[1]->currentTexturePosition[2], layerTex[1]->currentTexturePosition[3]);
     glVertex3f(pos_x + width, pos_y + offset, 0.0f);
 
     // Top-right corner.
-    glTexCoord2f(layerTex[1]->texturePosition[4], layerTex[1]->texturePosition[5]);
+    glTexCoord2f(layerTex[1]->currentTexturePosition[4], layerTex[1]->currentTexturePosition[5]);
     glVertex3f(pos_x + width, pos_y + height + offset, 0.0f);
 
     // Top-left corner.
-    glTexCoord2f(layerTex[1]->texturePosition[6], layerTex[1]->texturePosition[7]);
+    glTexCoord2f(layerTex[1]->currentTexturePosition[6], layerTex[1]->currentTexturePosition[7]);
     glVertex3f(pos_x, pos_y + height + offset, 0.0f);
 
     glEnd();
@@ -230,7 +222,7 @@ void Paddle::onCollision(ICollideable *other, float hitX, float hitY) {
     data.posX = hitX;
     data.posY = hitY;
     data.sender = this;
-    data.target = dynamic_cast<const GameObject*>(other);
+    data.target = dynamic_cast<const GameObject *>(other);
 
     switch (other->getCollisionType()) {
         case static_cast<int>(CollisionType::Ball):

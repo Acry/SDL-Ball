@@ -1,18 +1,42 @@
 // Powerup.h
 #pragma once
-#include "GameObject.h"
+
+#include "ICollideable.h"
+#include "MovingObject.h"
 #include "PowerupTypes.h"
 
-class Powerup final : public GameObject {
-    void drawBase() const;
-
+class Powerup final : public MovingObject, public ICollideable {
 public:
-    bool visible{true};
-    PowerupType type{PowerupType::None};
+    explicit Powerup(const texture &tex) : MovingObject(tex) {
+    }
 
-    Powerup() = default;
-    void init() override {} // Leere Implementation
-    void update(float deltaTime) override {} // Leere Implementation
-    void draw(float deltaTime) override;
+    void init() override {
+    }
+
+    void update(float deltaTime) override {
+    }
+
+    void draw() const override;
+
+    void setActive(const bool value) override { collisionActive = value; }
+
     ~Powerup() override = default;
+
+    [[nodiscard]] float getPosX() const override { return pos_x; }
+    [[nodiscard]] float getPosY() const override { return pos_y; }
+    [[nodiscard]] float getWidth() const override { return width; }
+    [[nodiscard]] float getHeight() const override { return height; }
+    [[nodiscard]] bool isVisible() const { return visible; }
+    [[nodiscard]] bool isActive() const override { return collisionActive; }
+
+    [[nodiscard]] CollisionType getCollisionType() const override {
+        return CollisionType::PowerUp;
+    }
+
+private:
+    bool collisionActive{true};
+
+    bool visible{true};
+
+    PowerupType type{PowerupType::None};
 };
