@@ -104,8 +104,9 @@ bool TextureManager::load(const std::filesystem::path &pathName, texture &tex) c
         return false;
     }
 
-    tex.animationProperties.pxw = tempSurface->w;
-    tex.animationProperties.pxh = tempSurface->h;
+    tex.animationProperties.pxw = static_cast<float>(tempSurface->w);
+    tex.animationProperties.pxh = static_cast<float>(tempSurface->h);
+
     SDL_FreeSurface(tempSurface);
 
     return true;
