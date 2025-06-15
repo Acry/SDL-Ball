@@ -256,8 +256,7 @@ bool LevelManager::loadLevel(size_t level) {
 }
 
 void LevelManager::onLevelRequested(const LevelRequestedData &data) {
-    const size_t requestedLevel = data.level;
-    if (loadLevel(requestedLevel)) {
+    if (const size_t requestedLevel = data.level; loadLevel(requestedLevel)) {
         eventManager->emit(GameEvent::LevelLoaded, currentLevelData);
     } else {
         SDL_Log("Fehler beim Laden von Level %zu", requestedLevel);
