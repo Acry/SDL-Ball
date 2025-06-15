@@ -11,7 +11,7 @@
 
 #define DEBUG_SORT_BACKGROUNDS 0
 
-void normalizeColor(const std::string &value, float *colorArray, size_t length) {
+void normalizeColor(const std::string &value, float *colorArray, const size_t length) {
     constexpr float normalizer = 1.0f / 255.0f;
     for (size_t i = 0; i < length; ++i) {
         colorArray[i] = static_cast<float>(std::stoi(value.substr(i * 2, 2), nullptr, 16)) * normalizer;
@@ -150,7 +150,8 @@ bool TextureManager::readTextureProperties(
 
 
         try {
-            if (TextureProperty texProperty = getTexturePropertyFromString(key); texProperty != TextureProperty::Unknown) {
+            if (TextureProperty texProperty = getTexturePropertyFromString(key);
+                texProperty != TextureProperty::Unknown) {
                 switch (texProperty) {
                     case TextureProperty::TextureColor:
                         if (value.length() >= 8) {
@@ -535,7 +536,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, text
 
     // 6. check colors values
     bool hasColor = false;
-    for (const float i : tex.textureProperties.textureColor) {
+    for (const float i: tex.textureProperties.textureColor) {
         if (i > 0.0f) {
             hasColor = true;
             break;
