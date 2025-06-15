@@ -2,6 +2,10 @@
 
 ![old logo](images/old-logo.png)
 
+Some working manual tests:
+
+https://github.com/user-attachments/assets/6edef4a5-070b-4f8f-8329-65b208e1741a
+
 I pulled the Repository via <https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=sdl-ball>.
 With sound enabled, the rendering was broken for me.
 I had to initialize the soundClass before creating the window and opengl-context.
