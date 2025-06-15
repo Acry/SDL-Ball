@@ -4,8 +4,6 @@
 [ ] Background-Texture to setting
 [ ] Rethink: Use Type SpriteSheetAnimation for backgrounds?
 [ ] Background-Texture from TextureManager
-std::array<SpriteSheetAnimation *, static_cast<size_t>(PaddleTexture::Count)> paddleTextures{};
-SpriteSheetAnimation *getPaddleTexture(PaddleTexture type) const;
 
 ## Modernisierung des BackgroundManagers mit Shadern
 

@@ -1,2 +1,0 @@
-# Testhelper for manual tests
-

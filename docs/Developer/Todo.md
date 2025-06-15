@@ -1,15 +1,15 @@
 # Todo
 
-Besides the obvious things like fixing bugs, refactoring and moving on to shaders,
+Besides the obvious things like fixing bugs, refactoring and moving on SDL3 and shaders,
 there are a lot of things to do.
 
 ## Pipeline
 
-[BackgroundManager-Todo](Manager/BackgroundManager_Todo.md)
+[Current things](CURRENT.md)
 
 * GameObjects
 
-- [ ] Brick to moving object, for dropping levels
+- [X] Brick to moving object, for dropping levels
 - [ ] BallManager
 - [X] BrickManager
   [X] Dropping Levels
@@ -81,13 +81,10 @@ GameObjects: Balls, Paddle, Bricks, Powerups, Tracer, etc.
 - [ ] PowerupManager, rework
 - [X] PowerupManager_Tests
 
-  Blocker: BallManager
-- [ ] Powerup_Tests
-- [ ] PowerupManager, rework
-- [ ] PowerupManager_Tests
 - [ ] Bullet, rework
 - [ ] Bullet_Tests
 
+- [ ] HUD-Manager
 - HUD (Score, Clock, Lives, Level, Speedometer, Powerups consumed (bottom), Shop (top))
     - [ ] Score
     - [ ] Clock
@@ -106,10 +103,10 @@ ___
 - [ ] GameManager, create
 - [ ] GameManager_Tests
 
-- [ ] **Game should be playable again**
-
 - [X] CodeManager
 - [ ] CodeManager_Tests
+
+- [ ] **Game should be playable again**
 
 ___
 
@@ -120,16 +117,21 @@ ___
     - [ ] QuitMenu
     - [ ] HighscoreMenu
     - [ ] LevelSelectMenu
-- [ ] MenuManager: keyboard support
+- [ ] MenuManager Mouse collsion and click
+- [ ] MenuManager: keyboard support (events)
 - [ ] MenuManager_Tests
 - [ ] InputManager_Tests
 
 - [ ] SceneManager create
 - [ ] SceneManager_Tests
 
+## Scenes
+
 - [ ] TitleScreen, rework
   Blocker GameManager, SceneManager, MenuManager
 - [ ] TitleScreen_Tests
+
+## Savegames
 
 - [ ] Decouple SavegameManager
 - [ ] support old savegame format 1
@@ -137,13 +139,19 @@ ___
 - [ ] implement current savegame format
 - [ ] SavegameManager_Tests
 
-- [X] LevelManager_Tests
-- [ ] LevelManager, check old formats
+## Highscores
 
 - [ ] HighscoreManager_Tests
 
+## Level
+
+- [X] LevelManager_Tests
+- [ ] LevelManager, check old formats
 - [ ] modernize LevelEditor
 - [ ] LevelEditor_Tests
+- [ ] InGame-LevelEditor
+
+## Auxiliary Managers
 
 - [ ] [ShaderManager](Manager/ShaderManager.md)
 
@@ -171,11 +179,12 @@ ___
 - [ ] n - next level
 - [ ] m - previous level
 - [ ] f - autoplay
+- [ ] c - chose level
 
 - [ ] Make the game playable without datafiles (random levels, no samplers)
 - [ ] LevelManager - random level
 - [ ] simple GPU-Sounds?
-- [ ] mod support for music and samples
+- [ ] mod support for music and samples (demonstrate in Retro theme)
 - [X] make game playable with keys
 - [ ] MenuManager
 - [ ] change difficulty in Menu
@@ -190,11 +199,13 @@ ___
 - [ ] Animate Paddle texture
 - [ ] Animate Glue layer
 - [X] [SpriteSheetAnimation](misc/SpriteSheetAnimation.md) einmaliges Abspielen implementieren
+- [ ] fix speedometer
 
-Themes
+## Themes
 
 - [Arkanoid ](Themes/Araknoid.md) smalle playfield
 - Retro [Theme](Themes/Retro.md)
+- Ingame (static), minimalitic
 
 #### Tracer
 
@@ -211,28 +222,30 @@ Themes
 
 ### Auxiliary
 
-- [ ] use OpenGL debug callbacks
+- [ ] use OpenGL debug callbacks - think it is not worth for legcy gl
 - [X] I broke the screenshot feature after extraction. Might be a threading issue.
   Not sure, think it was because the method was static
 - [ ] ScreenshotManager with UI?
 - [ ] use player name from config
 - [ ] savegame folder, use textfile instead of binary
-- [ ] fix speedometer
+
 - [ ] fix messed up values due to [projection change](OpenGL/Projection.md).
-- [ ] use sdl2 high performance timer, see: [Timing](Physics%20&%20Timing/Timing.md)
+- [ ] use sdl3 high performance timer, see: [Timing](Physics%20&%20Timing/Timing.md)
 - [ ] Refactor [Timing](Refactoring/Timing.md)
-- [ ] show current level no# during gameplay
+- [ ] show current level no# during gameplay, IDK get ready for level X, fade in paddle and ball, play sounds
 - [ ] separate Powerup Descriptions from Title, new Scene
 - [ ] open website from title screen
 - [ ] add a new scene for the used keys
 - [ ] add a new scene for more explanation, see Website page=about.html
 - [ ] autoplay after title for a while
 - [ ] autosave level on quit, asked for continuing
-- [ ] hot reload themes/levels/graphics/sounds
-- [ ] polish Leveleditor
+- [ ] hot reload themes: levels, backgrounds graphics, sounds, fonts
+- [ ] polish JS Leveleditor?
+- [X] check gimp level plugin [Readme.md](../../leveleditor/gimp-leveleditor/Readme.md)
+- [ ] maintain gimp level plugin? IDK
 - [ ] using a physics engine at this point might be overkill.
 - [ ] add a pause indicator / Pause Scene
-- [ ] rework the shop
+- [ ] rework the powerup shop
 - [ ] https://examples.libsdl.org/SDL3/demo/04-bytepusher/
 
 - [X] implement callbacks (EventManager)
@@ -240,7 +253,7 @@ Themes
 - [ ] use shaders
 - [ ] use SDL 3, not sure if I should maintain SDL2 plus Emscripten
 - [ ] Emscripten
-- [ ] ThemeManager zu cmdline, um Themes zu validieren
+- [ ] ThemeManager zu cmdline, um Themes zu validieren?
 
 ### Source Structure
 

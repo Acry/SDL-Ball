@@ -1,10 +1,12 @@
 # BackgroundManager_Todo.md
 
+- [ ] color layer could repsond to collsions
+
 ## open issues
 
-- [ ] create test theme, use supported image-formats and different sizes
-- [ ] test theme switching
-- [ ] overlay off should respond immidiately and force recreation of display-list.
+- [X] create test theme, use supported image-formats and different sizes
+- [X] test theme switching
+- [X] overlay off should respond immidiately and force recreation of display-list.
 - [ ] tiled backgrounds | [see](../misc/Background.md)
 
 ## to be implemented
@@ -33,4 +35,8 @@ Auflösung und Format sollten keine große Rolle, lediglich das AR von 4:3 ist w
 ## after shader is working
 
 - [ ] animated backgrounds (sprite sheet oder colors)
-- [ ] make BackgroundManager-Shader responsive to events
+- [ ] make BackgroundManager-Shader responsive to events or Background Music
+
+## See: FIXME: BackgroundManager_Todo.md
+
+[BackgroundManager](../misc/BackgroundManager_Todo.md)
