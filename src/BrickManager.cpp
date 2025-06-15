@@ -3,8 +3,8 @@
 
 #include "config.h"
 
-BrickManager::BrickManager(IEventManager *evtMgr, TextureManager *texMgr)
-    : eventManager(evtMgr), textureManager(texMgr) {
+BrickManager::BrickManager(IEventManager *evtMgr, TextureManager *texMgr, SpriteSheetAnimationManager *animMgr)
+    : eventManager(evtMgr), textureManager(texMgr), spriteSheetAnimationManager(animMgr) {
     eventManager->addListener(GameEvent::BallHitBrick,
                               [this](const CollisionData &data) { onBallHitBrick(data); },
                               this);
@@ -28,7 +28,6 @@ BrickTexture BrickManager::getTextureForType(const BrickType type) {
         case BrickType::Red: return BrickTexture::Red;
         case BrickType::Explosive: return BrickTexture::Explosive;
         case BrickType::Doom: return BrickTexture::Doom;
-        case BrickType::Base: return BrickTexture::Base;
         default: return BrickTexture::Base;
     }
 }
@@ -36,15 +35,18 @@ BrickTexture BrickManager::getTextureForType(const BrickType type) {
 void BrickManager::setupBricks(const std::vector<BrickInfo> &brickInfos) {
     clear();
 
+    bricks.reserve(brickInfos.size());
+    brickHealth.reserve(brickInfos.size());
+    brickTypes.reserve(brickInfos.size());
+
     for (const auto &[type, x, y, CustomBrickColor]: brickInfos) {
         if (type == BrickType::None) continue;
 
-        Brick brick;
+        Brick brick(*textureManager->getBrickTexture(getTextureForType(type)));
         brick.pos_x = x;
         brick.pos_y = y;
         brick.width = BRICK_WIDTH;
         brick.height = BRICK_HEIGHT;
-        brick.texture = textureManager->getBrickTexture(getTextureForType(type));
 
         float health;
         switch (type) {
@@ -66,10 +68,21 @@ void BrickManager::setupBricks(const std::vector<BrickInfo> &brickInfos) {
         if (type == BrickType::Base) {
             brick.customColor = CustomBrickColor;
         }
+        const bool hasAnimation = brick.animProps.frames > 1;
+
         const size_t index = bricks.size();
-        bricks.push_back(std::move(brick));
         brickHealth[index] = health;
         brickTypes[index] = type;
+        bricks.push_back(std::move(brick));
+
+        if (hasAnimation) {
+            animationIndices.push_back(index);
+        }
+    }
+    for (const size_t idx: animationIndices) {
+        if (idx < bricks.size() && bricks[idx].animProps.frames > 1) {
+            spriteSheetAnimationManager->registerForAnimation(&bricks[idx], bricks[idx].animProps);
+        }
     }
 }
 
@@ -87,10 +100,10 @@ void BrickManager::update(const float deltaTime) {
     }
 }
 
-void BrickManager::draw(const float deltaTime) {
+void BrickManager::draw() const {
     for (auto &brick: bricks) {
         if (brick.isActive() && brick.isVisible()) {
-            brick.draw(deltaTime);
+            brick.draw();
         }
     }
 }
@@ -121,6 +134,9 @@ void BrickManager::onBallHitBrick(const CollisionData &data) {
 
     if (health <= 0) {
         brick.setActive(false);
+        spriteSheetAnimationManager->unregisterFromAnimation(&brick);
+
+        // Aus der Liste entfernen und löschen
         EventData destroyData;
         destroyData.sender = &brick;
         destroyData.posX = brick.pos_x;
@@ -130,9 +146,15 @@ void BrickManager::onBallHitBrick(const CollisionData &data) {
 }
 
 void BrickManager::clear() {
+    for (const size_t idx: animationIndices) {
+        if (idx < bricks.size()) {
+            spriteSheetAnimationManager->unregisterFromAnimation(&bricks[idx]);
+        }
+    }
     bricks.clear();
     brickHealth.clear();
     brickTypes.clear();
+    animationIndices.clear();
 }
 
 size_t BrickManager::getActiveBrickCount() const {
