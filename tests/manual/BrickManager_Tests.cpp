@@ -2,6 +2,7 @@
 #include "BrickManager.h"
 #include "LevelManager.h"
 #include "DisplayManager.hpp"
+#include "EventDispatcher.h"
 #include "TestHelper.h"
 #include "TextureManager.h"
 #include "EventManager.h"
@@ -9,7 +10,7 @@
 
 int main() {
     EventManager eventManager;
-    // MouseManager mouseManager(&eventManager);
+    MouseManager mouseManager(&eventManager);
     DisplayManager displayManager(&eventManager);
     if (!displayManager.init(0, 1024, 768, false)) {
         SDL_Log("Could not initialize display");
@@ -20,7 +21,7 @@ int main() {
     const std::filesystem::path themePath = "../themes/default";
 
     TextManager textManager;
-    if (!textManager.setTheme(themePath)) {
+    if (!textManager.setTheme("../tests/themes/test")) {
         SDL_Log("Error loading font theme %s", themePath.c_str());
         return EXIT_FAILURE;
     }
@@ -28,23 +29,25 @@ int main() {
     TestHelper testHelper(textManager, &eventManager);
 
     TextureManager textureManager;
-    if (!textureManager.setSpriteTheme("../themes/default")) {
+    if (!textureManager.setSpriteTheme(themePath)) {
         SDL_Log("Error loading texture theme");
         return EXIT_FAILURE;
     }
 
-
     LevelManager levelManager(&eventManager);
-    if (!levelManager.setTheme("../themes/default")) {
+    if (!levelManager.setTheme(themePath)) {
         SDL_Log("Error setting level theme");
         return EXIT_FAILURE;
     }
-    BrickManager brickManager(&eventManager, &textureManager);
+    SpriteSheetAnimationManager animationManager;
+    BrickManager brickManager(&eventManager, &textureManager, &animationManager);
 
     size_t currentLevel = 1;
     levelManager.loadLevel(currentLevel);
 
     auto levelCount = levelManager.getLevelCount();
+
+    const EventDispatcher eventDispatcher(&eventManager);
     const std::vector<std::string> instructions = {
         "S: Create Screenshot",
         "M: Toggle Mouse Coordinates",
@@ -135,12 +138,12 @@ int main() {
 
 
         testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
-
+        animationManager.updateAllAnimations(deltaTime);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         testHelper.drawGrid();
 
-        brickManager.draw(deltaTime);
+        brickManager.draw();
         testHelper.drawCenterLines();
         testHelper.renderInstructions(deltaTime, instructions);
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);

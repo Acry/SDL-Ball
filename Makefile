@@ -487,6 +487,7 @@ BRICK_TEST_SOURCES := $(MANUAL_TEST_DIR)BrickManager_Tests.cpp \
                       $(SOURCE_DIR)EventManager.cpp \
                       $(SOURCE_DIR)BrickManager.cpp \
                       $(SOURCE_DIR)MouseManager.cpp \
+                      $(SOURCE_DIR)SpriteSheetAnimationManager.cpp \
 
 BRICK_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BRICK_TEST_SOURCES:.cpp=.o)))
 
