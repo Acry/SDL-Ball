@@ -103,8 +103,6 @@ enum class TitleTexture {
 };
 
 class TextureManager {
-    std::unordered_map<std::string, std::unique_ptr<texture> > textures;
-
     // caches
     std::unordered_map<std::string, std::unique_ptr<texture> > textureCache;
     std::unordered_map<std::string, std::unique_ptr<texture> > backgroundCache;
@@ -178,4 +176,8 @@ public:
                                       SpriteSheetAnimationProperties &animProps);
 
     bool loadTextureWithProperties(const std::string &basePath, texture &animation) const;
+
+    const std::unordered_map<std::string, std::unique_ptr<texture> > &getTextureCache() const {
+        return textureCache;
+    }
 };

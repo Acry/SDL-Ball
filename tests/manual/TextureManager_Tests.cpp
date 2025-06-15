@@ -1,3 +1,4 @@
+// TextureManager_Tests.cpp
 #include <cstdlib>
 
 #include "TextureManager.h"
@@ -7,10 +8,43 @@
 #include "TestHelper.h"
 #include "TextManager.h"
 
-// Test theme loading
-// next:
-// SpriteSheetAnimation *TextureManager::getBrickTexture(BrickTexture type)
-// render all textures, except backgrounds
+// FIXME: Theme Change, Blocker: Alternative Theme (3.1) not yet implemented
+class MyTestHelper final : public TestHelper {
+public:
+    using TestHelper::TestHelper;
+
+    size_t currentTextureIndex = 0;
+    std::vector<std::pair<std::string, texture *> > texturesToDisplay;
+
+
+    void handleKeyPress(const KeyboardEventData &data) override {
+        TestHelper::handleKeyPress(data);
+
+        if (texturesToDisplay.empty())
+            return;
+
+        switch (data.key) {
+            case SDLK_LEFT:
+                if (currentTextureIndex > 0)
+                    currentTextureIndex--;
+                else
+                    currentTextureIndex = texturesToDisplay.size() - 1;
+                break;
+            case SDLK_RIGHT:
+                currentTextureIndex = (currentTextureIndex + 1) % texturesToDisplay.size();
+                break;
+            case SDLK_HOME:
+                currentTextureIndex = 0;
+                break;
+            case SDLK_END:
+                currentTextureIndex = texturesToDisplay.size() - 1;
+                break;
+            default:
+                break;
+        }
+    }
+};
+
 int main() {
     EventManager eventManager;
     MouseManager mouseManager(&eventManager);
@@ -27,7 +61,7 @@ int main() {
         return EXIT_FAILURE;
     }
     const EventDispatcher eventDispatcher(&eventManager);
-    TestHelper testHelper(textManager, &eventManager);
+    MyTestHelper testHelper(textManager, &eventManager);
 
     TextureManager textureManager;
     const std::filesystem::path themePath = "../themes/default";
@@ -37,14 +71,17 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    auto [textureProperties, animationProperties] = *textureManager.getBallTexture(BallTexture::Fireball);
-    SpriteSheetAnimation spriteSheetAnimation(animationProperties);
-
-    spriteSheetAnimation.isPlaying = true;
+    for (const auto &[path, texPtr]: textureManager.getTextureCache()) {
+        testHelper.texturesToDisplay.push_back({path, texPtr.get()});
+    }
 
     const std::vector<std::string> instructions = {
         "S: Create Screenshot",
         "M: Toggle Mouse Coordinates",
+        "-> - next texture",
+        "<- - previous texture",
+        "Pos1 - first texture",
+        "End - last texture",
         "ESC: Quit"
     };
 
@@ -58,39 +95,44 @@ int main() {
 
         running = eventDispatcher.processEvents();
 
-        spriteSheetAnimation.play(deltaTime);
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         testHelper.drawGrid();
         testHelper.drawCenterLines();
 
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBindTexture(GL_TEXTURE_2D, textureProperties.id);
+        if (!testHelper.texturesToDisplay.empty()) {
+            auto &[name, currentTexture] = testHelper.texturesToDisplay[testHelper.currentTextureIndex];
 
-        glColor4fv(textureProperties.textureColor);
+            glEnable(GL_TEXTURE_2D);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glBindTexture(GL_TEXTURE_2D, currentTexture->textureProperties.id);
 
-        glBegin(GL_QUADS);
+            glColor4fv(currentTexture->textureProperties.textureColor);
 
-        glTexCoord2f(spriteSheetAnimation.currentTexturePosition[0], spriteSheetAnimation.currentTexturePosition[1]);
-        glVertex2f(-0.5f, -0.5f);
+            glBegin(GL_QUADS);
 
-        glTexCoord2f(spriteSheetAnimation.currentTexturePosition[2], spriteSheetAnimation.currentTexturePosition[3]);
-        glVertex2f(0.5f, -0.5f);
+            glTexCoord2f(0.0f, 0.0f);
+            glVertex2f(-0.5f, -0.5f);
 
-        glTexCoord2f(spriteSheetAnimation.currentTexturePosition[4], spriteSheetAnimation.currentTexturePosition[5]);
-        glVertex2f(0.5f, 0.5f);
+            glTexCoord2f(1.0f, 0.0f);
+            glVertex2f(0.5f, -0.5f);
 
-        glTexCoord2f(spriteSheetAnimation.currentTexturePosition[6], spriteSheetAnimation.currentTexturePosition[7]);
-        glVertex2f(-0.5f, 0.5f);
+            glTexCoord2f(1.0f, 1.0f);
+            glVertex2f(0.5f, 0.5f);
 
-        glEnd();
+            glTexCoord2f(0.0f, 1.0f);
+            glVertex2f(-0.5f, 0.5f);
 
-        glDisable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
+            glEnd();
 
+            glDisable(GL_TEXTURE_2D);
+            glDisable(GL_BLEND);
+
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+            std::string infoText = "Texture: " + name;
+            textManager.write(infoText, Fonts::Menu, true, 1.0f, 0.0f, -0.6f);
+        }
         testHelper.renderInstructions(deltaTime, instructions);
         testHelper.drawMouseCoordinates();
 
