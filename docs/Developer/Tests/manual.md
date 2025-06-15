@@ -1,8 +1,42 @@
 # Manual Tests-Code
 
-`tests/manual`
+`../../../tests/manual`
 
-## manual tests
+## Currently implemented manual tests
+
+- test-backgroundManager
+- test-ball (needs: manager and class rework)
+- test-brickManager (needs animation registering) (try test-setup: class)
+- test-codeManager (stub, early setup)
+- test-collisionManager (needs GameObjectManagers)
+- test-configFileManager
+- test-displayManager
+- test-effectManager (need texture changes, needs new test-setup)
+- test-levelManager
+- test-paddle (needs: manager and class rework)
+- test-settingsManager
+- test-soundManager
+- test-spriteSheetAnimation
+- test-spriteSheetAnimationManager
+- test-textManager
+- test-textureManager
+- test-themeManager
+
+## Currently Working manual tests
+
+- test-backgroundManager
+- test-configFileManager
+- test-displayManager
+- test-levelManager (try test-setup: context)
+- test-settingsManager
+- test-soundManager
+- test-spriteSheetAnimation
+- test-spriteSheetAnimationManager
+- test-textManager
+- test-textureManager
+- test-themeManager
+
+## Planned manual tests (WIP)
 
 - test-backgroundManager
 - test-ball
@@ -16,10 +50,17 @@
 - test-effectManager
 - test-eventDispatcher
 - test-eventManager
+- test-Hud
+- test-hudManager
 - test-levelManager
+- test-MenuManager
 - test-mouseManager
 - test-paddle
 - test-paddleManager (PlayerManager)
+- test-Powerup
+- test-powerupManager
+- test-sameGame
+- test-saveGameManager
 - test-sceneManager
 - test-settingsManager
 - test-soundManager
@@ -29,9 +70,13 @@
 - test-textureManager
 - test-themeManager
 
-## Global State and virtual handleKeyPress
+## Test-Setup
 
-// I do not like this attempt to use global variables
+### Global State and virtual handleKeyPress
+
+I do not like this attempt to use global variables
+
+```c++
 LevelManager *levelManager = nullptr;
 BackgroundManager *backgroundManager = nullptr;
 TextureManager *textureManager = nullptr;
@@ -71,13 +116,14 @@ using TestHelper::TestHelper;
                 }
                 break;
 
-// ...
-default: ;
-}
-}
+            // ...
+            default: ;
+        }
+    }
 };
+```
 
-## Test context
+### TestContext
 
 ```c++
 struct TestContext {
@@ -120,7 +166,7 @@ int main() {
 }
 ```
 
-## Testklasse
+### TestClass
 
 ```c++
 // TestContext.h
@@ -240,7 +286,7 @@ int main() {
         running = eventDispatcher.processEvents();
 ```
 
-## Testklasse weiter getrieben
+### TestClass driven further
 
 ```c++
 int main() {
@@ -322,3 +368,7 @@ public:
     }
 };
 ```
+
+## See also
+
+[Managers.md](../Managers.md)

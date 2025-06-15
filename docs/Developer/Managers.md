@@ -45,9 +45,7 @@ SpriteSheetAnimationManager - handles the sprite sheet animations, calculates th
 gameObjects
 [UIManager](Manager/UIManager.md) - handles the UI, loads the UI file and applies it to the game (HUD)
 
-See: [Structure](Software-Engineering/Structure.md)
-
-___
+## Notes
 
 Das System entwickelt sich gut und folgt jetzt einem klaren Event-basierten Design:
 
@@ -80,3 +78,9 @@ Die Kommunikation läuft jetzt durchgängig über das Event-System statt direkte
 - Besser testbar
 - Leichter erweiterbar
 - Lose gekoppelt
+
+## See also
+
+- [Structure](Structure.md)
+- [Manual Tests](Tests/manual.md)
+- 
