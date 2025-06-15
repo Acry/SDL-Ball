@@ -28,6 +28,8 @@ See: [get started](docs/Developer/GetInvolved.md)
 or
 See: [Todo](docs/Developer/Todo.md)
 
+What I am currently on: [Current](docs/Developer/CURRENT.md)
+
 ## Significant changes
 
 - Theming is more versatile
