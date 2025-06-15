@@ -4,14 +4,21 @@
 #include <SDL2/SDL_image.h>
 #include <filesystem>
 #include <fstream>
+#include <ranges>
+
 #include "TextureUtilities.h"
 #include "TextureManager.h"
 
-#include <ranges>
-
 #define DEBUG_SORT_BACKGROUNDS 0
 
-TextureProperty getPropertyFromString(const std::string &key) {
+void normalizeColor(const std::string &value, float *colorArray, size_t length) {
+    constexpr float normalizer = 1.0f / 255.0f;
+    for (size_t i = 0; i < length; ++i) {
+        colorArray[i] = static_cast<float>(std::stoi(value.substr(i * 2, 2), nullptr, 16)) * normalizer;
+    }
+}
+
+TextureProperty getTexturePropertyFromString(const std::string &key) {
     static const std::unordered_map<std::string, TextureProperty> propertyMap = {
         {"texcolor", TextureProperty::TextureColor},
         {"parcolor", TextureProperty::ParticleColor},
@@ -87,13 +94,11 @@ bool TextureManager::load(const std::filesystem::path &pathName, texture &tex) c
         SDL_FreeSurface(tempSurface);
         return false;
     }
-
     if (TextureUtilities::SDL_FlipSurfaceVertical(tempSurface)) {
         SDL_Log("Error: could not invert surface for texture: %s", pathName.c_str());
         SDL_FreeSurface(tempSurface);
         return false;
     }
-
     if (!TextureUtilities::createGLTextureFromSurface(tempSurface, tex.textureProperties.id, true)) {
         SDL_FreeSurface(tempSurface);
         return false;
@@ -145,34 +150,16 @@ bool TextureManager::readTextureProperties(
 
 
         try {
-            // Prüfen, ob es eine TextureProperty ist
-            TextureProperty texProperty = getPropertyFromString(key);
-
-            if (texProperty != TextureProperty::Unknown) {
-                // TextureResource-Properties verarbeiten
+            if (TextureProperty texProperty = getTexturePropertyFromString(key); texProperty != TextureProperty::Unknown) {
                 switch (texProperty) {
                     case TextureProperty::TextureColor:
                         if (value.length() >= 8) {
-                            constexpr float normalizer = 1.0f / 255.0f;
-                            texResource.textureColor[0] =
-                                    static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
-                            texResource.textureColor[1] =
-                                    static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
-                            texResource.textureColor[2] =
-                                    static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
-                            texResource.textureColor[3] =
-                                    static_cast<float>(std::stoi(value.substr(6, 2), nullptr, 16)) * normalizer;
+                            normalizeColor(value, texResource.textureColor, 4);
                         }
                         break;
                     case TextureProperty::ParticleColor:
                         if (value.length() >= 6) {
-                            constexpr float normalizer = 1.0f / 255.0f;
-                            texResource.particleColor[0] =
-                                    static_cast<float>(std::stoi(value.substr(0, 2), nullptr, 16)) * normalizer;
-                            texResource.particleColor[1] =
-                                    static_cast<float>(std::stoi(value.substr(2, 2), nullptr, 16)) * normalizer;
-                            texResource.particleColor[2] =
-                                    static_cast<float>(std::stoi(value.substr(4, 2), nullptr, 16)) * normalizer;
+                            normalizeColor(value, texResource.particleColor, 3);
                         }
                         break;
                     case TextureProperty::FileName:
@@ -182,10 +169,10 @@ bool TextureManager::readTextureProperties(
                         SDL_Log("Warning: '%s' hat unknown texture property key: '%s' with value: '%s'",
                                 pathName.c_str(), key.c_str(), value.c_str());
                         break;
+                    default: ;
                 }
             } else {
-                // AnimationProperty verarbeiten
-                switch (AnimationProperty animProperty = getAnimPropertyFromString(key)) {
+                switch (getAnimPropertyFromString(key)) {
                     case AnimationProperty::XOffset:
                         animProps.xoffset = std::stof(value);
                         break;
@@ -243,10 +230,8 @@ bool TextureManager::setSpriteTheme(const std::string &themeName) {
     }
     clearTheme();
 
-    // Neuen Pfad setzen
     currentTheme = themeName;
 
-    // Texturen neu laden
     if (!loadAllGameTextures()) {
         SDL_Log("Fehler beim Laden der Texturen für Theme: %s", currentTheme.c_str());
         return false;
@@ -305,7 +290,6 @@ texture *TextureManager::loadAndCacheTexture(const std::string &path, const bool
         return nullptr;
     }
 
-    // Insert Cache and return Pointer
     textureCache[path] = std::move(newTexture);
     return textureCache[path].get();
 }
@@ -353,7 +337,7 @@ texture *TextureManager::getMiscTexture(MiscTexture type) const {
 bool TextureManager::loadAllGameTextures() {
     bool allTexturesLoaded = true;
 
-    // Paddle-Texturen laden
+    // Paddle
     if (!((paddleTextures[static_cast<size_t>(PaddleTexture::Base)] = loadAndCacheTexture("gfx/paddle/base"))))
         allTexturesLoaded = false;
     if (!((paddleTextures[static_cast<size_t>(PaddleTexture::Glue)] = loadAndCacheTexture("gfx/paddle/glue"))))
@@ -361,13 +345,13 @@ bool TextureManager::loadAllGameTextures() {
     if (!((paddleTextures[static_cast<size_t>(PaddleTexture::Gun)] = loadAndCacheTexture("gfx/paddle/gun"))))
         allTexturesLoaded = false;
 
-    // Ball-Texturen laden
+    // Ball
     if (!((ballTextures[static_cast<size_t>(BallTexture::Normal)] = loadAndCacheTexture("gfx/ball/normal"))))
         allTexturesLoaded = false;
     if (!((ballTextures[static_cast<size_t>(BallTexture::Fireball)] = loadAndCacheTexture("gfx/ball/fireball"))))
         allTexturesLoaded = false;
 
-    // Brick-Texturen laden
+    // Brick
     if (!((brickTextures[static_cast<size_t>(BrickTexture::Explosive)] = loadAndCacheTexture("gfx/brick/explosive"))))
         allTexturesLoaded = false;
     if (!((brickTextures[static_cast<size_t>(BrickTexture::Base)] = loadAndCacheTexture("gfx/brick/base"))))
@@ -395,7 +379,7 @@ bool TextureManager::loadAllGameTextures() {
     if (!((brickTextures[static_cast<size_t>(BrickTexture::Red)] = loadAndCacheTexture("gfx/brick/red"))))
         allTexturesLoaded = false;
 
-    // Powerup-Texturen laden
+    // Powerup
     if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Coin)] = loadAndCacheTexture("gfx/powerup/coin"))))
         allTexturesLoaded = false;
     if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Glue)] = loadAndCacheTexture("gfx/powerup/glue"))))
@@ -449,17 +433,17 @@ bool TextureManager::loadAllGameTextures() {
     if (!((powerUpTextures[static_cast<size_t>(PowerUpTexture::Bullet)] = loadAndCacheTexture("gfx/powerup/bullet"))))
         allTexturesLoaded = false;
 
-    // Misc Textures
+    // Misc
     if (!((miscTextures[static_cast<size_t>(MiscTexture::Border)] = loadAndCacheTexture("gfx/border"))))
         allTexturesLoaded = false;
 
-    // Effects Textures
+    // Effects
     if (!((effectTextures[static_cast<size_t>(EffectTexture::Tail)] = loadAndCacheTexture("gfx/effects/tail"))))
         allTexturesLoaded = false;
     if (!((effectTextures[static_cast<size_t>(EffectTexture::Particle)] = loadAndCacheTexture("gfx/effects/particle"))))
         allTexturesLoaded = false;
 
-    // Title Textures
+    // Title
     if (!((titleTextures[static_cast<size_t>(TitleTexture::Title)] = loadAndCacheTexture("gfx/title/title"))))
         allTexturesLoaded = false;
 
@@ -511,7 +495,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, text
         }
     }
 
-    // 4. Fehlerbehandlung nach den genannten Regeln
+    // 4. Errore handling
     if (!textureLoaded) {
         if (hasProps && !tex.textureProperties.fileName.empty()) {
             SDL_Log("Error: Die in der Eigenschaftsdatei angegebene Bilddatei existiert nicht: '%s'",
@@ -525,7 +509,7 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, text
         return false;
     }
 
-    // 5. Standard-Eigenschaften setzen, wenn keine Eigenschaften geladen wurden
+    // 5. Set default properties
     if (!hasProps) {
         SDL_Log("Warning: no properties '%s'", actualImagePath.c_str());
 
@@ -549,14 +533,14 @@ bool TextureManager::loadTextureWithProperties(const std::string &basePath, text
         tex.textureProperties.textureColor[3] = 1.0f;
     }
 
-    // 6. check colors and set fallback if not set
+    // 6. check colors values
     bool hasColor = false;
-    for (int i = 0; i < 4; i++) {
-        if (tex.textureProperties.textureColor[i] > 0.0f) {
+    for (const float i : tex.textureProperties.textureColor) {
+        if (i > 0.0f) {
             hasColor = true;
             break;
         }
-    }
+    } // set default colors
     if (!hasColor) {
         SDL_Log("Warning: No texture color set in '%s', using white", basePath.c_str());
         for (int i = 0; i < 3; i++) {
@@ -577,7 +561,7 @@ bool TextureManager::loadAllBackgrounds() {
     }
     clearBackgroundTheme();
 
-    // Dateien einsammeln und nach Basename sortieren
+    // collect files with supported formats
     std::vector<std::filesystem::directory_entry> entries;
     for (const auto &entry: std::filesystem::directory_iterator(directory)) {
         if (entry.is_regular_file()) {
@@ -587,21 +571,21 @@ bool TextureManager::loadAllBackgrounds() {
             }
         }
     }
-    // Natürliche Sortierung (natural sort)
+    // natural sort
     std::sort(entries.begin(), entries.end(), [](const auto &a, const auto &b) {
         std::string nameA = a.path().stem().string();
         std::string nameB = b.path().stem().string();
 
-        // Zu Kleinbuchstaben konvertieren für case-insensitive Sortierung
+        // to lower case for case-insensitive comparison
         std::transform(nameA.begin(), nameA.end(), nameA.begin(), ::tolower);
         std::transform(nameB.begin(), nameB.end(), nameB.begin(), ::tolower);
 
         auto compareChunks = [](const std::string &a, const std::string &b) {
             if (std::isdigit(a[0]) && std::isdigit(b[0])) {
-                // Numerischer Vergleich
+                // numerical
                 return std::stoi(a) < std::stoi(b);
             }
-            // Alphabetischer Vergleich
+            // alphabetical
             return a < b;
         };
 

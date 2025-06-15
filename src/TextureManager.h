@@ -102,7 +102,6 @@ enum class TitleTexture {
     Count
 };
 
-
 class TextureManager {
     std::unordered_map<std::string, std::unique_ptr<texture> > textures;
 
