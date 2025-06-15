@@ -4,13 +4,13 @@
 #include <vector>
 
 #include "DisplayManager.hpp"
+#include "EventDispatcher.h"
+#include "EventManager.h"
 #include "LevelManager.h"
+#include "MouseManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
-#include "EventManager.h"
 #include "config.h"
-#include "EventDispatcher.h"
-#include "MouseManager.h"
 
 const float colors[16][4] = {
     {1.0f, 1.0f, 1.0f, 1.0f}, // Weiß
@@ -31,142 +31,89 @@ const float colors[16][4] = {
     {0.0f, 0.0f, 0.0f, 1.0f} // Schwarz
 };
 
-std::vector<BrickInfo> bricks;
-
-void onLevelLoaded(const LevelData &data) {
-    bricks = data.bricks;
-}
-
-int main() {
+struct TestContext {
     EventManager eventManager;
-    MouseManager mouseManager(&eventManager);
-    DisplayManager displayManager(&eventManager);
-    if (!displayManager.init(0, 1024, 768, false)) {
-        SDL_Log("Could not initialize display");
-        return EXIT_FAILURE;
-    }
-    SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Level Test");
-
-    const std::filesystem::path themePath = "../themes/default";
-
+    MouseManager mouseManager;
+    DisplayManager displayManager;
     TextManager textManager;
-    if (!textManager.setTheme("../tests/themes/test")) {
-        SDL_Log("Error loading font theme %s", themePath.c_str());
-        return EXIT_FAILURE;
-    }
-    const EventDispatcher eventDispatcher(&eventManager);
-    TestHelper testHelper(textManager, &eventManager);
+    LevelManager levelManager;
 
-    eventManager.addListener(GameEvent::LevelLoaded,
-                             [](const LevelData &data) { onLevelLoaded(data); }, nullptr);
-
-    LevelManager levelManager(&eventManager);
-    if (!levelManager.setTheme(themePath)) {
-        SDL_Log("Error setting level theme %s", themePath.c_str());
-    }
-
+    std::vector<BrickInfo> bricks;
     size_t currentLevel = 1;
-    levelManager.loadLevel(currentLevel);
+    size_t levelCount = 0;
 
-    auto levelCount = levelManager.getLevelCount();
-    const std::vector<std::string> instructions = {
-        "S: Create Screenshot",
-        "M: Toggle Mouse Coordinates",
-        "-> - next level",
-        "<- - previous level",
-        "Pos1 - first level",
-        "End - last level",
-        "ESC: Quit"
-    };
-    bool running = true;
-    auto lastFrameTime = std::chrono::high_resolution_clock::now();
-    GLfloat normalizedMouseX = 0.0f, normalizedMouseY = 0.0f;
-    const std::filesystem::path screenshotPath = "./screenshots/";
-    const std::chrono::microseconds targetFrameTime(16667); // ~60 FPS (1s/60 = 16.67ms)
-    while (running) {
-        auto frameStart = std::chrono::high_resolution_clock::now();
-        auto currentTime = frameStart;
-        const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
-        lastFrameTime = currentTime;
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                running = false;
-            }
-            if (event.type == SDL_WINDOWEVENT) {
-                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    WindowEventData data;
-                    data.width = event.window.data1;
-                    data.height = event.window.data2;
-                    eventManager.emit(GameEvent::WindowResized, data);
-                }
-            }
-            if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym) {
-                    case SDLK_s:
-                        if (!std::filesystem::exists(screenshotPath)) {
-                            std::filesystem::create_directories(screenshotPath);
-                        }
-                        if (displayManager.screenshot(screenshotPath)) {
-                            textManager.addAnnouncement("Screenshot saved.", 1500, Fonts::AnnounceGood);
-                        } else {
-                            textManager.addAnnouncement("Screenshot not created.", 1500, Fonts::AnnounceBad);
-                        }
-                        break;
-                    case SDLK_m:
-                        testHelper.m_showMouseCoords = !testHelper.m_showMouseCoords;
-                        break;
-                    case SDLK_SPACE:
-                        currentLevel++;
-                        if (currentLevel > levelCount) currentLevel = 1; {
-                            levelManager.loadLevel(currentLevel);
-                        }
-                        break;
-                    case SDLK_HOME:
-                        currentLevel = 1; {
-                            levelManager.loadLevel(currentLevel);
-                        }
-                        break;
-                    case SDLK_END:
-                        currentLevel = levelCount; {
-                            levelManager.loadLevel(currentLevel);
-                        }
-                        break;
-                    case SDLK_LEFT:
-                        currentLevel--;
-                        if (currentLevel < 1) currentLevel = levelCount; {
-                            levelManager.loadLevel(currentLevel);
-                        }
-                        break;
-                    case SDLK_RIGHT:
-                        currentLevel++;
-                        if (currentLevel > levelCount) currentLevel = 1; {
-                            levelManager.loadLevel(currentLevel);
-                        }
-                        break;
-                    case SDLK_ESCAPE:
-                        running = false;
-                        break;
-                    default: ;
-                }
-            }
-            if (event.type == SDL_MOUSEMOTION) {
-                normalizedMouseX = (event.motion.x - displayManager.viewportX - displayManager.viewportW / 2.0f) * (
-                                       2.0f / displayManager.viewportW);
-                normalizedMouseY = (event.motion.y - displayManager.viewportY - displayManager.viewportH / 2.0f) * -1 *
-                                   (
-                                       2.0f / displayManager.viewportH);
-            }
+    TestContext()
+        : eventManager(),
+          mouseManager(&eventManager),
+          displayManager(&eventManager),
+          levelManager(&eventManager) {
+        if (!displayManager.init(0, 1024, 768, false)) {
+            throw std::runtime_error("Could not initialize display");
+        }
+        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Level Test");
+
+        textManager.setTheme("../tests/themes/test");
+
+        eventManager.addListener(GameEvent::LevelLoaded,
+                                 [this](const LevelData &data) {
+                                     this->bricks = data.bricks;
+                                 }, nullptr);
+
+        if (!levelManager.setTheme("../themes/default")) {
+            throw std::runtime_error("Error setting level theme");
         }
 
-        testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
+        levelCount = levelManager.getLevelCount();
+        levelManager.loadLevel(currentLevel);
+    }
 
+    void loadLevel(size_t level) {
+        if (level < 1) level = levelCount;
+        if (level > levelCount) level = 1;
+
+        currentLevel = level;
+        levelManager.loadLevel(currentLevel);
+    }
+};
+
+class LevelTestHelper final : public TestHelper {
+    TestContext &ctx;
+
+public:
+    explicit LevelTestHelper(TestContext &context)
+        : TestHelper(context.textManager, &context.eventManager),
+          ctx(context) {
+    }
+
+    void handleKeyPress(const KeyboardEventData &data) override {
+        TestHelper::handleKeyPress(data);
+
+        switch (data.key) {
+            case SDLK_RIGHT:
+            case SDLK_SPACE:
+                ctx.loadLevel(ctx.currentLevel + 1);
+                break;
+            case SDLK_LEFT:
+                ctx.loadLevel(ctx.currentLevel - 1);
+                break;
+            case SDLK_HOME:
+                ctx.loadLevel(1);
+                break;
+            case SDLK_END:
+                ctx.loadLevel(ctx.levelCount);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void renderLevel(const float deltaTime, const std::vector<std::string> &instructions) const {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        testHelper.drawGrid();
+        drawGrid();
 
         int idx = 0;
-        for (auto &brick: bricks) {
+        for (const auto &brick: ctx.bricks) {
             glColor4fv(colors[idx % 16]);
             glBegin(GL_QUADS);
             glVertex3f(brick.x, brick.y, 0.0f);
@@ -176,21 +123,49 @@ int main() {
             glEnd();
             ++idx;
         }
-        testHelper.drawCenterLines();
-        testHelper.renderInstructions(deltaTime, instructions);
+
+        drawCenterLines();
+        renderInstructions(deltaTime, instructions);
+
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         char tempText[64];
-        sprintf(tempText, "Level: %lu", currentLevel);
-        textManager.write(tempText, Fonts::Highscore, true, 1.0f, 0.0f, -0.5f);
-        testHelper.drawMouseCoordinates();
+        sprintf(tempText, "Level: %lu", ctx.currentLevel);
+        ctx.textManager.write(tempText, Fonts::Highscore, true, 1.0f, 0.0f, -0.5f);
 
-        SDL_GL_SwapWindow(displayManager.sdlWindow);
-        auto frameEnd = std::chrono::high_resolution_clock::now();
-        auto frameTime = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart);
-
-        if (frameTime < targetFrameTime) {
-            std::this_thread::sleep_for(targetFrameTime - frameTime);
-        }
+        drawMouseCoordinates();
+        SDL_GL_SwapWindow(ctx.displayManager.sdlWindow);
     }
-    return EXIT_SUCCESS;
+};
+
+int main() {
+    try {
+        TestContext ctx;
+        const LevelTestHelper testHelper(ctx);
+        const EventDispatcher eventDispatcher(&ctx.eventManager);
+
+        const std::vector<std::string> instructions = {
+            "S: Create Screenshot",
+            "M: Toggle Mouse Coordinates",
+            "-> - next level",
+            "<- - previous level",
+            "Pos1 - first level",
+            "End - last level",
+            "ESC: Quit"
+        };
+
+        bool running = true;
+        auto lastFrameTime = std::chrono::high_resolution_clock::now();
+
+        while (running) {
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+            lastFrameTime = currentTime;
+            running = eventDispatcher.processEvents();
+            testHelper.renderLevel(deltaTime, instructions);
+        }
+        return EXIT_SUCCESS;
+    } catch (const std::exception &e) {
+        SDL_Log("Error: %s", e.what());
+        return EXIT_FAILURE;
+    }
 }

@@ -24,10 +24,12 @@
 
 ## Currently Working manual tests
 
-- test-backgroundManager
+Before I fix all currently implemented Tests, I want to choose a final test-setup, so I can use it for all tests.
+
+- test-backgroundManager (uses test-setup: MyTestHelper)
 - test-configFileManager
 - test-displayManager
-- test-levelManager (try test-setup: context)
+- test-levelManager (uses test-setup: context)
 - test-settingsManager
 - test-soundManager
 - test-spriteSheetAnimation
@@ -161,8 +163,6 @@ int main() {
 
     // Übergib ctx an deine Helper oder nutze Referenzen darauf
     // Beispiel: MyTestHelper testHelper(ctx.textManager, &eventManager, ctx);
-
-    // ... Rest wie gehabt, aber ohne globale Variablen
 }
 ```
 
