@@ -2,6 +2,10 @@
 
 #include "TextureManager.h"
 #include "DisplayManager.hpp"
+#include "EventDispatcher.h"
+#include "MouseManager.h"
+#include "TestHelper.h"
+#include "TextManager.h"
 
 // Test theme loading
 // next:
@@ -9,11 +13,21 @@
 // render all textures, except backgrounds
 int main() {
     EventManager eventManager;
+    MouseManager mouseManager(&eventManager);
     DisplayManager displayManager(&eventManager);
     if (!displayManager.init(0, 1024, 768, false)) {
         SDL_Log("Could not initialize display");
         return EXIT_FAILURE;
     }
+    SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: TextureTheme Test");
+
+    TextManager textManager;
+    if (!textManager.setTheme("../tests/themes/test")) {
+        SDL_Log("Fehler beim Laden des Font-Themes");
+        return EXIT_FAILURE;
+    }
+    const EventDispatcher eventDispatcher(&eventManager);
+    TestHelper testHelper(textManager, &eventManager);
 
     TextureManager textureManager;
     const std::filesystem::path themePath = "../themes/default";
@@ -23,56 +37,40 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    SpriteSheetAnimation spriteSheetAnimation = *textureManager.getBallTexture(BallTexture::Fireball);
+    auto [textureProperties, animationProperties] = *textureManager.getBallTexture(BallTexture::Fireball);
+    SpriteSheetAnimation spriteSheetAnimation(animationProperties);
 
     spriteSheetAnimation.isPlaying = true;
-    spriteSheetAnimation.textureProperties.playing = true;
 
-    Uint32 lastTime = SDL_GetTicks();
+    const std::vector<std::string> instructions = {
+        "S: Create Screenshot",
+        "M: Toggle Mouse Coordinates",
+        "ESC: Quit"
+    };
+
     bool running = true;
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-    while (running) {
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                running = false;
-            }
-            if (event.type == SDL_WINDOWEVENT) {
-                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    displayManager.resize(event.window.data1, event.window.data2);
-                }
-            }
-            if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_t) {
-                }
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
-                    running = false;
-                }
-            }
-        }
-        // Zeit für Animation aktualisieren
-        const Uint32 currentTime = SDL_GetTicks();
-        const float deltaTime = (currentTime - lastTime) / 1000.0f; // in Sekunden
-        lastTime = currentTime;
+    auto lastFrameTime = std::chrono::high_resolution_clock::now();
 
-        // Animation aktualisieren
+    while (running) {
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+        lastFrameTime = currentTime;
+
+        running = eventDispatcher.processEvents();
+
         spriteSheetAnimation.play(deltaTime);
 
-        // Rendern
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Hier die Textur zeichnen
+        testHelper.drawGrid();
+        testHelper.drawCenterLines();
+
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBindTexture(GL_TEXTURE_2D, spriteSheetAnimation.textureProperties.texture);
+        glBindTexture(GL_TEXTURE_2D, textureProperties.id);
 
-        glColor4f(
-            spriteSheetAnimation.textureProperties.glTexColorInfo[0],
-            spriteSheetAnimation.textureProperties.glTexColorInfo[1],
-            spriteSheetAnimation.textureProperties.glTexColorInfo[2],
-            spriteSheetAnimation.textureProperties.glTexColorInfo[3]
-        );
+        glColor4fv(textureProperties.textureColor);
 
         glBegin(GL_QUADS);
 
@@ -92,6 +90,9 @@ int main() {
 
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);
+
+        testHelper.renderInstructions(deltaTime, instructions);
+        testHelper.drawMouseCoordinates();
 
         SDL_GL_SwapWindow(displayManager.sdlWindow);
     }
