@@ -12,24 +12,43 @@
 #include "TextManager.h"
 #include "config.h"
 
-const float colors[16][4] = {
-    {1.0f, 1.0f, 1.0f, 1.0f}, // Weiß
+const GLfloat colors[16][4] = {
+    {1.0f, 1.0f, 1.0f, 1.0f}, // Weiß, 0
     {0.0f, 0.4f, 1.0f, 1.0f}, // Blau
     {1.0f, 1.0f, 0.0f, 1.0f}, // Gelb
     {1.0f, 0.0f, 0.0f, 1.0f}, // Rot
     {0.0f, 1.0f, 0.0f, 1.0f}, // Grün
-    {1.0f, 0.0f, 1.0f, 1.0f}, // Magenta
+    {1.0f, 0.0f, 1.0f, 1.0f}, // Magenta, 5
     {0.0f, 1.0f, 1.0f, 1.0f}, // Cyan
     {1.0f, 0.5f, 0.0f, 1.0f}, // Orange
     {0.5f, 0.5f, 0.5f, 1.0f}, // Grau
     {0.6f, 0.3f, 0.0f, 1.0f}, // Braun
-    {0.5f, 0.0f, 0.5f, 1.0f}, // Violett
+    {0.5f, 0.0f, 0.5f, 1.0f}, // Violett, 10
     {0.0f, 0.0f, 0.5f, 1.0f}, // Dunkelblau
     {0.0f, 0.5f, 0.0f, 1.0f}, // Dunkelgrün
-    {0.5f, 0.5f, 0.0f, 1.0f}, // Oliv
-    {0.5f, 0.0f, 0.0f, 1.0f}, // Dunkelrot
-    {0.0f, 0.0f, 0.0f, 1.0f} // Schwarz
+    {1.0f, 1.0f, 1.0f, 0.5f},
+    {1.0f, 1.0f, 1.0f, 0.2f},
+    {0.0f, 0.0f, 0.0f, 1.0f} // Schwarz, 15
 };
+
+int getBrickColorIndex(const BrickType type) {
+    switch (type) {
+        case BrickType::Blue: return 1;
+        case BrickType::Yellow: return 2;
+        case BrickType::Cement: return 11;
+        case BrickType::Glass: return 13;
+        case BrickType::Green: return 4;
+        case BrickType::Grey: return 8;
+        case BrickType::Purple: return 5;
+        case BrickType::White: return 0;
+        case BrickType::Invisible: return 14;
+        case BrickType::Red: return 3;
+        case BrickType::Explosive: return 7;
+        case BrickType::Doom: return 10;
+        case BrickType::Base: return 12;
+        default: return 15;
+    }
+}
 
 struct TestContext {
     EventManager eventManager;
@@ -112,17 +131,38 @@ public:
 
         drawGrid();
 
-        int idx = 0;
-        for (const auto &brick: ctx.bricks) {
-            glColor4fv(colors[idx % 16]);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        for (const auto &[type, x, y, CustomBrickColor]: ctx.bricks) {
+            if (CustomBrickColor.r != 0.0f && CustomBrickColor.g != 0.0f &&
+                CustomBrickColor.b != 0.0f && CustomBrickColor.a != 0.0f) {
+                glColor4f(CustomBrickColor.r,
+                          CustomBrickColor.g,
+                          CustomBrickColor.b,
+                          CustomBrickColor.a);
+            } else {
+                const int colorIdx = getBrickColorIndex(type);
+                glColor4fv(colors[colorIdx]);
+            }
+            // Fill
             glBegin(GL_QUADS);
-            glVertex3f(brick.x, brick.y, 0.0f);
-            glVertex3f(brick.x + BRICK_WIDTH, brick.y, 0.0f);
-            glVertex3f(brick.x + BRICK_WIDTH, brick.y + BRICK_HEIGHT, 0.0f);
-            glVertex3f(brick.x, brick.y + BRICK_HEIGHT, 0.0f);
+            glVertex3f(x, y, 0.0f);
+            glVertex3f(x + BRICK_WIDTH, y, 0.0f);
+            glVertex3f(x + BRICK_WIDTH, y + BRICK_HEIGHT, 0.0f);
+            glVertex3f(x, y + BRICK_HEIGHT, 0.0f);
             glEnd();
-            ++idx;
+
+            // Outline
+            glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+            glLineWidth(0.1f);
+            glBegin(GL_LINE_LOOP);
+            glVertex3f(x, y, 0.0f);
+            glVertex3f(x + BRICK_WIDTH, y, 0.0f);
+            glVertex3f(x + BRICK_WIDTH, y + BRICK_HEIGHT, 0.0f);
+            glVertex3f(x, y + BRICK_HEIGHT, 0.0f);
+            glEnd();
         }
+        glDisable(GL_BLEND);
 
         drawCenterLines();
         renderInstructions(deltaTime, instructions);

@@ -1,11 +1,13 @@
 // colors.h
 #pragma once
 
+#include <epoxy/gl.h>
+
 struct Color {
-    float r{1.0f};
-    float g{1.0f};
-    float b{1.0f};
-    float a{1.0f};
+    GLfloat r{0.0f};
+    GLfloat g{0.0f};
+    GLfloat b{0.0f};
+    GLfloat a{0.0f};
 };
 
 #define GL_WHITE 1, 1, 1, 1

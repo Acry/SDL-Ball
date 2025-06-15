@@ -107,7 +107,7 @@ bool LevelManager::readLevelStructure() {
 
     // todo, be permissive with whitespace instead of zero
     while (std::getline(infile, line)) {
-        // trim Whitespace lineend
+        // trim Whitespace line end
         line = std::regex_replace(line, std::regex("\\s+$"), "");
 
         if (line == "** Start **") {
