@@ -1,5 +1,9 @@
 # CodeManager
 
+Der CodeManager instanziiert alle anderen Manager und
+steuert den Ablauf. Er spricht direkt mit dem SettingsManager, dem Theme-Manager und dem configfileManager.
+Der [EventManager](EventManager.md) ist die zentrale Kommunikationsschnittstelle.
+
 ```text
 SettingsManager → ThemeManager → TextureManager → GameManager
        ↑               ↑             ↑

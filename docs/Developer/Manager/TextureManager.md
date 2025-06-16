@@ -7,16 +7,18 @@ Ablauf:
 SETTING:
 TextureManager::setTheme - highest level, loads all themes
 
+```c++
     TextureManager::setSpriteTheme
-        TextureManager::setBallTheme
-        TextureManager::setPaddleTheme
-        TextureManager::setBrickTheme
+    TextureManager::setBallTheme
+    TextureManager::setPaddleTheme
+    TextureManager::setBrickTheme
     TextureManager::setPowerupTheme
     TextureManager::setBgTheme
     TextureManager::setEffectsTheme
     TextureManager::setMiscTheme
     TextureManager::setHudTheme
     TextureManager::setMenuTheme
+```
 
 LOADING:
 TextureManager::loadAllGameTextures -> TextureManager::loadAndCacheTexture -> TextureManager::loadTextureWithProperties
@@ -40,8 +42,6 @@ Ball hat zum beidpiel noch zusätzlich SpriteSheetAnimation fireTex;
 
 Paddle SpriteSheetAnimation *layerTex{};
 
-ich würde das ergene homogenisieren.
-
 SpriteSheetAnimation fireTex; würde der typ SpriteSheetAnimation fireball heißen, wie im theme wäre die zuordnung
 leicht.
 sie ersetzt die bestehende textur.
@@ -63,6 +63,7 @@ class SpriteTexture : public Texture
 class LayeredTexture : public SpriteTexture
 class SwitchableTexture : public SpriteTexture
 
+```c++
 setTexture<LayeredTexture>();
 auto* layeredTex = dynamic_cast<LayeredTexture*>(texture.get());
 if (layeredTex) {
@@ -92,6 +93,7 @@ if (!active) return;
         // Vereinfachte Zeichenroutine
         texture->draw(pos_x, pos_y, width, height, deltaTime);
     }
+```
 
 ## Cache rework
 
@@ -105,8 +107,6 @@ GameManager::loadResources() sollte die Texturen und Animationen laden, die vom 
 Der ThemeManager erhält die Pfade zu den Themen vom SettingsManager.
 
 Der TextureManager lädt die Texturen zu laden und die SpriteSheetAnimationen zu erstellen.
-
-Der ThemeManager muss aufgebohrt werden. snd (Audio, Graphics, Level, Fonts, Powerups, Backgrounds, Title (Scenes?)).
 
 Hiergeht es nur um die Texturen und Animationen, die in den Theme-Dateien definiert sind.
 Aktuell:

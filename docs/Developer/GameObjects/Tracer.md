@@ -1,6 +1,7 @@
 # Tracer
 
-Auch wenn der Tracer ein Anhängsel des Balls ist, wäre es sauberer, wenn er ebenfalls von MovingObject und eventuell sogar von GrowableObject erben würde. Das würde zu konsistenterem Code und besserer Wartbarkeit führen.
+Auch wenn der Tracer ein Anhängsel des Balls ist, wäre es sauberer, wenn er ebenfalls von MovingObject und eventuell
+sogar von GrowableObject erben würde. Das würde zu konsistenterem Code und besserer Wartbarkeit führen.
 
 ```c++
 class Tracer : public MovingObject, public GrowableObject {
@@ -225,11 +226,14 @@ void Ball::init() {
 ```
 
 Diese Änderungen ermöglichen, dass:
+
 1. Der Tracer als Ganzes aktiviert/deaktiviert wird
 2. Der Tracer-Status mit dem Ball-Status synchronisiert wird
 3. Bei Ball-Reset auch alle Tracer-Partikel zurückgesetzt werden
 
-Für eine saubere Implementierung wäre eigentlich ein komplettes Refactoring des Tracers sinnvoll, da das aktuelle Design mit den festen Arrays etwas veraltet ist. Eine modernere Lösung würde Vektoren und objektorientiertes Design für Partikel verwenden.
+Für eine saubere Implementierung wäre eigentlich ein komplettes Refactoring des Tracers sinnvoll, da das aktuelle Design
+mit den festen Arrays etwas veraltet ist. Eine modernere Lösung würde Vektoren und objektorientiertes Design für
+Partikel verwenden.
 
 ## modernere Lösung
 
@@ -425,3 +429,19 @@ public:
     }
 };
 ```
+
+## todo
+
+- [ ] Tracer, to EffectManager
+- [ ] tracer shows red color and shows up when glued to the paddle, should reset in new level
+- [ ] is tracer speed dependent on the speed of the ball?
+- [ ] Tracer, if Ball explosive, make Tracer more orange and dont use Colors of bricks bounced to.
+- [ ] Tracer refactoring (effectManager/eventManager/inheritance/particleSystem/consistent naming, from LevelTheme to
+  instance)
+  Named: Tail, Tracer, BallEffect, BallTracer, BallTail ...
+  public: tracer tail; - andersrum wäre richtig gewesen. Tracer ist eine Form des Ball-Tails
+- [ ] Tracer, inherit from growable
+
+## Bugs
+
+- [ ] [Tracer](GameObjects/Tracer.md) ist shortly visible after ball reset

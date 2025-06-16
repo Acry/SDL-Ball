@@ -12,7 +12,7 @@
 
 ## Option 1
 
-Texturen sind grundlegende Ressourcen des Rendering-Systems -> core
+Texturen sind grundlegende Ressourcen des Rendering-Systems → core
 
 ```text
 src/
@@ -95,3 +95,7 @@ Game
 │       ├── RenderPlayer
 │       └── RenderBall
 ```
+
+## See
+
+[Todo](Structure_Todo.md)

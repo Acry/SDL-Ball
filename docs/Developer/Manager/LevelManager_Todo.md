@@ -1,3 +1,24 @@
+# LevelManager Todo
+
+___
+
+- [ ] Einige Bricks laufen in späteren rechts aus dem Bild, Level: 15, 18, 20, 35
+- [ ] add Bricks per row vaildation
+- [ ] I think those levels need to be fixed. Some Bricks are under the Playfield border.
+
+___
+
+- [X] LevelEditor_Tests
+- [X] LevelManager, check old formats
+
+___
+
+- [ ] hot reload themes: levels, backgrounds graphics, sounds, fonts
+- [ ] modernize JS LevelEditor?
+- [ ] InGame-LevelEditor?
+- [ ] maintain gimp level plugin? IDK
+- [ ] LevelManager - random level
+
 ## Level-Daten exportieren
 
 ```c++

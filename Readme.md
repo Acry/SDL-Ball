@@ -18,7 +18,7 @@ Check out the following commit for the fixed code, while the rest stays the same
 
 ## Work in Progress
 
-Game is currently not building.
+**Game is currently not building.**
 
 `make tests` to run manual tests.
 
@@ -44,6 +44,7 @@ What I am currently on: [Current](docs/Developer/CURRENT.md)
 - no WiiMote support (currently)
 - sound always enabled
 - positional sound does recognize the Y-axis
+- Animation can be played once
 
 The config is now in `.config/SDL-Ball`, not `sdl-ball` anymore.
 You can copy the files from the old folder to the new one, should just work.

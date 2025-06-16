@@ -1,12 +1,14 @@
-# Save Game Manager
+# SaveGameManager
 
 ## Current Version (3.1.0)
 
 Hier sind die Hauptprobleme, die ich sehe:
 
-Enge Kopplung: MAXPOTEXTURES ist eine globale Konstante, die direkt in der Struktur verwendet wird. Das macht die Datenstruktur von externen Definitionen abhängig.
+Enge Kopplung: MAXPOTEXTURES ist eine globale Konstante, die direkt in der Struktur verwendet wird. Das macht die
+Datenstruktur von externen Definitionen abhängig.
 
-Boolsche Arrays für Powerups: Die Verwendung eines Arrays fester Größe für Powerups ist unflexibel. Beim Hinzufügen neuer Powerups müssen alle Speicherformate aktualisiert werden.
+Boolsche Arrays für Powerups: Die Verwendung eines Arrays fester Größe für Powerups ist unflexibel. Beim Hinzufügen
+neuer Powerups müssen alle Speicherformate aktualisiert werden.
 
 Gut, hier kam der Shop, das ist legitim
 Inkonsistente Struktur-Versionen: player_struct_version_1 fehlt das coins-Feld, was zu Kompatibilitätsproblemen führt.
@@ -14,14 +16,18 @@ Inkonsistente Struktur-Versionen: player_struct_version_1 fehlt das coins-Feld, 
 Fehlende Abstraktion: Die player_struct ist nur eine Datenstruktur ohne Verhalten oder Validierung.
 
 Eine moderne Spieler-Klasse sollte:
+
 - Daten kapseln und Validierung bieten
 - Flexibel bei Powerup-Erweiterungen sein
 - Serialisierung/Deserialisierung unterstützen
 - Versionierung handhaben
 
-Ich würde empfehlen, zuerst eine saubere Player-Klasse zu implementieren, die verschiedene Serialisierungsformate unterstützt (z.B. für alte Speicherstände). Danach kann der SaveGameManager überarbeitet werden, um diese Klasse zu nutzen, anstatt direkt mit den Strukturen zu arbeiten.
+Ich würde empfehlen, zuerst eine saubere Player-Klasse zu implementieren, die verschiedene Serialisierungsformate
+unterstützt (z.B. für alte Speicherstände). Danach kann der SaveGameManager überarbeitet werden, um diese Klasse zu
+nutzen, anstatt direkt mit den Strukturen zu arbeiten.
 
-Zudem sollte PowerUp als eigene Klasse oder Enum implementiert werden, statt als Array von booleans mit magischen Indizes.
+Zudem sollte PowerUp als eigene Klasse oder Enum implementiert werden, statt als Array von booleans mit magischen
+Indizes.
 
 ## Save game Version 2
 
@@ -56,7 +62,8 @@ Dateiformat
 Beginnt mit einem Header (Integer), der die Version enthält
 Gefolgt von sechs savedGame-Strukturen
 Binäres Format für effiziente Speicherung und Lesevorgänge
-Der Code nutzt Binärdateien zur Verwaltung und überwacht die Versionskompatibilität, um sicherzustellen, dass ältere Speicherstände nicht mit neueren Versionen des Spiels inkompatibel werden.
+Der Code nutzt Binärdateien zur Verwaltung und überwacht die Versionskompatibilität, um sicherzustellen, dass ältere
+Speicherstände nicht mit neueren Versionen des Spiels inkompatibel werden.
 
 ```c++
 #define SAVEGAME_VERSION 2

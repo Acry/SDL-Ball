@@ -17,3 +17,9 @@ PauseScene
 PlayScene
 SettingsScene
 TitleScene
+
+TutorialScene
+
+## See
+
+[SceneManager](../Manager/SceneManager.md) for more information about the scene system.

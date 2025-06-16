@@ -34,3 +34,28 @@ void BrickManager::onBallHitBrick(const CollisionData& data) {
     onBrickHit(hitData);
 }
 ```
+
+## BrickManager tests
+
+use test helper and test context
+implement dropping levels
+
+## BrickManager collision
+
+[ ] - use EventManager to emit events on collision
+[ ] - for dropping level, brick paddle collision need to be checked
+
+```c++
+// BrickManager.h
+class BrickManager {
+    // ... bestehender Code ...
+
+    void handleCollision(size_t brickIndex, const ICollideable* other) {
+        if (auto* ball = dynamic_cast<const Ball*>(other)) {
+            EventData data;
+            data.target = &bricks[brickIndex];
+            onBrickHit(data);
+        }
+    }
+};
+```

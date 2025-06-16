@@ -1,5 +1,9 @@
 # GameManager
 
+GameManager:
+Reagiert auf höherer Ebene (z.B. Level abgeschlossen wenn alle Bricks zerstört)
+
+```c++
 class GameStateManager {
 private:
 Ball ball;
@@ -16,6 +20,7 @@ CollisionManager collisionManager;
         collisionManager.checkCollisions(ball, paddle, bricks);
         effectManager.update(deltaTime);
     }
+```
 
 Der SettingsManager sollte hauptsächlich für das Laden, Speichern und Bereitstellen von Einstellungen verantwortlich
 sein, nicht für die Spielinitialisierung. Die zentrale GameManager-Klasse sollte das Management aller Subsysteme

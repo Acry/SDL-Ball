@@ -12,7 +12,8 @@ Grundsätzlich haben wir 3 Typen von Einstellungen:
 
 ## Manager-Types
 
-TBD
+InputManager: MouseManager, KeyboardManager, JoystickManager, ControllerManager
+GameObjectManager: BallManager, BrickManager, PaddleManager, PowerupManager
 
 ## Short Overview
 

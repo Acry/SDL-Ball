@@ -1,5 +1,27 @@
 # CollisionManager
 
+ObjectManager - CollisionManager
+| |
+| checkCollision(...)? |
+|------------------------------>|
+| |
+| Ergebnis |
+|<------------------------------|
+| |
+| emitEvent bei Kollision |
+|------------------------------>|
+
+GameManager CollisionManager
+| |
+| checkCollision(...)? |
+|---------------------------------->|
+| |
+| Ergebnis |
+|<----------------------------------|
+| |
+| emitEvent bei Kollision |
+|---------------------------------->|
+
 class CollisionManager {
 public:
 void checkCollisions(Ball& ball, Paddle& paddle, const std::vector<Brick>& bricks);
