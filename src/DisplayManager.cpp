@@ -266,6 +266,13 @@ bool DisplayManager::initOpenGL(const unsigned int flags) {
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &doubleBuffered);
     SDL_Log("Double buffering %s", doubleBuffered ? "aktiviert" : "deaktiviert");
 
+    if (SDL_GL_MakeCurrent(sdlWindow, glcontext) < 0) {
+        SDL_Log("Error:%s", SDL_GetError());
+        SDL_GL_DeleteContext(glcontext);
+        SDL_DestroyWindow(sdlWindow);
+        SDL_Quit();
+        return false;
+    }
     /* Enable smooth shading */
     // glShadeModel(GL_SMOOTH);
 
