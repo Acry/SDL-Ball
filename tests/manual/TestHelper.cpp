@@ -9,9 +9,9 @@ TestHelper::TestHelper(TextManager &textManager, IEventManager *eventManager, co
                        const float gridExtent)
     : m_gridSpacing(gridSpacing),
       m_gridExtent(gridExtent),
+      m_textManager(textManager), m_eventManager(eventManager),
       m_mouseX(0.0f),
       m_mouseY(0.0f),
-      m_textManager(textManager), m_eventManager(eventManager),
       m_showMouseCoords(false) {
     glClearColor(GL_LIGHT_BLUE);
     m_mouseText[0] = '\0';
@@ -20,7 +20,14 @@ TestHelper::TestHelper(TextManager &textManager, IEventManager *eventManager, co
                                 [this](const MouseCoordinatesNormalizedEventData &data) {
                                     this->handleMouseCoordinatesNormalized(data);
                                 }, this);
-
+    m_eventManager->addListener(GameEvent::MouseButtonPressed,
+                                [this](const MouseEventData &data) {
+                                    this->handleMouseButton(data);
+                                }, this);
+    m_eventManager->addListener(GameEvent::MouseWheelScrolled,
+                                [this](const MouseEventData &data) {
+                                    this->MouseWheelScrolled(data);
+                                }, this);
     m_eventManager->addListener(GameEvent::KeyPressed,
                                 [this](const KeyboardEventData &data) {
                                     this->handleKeyPress(data);
@@ -190,6 +197,18 @@ void TestHelper::handleKeyPress(const KeyboardEventData &data) {
         // Weitere Tastenbelegungen hier ergänzen
         default:
             break;
+    }
+}
+
+void TestHelper::handleMouseButton(const MouseEventData &data) {
+    if (m_showMouseCoords) {
+        SDL_Log("Mouse button %d clicked at (%.2f, %.2f)", data.button, m_mouseX, m_mouseY);
+    }
+}
+
+void TestHelper::MouseWheelScrolled(const MouseEventData &data) {
+    if (m_showMouseCoords) {
+        SDL_Log("Mouse Wheel Event: isflipped %d horitontal (%d, %d)", data.wheelFlipped, data.wheelX, data.wheelY);
     }
 }
 

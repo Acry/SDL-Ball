@@ -5,7 +5,6 @@
 // Center Mouse
 // SDL_WarpMouseInWindow(display.sdlWindow, display.currentW / 2, display.currentH / 2);
 
-
 // SDL_SetWindowGrab(window, SDL_TRUE);
 
 // Listen for GameEvent::MenuOpened and GameEvent::MenuClosed
@@ -14,8 +13,9 @@
 MouseManager::MouseManager(IEventManager *evtMgr) : IInputManager(evtMgr) {
     eventManager->addListener(GameEvent::MouseMoved,
                               [this](const MouseEventData &data) {
-                                  this->handleMotionEvent(data);
+                                  this->handleMouseEvent(data);
                               }, this);
+
     eventManager->addListener(GameEvent::ViewportResized,
                               [this](const ViewportEventData &data) {
                                   this->handleResizeViewportEvent(data);
@@ -40,7 +40,7 @@ void MouseManager::normalizedMouseCoordinates() {
     eventManager->emit(GameEvent::MouseCoordinatesNormalized, data);
 }
 
-void MouseManager::handleMotionEvent(const MouseEventData &data) {
+void MouseManager::handleMouseEvent(const MouseEventData &data) {
     mouseX = data.x;
     mouseY = data.y;
     normalizedMouseCoordinates();

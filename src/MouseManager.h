@@ -12,7 +12,7 @@ public:
 
     void normalizedMouseCoordinates();
 
-    void handleMotionEvent(const MouseEventData &data);
+    void handleMouseEvent(const MouseEventData &data);
 
     void handleResizeViewportEvent(const ViewportEventData &data);
 

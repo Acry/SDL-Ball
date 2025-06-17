@@ -51,6 +51,7 @@ enum class GameEvent {
     MouseCoordinatesNormalized,
     MouseButtonPressed,
     MouseButtonReleased,
+    MouseWheelScrolled,
     WindowResized,
     QuitRequested,
 
@@ -77,6 +78,10 @@ struct MouseCoordinatesNormalizedEventData {
 struct MouseEventData {
     float x{0.0f};
     float y{0.0f};
+    uint8_t button{0};
+    int wheelX{0}; // Horizontales Scrollen
+    int wheelY{0}; // Vertikales Scrollen
+    bool wheelFlipped{false}; // Ob die Scroll-Richtung umgedreht ist
 };
 
 struct KeyboardEventData {

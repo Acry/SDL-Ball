@@ -10,13 +10,15 @@ class TestHelper {
     float m_gridExtent;
 
     char m_mouseText[64]{};
-    float m_mouseX;
-    float m_mouseY;
+
     TextManager &m_textManager;
     IEventManager *m_eventManager;
     const std::filesystem::path screenshotPath = "./screenshots/";
 
 public:
+    float m_mouseX;
+    float m_mouseY;
+
     explicit TestHelper(TextManager &textManager, IEventManager *eventManager, float gridSpacing = 0.1f,
                         float gridExtent = 1.0f);
 
@@ -44,7 +46,11 @@ public:
 
     virtual void handleKeyPress(const KeyboardEventData &data);
 
-    bool screenshot() const;
+    virtual void handleMouseButton(const MouseEventData &data);
+
+    virtual void MouseWheelScrolled(const MouseEventData &data);
+
+    [[nodiscard]] bool screenshot() const;
 
     bool m_showMouseCoords;
 

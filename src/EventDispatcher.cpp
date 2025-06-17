@@ -24,6 +24,41 @@ bool EventDispatcher::processEvents() const {
                 break;
             }
 
+            case SDL_MOUSEBUTTONDOWN: {
+                MouseEventData data{
+                    static_cast<float>(event.button.x),
+                    static_cast<float>(event.button.y),
+                    event.button.button
+                };
+                eventManager->emit(GameEvent::MouseButtonPressed, data);
+                break;
+            }
+
+            case SDL_MOUSEBUTTONUP: {
+                MouseEventData data{
+                    static_cast<float>(event.button.x),
+                    static_cast<float>(event.button.y),
+                    event.button.button
+                };
+                eventManager->emit(GameEvent::MouseButtonReleased, data);
+                break;
+            }
+
+            case SDL_MOUSEWHEEL: {
+                MouseEventData data{};
+                // Setzen der Mausposition (optional)
+                int mouseX, mouseY;
+                SDL_GetMouseState(&mouseX, &mouseY);
+                data.x = static_cast<float>(mouseX);
+                data.y = static_cast<float>(mouseY);
+                // Wheel-spezifische Daten
+                data.wheelX = event.wheel.x;
+                data.wheelY = event.wheel.y;
+                data.wheelFlipped = (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED);
+                eventManager->emit(GameEvent::MouseWheelScrolled, data);
+                break;
+            }
+
             case SDL_KEYDOWN: // Menu öffnen -> KeyboardManager -> emit(GameEvent::OpenenMenu);
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     running = false;
