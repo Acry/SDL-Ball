@@ -50,7 +50,7 @@ int getBrickColorIndex(const BrickType type) {
     }
 }
 
-struct TestContext {
+struct LevelTestContext {
     EventManager eventManager;
     MouseManager mouseManager;
     DisplayManager displayManager;
@@ -61,9 +61,8 @@ struct TestContext {
     size_t currentLevel = 1;
     size_t levelCount = 0;
 
-    TestContext()
-        : eventManager(),
-          mouseManager(&eventManager),
+    LevelTestContext()
+        : mouseManager(&eventManager),
           displayManager(&eventManager),
           levelManager(&eventManager) {
         if (!displayManager.init(0, 1024, 768, false)) {
@@ -81,7 +80,6 @@ struct TestContext {
         if (!levelManager.setTheme("../themes/default")) {
             throw std::runtime_error("Error setting level theme");
         }
-
         levelCount = levelManager.getLevelCount();
         levelManager.loadLevel(currentLevel);
     }
@@ -96,10 +94,10 @@ struct TestContext {
 };
 
 class LevelTestHelper final : public TestHelper {
-    TestContext &ctx;
+    LevelTestContext &ctx;
 
 public:
-    explicit LevelTestHelper(TestContext &context)
+    explicit LevelTestHelper(LevelTestContext &context)
         : TestHelper(context.textManager, &context.eventManager),
           ctx(context) {
     }
@@ -179,7 +177,7 @@ public:
 
 int main() {
     try {
-        TestContext ctx;
+        LevelTestContext ctx;
         const LevelTestHelper testHelper(ctx);
         const EventDispatcher eventDispatcher(&ctx.eventManager);
 
