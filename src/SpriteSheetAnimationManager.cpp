@@ -15,6 +15,16 @@ bool SpriteSheetAnimationManager::unregisterFromAnimation(GameObject *gameObject
                                          });
 
     if (it != animations.end()) {
+        if (gameObject) {
+            gameObject->uvCoordinates[0] = 0.0f;
+            gameObject->uvCoordinates[1] = 0.0f; // Bottom-left
+            gameObject->uvCoordinates[2] = 1.0f;
+            gameObject->uvCoordinates[3] = 0.0f; // Bottom-right
+            gameObject->uvCoordinates[4] = 1.0f;
+            gameObject->uvCoordinates[5] = 1.0f; // Top-right
+            gameObject->uvCoordinates[6] = 0.0f;
+            gameObject->uvCoordinates[7] = 1.0f; // Top-left
+        }
         animations.erase(it);
         return true;
     }
