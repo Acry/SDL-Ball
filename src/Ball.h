@@ -6,16 +6,7 @@
 #include "GrowableObject.h"
 #include "ICollideable.h"
 
-class Ball final : public MovingObject, public GrowableObject, public ICollideable {
-    void drawBase() const;
-
-    void drawExplosiveLayer() const;
-
-    GLfloat rad{};
-    EventManager *eventManager;
-
-    mutable std::vector<float> collisionPoints;
-
+class Ball final : public GrowableObject, public ICollideable {
 protected:
     void onSizeChanged() override;
 
@@ -26,23 +17,15 @@ public:
     bool glued{false};
     GLfloat bsin[32]{}, bcos[32]{};
     bool aimdir{false};
-    SpriteSheetAnimation *fireTex;
 
     void launchFromPaddle();
 
-    explicit Ball(EventManager *eventMgr);
-
-    ~Ball() override;
+    explicit Ball(const texture &tex) : GrowableObject(tex) {
+    }
 
     void init() override;
 
-    // Implementation der virtuellen Getter/Setter aus GrowableObject
-    [[nodiscard]] GLfloat getWidth() const override { return width; }
-    [[nodiscard]] GLfloat getHeight() const override { return height; }
-    void setWidth(const GLfloat w) override { width = w; }
-    void setHeight(const GLfloat h) override { height = h; }
-
-    void hit(GLfloat c[]);
+    // void hit(GLfloat c[]);
 
     void update(float deltaTime) override;
 
@@ -56,16 +39,29 @@ public:
 
     void setSize(GLfloat s);
 
-    // ICollideable Interface
-    float getPosX() const override { return pos_x; }
-    float getPosY() const override { return pos_y; }
-    bool isActive() const override { return isActive(); }
+    // const std::vector<float> *getCollisionPoints() const override;
 
-    const std::vector<float> *getCollisionPoints() const override;
+    // void onCollision(const ICollideable *other, float hitX, float hitY) override;
 
-    void onCollision(const ICollideable *other, float hitX, float hitY) override;
+    ~Ball() override;
+
+    // [[nodiscard]] float getPosX() const override { return pos_x; }
+    // [[nodiscard]] float getPosY() const override { return pos_y; }
+    // [[nodiscard]] float getWidth() const override { return width; }
+    // [[nodiscard]] float getHeight() const override { return height; }
+    // [[nodiscard]] bool isVisible() const { return visible; }
+    // [[nodiscard]] bool isActive() const override { return collisionActive; }
 
     [[nodiscard]] CollisionType getCollisionType() const override {
         return CollisionType::Ball;
     }
+
+private:
+    void drawBase() const;
+
+    void drawExplosiveLayer() const;
+
+    GLfloat rad{};
+
+    mutable std::vector<float> collisionPoints;
 };

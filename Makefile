@@ -350,7 +350,6 @@ $(BUILD_DIR)SoundManager_Tests.o: $(MANUAL_TEST_DIR)SoundManager_Tests.cpp
 # Ball
 BALL_TEST_SOURCES := $(MANUAL_TEST_DIR)Ball_Tests.cpp \
                      $(MANUAL_TEST_DIR)TestHelper.cpp \
-                     $(SOURCE_DIR)Ball.cpp \
                      $(SOURCE_DIR)GameObject.cpp \
                      $(SOURCE_DIR)MovingObject.cpp \
                      $(SOURCE_DIR)GrowableObject.cpp \
@@ -360,7 +359,10 @@ BALL_TEST_SOURCES := $(MANUAL_TEST_DIR)Ball_Tests.cpp \
                      $(SOURCE_DIR)TextureManager.cpp \
                      $(SOURCE_DIR)TextureUtilities.cpp \
                      $(SOURCE_DIR)CollisionManager.cpp \
-                     $(SOURCE_DIR)EventManager.cpp
+                     $(SOURCE_DIR)EventManager.cpp \
+                     $(SOURCE_DIR)MouseManager.cpp \
+                     $(SOURCE_DIR)EventDispatcher.cpp \
+                     $(SOURCE_DIR)SpriteSheetAnimationManager.cpp \
 
 BALL_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BALL_TEST_SOURCES:.cpp=.o)))
 

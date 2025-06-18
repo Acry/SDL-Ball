@@ -202,15 +202,6 @@ void Ball::update(const float deltaTime) {
 void Ball::onSizeChanged() {
     pos_x = centerX - width / 2.0f;
     pos_y = centerY - height / 2.0f;
-    // Aktualisiere die Punkte für den Ball (bsin und bcos Arrays)
-    // constexpr int POINTS = 32;
-    // for (int i = 0; i < POINTS; ++i) {
-    //     constexpr float TWO_PI = 6.28318531f;
-    //     // Berechne den Winkel basierend auf dem Index
-    //     const float rad = static_cast<float>(i) * TWO_PI / POINTS;
-    //     bsin[i] = sin(rad) * width;
-    //     bcos[i] = cos(rad) * width;
-    // }
 }
 
 void Ball::launchFromPaddle() {
