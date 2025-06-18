@@ -324,8 +324,8 @@ public:
                     ball2->centerY = ball2->pos_y + ball2->height / 2.0f;
 
                     // Massen der Bälle berechnen (proportional zum Volumen/Radius³)
-                    const float mass1 = std::pow(radius1, 3);
-                    const float mass2 = std::pow(radius2, 3);
+                    const float mass1 = std::powf(radius1, 3);
+                    const float mass2 = std::powf(radius2, 3);
 
                     // Relativgeschwindigkeit
                     const float rvx = ball2->xvel - ball1->xvel;
@@ -354,6 +354,25 @@ public:
                     ball1->yvel += dvy1;
                     ball2->xvel += dvx2;
                     ball2->yvel += dvy2;
+
+                    // Mindestgeschwindigkeit für beide Bälle sicherstellen
+                    constexpr float MIN_SPEED = 0.3f;
+
+                    // Ball 1 prüfen und korrigieren
+                    float speed1 = std::sqrt(ball1->xvel * ball1->xvel + ball1->yvel * ball1->yvel);
+                    if (speed1 < MIN_SPEED && speed1 > 0.0001f) {
+                        // Behalte die Richtung bei, aber erhöhe die Geschwindigkeit
+                        ball1->xvel = ball1->xvel * MIN_SPEED / speed1;
+                        ball1->yvel = ball1->yvel * MIN_SPEED / speed1;
+                    }
+
+                    // Ball 2 prüfen und korrigieren
+                    float speed2 = std::sqrt(ball2->xvel * ball2->xvel + ball2->yvel * ball2->yvel);
+                    if (speed2 < MIN_SPEED && speed2 > 0.0001f) {
+                        // Behalte die Richtung bei, aber erhöhe die Geschwindigkeit
+                        ball2->xvel = ball2->xvel * MIN_SPEED / speed2;
+                        ball2->yvel = ball2->yvel * MIN_SPEED / speed2;
+                    }
 
                     // Kollisionspunkte aktualisieren
                     ball1->collisionPoints = *ball1->getCollisionPoints();
