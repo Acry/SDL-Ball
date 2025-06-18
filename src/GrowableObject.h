@@ -1,7 +1,9 @@
 #pragma once
 #include <epoxy/gl.h>
 
-class GrowableObject {
+#include "MovingObject.h"
+
+class GrowableObject : public MovingObject {
 protected:
     bool growing{false};
     bool shrinking{false};
@@ -15,16 +17,30 @@ protected:
     }
 
 public:
-    virtual ~GrowableObject() = default;
+    explicit GrowableObject(const texture &tex) : MovingObject(tex) {
+    }
 
-    // Virtuelle Getter und Setter für Größe (zu implementieren in Subklassen)
-    virtual GLfloat getWidth() const = 0;
+    ~GrowableObject() override = default;
 
-    virtual GLfloat getHeight() const = 0;
+    void update(const float deltaTime) override {
+        updateGrowth(deltaTime);
+        MovingObject::update(deltaTime);
+    }
 
-    virtual void setWidth(GLfloat w) = 0;
+    void init() override = 0;
 
-    virtual void setHeight(GLfloat h) = 0;
+    void draw() const override = 0;
+
+    [[nodiscard]] virtual GLfloat getWidth() const { return width; }
+    [[nodiscard]] virtual GLfloat getHeight() const { return height; }
+
+    virtual void setWidth(const GLfloat w) {
+        width = w;
+    }
+
+    virtual void setHeight(const GLfloat h) {
+        height = h;
+    }
 
     void setGrowTarget(GLfloat targetWidth);
 
@@ -33,6 +49,6 @@ public:
     void grow(GLfloat targetWidth);
 
     // Getter für Status
-    bool isGrowing() const { return growing; }
-    bool isShrinking() const { return shrinking; }
+    [[nodiscard]] bool isGrowing() const { return growing; }
+    [[nodiscard]] bool isShrinking() const { return shrinking; }
 };

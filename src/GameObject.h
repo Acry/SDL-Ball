@@ -6,8 +6,6 @@
 #include "SpriteSheetAnimation.h"
 #include "TextureManager.h"
 
-class EventManager;
-
 class GameObject {
 public:
     explicit GameObject(const texture &tex) {

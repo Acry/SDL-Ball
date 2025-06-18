@@ -1,6 +1,6 @@
 #include "GrowableObject.h"
 
-void GrowableObject::setGrowTarget(GLfloat targetWidth) {
+void GrowableObject::setGrowTarget(const GLfloat targetWidth) {
     destWidth = targetWidth;
     if (targetWidth > getWidth()) {
         growing = true;
@@ -14,42 +14,43 @@ void GrowableObject::setGrowTarget(GLfloat targetWidth) {
     }
 }
 
-void GrowableObject::updateGrowth(float deltaTime) {
+void GrowableObject::updateGrowth(const float deltaTime) {
+    if (!growing && !shrinking) return;
+    const GLfloat oldWidth = width;
+    const GLfloat oldHeight = height;
     if (growing) {
-        GLfloat newsize = growSpeed * deltaTime;
-        setWidth(getWidth() + newsize);
+        const GLfloat growStep = growSpeed * deltaTime;
+        setWidth(width + growStep);
 
-        if (getWidth() >= destWidth) {
-            setWidth(destWidth);
+        if (keepAspectRatio) {
+            setHeight(width / aspectRatio);
+        }
+
+        if (width >= destWidth) {
             growing = false;
         }
+    } else {
+        const GLfloat shrinkStep = growSpeed * deltaTime;
+        setWidth(width - shrinkStep);
 
-        // Höhe anpassen
         if (keepAspectRatio) {
-            setHeight(getWidth() * aspectRatio);
+            setHeight(width / aspectRatio);
         }
 
-        // Subklassen benachrichtigen
-        onSizeChanged();
-    } else if (shrinking) {
-        GLfloat newsize = growSpeed * deltaTime;
-        setWidth(getWidth() - newsize);
-
-        if (getWidth() <= destWidth) {
-            setWidth(destWidth);
+        if (width <= destWidth) {
             shrinking = false;
         }
-
-        // Höhe anpassen
-        if (keepAspectRatio) {
-            setHeight(getWidth() * aspectRatio);
-        }
-
-        // Subklassen benachrichtigen
-        onSizeChanged();
     }
+    // Berechne die Positionskorrektur, um das Zentrum beizubehalten
+    const GLfloat widthDiff = width - oldWidth;
+    const GLfloat heightDiff = height - oldHeight;
+
+    // Verschiebe Position nach links/oben, um Wachstum aus dem Zentrum zu ermöglichen
+    pos_x -= widthDiff / 2.0f;
+    pos_y -= heightDiff / 2.0f;
+    onSizeChanged();
 }
 
-void GrowableObject::grow(GLfloat targetWidth) {
+void GrowableObject::grow(const GLfloat targetWidth) {
     setGrowTarget(targetWidth);
 }
