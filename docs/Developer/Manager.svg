@@ -34,15 +34,7 @@
    inkscape:window-maximized="1"
    inkscape:current-layer="layer1" />
     <defs
-            id="defs1"><linearGradient
-   id="linearGradient8"
-   inkscape:collect="always"><stop
-     style="stop-color:#000000;stop-opacity:1;"
-     offset="0"
-     id="stop8" /><stop
-            style="stop-color:#000000;stop-opacity:0;"
-            offset="1"
-            id="stop9"/></linearGradient>
+            id="defs1">
         <rect
                 x="157.71742"
                 y="687.82321"
@@ -73,15 +65,7 @@
      id="image1"
      x="0"
      y="0" /></pattern>
-        <linearGradient
-                inkscape:collect="always"
-                xlink:href="#linearGradient8"
-                id="linearGradient9"
-                x1="592.45447"
-                y1="263.77103"
-                x2="741.85602"
-                y2="360.10928"
-                gradientUnits="userSpaceOnUse"/></defs>
+        </defs>
     <g
             inkscape:label="Ebene 1"
             inkscape:groupmode="layer"
@@ -107,20 +91,8 @@
                 height="21.128571"
                 x="66.674088"
                 y="346.96225"/>
-        <rect
-                style="fill:none;stroke:#ff0000;stroke-width:1.34138"
-                id="rect1-1"
-                width="83.885269"
-                height="53.014355"
-                x="733.18628"
-                y="54.459038"/>
-        <rect
-                style="fill:none;stroke:#ff0000;stroke-width:1.51133"
-                id="rect1-1-1"
-                width="75.017853"
-                height="38.44846"
-                x="649.72009"
-                y="54.091053"/>
+
+
         <rect
                 style="fill:none;stroke:#008000;stroke-width:0.799999"
                 id="rect1-1-1-0"
@@ -128,13 +100,7 @@
                 height="21.128571"
                 x="58.757729"
                 y="99.32312"/>
-        <rect
-                style="fill:none;stroke:#ff0000;stroke-width:1.46433"
-                id="rect1-1-1-0-9"
-                width="81.117836"
-                height="48.514233"
-                x="559.83783"
-                y="54.11937"/>
+
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-3"
@@ -142,28 +108,8 @@
                 height="21.128571"
                 x="118.83124"
                 y="347.00061"/>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="576.94495"
-                y="52.587101"
-                id="text1"><tspan
-     sodipodi:role="line"
-     id="tspan1"
-     style="stroke-width:0.264583"
-     x="576.94495"
-     y="52.587101">GameManager</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="665.99127"
-                y="52.535282"
-                id="text1-7"><tspan
-     sodipodi:role="line"
-     id="tspan1-3"
-     style="stroke-width:0.264583"
-     x="665.99127"
-     y="52.535282">LevelManager</tspan></text>
+
+
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -571,53 +517,8 @@
      style="stroke-width:0.264583"
      x="186.4883"
      y="147.21771">GameManager</tspan></text>
-        <rect
-                style="fill:none;stroke:#ff0000;stroke-width:0.799999"
-                id="rect1-1-1-0-4"
-                width="64.791092"
-                height="25.880379"
-                x="662.13849"
-                y="186.02188"/>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="683.13385"
-                y="184.82178"
-                id="text1-7-3-7"><tspan
-     sodipodi:role="line"
-     id="tspan1-3-1-6"
-     style="stroke-width:0.264583"
-     x="683.13385"
-     y="184.82178">CollisionManager</tspan></text>
-        <rect
-                style="fill:none;stroke:#ff0000;stroke-width:0.799999"
-                id="rect1-1-1-0-4-2"
-                width="58.103558"
-                height="25.864286"
-                x="735.19708"
-                y="186.04175"/>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="749.93732"
-                y="184.84164"
-                id="text1-7-3-7-6"><tspan
-     sodipodi:role="line"
-     id="tspan1-3-1-6-6"
-     style="stroke-width:0.264583"
-     x="749.93732"
-     y="184.84164">BallManager</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="749.35229"
-                y="52.988243"
-                id="text2"><tspan
-     sodipodi:role="line"
-     id="tspan2"
-     style="stroke-width:0.264583"
-     x="749.35229"
-     y="52.988243">BrickManager</tspan></text>
+
+
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -810,266 +711,8 @@
      style="stroke-width:0.264583"
      x="26.693556"
      y="352.69363">ICollideable</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:start;text-anchor:start;stroke-width:0.264583"
-                x="603.71655"
-                y="310.7861"
-                id="text10"><tspan
-     sodipodi:role="line"
-     id="tspan10"
-     style="text-align:start;text-anchor:start;stroke-width:0.264583"
-     x="603.71655"
-     y="310.7861">CollisionManager emit: brickHit</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="648.12012"
-                y="321.08966"
-                id="text11"><tspan
-     sodipodi:role="line"
-     id="tspan11"
-     style="stroke-width:0.264583"
-     x="648.12012"
-     y="321.08966">BrickManager emit: brickDestroyed</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="661.51471"
-                y="332.42355"
-                id="text12"><tspan
-     sodipodi:role="line"
-     id="tspan12"
-     style="stroke-width:0.264583"
-     x="661.51471"
-     y="332.42355">PowerupManager: listener for BrickDestroyed</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="645.18188"
-                y="297.88016"
-                id="text13"><tspan
-     sodipodi:role="line"
-     id="tspan13"
-     style="stroke-width:0.264583"
-     x="645.18188"
-     y="297.88016">LevelManager emit: LevelLoaded</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="645.28662"
-                y="287.86069"
-                id="text14"><tspan
-     sodipodi:role="line"
-     id="tspan14"
-     style="stroke-width:0.264583"
-     x="645.28662"
-     y="287.86069">GameManager emit: LevelStarted</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="652.75671"
-                y="343.24231"
-                id="text15"><tspan
-     sodipodi:role="line"
-     id="tspan15"
-     style="stroke-width:0.264583"
-     x="652.75671"
-     y="343.24231">BrickManager emit: LevelCleard</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="623.64917"
-                y="276.78436"
-                id="text16"><tspan
-     sodipodi:role="line"
-     id="tspan16"
-     style="stroke-width:0.264583"
-     x="623.64917"
-     y="276.78436">Event-Structure</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="597.82111"
-                y="61.671825"
-                id="text17"><tspan
-     sodipodi:role="line"
-     id="tspan17"
-     style="stroke-width:0.264583"
-     x="597.82111"
-     y="61.671825">Emit: LevelStarted, Level: 1</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="678.10272"
-                y="62.7229"
-                id="text18"><tspan
-     sodipodi:role="line"
-     id="tspan18"
-     style="stroke-width:0.264583"
-     x="678.84357"
-     y="62.7229">Listen: LevelStarted </tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="675.58667"
-                y="70.328247"
-                id="text19"><tspan
-     sodipodi:role="line"
-     id="tspan19"
-     style="stroke-width:0.264583"
-     x="675.58667"
-     y="70.328247">Action: LoadLevel</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="676.39069"
-                y="78.593178"
-                id="text20"><tspan
-     sodipodi:role="line"
-     id="tspan20"
-     style="stroke-width:0.264583"
-     x="676.39069"
-     y="78.593178">Emit: LevelLoaded</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:9.87778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583;fill-opacity:1;fill:url(#linearGradient9)"
-                x="685.86768"
-                y="34.639694"
-                id="text21"><tspan
-     sodipodi:role="line"
-     id="tspan21"
-     style="font-size:9.87778px;stroke-width:0.264583;fill-opacity:1;fill:url(#linearGradient9)"
-     x="685.86768"
-     y="34.639694">Load and Setup: Level</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="761.71802"
-                y="62.617874"
-                id="text22"><tspan
-     sodipodi:role="line"
-     id="tspan22"
-     style="stroke-width:0.264583"
-     x="761.71802"
-     y="62.617874">Listen: LevelLoaded</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="761.07404"
-                y="69.44397"
-                id="text23"><tspan
-     sodipodi:role="line"
-     id="tspan23"
-     style="stroke-width:0.264583"
-     x="761.07404"
-     y="69.44397">Action: SetupBricks</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="762.37299"
-                y="134.13362"
-                id="text23-8"><tspan
-     sodipodi:role="line"
-     id="tspan23-8"
-     style="stroke-width:0.264583"
-     x="762.37299"
-     y="134.13362">Action: InitPowerups</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="758.75574"
-                y="77.300446"
-                id="text24"><tspan
-     sodipodi:role="line"
-     id="tspan24"
-     style="stroke-width:0.264583"
-     x="758.75574"
-     y="77.300446">Emit: BricksSetup</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="763.10846"
-                y="143.5589"
-                id="text24-9"><tspan
-     sodipodi:role="line"
-     id="tspan24-2"
-     style="stroke-width:0.264583"
-     x="763.10846"
-     y="143.5589">Emit: PowerupsInited</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="765.88928"
-                y="164.98421"
-                id="text24-9-1"><tspan
-     sodipodi:role="line"
-     id="tspan24-2-5"
-     style="stroke-width:0.264583"
-     x="765.88928"
-     y="164.98421">Action: SpawnPowerup</tspan></text>
-        <rect
-                style="fill:none;stroke:#ff0000;stroke-width:1.36873"
-                id="rect1-36-4"
-                width="83.581284"
-                height="54.438419"
-                x="733.60645"
-                y="117.92262"/>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="755.15692"
-                y="117.23814"
-                id="text2-4-4"><tspan
-     sodipodi:role="line"
-     id="tspan2-5-3"
-     style="stroke-width:0.264583"
-     x="755.15692"
-     y="117.23814">PowerupManager</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="761.51196"
-                y="126.6812"
-                id="text25"><tspan
-     sodipodi:role="line"
-     id="tspan25"
-     style="stroke-width:0.264583"
-     x="761.51196"
-     y="126.6812">Listen: LevelLoaded</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="588.29413"
-                y="70.216911"
-                id="text26"><tspan
-     sodipodi:role="line"
-     id="tspan26"
-     style="stroke-width:0.264583"
-     x="588.29413"
-     y="70.216911">Listen: BricksSetup</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="592.57446"
-                y="78.59549"
-                id="text27"><tspan
-     sodipodi:role="line"
-     id="tspan27"
-     style="stroke-width:0.264583"
-     x="592.57446"
-     y="78.59549">Listen: PowerupsInited</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="585.74408"
-                y="87.151466"
-                id="text28"><tspan
-     sodipodi:role="line"
-     id="tspan28"
-     style="stroke-width:0.264583"
-     x="586.48492"
-     y="87.151466">Emit: LevelReady </tspan></text>
+
+
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -1081,189 +724,8 @@
      style="stroke-width:0.264583"
      x="251.17499"
      y="52.639286" /></text>
-        <rect
-                style="fill:none;stroke:#ff0000;stroke-width:0.799999"
-                id="rect1-1-1-0-4-4"
-                width="65.753586"
-                height="20.582146"
-                x="806.40454"
-                y="185.80782"/>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="824.1698"
-                y="184.60277"
-                id="text1-7-3-7-8"><tspan
-     sodipodi:role="line"
-     id="tspan1-3-1-6-7"
-     style="stroke-width:0.264583"
-     x="824.1698"
-     y="184.60277">PlayerManager</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="593.57623"
-                y="95.443695"
-                id="text30"><tspan
-     sodipodi:role="line"
-     id="tspan30"
-     style="stroke-width:0.264583"
-     x="593.57623"
-     y="95.443695">Listen: BricksDestroyed</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="763.15125"
-                y="86.791916"
-                id="text31"><tspan
-     sodipodi:role="line"
-     id="tspan31"
-     style="stroke-width:0.264583"
-     x="763.15125"
-     y="86.791916">Emit: BrickDestroyed</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="764.57129"
-                y="95.901176"
-                id="text31-2"><tspan
-     sodipodi:role="line"
-     id="tspan31-2"
-     style="stroke-width:0.264583"
-     x="764.57129"
-     y="95.901176">Emit: BricksDestroyed</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="764.79053"
-                y="156.0062"
-                id="text32"><tspan
-     sodipodi:role="line"
-     id="tspan32"
-     style="stroke-width:0.264583"
-     x="764.79053"
-     y="156.0062">Listen: BrickDestroyed</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="682.28967"
-                y="195.50531"
-                id="text33"><tspan
-     sodipodi:role="line"
-     id="tspan33"
-     style="stroke-width:0.264583"
-     x="682.28967"
-     y="195.50531">Emit: BrickHit</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="769.1568"
-                y="194.07405"
-                id="text34"><tspan
-     sodipodi:role="line"
-     id="tspan34"
-     style="stroke-width:0.264583"
-     x="769.1568"
-     y="194.07405">Listen: LevelStarted</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="837.70184"
-                y="194.11903"
-                id="text34-9"><tspan
-     sodipodi:role="line"
-     id="tspan34-1"
-     style="stroke-width:0.264583"
-     x="837.70184"
-     y="194.11903">Listen: LevelStarted</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="763.51556"
-                y="203.72762"
-                id="text35"><tspan
-     sodipodi:role="line"
-     id="tspan35"
-     style="stroke-width:0.264583"
-     x="763.51556"
-     y="203.72762">Action: Spawn Ball</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="839.93579"
-                y="201.67497"
-                id="text35-5"><tspan
-     sodipodi:role="line"
-     id="tspan35-9"
-     style="stroke-width:0.264583"
-     x="839.93579"
-     y="201.67497">Action: Spawn Paddle</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="805.72345"
-                y="283.09723"
-                id="text36"><tspan
-     sodipodi:role="line"
-     id="tspan36"
-     style="stroke-width:0.264583"
-     x="805.72345"
-     y="283.09723">LevelCleared / BricksDestroyed</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="792.06274"
-                y="291.65796"
-                id="text37"><tspan
-     sodipodi:role="line"
-     id="tspan37"
-     style="stroke-width:0.264583"
-     x="792.06274"
-     y="291.65796">Player verliert Leben</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="792.97345"
-                y="300.21866"
-                id="text38"><tspan
-     sodipodi:role="line"
-     id="tspan38"
-     style="stroke-width:0.264583"
-     x="792.97345"
-     y="300.21866">Ball verlässt Spielfeld</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="795.06812"
-                y="308.87045"
-                id="text39"><tspan
-     sodipodi:role="line"
-     id="tspan39"
-     style="stroke-width:0.264583"
-     x="795.06812"
-     y="308.87045">Kein Ball auf Spieldfeld</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="796.16095"
-                y="317.24902"
-                id="text40"><tspan
-     sodipodi:role="line"
-     id="tspan40"
-     style="stroke-width:0.264583"
-     x="796.16095"
-     y="317.24902">Playhatkein Leben mehr</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="802.90027"
-                y="325.90079"
-                id="text41"><tspan
-     sodipodi:role="line"
-     id="tspan41"
-     style="stroke-width:0.264583"
-     x="802.90027"
-     y="325.90079">PlayerLost/PlayerLostAllTries</tspan></text>
+
+
         <text
                 xml:space="preserve"
                 transform="scale(0.26458333)"
@@ -1519,32 +981,6 @@
      style="stroke-width:0.264583"
      x="299.61176"
      y="125.7956">PenManager</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:16.9333px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;stroke-width:0.264583"
-                x="776.29285"
-                y="32.785713"
-                id="text6"><tspan
-     sodipodi:role="line"
-     style="font-size:16.9333px;stroke-width:0.264583"
-     x="776.29285"
-     y="32.785713"
-     id="tspan7">FIXME:</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;stroke-width:0.264583"
-                x="841.86426"
-                y="32.421429"
-                id="text8"><tspan
-     sodipodi:role="line"
-     id="tspan8"
-     style="stroke-width:0.264583"
-     x="841.86426"
-     y="32.421429">Just Load Level flow</tspan></text>
-        <rect
-                style="fill:none;stroke-width:0.799999;stroke-dasharray:0.799999, 1.6;stroke-dashoffset:0;stroke:#000000"
-                id="rect9"
-                width="266.60452"
-                height="96.338249"
-                x="594.5152"
-                y="260.16479"/></g></svg>
+        
+        
+        </g></svg>
