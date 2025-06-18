@@ -323,44 +323,37 @@ public:
                     ball2->centerX = ball2->pos_x + ball2->width / 2.0f;
                     ball2->centerY = ball2->pos_y + ball2->height / 2.0f;
 
-                    // Geschwindigkeitsbeträge speichern
-                    const float speed1 = std::sqrt(ball1->xvel * ball1->xvel + ball1->yvel * ball1->yvel);
-                    const float speed2 = std::sqrt(ball2->xvel * ball2->xvel + ball2->yvel * ball2->yvel);
+                    // Massen der Bälle berechnen (proportional zum Volumen/Radius³)
+                    const float mass1 = std::pow(radius1, 3);
+                    const float mass2 = std::pow(radius2, 3);
 
-                    // Relativgeschwindigkeit für Kollisionsrichtung berechnen
+                    // Relativgeschwindigkeit
                     const float rvx = ball2->xvel - ball1->xvel;
                     const float rvy = ball2->yvel - ball1->yvel;
 
-                    // Dot-Produkt für Richtungskomponente
+                    // Geschwindigkeit entlang der Kollisionsnormale
                     const float velAlongNormal = rvx * nx + rvy * ny;
 
-                    // Nur bei sich annähernden Bällen reagieren
+                    // Nur reagieren, wenn sich die Bälle aufeinander zubewegen
                     if (velAlongNormal > 0) continue;
 
-                    // Geschwindigkeitsvektoren entlang der Kollisionsnormale spiegeln
-                    // Ball 1: Geschwindigkeitskomponente entlang der Kollisionsnormale umkehren
-                    const float dot1 = ball1->xvel * nx + ball1->yvel * ny;
-                    ball1->xvel -= 2.0f * dot1 * nx;
-                    ball1->yvel -= 2.0f * dot1 * ny;
+                    // Elastischer Stoß mit ungleichen Massen
+                    constexpr float restitution = 1.0f; // Vollkommen elastisch
 
-                    // Ball 2: Geschwindigkeitskomponente entlang der Kollisionsnormale umkehren
-                    const float dot2 = ball2->xvel * nx + ball2->yvel * ny;
-                    ball2->xvel -= 2.0f * dot2 * nx;
-                    ball2->yvel -= 2.0f * dot2 * ny;
+                    // Impulsberechnung nach Impulserhaltungssatz
+                    const float impulse = -(1.0f + restitution) * velAlongNormal / (1.0f / mass1 + 1.0f / mass2);
 
-                    // Geschwindigkeitsbeträge wiederherstellen
-                    const float newSpeed1 = std::sqrt(ball1->xvel * ball1->xvel + ball1->yvel * ball1->yvel);
-                    const float newSpeed2 = std::sqrt(ball2->xvel * ball2->xvel + ball2->yvel * ball2->yvel);
+                    // Geschwindigkeitsänderungen berechnen
+                    const float dvx1 = -impulse * nx / mass1;
+                    const float dvy1 = -impulse * ny / mass1;
+                    const float dvx2 = impulse * nx / mass2;
+                    const float dvy2 = impulse * ny / mass2;
 
-                    if (newSpeed1 > 0.0001f) {
-                        ball1->xvel = ball1->xvel * speed1 / newSpeed1;
-                        ball1->yvel = ball1->yvel * speed1 / newSpeed1;
-                    }
-
-                    if (newSpeed2 > 0.0001f) {
-                        ball2->xvel = ball2->xvel * speed2 / newSpeed2;
-                        ball2->yvel = ball2->yvel * speed2 / newSpeed2;
-                    }
+                    // Neue Geschwindigkeiten anwenden
+                    ball1->xvel += dvx1;
+                    ball1->yvel += dvy1;
+                    ball2->xvel += dvx2;
+                    ball2->yvel += dvy2;
 
                     // Kollisionspunkte aktualisieren
                     ball1->collisionPoints = *ball1->getCollisionPoints();
