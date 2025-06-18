@@ -7,6 +7,7 @@
 #include "DisplayManager.hpp"
 #include "EventDispatcher.h"
 #include "GrowableObject.h"
+#include "MathHelper.h"
 #include "MouseManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
@@ -252,11 +253,17 @@ public:
         checkBallCollisions();
     }
 
+    float getRandomLaunchAngle() const {
+        // Erzeugt einen Winkel von π/2 ± 0.087 Radianten (ca. ±5 Grad)
+        return M_PI / 2 + randomFloat(0.174f, 0.087f);
+    }
+
     void launchFromPaddle() {
         selectedBall->setGlued(false);
-        selectedBall->xvel = selectedBall->velocity * std::cos(launchAngle);
-        selectedBall->yvel = selectedBall->velocity * std::sin(launchAngle);
-        selectedBall->setAngle(launchAngle);
+        const float randomAngle = getRandomLaunchAngle();
+        selectedBall->xvel = selectedBall->velocity * std::cos(randomAngle);
+        selectedBall->yvel = selectedBall->velocity * std::sin(randomAngle);
+        selectedBall->setAngle(randomAngle);
     }
 
     void checkBorderCollsions() {
