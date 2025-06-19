@@ -72,9 +72,9 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         putBrick: function (brickType, brickNum) {
-            return `<a href="#Brick${brickNum}" id="brick${brickNum}" data-brick-num="${brickNum}">
-                ${this.brickGfx(brickType)}
-            </a>`;
+            return `<a href="#Brick${brickNum}" id="brick${brickNum}" data-brick-num="${brickNum}" class="inline-block">
+        ${this.brickGfx(brickType)}
+    </a>`;
         },
 
         drawLevel: function () {
@@ -98,7 +98,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             levelData += "\n** Stop **";
 
-            document.getElementById("html_lvl").innerHTML = htmlData;
+            // Das Element komplett leeren bevor neuer Inhalt eingefügt wird
+            const lvlElement = document.getElementById("html_lvl");
+            lvlElement.innerHTML = htmlData;
             document.getElementById("html_leveldata").value = levelData;
 
             // Nachdem die bricks gerendert wurden, Event-Listener hinzufügen
