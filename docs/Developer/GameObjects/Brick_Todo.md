@@ -1,5 +1,8 @@
 # Brick_Todo.md
 
+I need a new Brick Class, which is indestructible, but can be hit by the Ball.
+Does not count on level clear.
+
 ## BrickTests
 
 brick needs to rendered, after lost hp (isDestroying)
