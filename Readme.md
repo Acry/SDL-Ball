@@ -54,3 +54,5 @@ You can copy the files from the old folder to the new one, should just work.
 ![new logo](images/current-logo.png)
 
 ![JS-LevelEditor](images/js-level-editor.png)
+
+![GTK3-LevelEditor](images/leveleditor-python-gtk3.png)
