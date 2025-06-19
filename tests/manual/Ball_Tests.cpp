@@ -83,19 +83,19 @@ public:
 
     // Ball-spezifische Methoden
     [[nodiscard]] float getAngle() const {
-        return rad;
+        return angleRadians;
     }
 
     void setAngle(const float o) {
-        rad = o;
-        xvel = velocity * std::cos(rad);
-        yvel = velocity * std::sin(rad);
+        angleRadians = o;
+        xvel = velocity * std::cos(angleRadians);
+        yvel = velocity * std::sin(angleRadians);
     }
 
     void setSpeed(const float v) {
         velocity = v;
-        xvel = velocity * std::cos(rad);
-        yvel = velocity * std::sin(rad);
+        xvel = velocity * std::cos(angleRadians);
+        yvel = velocity * std::sin(angleRadians);
     }
 
     void setSize(const float s) {
@@ -141,7 +141,7 @@ private:
     bool active{false};
     bool glued{false};
     bool explosive{false};
-    float rad{0.0f};
+    float angleRadians{0.0f};
 };
 
 class TestBallManager {
@@ -217,7 +217,7 @@ public:
                 ball->pos_x = x - ball->width / 2.0f;
                 ball->pos_y = y - ball->height / 2.0f;
                 selectedBall = ball;
-                launchFromPaddle();
+                launchBall();
                 return;
             }
         }
@@ -240,25 +240,25 @@ public:
             }
             managedObjects.push_back(ball);
             selectedBall = ball;
-            launchFromPaddle();
+            launchBall();
         }
     }
 
-    void update(const float deltaTime) {
+    void update(const float deltaTime) const {
         for (auto *ball: managedObjects) {
             if (!ball->isPhysicallyActive() || ball->isGlued()) continue;
             ball->update(deltaTime);
         }
-        checkBorderCollsions();
-        checkBallCollisions();
+        checkBorderCollision();
+        checkBallToBallCollision();
     }
 
-    float getRandomLaunchAngle() const {
-        // Erzeugt einen Winkel von π/2 ± 0.087 Radianten (ca. ±5 Grad)
+    static float getRandomLaunchAngle() {
+        // Generates an angle of π/2 ± 0.087 radians (approx. ±5 degrees)
         return M_PI / 2 + randomFloat(0.174f, 0.087f);
     }
 
-    void launchFromPaddle() {
+    void launchBall() const {
         selectedBall->setGlued(false);
         const float randomAngle = getRandomLaunchAngle();
         selectedBall->xvel = selectedBall->velocity * std::cos(randomAngle);
@@ -266,7 +266,7 @@ public:
         selectedBall->setAngle(randomAngle);
     }
 
-    void checkBorderCollsions() {
+    void checkBorderCollision() const {
         for (auto *ball: managedObjects) {
             if (!ball->isPhysicallyActive()) continue;
 
@@ -288,7 +288,7 @@ public:
         }
     }
 
-    void checkBallCollisions() {
+    void checkBallToBallCollision() const {
         for (size_t i = 0; i < managedObjects.size(); ++i) {
             auto *ball1 = managedObjects[i];
             if (!ball1->isPhysicallyActive()) continue;
@@ -565,8 +565,22 @@ public:
         ctx.ballManager->update(deltaTime);
         ctx.ballManager->draw();
         renderInstructions(deltaTime, instructions);
+        drawBallCount();
         drawMouseCoordinates();
         SDL_GL_SwapWindow(ctx.displayManager.sdlWindow);
+    }
+
+    void drawBallCount() const {
+        int activeBalls = 0;
+        for (const auto *ball: ctx.ballManager->managedObjects) {
+            if (ball->isPhysicallyActive()) {
+                activeBalls++;
+            }
+        }
+        char ballCountText[32];
+        sprintf(ballCountText, "Balls: %d", activeBalls);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        ctx.textManager.write(ballCountText, Fonts::Highscore, true, 0.4f, 0.0f, -0.9f);
     }
 };
 
