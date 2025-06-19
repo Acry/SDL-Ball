@@ -2,5 +2,7 @@
 
 Top: Fix all current manual Tests
 
-- [ ] Ball
-- [ ] BallManager
+- [ ] PaddleManager_Tests.md
+- [ ] GameManager_Tests.md
+- [ ] CodeManager_Tests.md
+- [ ] SceneManager_Tests.md
