@@ -109,7 +109,7 @@ void BrickManager::draw() const {
 }
 
 void BrickManager::onBallHitBrick(const CollisionData &data) {
-    const auto *hitBrick = static_cast<const Brick *>(data.object2);
+    const auto *hitBrick = dynamic_cast<const Brick *>(data.object2);
     const auto index = static_cast<size_t>(hitBrick - &bricks[0]);
 
     float &health = brickHealth[index];
