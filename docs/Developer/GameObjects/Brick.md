@@ -1,4 +1,75 @@
-# Brick-Conept
+# Brick-Concept
+
+## Brick Types
+
+enum class BrickType {
+None,
+Blue,
+Yellow,
+Cement,
+Glass,
+Green,
+Grey,
+Purple,
+White,
+Invisible,
+Red,
+Explosive,
+Doom,
+Base
+};
+
+int BrickManager::getBaseScore(BrickType type) {
+switch(type) {
+case BrickType::Cement:    return 300;
+case BrickType::Glass:     return 200;
+case BrickType::Invisible: return 250;
+case BrickType::Explosive: return 400;
+default:                   return 100;
+}
+}
+Bei Typ '3' (Zementsteine): Der Score wird auf 300 gesetzt, wenn der Stein "breakable" wird.
+player.score += score * player.multiply * var.averageBallSpeed; //Speed bonus
+see score
+
+Normale Bricks: Standard-Blöcke (Typ '1')
+Diese geben normale Punktzahl und erfordern einen Treffer zum Zerstören
+
+Zement-Bricks (Typ '3')
+Unzerstörbar, bis sie durch breakable() in zerstörbare Blöcke umgewandelt werden
+Nach Umwandlung: 300 Punkte und 1 benötigter Treffer
+
+Glas-Bricks (Typ '4')
+Werden mit breakable() in zerstörbare Blöcke umgewandelt
+
+Unsichtbare Bricks (Typ '9')
+Ähnlich wie Glas-Bricks, aber zuerst unsichtbar
+Erscheinen nach dem ersten Treffer
+
+Explosive Bricks (Typ 'B')
+Lösen eine Kettenreaktion aus und zerstören benachbarte Blöcke
+Werden durch Funktion makeExplosive() umgewandelt
+
+Doom-Bricks (Typ 'C')
+Spezielle Blöcke mit eigenem Soundeffekt
+
+Farbige Bricks
+Aus dem Texture-Loading-Code erkennbar: blau, gelb, grün, grau, lila, weiß und rot
+Diese haben vermutlich ähnliche Eigenschaften, aber unterschiedliches Aussehen
+Anzahl der benötigten Treffer (hitsLeft)
+Verhalten beim Treffen (normales Verschwinden oder Explosion)
+Visuellen Effekten und Soundeffekten
+Die hit()-Methode ist der zentrale Punkt, an dem die Punkte vergeben werden:
+
+growExplosive: Lässt benachbarte Bricks explosiv werden
+breakable: Macht einen Brick zerstörbar (durch Powerup)
+
+Power-up "Explosive Grow" lässt explosive Bricks wachsen
+Power-up "Easy Brick" macht alle Bricks leichter zu zerstören
+Power-up "Detonate" sprengt alle explosiven Bricks
+Power-up "Drop" lässt alle Bricks nach unten fallen
+
+## BrickManager
 
 [BrickManage](../Manager/BrickManager.md)
 
