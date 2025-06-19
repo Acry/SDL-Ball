@@ -4,6 +4,15 @@ https://en.wikipedia.org/wiki/Breakout_(video_game)
 
 [ ] bring my own researches into this ( find first =) )
 
+https://www.youtube.com/watch?v=BeiLZVXxpiI
+DX-Ball 1995 - Michael P. Welch, based on Megaball by Ed and Al Mackey
+DX-Ball 2 1996
+Shatter 2009 - remastered 2022
+Ricochet Lost Worlds: Recharged. 2006
+Ricochet Infinity 2007
+
+## Breakout
+
 Atari 2600, 1976
 https://atari.com/pages/breakout?srsltid=AfmBOorhHtA2S0oXoYLhtrpe8O4zG_ldgQn9MUzpIRjFNIrOektR3S-B
 
@@ -16,6 +25,14 @@ repeatedly bouncing a ball off a paddle into them. The concept was predated by R
 game's designers were influenced by Atari's own Pong (1972).
 
 The arcade version of Breakout uses a monochrome display underneath a translucent colored overlay.
+
+## More Clones
+
+https://www.youtube.com/watch?v=SIUrwg6WV
+
+## Arkanoid
+
+https://www.youtube.com/watch?v=fA6cfcL7sm8&t=352s
 
 ## Clean Sweep
 
