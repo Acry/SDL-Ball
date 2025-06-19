@@ -83,4 +83,4 @@ Die Kommunikation läuft jetzt durchgängig über das Event-System statt direkte
 ## See also
 
 - [Structure](Structure.md)
-- [Manual Tests](Tests/manual.md)
+- [Manual Tests](Tests/Manual-Tests.md)

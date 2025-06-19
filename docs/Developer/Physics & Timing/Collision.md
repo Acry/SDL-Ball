@@ -28,4 +28,3 @@ stärker beeinflusst.
 Unelastisch: Wenn die Kugeln zusammenkleben, bewegen sie sich nach der Kollision als ein Objekt weiter. Die
 resultierende Geschwindigkeit hängt von der Masse beider Kugeln ab, aber die kleinere Kugel trägt weniger zum
 Gesamtimpuls bei.
-

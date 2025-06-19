@@ -242,60 +242,60 @@ public:
     }
 };
 
-    void detonateExplosives(brick bricks[], EffectManager &fxMan) {
-        for (int i = 0; i < 598; i++) {
-            if (bricks[i].active && bricks[i].type == 'B') {
-                position v;
-                position p;
-                p.x = bricks[i].pos_x;
-                p.y = bricks[i].pos_y;
-                v.x = 0.0;
-                v.y = 0.0;
-                bricks[i].hit(fxMan, p, v, false);
-            }
+void detonateExplosives(brick bricks[], EffectManager &fxMan) {
+    for (int i = 0; i < 598; i++) {
+        if (bricks[i].active && bricks[i].type == 'B') {
+            position v;
+            position p;
+            p.x = bricks[i].pos_x;
+            p.y = bricks[i].pos_y;
+            v.x = 0.0;
+            v.y = 0.0;
+            bricks[i].hit(fxMan, p, v, false);
+        }
+    }
+}
+
+void updateBrickPositions(brick bricks[]) {
+    for (int i = 0; i < 598; i++) {
+        if (!bricks[i].active) continue;
+
+        // Original Fallgeschwindigkeit beibehalten
+        bricks[i].pos_y -= bricks[i].height * 2;
+
+        // Original untere Grenze beibehalten
+        if (bricks[i].pos_y < -1.00 - bricks[i].height) {
+            bricks[i].active = false;
+            updated_nbrick[bricks[i].row][bricks[i].bricknum] = -1;
+            player.score -= bricks[i].score;
+
+            var.bricksHit = true;
+            gVar.deadTime = 0;
+        }
+    }
+}
+
+void explosiveGrow(brick bricks[]) {
+    for (int i = 0; i < 598; i++) {
+        if (bricks[i].active) {
+            bricks[i].growExplosive(bricks);
         }
     }
 
-    void updateBrickPositions(brick bricks[]) {
-        for (int i = 0; i < 598; i++) {
-            if (!bricks[i].active) continue;
+    for (int i = 0; i < 598; i++) {
+        bricks[i].justBecomeExplosive = false;
+    }
+}
 
-            // Original Fallgeschwindigkeit beibehalten
-            bricks[i].pos_y -= bricks[i].height * 2;
-
-            // Original untere Grenze beibehalten
-            if (bricks[i].pos_y < -1.00 - bricks[i].height) {
-                bricks[i].active = false;
-                updated_nbrick[bricks[i].row][bricks[i].bricknum] = -1;
-                player.score -= bricks[i].score;
-
-                var.bricksHit = true;
-                gVar.deadTime = 0;
-            }
+void easyBrick(brick bricks[]) {
+    for (int i = 0; i < 598; i++) {
+        if (bricks[i].active) {
+            bricks[i].breakable();
         }
     }
+}
 
-    void explosiveGrow(brick bricks[]) {
-        for (int i = 0; i < 598; i++) {
-            if (bricks[i].active) {
-                bricks[i].growExplosive(bricks);
-            }
-        }
-
-        for (int i = 0; i < 598; i++) {
-            bricks[i].justBecomeExplosive = false;
-        }
-    }
-
-    void easyBrick(brick bricks[]) {
-        for (int i = 0; i < 598; i++) {
-            if (bricks[i].active) {
-                bricks[i].breakable();
-            }
-        }
-    }
-
-    void brick::hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe) {
+void brick::hit(EffectManager &fxMan, position poSpawnPos, position poSpawnVel, bool ballHitMe) {
     position p, s;
 
     if (type != '3' || player.powerup[PO_THRU])

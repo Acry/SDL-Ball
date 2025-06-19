@@ -24,13 +24,11 @@ Identifiziert Themes und deren Inhaltstypen (gfx, snd, lvl)
 Speichert Metadaten für jedes Theme
 Theme-Verwaltung:
 
-
 listThemes(): Gibt Liste verfügbarer Themes zurück
 themeExists(): Prüft, ob ein Theme existiert
 setCurrentTheme(): Setzt aktives Theme
 getCurrentTheme(): Gibt aktives Theme zurück
 Ressourcen-Zugriff (getThemeFilePath):
-
 
 Findet Dateien nach Theme-Hierarchie:
 Nutzer-Theme-Verzeichnis
@@ -38,11 +36,11 @@ Globales Theme-Verzeichnis
 Default-Theme (Fallback)
 Nutzt Caching für schnelleren Zugriff
 Gibt vollständigen Dateipfad oder leeren String zurück
+
 Hilfsfunktionen:
-
-
 getDefaultTheme(): Liefert Name des Standard-Themes
 themeHasResource(): Prüft, ob eine Ressource in einem Theme existiert
+
 Die Klasse arbeitet eng mit dem ConfigFileManager zusammen und bietet eine zentrale Schnittstelle für das Laden von themenspezifischen Ressourcen im gesamten Spiel.
 
 ## Responsibilities
@@ -77,7 +75,6 @@ Effects
 Get from [ConfigFileManager](ConfigFileManager.md)
 Order should be:
 from private to system
-
 
 ## Die Rolle von ThemeManager.cpp
 
