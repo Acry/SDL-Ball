@@ -1,0 +1,116 @@
+<html>
+<head>
+    <title>SDL-Ball LevelEditor v 0.15</title>
+    <script src="leveleditor.js" type="text/javascript"></script>
+</head>
+<body>
+<a href="#" id="clearButton">Clear All / New Level</a>
+<br>
+<table border=1>
+    <tr>
+        <td colspan=2 bgcolor=black>
+            <div id="html_lvl">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <a href="#" id="boardToDataButton">Board-&gt;Data</a> - - <a href="#"
+                                                                         id="dataToBoardButton">Data-&gt;Board</a><br>
+            <textarea id="html_leveldata" rows=24 cols=52>
+** Start **
+000000JB00000000000000J6J6J6J60000000000000000000000
+0000JBJBJB0000000000J6J6J6J6J6J600000000000000JB0000
+000000JB0000000000J6J6J6J6J6J6J6J60000000000JBJBJB00
+000000000000000000J6J6J6J6J6J6J6J6000000000000JB0000
+0000000000000000J6J6J6J6J6J6J6J6J6J60000000000000000
+0000000000000000J6J6J6J6J6J6J6J6J6J60000000000000000
+0000000000000000J6J6J6J6J6J6J6J6J6J60000000000000000
+0000000000J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J70000000000
+0000J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J70000
+00J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J700
+0000J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J7J70000
+000000000000J7J7J7J7J7J7J7J7J7J7J7J7J700000000000000
+0000000000000000000000000000000000000000000000000000
+0000000000000000JB000000JB000000JB000000000000000000
+0000000000000000JB000000JB000000JB000000000000000000
+0000000000000000JB000000JB000000JB000000000000000000
+0000000000000000JB000000JB000000JB000000000000000000
+0000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000
+J5J5JAJ5J5JBJ5J5JAJ5J5JBJ5J5JAJ5J5JAJ5J5JAJ5J5JBJ5J5
+J4J2J2J4J4J2J2J4J4J2J2J4J4J2J2J4J4J2J2J4J4J2J2J4J4J2
+JBJ1JBJBJ1J1JBJBJ1J1JBJBJ1J1JBJBJ1J1JBJBJ1J1JBJBJ1JB
+** Stop **
+          </textarea>
+        </td>
+        <td valign="top">
+            <div id="html_selectedBrickType">Selected Brick Type: <img src="gfx/blue.png" border=0 width=32 height=16>
+            </div>
+            <br>
+            <a href="#" class="brickTypeSelector" data-type="1"><img src="gfx/blue.png" border=0></a>
+            <a href="#" class="brickTypeSelector" data-type="2"><img src="gfx/yellow.png" border=0></a>
+            <a href="#" class="brickTypeSelector" data-type="3"><img src="gfx/cement.png" border=0></a>
+            <a href="#" class="brickTypeSelector" data-type="4"><img src="gfx/glass.png" border=0></a><br>
+            <a href="#" class="brickTypeSelector" data-type="5"><img src="gfx/green.png" border=0></a>
+            <a href="#" class="brickTypeSelector" data-type="6"><img src="gfx/steel.png" border=0></a>
+            <a href="#" class="brickTypeSelector" data-type="7"><img src="gfx/purple.png" border=0></a>
+            <a href="#" class="brickTypeSelector" data-type="8"><img src="gfx/white.png" border=0></a><br>
+            <a href="#" class="brickTypeSelector" data-type="9"><img src="gfx/invisible.png" border=0></a>
+            <a href="#" class="brickTypeSelector" data-type="A"><img src="gfx/red.png" border=0></a>
+            <a href="#" class="brickTypeSelector" data-type="B"><img src="gfx/explosive.png" border=0></a>
+            <a href="#" class="brickTypeSelector" data-type="C"><img src="gfx/doom.png" border=0></a>
+            <!--<a href="#" class="brickTypeSelector" data-type="D"><img src="gfx/custom.png" border=0></a>-->
+            <br>
+            <hr>
+            <br>
+
+            <div id="html_powerupTypeSelected">Powerup Selected: M</div>
+            <select id="html_powerupType">
+                <option value="M">Random (2%)</option>
+                <option value="K">Random (100%)</option>
+                <option value="J">Random (10%)</option>
+                <option value="L">Random (5%)</option>
+                <option value="N">Random (1%)</option>
+                <option value="0">No Powerup</option>
+                <option value="Q">Random Evil (100%)</option>
+
+                <option value="1">Extrude</option>
+                <option value="2">Shrink</option>
+                <option value="4">Glue</option>
+                <option value="5">Multiball</option>
+                <option value="6">Go-Thru</option>
+                <!-- <option value="7">Faster ball</option> -->
+                <!-- <option value="8">All bricks destructable</option> -->
+                <!--<option value="9">Next Level</option>-->
+                <!--<option value="A">Slower ball</option>-->
+                <option value="B">Explosive ball</option>
+                <!--<option value="C">Detonate all explosive</option>-->
+                <option value="E">Gravity</option>
+                <option value="F">Big ball</option>
+                <option value="G">Normal ball</option>
+                <option value="H">Small ball</option>
+                <option value="I">Aim</option>
+                <option value="O">Extra Life</option>
+                <!--<option value="S">Die</option>-->
+                <option value="P">Gun</option>
+                <option value="R">LaserSight</option>
+            </select><br>
+            The selected powerup will be<br>applied to every brick you place.
+        </td>
+    </tr>
+    <tr>
+        <td colspan=2>
+            <b>Instructions:</b>
+            Click clear to clean up the board.<br>
+            This editor do NOT support creation/loading of custom colored bricks.<br>
+            To load/edit a existing level, copy/paste it into the textarea and click Data->Board<br>
+            When you have made a level, click Board->Data and copy/paste the text into data/levels.txt<br>
+        </td>
+    </tr>
+</table>
+<div id="html_debug">
+</div>
+</body>
+</html>
