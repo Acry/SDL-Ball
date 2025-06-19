@@ -1,4 +1,3 @@
-#include "../src/Brick_old.h"
 int nbrick[23][26];
 int updated_nbrick[23][26];
 
