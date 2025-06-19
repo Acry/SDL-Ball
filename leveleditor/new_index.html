@@ -7,17 +7,41 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="leveleditor.js" type="text/javascript"></script>
     <style>
+        /* Bricks direkt nebeneinander ohne Abstand */
         #html_lvl a {
             display: inline-block;
             width: 32px;
             height: 16px;
-            vertical-align: middle;
+            vertical-align: top; /* Verhindert vertikale Abstände */
+            margin: 0;
+            padding: 0;
+            font-size: 0; /* Entfernt unerwünschte Abstände durch Inline-Element-Verhalten */
+            line-height: 0;
         }
 
+        /* Zeilenumbrüche ohne zusätzlichen Abstand */
         #html_lvl br {
             display: block;
             content: "";
-            margin-top: 0;
+            margin: 0;
+            padding: 0;
+            line-height: 0;
+            font-size: 0;
+        }
+
+        /* Container für die Bricks */
+        #html_lvl {
+            line-height: 0;
+            font-size: 0;
+            letter-spacing: 0;
+            word-spacing: 0;
+        }
+
+        /* Für die Bilder in den Bricks */
+        #html_lvl img {
+            display: block;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
