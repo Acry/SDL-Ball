@@ -151,4 +151,5 @@ if (event.type == SDL_KEYUP) {
 4. **Responsives Gefühl**: Das Paddle reagiert sofort auf Tasteneingaben
 5. **Trägheit**: Realistische Bewegung mit Ausgleitung beim Loslassen der Tasten
 
-Das Ergebnis ist ein viel natürlicheres und angenehmeres Steuerungsgefühl, das die Präzision verbessert und dem Spieler mehr Kontrolle gibt.
+Das Ergebnis ist ein viel natürlicheres und angenehmeres Steuerungsgefühl, das die Präzision verbessert und dem Spieler
+mehr Kontrolle gibt.

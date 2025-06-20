@@ -1,6 +1,7 @@
 # Paddle-Explosionseffekt implementieren
 
-Der Code für eine Paddle-Explosion fehlt noch. Eine Explosionsanimation ist wichtig, wenn das Paddle durch ein Game-Over-Ereignis zerstört wird.
+Der Code für eine Paddle-Explosion fehlt noch.
+Eine Explosionsanimation ist wichtig, wenn das Paddle durch ein Game-Over-Ereignis zerstört wird.
 
 Hier ist meine Implementierungsvorschlag:
 
@@ -148,9 +149,11 @@ if (spielerHatVerloren) {
 ```
 
 Diese Implementierung bietet:
+
 - Eine animierte Explosion mit Partikeln
 - Dynamische Farb- und Größenänderung
 - Automatische Markierung des Paddles als "tot" nach der Explosion
 - Unterbrechung der normalen Paddle-Funktionalität während der Explosion
 
-Die Partikel verteilen sich in einem leicht ovalen Muster und verblassen von weiß zu rot/orange, während sie sich vom ursprünglichen Paddle-Standort wegbewegen.
+Die Partikel verteilen sich in einem leicht ovalen Muster und verblassen von weiß zu rot/orange, während sie sich vom
+ursprünglichen Paddle-Standort wegbewegen.
