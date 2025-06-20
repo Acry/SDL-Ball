@@ -2,27 +2,28 @@
 
 The PlayerManager is responsible for managing the player settings and state in the game. It controls the paddle, lives,
 coins, and other player-related attributes. The PlayerManager should not be responsible for initializing the player
-directly; instead, it should retrieve the necessary settings from the SettingsManager and pass them to the Player class.
+directly; instead, it should retrieve the necessary settings from the GameManager, via SettingsManager, and pass them to
+the Player class.
 
-```c++
-class Player {
-private:
-    difficultyStruct currentDifficulty;
+lives
+coins
+powerups
+speed
 
-public:
-    Player() = default;
-    
-    void init(const difficultyStruct& difficulty) {
-        currentDifficulty = difficulty;
-        lives = difficulty.life;
-        coins = difficulty.coins;
-        // weitere Initialisierungen...
-    }
-    // ... rest der Klasse
-};
-```
+Spawn
 
-## old code
+Despawn
+
+Textures:
+Dein bestehender Ansatz mit den separaten Properties für jede Schicht ist sehr praktisch und leicht verständlich.
+
+ManagedObjects:
+Da der PaddleManager nur ein Paddle verwalten soll, könnte der Vector für managedObjects auf ein einzelnes Element
+beschränkt werden, aber das Beibehalten für Konsistenz mit anderen Managern ist auch sinnvoll.
+
+Collisions:
+
+## Old code explanation
 
 Der Player wird hauptsächlich durch die globale Struktur player_struct player repräsentiert, die verschiedene
 Spielerattribute wie Score, Level, Lives und Powerups enthält.
