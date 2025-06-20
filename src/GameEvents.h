@@ -12,20 +12,23 @@
 #include "PowerupTypes.h"
 
 enum class GameEvent {
-    BallHitLeftBorder, // Index 0
-    BallHitRightBorder, // Index 1
-    BallHitTopBorder, // Index 2
-    BallLost, // Index 3
-    BallHitPaddle, // Index 4
-    BrickDestroyed, // Index 5
-    PowerUpCollected, // Index 6
-    BallHitBrick, // Index 7
-    PaddleHitLeftBorder, // Index 8
-    PaddleHitRightBorder, // Index 9
+    // Collision events
+    BallHitLeftBorder,
+    BallHitRightBorder,
+    BallHitTopBorder,
+    BallHitBall,
+    BallLost,
+    BallHitPaddle,
+    BallHitBrick,
+
+    PowerUpCollected,
+    PaddleHitLeftBorder,
+    PaddleHitRightBorder,
 
     BallCreated,
     BallMoved,
     BallDestroyed,
+    LastBallDestroyed, // BallManager: Last ball destroyed event
 
     CreateTracer,
     TracerCreated,
@@ -34,16 +37,23 @@ enum class GameEvent {
     UpdateTracerSize,
     RemoveTracer,
 
-    PaddleCreated,
-    PaddleMoved,
-    PaddleDestroyed,
+    PaddleCreated, // PaddleManager: Paddle created event
+    PaddleMoved, // PaddleManager: Paddle moved event
+    PaddleDestroyed, // PaddleManager: Paddle destroyed event
 
     LevelRequested,
     LevelChanged,
     LevelThemeRequested,
     LevelThemeChanged,
-    LevelLoaded,
-    LevelStarted,
+    LevelLoaded, // LevelManager: Level loaded event
+    LevelStarted, // GameManager: Level started event
+
+    BrickDestroyed, // BrickManager: Brick destroyed event
+    LevelCleared, // BrickManager: Level cleared event
+
+    DifficultyChanged, // MenuManager: Difficulty changed event
+
+    ScoreChanged,
 
     KeyPressed,
     KeyReleased,
@@ -55,6 +65,10 @@ enum class GameEvent {
     WindowResized,
     QuitRequested,
 
+    SceneChangedRequested,
+    SceneChanged,
+    ScreenshotRequested,
+    ScreenshotCreated,
     ViewportResized,
 };
 

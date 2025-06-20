@@ -1,5 +1,6 @@
 # BrickManager
 
+LevelCleared
 Event-Flow:
 
 CollisionManager erkennt die Kollision zwischen Ball und Brick
