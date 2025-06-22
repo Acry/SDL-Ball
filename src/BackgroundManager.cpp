@@ -74,25 +74,29 @@ void BackgroundManager::drawQuad() const {
     // Bottom-left corner.
     if (showBackgroundOverlay)
         glColor4f(colors[0].r, colors[0].g, colors[0].b, colors[0].a);
-    glTexCoord2f(0.0f, 0.0f);
+    glTexCoord2f(currentTexture->textureProperties.uvCoordinates[0],
+                 currentTexture->textureProperties.uvCoordinates[1]);
     glVertex3f(-1.0f, -1.0f, 0.0f);
 
     // Bottom-right corner.
     if (showBackgroundOverlay)
         glColor4f(colors[1].r, colors[1].g, colors[1].b, colors[1].a);
-    glTexCoord2f(1.0f, 0.0f);
+    glTexCoord2f(currentTexture->textureProperties.uvCoordinates[2],
+                 currentTexture->textureProperties.uvCoordinates[3]);
     glVertex3f(1.0f, -1.0f, 0.0f);
 
     // Top-right corner.
     if (showBackgroundOverlay)
         glColor4f(colors[2].r, colors[2].g, colors[2].b, colors[2].a);
-    glTexCoord2f(1.0f, 1.0f);
+    glTexCoord2f(currentTexture->textureProperties.uvCoordinates[4],
+                 currentTexture->textureProperties.uvCoordinates[5]);
     glVertex3f(1.0f, 1.0f, 0.0f);
 
     // Top-left corner.
     if (showBackgroundOverlay)
         glColor4f(colors[3].r, colors[3].g, colors[3].b, colors[3].a);
-    glTexCoord2f(0.0f, 1.0f);
+    glTexCoord2f(currentTexture->textureProperties.uvCoordinates[6],
+                 currentTexture->textureProperties.uvCoordinates[7]);
     glVertex3f(-1.0f, 1.0f, 0.0f);
 
     glEnd();
