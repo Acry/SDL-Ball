@@ -34,19 +34,19 @@ public:
         glBegin(GL_QUADS);
 
         // Bottom-left corner
-        glTexCoord2f(uvCoordinates[0], uvCoordinates[1]);
+        glTexCoord2f(textureProperties.uvCoordinates[0], textureProperties.uvCoordinates[1]);
         glVertex3f(pos_x, pos_y, 0.0f);
 
         // Bottom-right corner
-        glTexCoord2f(uvCoordinates[2], uvCoordinates[3]);
+        glTexCoord2f(textureProperties.uvCoordinates[2], textureProperties.uvCoordinates[3]);
         glVertex3f(pos_x + width, pos_y, 0.0f);
 
         // Top-right corner
-        glTexCoord2f(uvCoordinates[4], uvCoordinates[5]);
+        glTexCoord2f(textureProperties.uvCoordinates[4], textureProperties.uvCoordinates[5]);
         glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
         // Top-left corner
-        glTexCoord2f(uvCoordinates[6], uvCoordinates[7]);
+        glTexCoord2f(textureProperties.uvCoordinates[6], textureProperties.uvCoordinates[7]);
         glVertex3f(pos_x, pos_y + height, 0.0f);
 
         glEnd();
@@ -61,16 +61,15 @@ public:
     }
 
     template<typename T = GameObject>
-    GameObject *createGameObject(const texture &tex) {
+    GameObject *createGameObject(texture &tex) {
         static_assert(std::is_base_of_v<GameObject, T>, "T muss von GameObject abgeleitet sein");
         auto *obj = new T(tex);
         managedObjects.push_back(obj);
 
         // Beim AnimationManager registrieren, wenn das Objekt Animationseigenschaften hat
         if (tex.animationProperties.frames > 1) {
-            animationManager->registerForAnimation(obj, tex.animationProperties);
+            animationManager->registerForAnimation(obj, tex.animationProperties, obj->textureProperties.uvCoordinates);
         }
-
         return obj;
     }
 
@@ -78,7 +77,7 @@ public:
         if (!obj) return;
 
         // Vom AnimationManager abmelden
-        animationManager->unregisterFromAnimation(obj);
+        animationManager->unregisterFromAnimation(obj, obj->animProps);
 
         // Aus der Liste entfernen und löschen
         if (const auto it = std::ranges::find(managedObjects, obj); it != managedObjects.end()) {
@@ -134,6 +133,13 @@ int main() {
         }
     }
 
+    //GameObject *testObj = objectManager.createGameObject<TestGameObject>(texture);
+    //testObj->pos_x = -0.95f;
+    //testObj->pos_y = 0.2f;
+    //testObj->width = 0.4f;
+    //testObj->height = 0.4f;
+
+    //testObjects.push_back(testObj);
     const std::vector<std::string> instructions = {
         "S: Create Screenshot",
         "M: Toggle Mouse Coordinates",

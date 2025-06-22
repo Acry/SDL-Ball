@@ -13,6 +13,7 @@ struct TextureResource {
     GLfloat textureColor[4]{1.0f, 1.0f, 1.0f, 1.0f}; // RGBA-Farbmodifikator
     GLfloat particleColor[3]{1.0f, 1.0f, 1.0f}; // RGB-Partikelfarbe
     std::string fileName; // Pfad zur Textur
+    TextureCoordinates uvCoordinates;
 };
 
 enum class TextureProperty {

@@ -11,19 +11,19 @@ void Brick::draw() const {
     glBegin(GL_QUADS);
 
     // Bottom-left corner
-    glTexCoord2f(uvCoordinates[0], uvCoordinates[1]);
+    glTexCoord2f(textureProperties.uvCoordinates[0], textureProperties.uvCoordinates[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
 
     // Bottom-right corner
-    glTexCoord2f(uvCoordinates[2], uvCoordinates[3]);
+    glTexCoord2f(textureProperties.uvCoordinates[2], textureProperties.uvCoordinates[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
 
     // Top-right corner
-    glTexCoord2f(uvCoordinates[4], uvCoordinates[5]);
+    glTexCoord2f(textureProperties.uvCoordinates[4], textureProperties.uvCoordinates[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
     // Top-left corner
-    glTexCoord2f(uvCoordinates[6], uvCoordinates[7]);
+    glTexCoord2f(textureProperties.uvCoordinates[6], textureProperties.uvCoordinates[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
 
     glEnd();

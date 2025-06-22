@@ -3,8 +3,6 @@
 #include "Paddle.h"
 
 Paddle::Paddle() : MovingObject() {
-    // eventManager direkt zuweisen entfällt, da es jetzt durch GameObject verwaltet wird
-     // Zugriff auf das geschützte Mitglied der Basisklasse
     init();
 }
 
@@ -30,7 +28,6 @@ void Paddle::init() {
 }
 
 void Paddle::draw() const {
-
     drawBase();
 
     if (hasGlueLayer) {
@@ -71,7 +68,6 @@ void Paddle::drawBase() const {
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
 }
-
 
 void Paddle::drawGlueLayer() const {
     glLoadIdentity();

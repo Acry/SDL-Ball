@@ -42,19 +42,19 @@ public:
         glBegin(GL_QUADS);
 
         // Bottom-left corner
-        glTexCoord2f(uvCoordinates[0], uvCoordinates[1]);
+        glTexCoord2f(textureProperties.uvCoordinates[0], textureProperties.uvCoordinates[1]);
         glVertex3f(pos_x, pos_y, 0.0f);
 
         // Bottom-right corner
-        glTexCoord2f(uvCoordinates[2], uvCoordinates[3]);
+        glTexCoord2f(textureProperties.uvCoordinates[2], textureProperties.uvCoordinates[3]);
         glVertex3f(pos_x + width, pos_y, 0.0f);
 
         // Top-right corner
-        glTexCoord2f(uvCoordinates[4], uvCoordinates[5]);
+        glTexCoord2f(textureProperties.uvCoordinates[4], textureProperties.uvCoordinates[5]);
         glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
         // Top-left corner
-        glTexCoord2f(uvCoordinates[6], uvCoordinates[7]);
+        glTexCoord2f(textureProperties.uvCoordinates[6], textureProperties.uvCoordinates[7]);
         glVertex3f(pos_x, pos_y + height, 0.0f);
 
         glEnd();
@@ -176,7 +176,8 @@ public:
                 ball->animProps = fireballTexture->animationProperties;
                 // Animation registrieren, falls vorhanden
                 if (ball->animProps.frames > 1) {
-                    animationManager->registerForAnimation(ball, ball->animProps);
+                    animationManager->
+                            registerForAnimation(ball, ball->animProps, ball->textureProperties.uvCoordinates);
                     animationIndices.push_back(ballIndex);
                 }
             }
@@ -185,7 +186,7 @@ public:
             if (normalTexture) {
                 ball->textureProperties = normalTexture->textureProperties;
                 ball->animProps = normalTexture->animationProperties;
-                animationManager->unregisterFromAnimation(ball);
+                animationManager->unregisterFromAnimation(ball, ball->animProps);
                 std::erase(animationIndices, ballIndex);
             }
         }
@@ -195,7 +196,7 @@ public:
         if (!ball) return;
 
         ball->setPhysicallyActive(false);
-        animationManager->unregisterFromAnimation(ball);
+        animationManager->unregisterFromAnimation(ball, ball->animProps);
 
         if (const auto it = std::ranges::find(managedObjects, ball); it != managedObjects.end()) {
             const size_t ballIndex = std::distance(managedObjects.begin(), it);
@@ -236,7 +237,7 @@ public:
             ball->pos_x = x - ball->width / 2.0f;
             ball->pos_y = y - ball->height / 2.0f;
             if (ball->animProps.frames > 1) {
-                animationManager->registerForAnimation(ball, ball->animProps);
+                animationManager->registerForAnimation(ball, ball->animProps, ball->textureProperties.uvCoordinates);
             }
             managedObjects.push_back(ball);
             selectedBall = ball;
@@ -413,7 +414,7 @@ public:
 
     void clear() {
         for (auto *ball: managedObjects) {
-            animationManager->unregisterFromAnimation(ball);
+            animationManager->unregisterFromAnimation(ball, ball->animProps);
             ball->setPhysicallyActive(false);
         }
         animationIndices.clear();
@@ -593,6 +594,8 @@ int main() {
             "LMB: Spawn Ball",
             "Vertical Mouse Wheel: Select Ball",
             "E: Toggle Explosive State of Selected Ball",
+            "G: Grow Selected Ball",
+            "K: Shrink Selected Ball",
             "S: Screenshot",
             "M: Toggle Mouse Coordinates",
             "ESC: Quit"

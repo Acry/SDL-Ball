@@ -1,3 +1,4 @@
+// SpriteSheetAnimation.cpp
 #include <SDL2/SDL_log.h>
 
 #include "SpriteSheetAnimation.h"

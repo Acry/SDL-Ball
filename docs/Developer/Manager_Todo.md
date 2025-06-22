@@ -1,7 +1,5 @@
 ## Missing Managers
 
-Ball,
-Paddle,
 SceneManager:
 Autoplay, Credits Hauptmenü, Spiel, Pause, Game Over)
 SaveGameManager,

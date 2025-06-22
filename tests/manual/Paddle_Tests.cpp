@@ -1,185 +1,481 @@
 // Paddle_Tests.cpp
 #include <cstdlib>
-
+#include <numeric>
+#include <vector>
+#include <cmath>
+#include <algorithm>
 #include "DisplayManager.hpp"
-#include "Paddle.h"
-#include "PlayfieldBorder.h"
+#include "EventDispatcher.h"
+#include "GrowableObject.h"
+#include "MouseManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
 #include "TextureManager.h"
+#include "SpriteSheetAnimationManager.h"
 
-#define DEBUG_DRAW_PADDLE_BOUNDING_BOXES 0
-
-int main() {
-    EventManager eventManager;
-    DisplayManager displayManager(&eventManager);
-    if (!displayManager.init(0, 1024, 768, false)) {
-        SDL_Log("Could not initialize display");
-        return EXIT_FAILURE;
-    }
-    SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Paddle Test");
-    TextManager textManager;
-    if (!textManager.setTheme("../themes/default")) {
-        SDL_Log("Fehler beim Laden des Font-Themes");
-    }
-    TestHelper testHelper(textManager, &eventManager);
-    Paddle paddle(&eventManager);
-    TextureManager textureManager;
-    if (!textureManager.setSpriteTheme("../themes/default")) {
-        SDL_Log("Fehler beim Laden des Texture-Themes");
-        return EXIT_FAILURE;
+class TestPaddle final : public GrowableObject, public ICollideable {
+public:
+    explicit TestPaddle(const texture &tex) : GrowableObject(tex) {
+        this->width = 0.124f;
+        this->height = 0.032f;
+        this->velocity = 0.0f;
+        pos_y = -0.955f;
+        pos_x = 0.0f - width / 2.0f;
+        aspectRatio = width / height;
+        onSizeChanged();
     }
 
-    paddle.texture = textureManager.getPaddleTexture(PaddleTexture::Base);
-    if (!paddle.texture) {
-        SDL_Log("Fehler beim Laden der Paddle-Textur");
-        return EXIT_FAILURE;
+    float centerX{0.0f};
+    float centerY{0.0f};
+
+    mutable std::vector<float> collisionPoints;
+
+    TextureResource glueLayerTextureProperties;
+    SpriteSheetAnimationProperties glueLayerAnimProps{};
+
+    TextureResource gunLayerTextureProperties;
+    SpriteSheetAnimationProperties gunLayerAnimProps{};
+
+    void init() override {
+        // Implementierung der abstrakten Methode aus GameObject
     }
 
-    // Array-Deklaration entfernen, da layerTex bereits als Array in der Klasse definiert ist
-    paddle.layerTex[0] = textureManager.getPaddleTexture(PaddleTexture::Glue);
-    if (!paddle.layerTex[0]) {
-        SDL_Log("Fehler beim Laden der Glue-Textur");
-        return EXIT_FAILURE;
-    }
-
-    paddle.layerTex[1] = textureManager.getPaddleTexture(PaddleTexture::Gun);
-    if (!paddle.layerTex[1]) {
-        SDL_Log("Fehler beim Laden der Gun-Textur");
-        return EXIT_FAILURE;
-    }
-
-    std::vector<std::string> instructions = {
-        "1: Set Paddle Glue Layer",
-        "2: Set Paddle Gun Layer",
-        "g: Paddle grow",
-        "s: Paddle shrink",
-        "<-: Paddle move left",
-        "->: Paddle move right",
-        "Mouse: Move Paddle",
-        "m: Toggle Mouse Coordinates",
-        "ESC: Quit"
-    };
-
-    SDL_WarpMouseInWindow(displayManager.sdlWindow, displayManager.currentW / 2, displayManager.currentH / 2);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-    Uint32 lastTime = SDL_GetTicks();
-    GLfloat normalizedMouseX, normalizedMouseY;
-    bool running = true;
-    while (running) {
-        Uint32 currentTime = SDL_GetTicks();
-        float deltaTime = (currentTime - lastTime) / 1000.0f;
-        lastTime = currentTime;
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                running = false;
-            }
-            if (event.type == SDL_WINDOWEVENT) {
-                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    displayManager.resize(event.window.data1, event.window.data2);
-                }
-            }
-            if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
-                    running = false;
-                }
-                float moveStep = 0.09f; // Konstanter, kleiner Wert für Tastatureingabe
-                switch (event.key.keysym.sym) {
-                    case SDLK_LEFT:
-                        paddle.moveTo(paddle.pos_x - moveStep, deltaTime);
-                        break;
-                    case SDLK_RIGHT:
-                        paddle.moveTo(paddle.pos_x + moveStep, deltaTime);
-                        break;
-                    case SDLK_g:
-                        paddle.grow(paddle.getWidth() * 1.5f);
-                        break;
-                    case SDLK_s:
-                        paddle.grow(paddle.getWidth() * 0.7f);
-                    case SDLK_m:
-                        testHelper.m_showMouseCoords = !testHelper.m_showMouseCoords;
-                        break;
-                    case SDLK_1:
-                        paddle.setGlueLayer(!paddle.hasGlueLayer);
-                        break;
-                    case SDLK_2:
-                        paddle.setGunLayer(!paddle.hasGunLayer);
-                        break;
-                    default: ;
-                }
-            }
-            if (event.type == SDL_MOUSEMOTION) {
-                normalizedMouseX = (event.motion.x - displayManager.viewportX - displayManager.viewportW / 2.0f) * (
-                                       2.0f / displayManager.viewportW);
-                normalizedMouseY = (event.motion.y - displayManager.viewportY - displayManager.viewportH / 2.0f) * -1 *
-                                   (
-                                       2.0f / displayManager.viewportH);
-                paddle.moveTo(normalizedMouseX, deltaTime);
-            }
+    void draw() const override {
+        drawBase();
+        if (hasGlueLayer) {
+            drawGlueLayer();
         }
-        testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
-        paddle.update(deltaTime);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        if (paddle.pos_x + paddle.width > +1.0f) {
-            paddle.pos_x = 1.0f - paddle.width;
+        if (hasGunLayer) {
+            drawGunLayer();
         }
-        paddle.draw(deltaTime);
-#if DEBUG_DRAW_PADDLE_BOUNDING_BOXES
-        GLfloat oldColor[4];
-        glGetFloatv(GL_CURRENT_COLOR, oldColor);
+    }
+
+    void update(const float deltaTime) override {
+        GrowableObject::update(deltaTime);
+        centerX = pos_x + width / 2.0f;
+        centerY = pos_y + height / 2.0f;
+        collisionPoints = *getCollisionPoints();
+    }
+
+    // ICollideable Interface
+    void setActive(const bool value) override { collisionActive = value; }
+    [[nodiscard]] float getPosX() const override { return pos_x; }
+    [[nodiscard]] float getPosY() const override { return pos_y; }
+    [[nodiscard]] float getWidth() const override { return width; }
+    [[nodiscard]] float getHeight() const override { return height; }
+    [[nodiscard]] bool isActive() const override { return collisionActive; }
+
+    [[nodiscard]] CollisionType getCollisionType() const override {
+        return CollisionType::Ball;
+    }
+
+    // Paddle-spezifische Methoden
+    void drawBase() const {
+        glLoadIdentity();
+        glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glColor4f(0.0f, 0.0f, 0.0f, 0.5f);
-
+        glBindTexture(GL_TEXTURE_2D, textureProperties.id);
+        glColor4fv(textureProperties.textureColor);
         glBegin(GL_QUADS);
 
-        // Bottom-left corner.
-        glVertex3f(paddle.pos_x, paddle.pos_y, 0.0f);
-        // Bottom-right corner.
-        glVertex3f(paddle.pos_x + paddle.width, paddle.pos_y, 0.0f);
-        // Top-right corner.
-        glVertex3f(paddle.pos_x + paddle.width, paddle.pos_y + paddle.height, 0.0f);
-        // Top-left corner.
-        glVertex3f(paddle.pos_x, paddle.pos_y + paddle.height, 0.0f);
+        // Bottom-left corner
+        glTexCoord2f(textureProperties.uvCoordinates[0], textureProperties.uvCoordinates[1]);
+        glVertex3f(pos_x, pos_y, 0.0f);
+
+        // Bottom-right corner
+        glTexCoord2f(textureProperties.uvCoordinates[2], textureProperties.uvCoordinates[3]);
+        glVertex3f(pos_x + width, pos_y, 0.0f);
+
+        // Top-right corner
+        glTexCoord2f(textureProperties.uvCoordinates[4], textureProperties.uvCoordinates[5]);
+        glVertex3f(pos_x + width, pos_y + height, 0.0f);
+
+        // Top-left corner
+        glTexCoord2f(textureProperties.uvCoordinates[6], textureProperties.uvCoordinates[7]);
+        glVertex3f(pos_x, pos_y + height, 0.0f);
 
         glEnd();
-
-        glDisable(GL_BLEND);
-        glColor4fv(oldColor);
-#endif
-        testHelper.renderInstructions(deltaTime, instructions);
-        // Red lines
-        glDisable(GL_LINE_SMOOTH);
-        glDisable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);
-
-        glPushMatrix();
-        glLoadIdentity();
-        glLineWidth(1.0f);
-
-        glColor4f(1.0f, 0.0f, 0.0f, 1.0f); // Rot (R,G,B,A)
-        glBegin(GL_LINES);
-        glVertex3f(-0.9f, 0.0f, 0.0f); // Startpunkt der Linie
-        glVertex3f(0.9f, 0.0f, 0.0f); // Endpunkt der Linie
-        glEnd();
-        glPopMatrix();
-
-        glPushMatrix();
-        glLoadIdentity();
-        glLineWidth(0.01f);
-
-        glBegin(GL_LINES);
-        glVertex3f(0.0f, 0.0f, 0.0f); // Startpunkt in der Mitte
-        glVertex3f(0.0f, -1.0f, 0.0f);
-        glEnd();
-        glPopMatrix();
-        testHelper.drawMouseCoordinates();
-        char tempText3[64];
-        sprintf(tempText3, "P: %.2f, %.2f", paddle.pos_x, paddle.pos_y);
-        textManager.write(tempText3, Fonts::IntroDescription, false, 1.0f, paddle.pos_x, paddle.pos_y);
-        SDL_GL_SwapWindow(displayManager.sdlWindow);
+        glDisable(GL_BLEND);
     }
-    return EXIT_SUCCESS;
+
+    void drawGlueLayer() const {
+        glLoadIdentity();
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBindTexture(GL_TEXTURE_2D, glueLayerTextureProperties.id);
+        glColor4fv(glueLayerTextureProperties.textureColor);
+        glBegin(GL_QUADS);
+
+        // Bottom-left corner
+        glTexCoord2f(glueLayerTextureProperties.uvCoordinates[0], glueLayerTextureProperties.uvCoordinates[1]);
+        glVertex3f(pos_x, pos_y, 0.0f);
+
+        // Bottom-right corner
+        glTexCoord2f(glueLayerTextureProperties.uvCoordinates[2], glueLayerTextureProperties.uvCoordinates[3]);
+        glVertex3f(pos_x + width, pos_y, 0.0f);
+
+        // Top-right corner
+        glTexCoord2f(glueLayerTextureProperties.uvCoordinates[4], glueLayerTextureProperties.uvCoordinates[5]);
+        glVertex3f(pos_x + width, pos_y + height, 0.0f);
+
+        // Top-left corner
+        glTexCoord2f(glueLayerTextureProperties.uvCoordinates[6], glueLayerTextureProperties.uvCoordinates[7]);
+        glVertex3f(pos_x, pos_y + height, 0.0f);
+
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+    }
+
+    void drawGunLayer() const {
+        glLoadIdentity();
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBindTexture(GL_TEXTURE_2D, gunLayerTextureProperties.id);
+        glColor4fv(gunLayerTextureProperties.textureColor);
+        glBegin(GL_QUADS);
+
+
+        // Bottom-left corner
+        glTexCoord2f(gunLayerTextureProperties.uvCoordinates[0], gunLayerTextureProperties.uvCoordinates[1]);
+        glVertex3f(pos_x, pos_y + height, 0.0f);
+
+        // Bottom-right corner
+        glTexCoord2f(gunLayerTextureProperties.uvCoordinates[2], gunLayerTextureProperties.uvCoordinates[3]);
+        glVertex3f(pos_x + width, pos_y + height, 0.0f);
+
+        // the 3.0f is hardcoded on top of the paddle
+        // actually one needs the normalized texture height and divide it by rows
+
+        // Top-right corner
+        glTexCoord2f(gunLayerTextureProperties.uvCoordinates[4], gunLayerTextureProperties.uvCoordinates[5]);
+        glVertex3f(pos_x + width, pos_y + height + height / 3.0f, 0.0f);
+
+        // Top-left corner
+        glTexCoord2f(gunLayerTextureProperties.uvCoordinates[6], gunLayerTextureProperties.uvCoordinates[7]);
+        glVertex3f(pos_x, pos_y + height + height / 3.0f, 0.0f);
+
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+    }
+
+    void setGlueLayer(const bool enabled) {
+        hasGlueLayer = enabled;
+    }
+
+    bool getGlueLayer() const {
+        return hasGlueLayer;
+    }
+
+    void setGunLayer(const bool enabled) {
+        hasGunLayer = enabled;
+    }
+
+    bool getGunLayer() const {
+        return hasGunLayer;
+    }
+
+    std::vector<float> *getCollisionPoints() const {
+        // Statisches Array für die Kreispunkte zur Kollisionserkennung
+        static std::vector<float> points;
+        points.clear();
+        points.reserve(64); // 32 Punkte * 2 Koordinaten
+
+        // Mittelpunkt des Balls berechnen
+        const float centerX = pos_x + width / 2.0f;
+        const float centerY = pos_y + height / 2.0f;
+
+        // FIXME: Paddle segments
+        // Kreispunkte um den Ball erzeugen
+        for (int i = 0; i < 32; ++i) {
+            const float angle = i * (2.0f * M_PI / 32.0f);
+            const float pointX = centerX + std::cos(angle) * (width / 2.0f);
+            const float pointY = centerY + std::sin(angle) * (height / 2.0f);
+            points.push_back(pointX);
+            points.push_back(pointY);
+        }
+
+        return &points;
+    }
+
+    void onSizeChanged() override {
+        //collisionPoints = *getCollisionPoints();
+    }
+
+    [[nodiscard]] bool isPhysicallyActive() const { return active; }
+    void setPhysicallyActive(const bool value) { active = value; }
+
+private:
+    bool collisionActive{true};
+    bool active{false};
+    bool hasGlueLayer{false};
+    bool hasGunLayer{false};
+};
+
+class TestPaddleManager {
+    IEventManager *eventManager;
+    TextureManager *textureManager;
+    SpriteSheetAnimationManager *animationManager;
+    std::vector<size_t> animationIndices;
+
+public:
+    TestPaddle *activePaddle = nullptr;
+
+    [[nodiscard]] TestPaddle *getActivePaddle() const {
+        return activePaddle;
+    }
+
+    void setGlueLayer(const bool enabled) const {
+        if (activePaddle) {
+            activePaddle->setGlueLayer(enabled);
+            if (enabled && activePaddle->glueLayerAnimProps.frames > 1) {
+                animationManager->registerForAnimation(activePaddle, activePaddle->glueLayerAnimProps,
+                                                       activePaddle->glueLayerTextureProperties.uvCoordinates);
+            } else if (!enabled && activePaddle->glueLayerAnimProps.frames > 1) {
+                animationManager->unregisterFromAnimation(activePaddle, activePaddle->glueLayerAnimProps);
+            }
+        }
+    }
+
+    void setGunLayer(const bool enabled) const {
+        if (activePaddle) {
+            activePaddle->setGunLayer(enabled);
+            if (enabled && activePaddle->gunLayerAnimProps.frames > 1) {
+                animationManager->registerForAnimation(activePaddle, activePaddle->gunLayerAnimProps,
+                                                       activePaddle->gunLayerTextureProperties.uvCoordinates);
+            } else if (!enabled && activePaddle->gunLayerAnimProps.frames > 1) {
+                animationManager->unregisterFromAnimation(activePaddle, activePaddle->gunLayerAnimProps);
+            }
+        }
+    }
+
+    TestPaddleManager(IEventManager *evtMgr, TextureManager *texMgr, SpriteSheetAnimationManager *animMgr)
+        : eventManager(evtMgr), textureManager(texMgr), animationManager(animMgr) {
+    }
+
+    void despawn() {
+        if (activePaddle) {
+            activePaddle->setPhysicallyActive(false);
+            if (activePaddle->animProps.frames > 1) {
+                animationManager->unregisterFromAnimation(activePaddle, activePaddle->animProps);
+            }
+            if (activePaddle->getGlueLayer() && activePaddle->glueLayerAnimProps.frames > 1) {
+                animationManager->unregisterFromAnimation(activePaddle, activePaddle->glueLayerAnimProps);
+            }
+            if (activePaddle->getGunLayer() && activePaddle->gunLayerAnimProps.frames > 1) {
+                animationManager->unregisterFromAnimation(activePaddle, activePaddle->gunLayerAnimProps);
+            }
+            const TestPaddle *oldPaddle = activePaddle;
+            activePaddle = nullptr;
+            delete oldPaddle;
+        }
+    }
+
+    void spawn() {
+        const texture *paddleBaseTexture = textureManager->getPaddleTexture(PaddleTexture::Base);
+        const auto paddle = new TestPaddle(*paddleBaseTexture);
+
+        if (paddle->animProps.frames > 1) {
+            animationManager->registerForAnimation(paddle, paddle->animProps, paddle->textureProperties.uvCoordinates);
+        }
+
+        const texture *paddleGlueTexture = textureManager->getPaddleTexture(PaddleTexture::Glue);
+        paddle->glueLayerTextureProperties = paddleGlueTexture->textureProperties;
+        paddle->glueLayerAnimProps = paddleGlueTexture->animationProperties;
+
+        const texture *paddleGunTexture = textureManager->getPaddleTexture(PaddleTexture::Gun);
+        paddle->gunLayerTextureProperties = paddleGunTexture->textureProperties;
+        paddle->gunLayerAnimProps = paddleGunTexture->animationProperties;
+
+        paddle->setPhysicallyActive(true);
+        activePaddle = paddle;
+    }
+
+    void update(const float deltaTime) const {
+        if (activePaddle) {
+            activePaddle->update(deltaTime);
+            checkBorderCollision();
+        }
+    }
+
+    void checkBorderCollision() const {
+        if (activePaddle) {
+            if (activePaddle->pos_x + activePaddle->width > 1.0f) {
+                activePaddle->pos_x = 1.0f - activePaddle->width;
+            } else if (activePaddle->pos_x < -1.0f) {
+                activePaddle->pos_x = -1.0f;
+            }
+        }
+    }
+
+    void checkPaddleToPowerupCollision() const {
+        // FIXME: TO PowerupManager
+        ;
+    }
+
+    void draw() const {
+        if (activePaddle) {
+            activePaddle->draw();
+        }
+    }
+
+    void clear() {
+        if (activePaddle) {
+            EventData data;
+            data.sender = activePaddle;
+            eventManager->emit(GameEvent::PaddleDestroyed, data); // FIXME
+            animationManager->unregisterFromAnimation(activePaddle, activePaddle->animProps);
+            animationManager->unregisterFromAnimation(activePaddle, activePaddle->glueLayerAnimProps);
+            animationManager->unregisterFromAnimation(activePaddle, activePaddle->gunLayerAnimProps);
+            activePaddle->setPhysicallyActive(false);
+            delete activePaddle;
+            activePaddle = nullptr;
+        }
+    }
+
+    ~TestPaddleManager() {
+        clear();
+    }
+};
+
+class PaddleTestContext {
+public:
+    EventManager eventManager;
+    MouseManager mouseManager;
+    DisplayManager displayManager;
+    TextManager textManager;
+    std::unique_ptr<TextureManager> textureManager;
+    SpriteSheetAnimationManager animationManager;
+    std::unique_ptr<TestPaddleManager> paddleManager;
+
+    PaddleTestContext()
+        : mouseManager(&eventManager),
+          displayManager(&eventManager) {
+        if (!displayManager.init(0, 1024, 768, false)) {
+            throw std::runtime_error("Could not initialize display");
+        }
+        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Ball Test");
+        textManager.setTheme("../tests/themes/test");
+        textureManager = std::make_unique<TextureManager>();
+        if (!textureManager->setSpriteTheme("../themes/default")) {
+            throw std::runtime_error("Error loading texture theme");
+        }
+        paddleManager = std::make_unique<TestPaddleManager>(&eventManager, textureManager.get(), &animationManager);
+    }
+};
+
+class PaddleTestHelper final : public TestHelper {
+    PaddleTestContext &ctx;
+
+public:
+    explicit PaddleTestHelper(PaddleTestContext &context)
+        : TestHelper(context.textManager, &context.eventManager), ctx(context) {
+    }
+
+    void handleKeyPress(const KeyboardEventData &data) override {
+        TestHelper::handleKeyPress(data);
+        switch (data.key) {
+            case SDLK_w:
+                if (!ctx.paddleManager->activePaddle) {
+                    ctx.paddleManager->spawn();
+                }
+                break;
+            case SDLK_DELETE:
+                if (ctx.paddleManager->activePaddle) {
+                    ctx.paddleManager->despawn();
+                }
+                break;
+            case SDLK_g:
+                if (ctx.paddleManager->activePaddle) {
+                    const float currentSize = ctx.paddleManager->activePaddle->getWidth();
+                    float newSize = currentSize * 1.2f;
+                    if (newSize <= 0.35f) {
+                        ctx.paddleManager->activePaddle->grow(ctx.paddleManager->activePaddle->getWidth() * 1.2f);
+                    }
+                }
+                break;
+            case SDLK_k:
+                if (ctx.paddleManager->activePaddle) {
+                    const float currentSize = ctx.paddleManager->activePaddle->getWidth();
+                    float newSize = currentSize * 0.8f;
+                    if (newSize >= 0.1f) {
+                        ctx.paddleManager->activePaddle->grow(ctx.paddleManager->activePaddle->getWidth() * 0.8f);
+                    }
+                }
+                break;
+            case SDLK_u:
+                if (ctx.paddleManager->activePaddle) {
+                    ctx.paddleManager->setGlueLayer(!ctx.paddleManager->activePaddle->getGlueLayer());
+                }
+                break;
+            case SDLK_l:
+                if (ctx.paddleManager->activePaddle) {
+                    ctx.paddleManager->setGunLayer(!ctx.paddleManager->activePaddle->getGunLayer());
+                }
+            default:
+                break;
+        }
+    }
+
+    void handleMouseButton(const MouseEventData &data) override {
+        TestHelper::handleMouseButton(data);
+        if (data.button == SDL_BUTTON_LEFT) {
+            //if (ctx.paddleManager) {
+            //    ctx.paddleManager->spawn(m_mouseX, m_mouseY, false);
+            //}
+        }
+    }
+
+    void render(const float deltaTime, const std::vector<std::string> &instructions) const {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        drawGrid();
+        drawCenterLines();
+        ctx.animationManager.updateAllAnimations(deltaTime);
+        ctx.paddleManager->update(deltaTime);
+        ctx.paddleManager->draw();
+        renderInstructions(deltaTime, instructions);
+        drawMouseCoordinates();
+        SDL_GL_SwapWindow(ctx.displayManager.sdlWindow);
+    }
+};
+
+int main() {
+    try {
+        PaddleTestContext ctx;
+        const PaddleTestHelper testHelper(ctx);
+        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        const std::vector<std::string> instructions = {
+            "W: Spawn Paddle",
+            "DEL: DeSpawn Paddle",
+            "G: Grow Paddle",
+            "K: Shrink Paddle",
+            "LMB: Fire Gun, when Paddle has Gun Layer",
+            "U: Toggle Glue State of Paddle",
+            "L: Toggle Laser State of Paddle",
+            "S: Screenshot",
+            "M: Toggle Mouse Coordinates",
+            "ESC: Quit"
+        };
+
+        bool running = true;
+        auto lastFrameTime = std::chrono::high_resolution_clock::now();
+
+        while (running) {
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+            lastFrameTime = currentTime;
+            running = eventDispatcher.processEvents();
+            testHelper.render(deltaTime, instructions);
+        }
+
+        return EXIT_SUCCESS;
+    } catch (const std::exception &e) {
+        SDL_Log("Error: %s", e.what());
+        return EXIT_FAILURE;
+    }
 }

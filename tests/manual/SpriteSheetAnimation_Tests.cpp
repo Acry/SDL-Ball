@@ -162,15 +162,31 @@ int main() {
         if (currentAnimation->isPlaying) {
             currentAnimation->play(deltaTime);
         }
+
+        std::string textureName;
+        switch (currentTexture) {
+            case 1: textureName = "bidir = 0";
+                break;
+            case 2: textureName = "bidir = 1";
+                break;
+            case 3: textureName = "bidir = 0, playOnce = 1";
+                break;
+            case 4: textureName = "bidir = 1, playOnce = 1";
+                break;
+            case 5: textureName = "Gun Powerup";
+                break;
+            default: textureName = "Unknown";
+                break;
+        }
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Hier die Textur zeichnen
         glEnable(GL_TEXTURE_2D);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // Zeichnen der UV-Test-Textur im Hintergrund
+        // Background grid for UV test
         glColor4f(0.7f, 0.7f, 0.7f, 0.5f);
         glBindTexture(GL_TEXTURE_2D, uvTest.textureProperties.id);
         glBegin(GL_QUADS);
@@ -195,10 +211,8 @@ int main() {
 
         glBindTexture(GL_TEXTURE_2D, currentTextureObj->textureProperties.id);
 
-        // Mit den Texturfarben färben
         glColor4fv(currentTextureObj->textureProperties.textureColor);
 
-        // Vergrößert in der Mitte zeichnen
         glBegin(GL_QUADS);
 
         // Bottom-left corner
@@ -221,24 +235,7 @@ int main() {
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);
 
-
         testHelper.renderInstructions(deltaTime, instructions);
-
-        std::string textureName;
-        switch (currentTexture) {
-            case 1: textureName = "bidir = 0";
-                break;
-            case 2: textureName = "bidir = 1";
-                break;
-            case 3: textureName = "bidir = 0, playOnce = 1";
-                break;
-            case 4: textureName = "bidir = 1, playOnce = 1";
-                break;
-            case 5: textureName = "Gun Powerup";
-                break;
-            default: textureName = "Unknown";
-                break;
-        }
 
         std::string statusText = "Current Texture: " + textureName;
         textManager.write(statusText, Fonts::Menu, true, 0.8f, 0.0f, -0.7f);

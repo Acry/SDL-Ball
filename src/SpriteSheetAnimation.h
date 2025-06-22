@@ -1,6 +1,7 @@
 // SpriteSheetAnimation.h
 #pragma once
 
+#include <cstring>
 #include <SDL2/SDL_stdinc.h>
 
 struct SpriteSheetAnimationProperties {
@@ -51,7 +52,24 @@ struct TextureCoordinates {
 
     // Zugriff auf einzelne Koordinaten
     float &operator[](const size_t index) { return coords[index]; }
+
     const float &operator[](const size_t index) const { return coords[index]; }
+
+    // Expliziter Kopierkonstruktor
+    TextureCoordinates(const TextureCoordinates &other) {
+        std::memcpy(coords, other.coords, sizeof(coords));
+    }
+
+    // Standard-Konstruktor beibehalten
+    TextureCoordinates() = default;
+
+    // Copy-Assignment-Operator
+    TextureCoordinates &operator=(const TextureCoordinates &other) {
+        if (this != &other) {
+            std::memcpy(coords, other.coords, sizeof(coords));
+        }
+        return *this;
+    }
 };
 
 class SpriteSheetAnimation {

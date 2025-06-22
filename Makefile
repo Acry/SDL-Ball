@@ -275,17 +275,19 @@ $(BUILD_DIR)MockEventManager.o: $(MANUAL_TEST_DIR)MockEventManager.cpp
 # Paddle
 PADDLE_TEST_SOURCES := $(MANUAL_TEST_DIR)Paddle_Tests.cpp \
                        $(MANUAL_TEST_DIR)TestHelper.cpp \
-                       $(SOURCE_DIR)Paddle.cpp \
-                       $(SOURCE_DIR)GameObject.cpp \
-                       $(SOURCE_DIR)MovingObject.cpp \
-                       $(SOURCE_DIR)GrowableObject.cpp \
+                       $(SOURCE_DIR)CollisionManager.cpp \
                        $(SOURCE_DIR)DisplayManager.cpp \
+                       $(SOURCE_DIR)EventDispatcher.cpp \
+                       $(SOURCE_DIR)EventManager.cpp \
+                       $(SOURCE_DIR)GameObject.cpp \
+                       $(SOURCE_DIR)GrowableObject.cpp \
+                       $(SOURCE_DIR)MouseManager.cpp \
+                       $(SOURCE_DIR)MovingObject.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                       $(SOURCE_DIR)SpriteSheetAnimationManager.cpp \
                        $(SOURCE_DIR)TextManager.cpp \
                        $(SOURCE_DIR)TextureManager.cpp \
                        $(SOURCE_DIR)TextureUtilities.cpp \
-                       $(SOURCE_DIR)CollisionManager.cpp \
-                       $(SOURCE_DIR)EventManager.cpp
 
 PADDLE_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(PADDLE_TEST_SOURCES:.cpp=.o)))
 

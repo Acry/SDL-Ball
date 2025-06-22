@@ -81,7 +81,8 @@ void BrickManager::setupBricks(const std::vector<BrickInfo> &brickInfos) {
     }
     for (const size_t idx: animationIndices) {
         if (idx < bricks.size() && bricks[idx].animProps.frames > 1) {
-            spriteSheetAnimationManager->registerForAnimation(&bricks[idx], bricks[idx].animProps);
+            spriteSheetAnimationManager->registerForAnimation(&bricks[idx], bricks[idx].animProps,
+                                                              bricks[idx].textureProperties.uvCoordinates);
         }
     }
 }
@@ -134,7 +135,7 @@ void BrickManager::onBallHitBrick(const CollisionData &data) {
 
     if (health <= 0) {
         brick.setActive(false);
-        spriteSheetAnimationManager->unregisterFromAnimation(&brick);
+        spriteSheetAnimationManager->unregisterFromAnimation(&brick, brick.animProps);
 
         // Aus der Liste entfernen und löschen
         EventData destroyData;
@@ -148,7 +149,7 @@ void BrickManager::onBallHitBrick(const CollisionData &data) {
 void BrickManager::clear() {
     for (const size_t idx: animationIndices) {
         if (idx < bricks.size()) {
-            spriteSheetAnimationManager->unregisterFromAnimation(&bricks[idx]);
+            spriteSheetAnimationManager->unregisterFromAnimation(&bricks[idx], bricks[idx].animProps);
         }
     }
     bricks.clear();
