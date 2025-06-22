@@ -28,6 +28,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     EventManager.cpp \
     GrowableObject.cpp \
     InputManager.cpp \
+    KeyboardManager.cpp \
     LevelManager.cpp \
     MathHelper.cpp \
     MouseManager.cpp \
@@ -282,6 +283,7 @@ PADDLE_TEST_SOURCES := $(MANUAL_TEST_DIR)Paddle_Tests.cpp \
                        $(SOURCE_DIR)GameObject.cpp \
                        $(SOURCE_DIR)GrowableObject.cpp \
                        $(SOURCE_DIR)MouseManager.cpp \
+                       $(SOURCE_DIR)KeyboardManager.cpp \
                        $(SOURCE_DIR)MovingObject.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimationManager.cpp \

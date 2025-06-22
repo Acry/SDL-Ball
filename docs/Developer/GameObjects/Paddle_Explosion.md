@@ -157,3 +157,49 @@ Diese Implementierung bietet:
 
 Die Partikel verteilen sich in einem leicht ovalen Muster und verblassen von weiß zu rot/orange, während sie sich vom
 ursprünglichen Paddle-Standort wegbewegen.
+
+## old explode code:
+
+```c++
+if(player.explodePaddle)
+{
+  player.explodePaddle=0;
+  soundMan.add(SND_DIE,0);
+  if(setting.eyeCandy)
+  {
+    fxMan.set(FX_VAR_TYPE, FX_PARTICLEFIELD);
+
+    p.x=paddle.width*2;
+    p.y=paddle.height*2;
+    fxMan.set(FX_VAR_RECTANGLE, p);
+
+    p.x=paddle.posx;
+    p.y=paddle.posy;
+
+    fxMan.set(FX_VAR_LIFE, 2000);
+    fxMan.set(FX_VAR_NUM, 20);
+    fxMan.set(FX_VAR_SIZE, 0.025f);
+    fxMan.set(FX_VAR_SPEED, 0.35f);
+    fxMan.set(FX_VAR_GRAVITY, -0.7f);
+    fxMan.set(FX_VAR_COLOR, 1.0f, 0.7f, 0.0f);
+    fxMan.spawn(p);
+    fxMan.set(FX_VAR_COLOR, 1.0f, 0.8f, 0.0f);
+    fxMan.spawn(p);
+    fxMan.set(FX_VAR_COLOR, 1.0f, 0.9f, 0.0f);
+    fxMan.spawn(p);
+    fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 0.0f);
+    fxMan.spawn(p);
+
+    fxMan.set(FX_VAR_NUM, 32);
+    fxMan.set(FX_VAR_SIZE, 0.05f);
+    fxMan.set(FX_VAR_LIFE, 1500);
+    fxMan.set(FX_VAR_SPEED, 0.7f);
+    fxMan.set(FX_VAR_GRAVITY, 0.0f);
+
+    fxMan.set(FX_VAR_COLOR, 0.5f, 0.5f, 0.5f);
+    fxMan.spawn(p);
+    fxMan.set(FX_VAR_COLOR, 1.0f, 1.0f, 1.0f);
+    fxMan.spawn(p);
+  }
+}
+```

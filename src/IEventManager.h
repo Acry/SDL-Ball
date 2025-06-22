@@ -28,6 +28,8 @@ public:
 
     virtual void emit(GameEvent event, const MouseCoordinatesNormalizedEventData &data) = 0;
 
+    virtual void emit(GameEvent event, const KeyboardMoveEventData &data) = 0;
+
     virtual void addListener(GameEvent event, EventCallback callback, void *owner) = 0;
 
     virtual void addListener(GameEvent event, LevelEventCallback callback, void *owner) = 0;
@@ -49,6 +51,8 @@ public:
     virtual void addListener(GameEvent event, ViewportEventCallback callback, void *owner) = 0;
 
     virtual void addListener(GameEvent event, MouseCoordinatesNormalizedEventCallback callback, void *owner) = 0;
+
+    virtual void addListener(GameEvent event, KeyboardMoveEventCallback callback, void *owner) = 0;
 
     virtual void removeListener(GameEvent event, void *owner) = 0;
 };

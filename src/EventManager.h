@@ -22,6 +22,7 @@ class EventManager : public IEventManager {
     using MouseEventListenerEntry = ListenerEntryBase<MouseEventCallback>;
     using ViewportEventListenerEntry = ListenerEntryBase<ViewportEventCallback>;
     using MouseCoordinatesNormalizedEventListenerEntry = ListenerEntryBase<MouseCoordinatesNormalizedEventCallback>;
+    using KeyboardMoveEventListenerEntry = ListenerEntryBase<KeyboardMoveEventCallback>;
 
     std::unordered_map<GameEvent, std::vector<ListenerEntry> > eventListeners;
     std::unordered_map<GameEvent, std::vector<LevelListenerEntry> > levelEventListeners;
@@ -35,6 +36,7 @@ class EventManager : public IEventManager {
     std::unordered_map<GameEvent, std::vector<ViewportEventListenerEntry> > viewportEventListeners;
     std::unordered_map<GameEvent, std::vector<MouseCoordinatesNormalizedEventListenerEntry> >
     mouseCoordinatesNormalizedEventListeners;
+    std::unordered_map<GameEvent, std::vector<KeyboardMoveEventListenerEntry> > keyboardMoveEventListeners;
 
 public:
     void addListener(GameEvent event, EventCallback callback, void *owner) override;
@@ -59,6 +61,8 @@ public:
 
     void addListener(GameEvent event, MouseCoordinatesNormalizedEventCallback callback, void *owner) override;
 
+    void addListener(GameEvent event, KeyboardMoveEventCallback callback, void *owner) override;
+
     void emit(GameEvent event, const EventData &data) override;
 
     void emit(GameEvent event, const LevelData &data) override;
@@ -80,6 +84,8 @@ public:
     void emit(GameEvent event, const ViewportEventData &data) override;
 
     void emit(GameEvent event, const MouseCoordinatesNormalizedEventData &data) override;
+
+    void emit(GameEvent event, const KeyboardMoveEventData &data) override;
 
     void removeListener(GameEvent event, void *owner) override;
 };

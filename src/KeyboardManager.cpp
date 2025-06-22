@@ -1,5 +1,7 @@
 #include "KeyboardManager.h"
 
+#include "config.h"
+
 KeyboardManager::KeyboardManager(IEventManager *evtMgr) : IInputManager(evtMgr) {
     eventManager->addListener(GameEvent::KeyPressed,
                               [this](const KeyboardEventData &data) { handleKeyPressedEvent(data); }, this);
@@ -17,9 +19,35 @@ void KeyboardManager::cleanup() {
 }
 
 void KeyboardManager::handleKeyPressedEvent(const KeyboardEventData &data) {
-    // Tastendruck verarbeiten
+    if (data.key == DEFAULT_KEY_LEFT) {
+        leftKeyPressed = true;
+        updatePaddleMovement();
+    } else if (data.key == DEFAULT_KEY_RIGHT) {
+        rightKeyPressed = true;
+        updatePaddleMovement();
+    }
 }
 
 void KeyboardManager::handleKeyReleasedEvent(const KeyboardEventData &data) {
-    // Tastenloslassen verarbeiten
+    if (data.key == DEFAULT_KEY_LEFT) {
+        leftKeyPressed = false;
+        updatePaddleMovement();
+    } else if (data.key == DEFAULT_KEY_RIGHT) {
+        rightKeyPressed = false;
+        updatePaddleMovement();
+    }
+}
+
+void KeyboardManager::updatePaddleMovement() {
+    if (leftKeyPressed && !rightKeyPressed) {
+        keyboardDirection = -1.0f;
+    } else if (rightKeyPressed && !leftKeyPressed) {
+        keyboardDirection = 1.0f;
+    } else {
+        keyboardDirection = 0.0f;
+    }
+    KeyboardMoveEventData moveData;
+    moveData.direction = keyboardDirection;
+    moveData.speed = keyboardMovementSpeed;
+    eventManager->emit(GameEvent::KeyboardPaddleMove, moveData);
 }

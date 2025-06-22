@@ -7,6 +7,7 @@
 #include "DisplayManager.hpp"
 #include "EventDispatcher.h"
 #include "GrowableObject.h"
+#include "KeyboardManager.h"
 #include "MouseManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
@@ -222,10 +223,11 @@ class TestPaddleManager {
     TextureManager *textureManager;
     SpriteSheetAnimationManager *animationManager;
     std::vector<size_t> animationIndices;
+    float moveTargetX = 0.0f;
 
 public:
     TestPaddle *activePaddle = nullptr;
-
+    float paddleSpeed = 10.0f; // Anpassbare Geschwindigkeit
     [[nodiscard]] TestPaddle *getActivePaddle() const {
         return activePaddle;
     }
@@ -256,6 +258,32 @@ public:
 
     TestPaddleManager(IEventManager *evtMgr, TextureManager *texMgr, SpriteSheetAnimationManager *animMgr)
         : eventManager(evtMgr), textureManager(texMgr), animationManager(animMgr) {
+        eventManager->addListener(GameEvent::MouseCoordinatesNormalized,
+                                  [this](const MouseCoordinatesNormalizedEventData &data) {
+                                      this->handleMouseCoordinatesNormalized(data);
+                                  }, this);
+        eventManager->addListener(GameEvent::KeyboardPaddleMove,
+                                  [this](const KeyboardMoveEventData &data) {
+                                      this->handleKeyboardMove(data);
+                                  }, this);
+    }
+
+    void handleMouseCoordinatesNormalized(const MouseCoordinatesNormalizedEventData &data) {
+        if (activePaddle) {
+            paddleSpeed = 10.0f;
+            moveTargetX = data.x - activePaddle->getWidth() / 2.0f;
+        }
+    }
+
+    void handleKeyboardMove(const KeyboardMoveEventData &data) {
+        if (activePaddle) {
+            if (data.direction != 0.0f) {
+                moveTargetX = data.direction < 0 ? -1.0f : 1.0f;
+            } else {
+                moveTargetX = activePaddle->pos_x;
+            }
+            paddleSpeed = 1.0f;
+        }
     }
 
     void despawn() {
@@ -281,7 +309,8 @@ public:
         const auto paddle = new TestPaddle(*paddleBaseTexture);
 
         if (paddle->animProps.frames > 1) {
-            animationManager->registerForAnimation(paddle, paddle->animProps, paddle->textureProperties.uvCoordinates);
+            animationManager->registerForAnimation(paddle, paddle->animProps,
+                                                   paddle->textureProperties.uvCoordinates);
         }
 
         const texture *paddleGlueTexture = textureManager->getPaddleTexture(PaddleTexture::Glue);
@@ -299,7 +328,30 @@ public:
     void update(const float deltaTime) const {
         if (activePaddle) {
             activePaddle->update(deltaTime);
+            moveTowardsTarget(deltaTime);
             checkBorderCollision();
+        }
+    }
+
+    void moveTowardsTarget(const float deltaTime) const {
+        if (moveTargetX == activePaddle->pos_x) {
+            return;
+        }
+
+        // Richtung bestimmen
+        float direction = (moveTargetX > activePaddle->pos_x) ? 1.0f : -1.0f;
+
+        // Konstante Geschwindigkeitsbewegung
+        float movement = direction * paddleSpeed * deltaTime;
+
+        // Prüfen, ob wir das Ziel mit dieser Bewegung überschreiten würden
+        if ((direction > 0 && activePaddle->pos_x + movement > moveTargetX) ||
+            (direction < 0 && activePaddle->pos_x + movement < moveTargetX)) {
+            // Genau auf Zielposition setzen, um Überschwingen zu vermeiden
+            activePaddle->pos_x = moveTargetX;
+        } else {
+            // Mit konstanter Geschwindigkeit bewegen
+            activePaddle->pos_x += movement;
         }
     }
 
@@ -339,6 +391,8 @@ public:
     }
 
     ~TestPaddleManager() {
+        eventManager->removeListener(GameEvent::MouseCoordinatesNormalized, this);
+        eventManager->removeListener(GameEvent::KeyboardPaddleMove, this);
         clear();
     }
 };
@@ -347,6 +401,7 @@ class PaddleTestContext {
 public:
     EventManager eventManager;
     MouseManager mouseManager;
+    KeyboardManager keyboardManager;
     DisplayManager displayManager;
     TextManager textManager;
     std::unique_ptr<TextureManager> textureManager;
@@ -355,6 +410,7 @@ public:
 
     PaddleTestContext()
         : mouseManager(&eventManager),
+          keyboardManager(&eventManager),
           displayManager(&eventManager) {
         if (!displayManager.init(0, 1024, 768, false)) {
             throw std::runtime_error("Could not initialize display");
@@ -365,7 +421,8 @@ public:
         if (!textureManager->setSpriteTheme("../themes/default")) {
             throw std::runtime_error("Error loading texture theme");
         }
-        paddleManager = std::make_unique<TestPaddleManager>(&eventManager, textureManager.get(), &animationManager);
+        paddleManager = std::make_unique<TestPaddleManager>(&eventManager, textureManager.get(),
+                                                            &animationManager);
     }
 };
 
@@ -395,7 +452,8 @@ public:
                     const float currentSize = ctx.paddleManager->activePaddle->getWidth();
                     float newSize = currentSize * 1.2f;
                     if (newSize <= 0.35f) {
-                        ctx.paddleManager->activePaddle->grow(ctx.paddleManager->activePaddle->getWidth() * 1.2f);
+                        ctx.paddleManager->activePaddle->grow(
+                            ctx.paddleManager->activePaddle->getWidth() * 1.2f);
                     }
                 }
                 break;
@@ -404,7 +462,8 @@ public:
                     const float currentSize = ctx.paddleManager->activePaddle->getWidth();
                     float newSize = currentSize * 0.8f;
                     if (newSize >= 0.1f) {
-                        ctx.paddleManager->activePaddle->grow(ctx.paddleManager->activePaddle->getWidth() * 0.8f);
+                        ctx.paddleManager->activePaddle->grow(
+                            ctx.paddleManager->activePaddle->getWidth() * 0.8f);
                     }
                 }
                 break;

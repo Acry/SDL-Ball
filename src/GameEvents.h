@@ -57,6 +57,7 @@ enum class GameEvent {
 
     KeyPressed,
     KeyReleased,
+    KeyboardPaddleMove,
     MouseMoved,
     MouseCoordinatesNormalized,
     MouseButtonPressed,
@@ -101,6 +102,11 @@ struct MouseEventData {
 struct KeyboardEventData {
     SDL_Keycode key{0};
     bool isPressed{false};
+};
+
+struct KeyboardMoveEventData {
+    float direction; // -1.0 für links, 0.0 für keine Bewegung, 1.0 für rechts
+    float speed; // Bewegungsgeschwindigkeit für die Tastatursteuerung
 };
 
 struct BrickInfo {
@@ -170,6 +176,7 @@ using CollisionEventCallback = std::function<void(const CollisionData &)>;
 
 // Input event callbacks
 using KeyboardEventCallback = std::function<void(const KeyboardEventData &)>;
+using KeyboardMoveEventCallback = std::function<void(const KeyboardMoveEventData &)>;
 using MouseEventCallback = std::function<void(const MouseEventData &)>;
 using MouseCoordinatesNormalizedEventCallback = std::function<void(const MouseCoordinatesNormalizedEventData &)>;
 
