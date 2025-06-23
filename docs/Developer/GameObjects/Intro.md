@@ -1,6 +1,6 @@
 # GameObjects
 
-passive & active (actor)
+Passive & active (actor)
 
 Die Spielobjekte sollten möglichst "dumm" sein und nur ihre grundlegenden Eigenschaften und Verhaltensweisen kennen.
 
@@ -9,9 +9,21 @@ Die Spielobjekte sollten möglichst "dumm" sein und nur ihre grundlegenden Eigen
 - [GameObject](GameObject-Interface.md)
 - [MovingObject](MovingObject.md)
 - [Paddle](Paddle.md)
-- [Paddle_Explosion.md](Paddle_Explosion.md)
-- [Paddle_control](Paddle_control.md)
-- [Paddle_keyboard_control.md](Paddle_keyboard_control.md)
 - [Player and Paddle](Player_and_Paddle.md)
-- [PowerUp](PowerUp.md)
+- [PowerUp](Powerup.md)
+- [Tracer](Tracer.md)
+
+## Abstract classes
+
+- [GameObject](GameObject.md)
+- [MovingObject](MovingObject.md)
+- [GrowableObject](GrowableObject.md)
+- ICollidable
+
+## Concrete classes
+
+- [Ball](Ball.md)
+- [Brick](Brick.md)
+- [Border](Border.md)
+- [PowerUp](Powerup.md)
 - [Tracer](Tracer.md)

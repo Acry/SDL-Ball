@@ -13,7 +13,7 @@ Top: Fix all current manual Tests
 - [ ] Gun
 - [ ] Tracer
 
-Paddle-Spawn, Paddle explode
+Paddle-Spawn, Paddle Despawn - on level completed, Paddle explode
 
 ## Connect the dots:
 

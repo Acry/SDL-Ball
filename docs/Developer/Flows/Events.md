@@ -1,5 +1,7 @@
-# EventDispatcher
+# Events
 
+EventDispatcher
+// GameEvents.h
 GameEvents
 IEventManager
 EventManager

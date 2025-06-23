@@ -1,8 +1,5 @@
 # Brick_Todo.md
 
-I need a new Brick Class, which is indestructible, but can be hit by the Ball.
-Does not count on level clear.
-
 ## BrickTests
 
 brick needs to rendered, after lost hp (isDestroying)
@@ -13,3 +10,9 @@ Bricks destroyed, active, visible, Fade or shrink?
 Render all Bricks
 InvisibleBricks rot umranden.
 Click a Brick to hit
+
+## Future
+
+I need a new Brick Class, which is indestructible, but can be hit by the Ball.
+Does not count on level clear.
+destructible Bricks, indestructible Bricks
