@@ -1,19 +1,19 @@
 # Scenes
 
-AutoplayScene
-CreditsScene
+- AutoplayScene
+- CreditsScene
 
-GameOverScene
-GameScene
-HighscoreScene
+- GameOverScene
+- GameScene
+- HighscoreScene
 
-LevelDoneScene
-MenusScenes
-PauseScene
-PlayScene
-SettingsScene
+- LevelDoneScene
+- MenusScenes
+- PauseScene
+- PlayScene
+- SettingsScene
 
-TitleScene
+- TitleScene
 
 TutorialScenes/InstructionsScene
 
@@ -24,11 +24,13 @@ TutorialScenes/InstructionsScene
 ## See
 
 [SceneManager](../Manager/SceneManager.md) for more information about the scene system.
+[Transitions](screen-transitions.md)
 
 ## Sketch
 
 Create a couple of example scenes to demonstrate usage (e.g., MainMenuScene and GameplayScene).
 
+```c++
 #include <iostream>
 #include "Scene.h"
 
@@ -51,7 +53,9 @@ std::cout << "Main Menu Scene Initialized\n";
     }
 
 };
+```
 
+```c++
 class GameplayScene : public Scene {
 public:
 void initialize() override {
@@ -71,7 +75,9 @@ std::cout << "Gameplay Scene Initialized\n";
     }
 
 };
+```
 
+```c++
 #include "SceneManager.h"
 #include "Scene.h"
 #include <memory>
@@ -99,4 +105,4 @@ SceneManager sceneManager;
     return 0;
 
 }
-
+```
