@@ -80,6 +80,35 @@ Die Kommunikation läuft jetzt durchgängig über das Event-System statt direkte
 - Leichter erweiterbar
 - Lose gekoppelt
 
+## Sketch
+
+Code Manager:
+Bootstraps the game, initializing all managers (scene manager, event manager, game object manager, etc.).
+Runs the main game loop, computing deltaTime using std::chrono.
+Passes deltaTime to the scene manager’s update method.
+
+Settings/Theme Managers:
+Used by scenes or game objects for configuration (e.g., frame rate caps) or rendering (e.g., visual styles).
+
+Event Manager
+EventDispatcher
+
+Scene Manager:
+Manages scenes (e.g., MainMenuScene, GameScene, etc.).
+Calls the active scene’s update and render methods, passing deltaTime to update.
+
+GameScene (a specific scene):
+Represents the game itself.
+Calls the GameObjectManager’s update method with deltaTime to update game objects.
+Handles rendering of game objects (via GameObjectManager or directly).
+
+GameManager - orchestrates the game flow
+Game Object Manager
+
+Timing:
+Lives in the Code Manager, as it drives the game loop and provides consistent deltaTime to all systems.
+deltaTime flows from CodeManager → SceneManager → GameScene → GameObjectManager.
+
 ## See also
 
 - [Structure](Structure.md)

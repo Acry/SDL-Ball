@@ -31,3 +31,12 @@ void gameLoop() {
 
 - [ ] Refactor [Timing](Refactoring/Timing.md)
 - [ ] use sdl3 high performance timer, see: [Timing](Physics%20&%20Timing/Timing.md)
+
+## Timescale
+
+If scenes need custom timing (e.g., slow-motion effects), the scene can scale deltaTime internally (e.g.,
+effectiveDeltaTime = deltaTime * timeScale).
+
+Threading: If your game uses multiple threads (e.g., rendering vs. logic), ensure deltaTime is synchronized. The code
+manager’s single-threaded loop is simplest for now.
+
