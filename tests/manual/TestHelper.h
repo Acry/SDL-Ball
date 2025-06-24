@@ -38,7 +38,7 @@ public:
 
     void updateMousePosition(float x, float y);
 
-    void handleMouseCoordinatesNormalized(const MouseCoordinatesNormalizedEventData &data);
+    virtual void handleMouseCoordinatesNormalized(const MouseCoordinatesNormalizedEventData &data);
 
     void toggleMouseCoordinates(bool show);
 

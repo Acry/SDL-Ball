@@ -71,6 +71,7 @@ TEST_TARGETS := \
     test-text \
     test-texture \
     test-theme \
+    test-tracer \
 
 AUTO_TEST_TARGETS := texture-automatic-test event-automatic-test collision-automatic-test
 TARGET=sdl-ball
@@ -300,6 +301,30 @@ $(BUILD_DIR)Paddle_Tests.o: $(MANUAL_TEST_DIR)Paddle_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
+# Tracer
+TRACER_TEST_SOURCES := $(MANUAL_TEST_DIR)Tracer_Tests.cpp \
+                       $(MANUAL_TEST_DIR)TestHelper.cpp \
+                       $(SOURCE_DIR)DisplayManager.cpp \
+                       $(SOURCE_DIR)EventDispatcher.cpp \
+                       $(SOURCE_DIR)EventManager.cpp \
+                       $(SOURCE_DIR)GameObject.cpp \
+                       $(SOURCE_DIR)MovingObject.cpp \
+                       $(SOURCE_DIR)MouseManager.cpp \
+                       $(SOURCE_DIR)KeyboardManager.cpp \
+                       $(SOURCE_DIR)TextManager.cpp \
+                       $(SOURCE_DIR)TextureManager.cpp \
+                       $(SOURCE_DIR)TextureUtilities.cpp \
+                       $(SOURCE_DIR)Tracer.cpp \
+
+TRACER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TRACER_TEST_SOURCES:.cpp=.o)))
+
+test-tracer: $(TRACER_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(TRACER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-tracer
+
+$(BUILD_DIR)Tracer_Tests.o: $(MANUAL_TEST_DIR)Tracer_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
 # ThemeManager
 THEME_TEST_SOURCES := $(MANUAL_TEST_DIR)ThemeManager_Tests.cpp \
                       $(SOURCE_DIR)ThemeManager.cpp \
@@ -389,16 +414,19 @@ $(BUILD_DIR)Ball_Tests.o: $(MANUAL_TEST_DIR)Ball_Tests.cpp
 ###############################################################################
 # EffectManager
 EFFECT_TEST_SOURCES := $(MANUAL_TEST_DIR)EffectManager_Tests.cpp \
+                       $(SOURCE_DIR)DisplayManager.cpp \
                        $(SOURCE_DIR)EffectManager.cpp \
+                       $(SOURCE_DIR)EventDispatcher.cpp \
                        $(SOURCE_DIR)EventManager.cpp \
                        $(SOURCE_DIR)MathHelper.cpp \
-                       $(SOURCE_DIR)DisplayManager.cpp \
+                       $(SOURCE_DIR)MouseManager.cpp \
+                       $(SOURCE_DIR)KeyboardManager.cpp \
+                       $(SOURCE_DIR)MovingObject.cpp \
+                       $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                       $(SOURCE_DIR)TextManager.cpp \
                        $(SOURCE_DIR)TextureManager.cpp \
                        $(SOURCE_DIR)TextureUtilities.cpp \
-                       $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                       $(SOURCE_DIR)MovingObject.cpp \
-                       $(SOURCE_DIR)Tracer.cpp \
-                       $(SOURCE_DIR)TextManager.cpp \
+                       # $(SOURCE_DIR)Tracer.cpp \
 
 EFFECT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECT_TEST_SOURCES:.cpp=.o)))
 
