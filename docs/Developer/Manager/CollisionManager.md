@@ -73,3 +73,44 @@ if (CollisionManager::checkBallPaddleCollision(ball, paddle, colPoint)) {
     // z.B. Sound abspielen, Punkte vergeben, etc.
 }
 ```
+
+## collision side
+
+enum class CollisionSide {
+None,
+Top,
+Bottom,
+Left,
+Right
+};
+
+## Kollisionsbehandlung basierend auf der Form und Masse der Objekte ist sehr sinnvoll.
+
+bislang wird ein gameobject nur durch den namen indentifiziert.
+
+Aber bälle sind rund
+
+wände sind flach
+
+das paddle ist horizontal convex
+
+also könnte man collisionscode aufgrund der form und oder der masse eine objects implementieren.
+
+Erweiterung der ICollideable-Schnittstelle:
+
+[[nodiscard]] virtual CollisionShape getCollisionShape() const = 0;
+[[nodiscard]] virtual float getMass() const = 0;
+
+Spezialisierte Kollisionsbehandlungen:
+
+Kreis-zu-Rechteck (Ball zu Block)
+Kreis-zu-Konvex (Ball zu Paddle)
+Kreis-zu-Linie (Ball zu Wand)
+Kreis-zu-Kreis (Ball zu Ball)
+
+enum class CollisionShape {
+Circle,
+Rectangle,
+Convex,
+Line,
+CompoundShape // Für komplexere Objekte aus mehreren G

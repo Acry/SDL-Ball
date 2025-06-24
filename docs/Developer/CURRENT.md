@@ -2,10 +2,10 @@
 
 Top: Fix all current manual Tests
 
-- [ ] rethink Paddle movement
-- [ ] rethink collision (paddle collision points)
-
-- [ ] PaddleManager.md
+- [X] rethink collision (paddle collision points)
+  Mixed approach for now, on collision in GameObjectManagers
+  no convex paddle for now, just a simple rectangle, set angle
+- [ ] Paddle/PaddleManager real implementations in src
 - [ ] EffectManager.md
 - [ ] Collision.md
 - [ ] PowerupManager
