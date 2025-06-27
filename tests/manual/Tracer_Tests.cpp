@@ -11,6 +11,7 @@
 #include "TextManager.h"
 #include "TextureManager.h"
 #include "Tracer.h"
+#include "SparkleEffect.h"
 
 const GLfloat colors[16][4] = {
     {1.0f, 1.0f, 1.0f, 1.0f}, // Weiß, 0
@@ -58,11 +59,13 @@ public:
 
 class TracerTestHelper final : public TestHelper {
     TracerTestContext &ctx;
-    Tracer *tracer; // Zeiger auf den Tracer
+    Tracer *tracer;
+    SparkleEffect *sparkleEffect;
 
 public:
-    explicit TracerTestHelper(TracerTestContext &context, Tracer *tracerPtr)
-        : TestHelper(context.textManager, &context.eventManager), ctx(context), tracer(tracerPtr) {
+    explicit TracerTestHelper(TracerTestContext &context, Tracer *tracerPtr, SparkleEffect *sparkleEffectPtr)
+        : TestHelper(context.textManager, &context.eventManager), ctx(context), tracer(tracerPtr),
+          sparkleEffect(sparkleEffectPtr) {
     }
 
     void handleKeyPress(const KeyboardEventData &data) override {
@@ -71,7 +74,11 @@ public:
             case SDLK_w:
                 break;
             case SDLK_DELETE:
-
+                break;
+            case SDLK_e: // Tracer vergrößern
+                if (sparkleEffect) {
+                    sparkleEffect->init({0.0f, 0.0f}); // Initialisiere den Effekt an der Mausposition
+                }
                 break;
             case SDLK_g: // Tracer vergrößern
                 if (tracer) {
@@ -83,7 +90,18 @@ public:
                     tracer->setSize(0.8f); // Verkleinern um 20%
                 }
                 break;
-            case SDLK_u:
+            case SDLK_c: // Farbe des SparkleEffect ändern (C-Taste)
+                if (sparkleEffect) {
+                    // Zwischen verschiedenen Farben wechseln
+                    static int colorIndex = 0;
+                    colorIndex = (colorIndex + 1) % 16;
+                    sparkleEffect->setColor(Color{
+                        colors[colorIndex][0],
+                        colors[colorIndex][1],
+                        colors[colorIndex][2],
+                        colors[colorIndex][3]
+                    });
+                }
                 break;
             case SDLK_l:
             case SDLK_r: // R-Taste zum Ein-/Ausschalten des Regenbogeneffekts
@@ -145,6 +163,11 @@ public:
             tracer->update(deltaTime);
             tracer->draw();
         }
+
+        if (sparkleEffect->isActive()) {
+            sparkleEffect->update(deltaTime);
+            sparkleEffect->draw();
+        }
         renderInstructions(deltaTime, instructions);
         drawMouseCoordinates();
         SDL_GL_SwapWindow(ctx.displayManager.sdlWindow);
@@ -156,13 +179,24 @@ int main() {
         TracerTestContext ctx;
         const EventDispatcher eventDispatcher(&ctx.eventManager);
         const auto tracer = std::make_unique<Tracer>(*ctx.textureManager->getEffectTexture(EffectTexture::Tail));
-        const TracerTestHelper testHelper(ctx, tracer.get());
+
         tracer->setSize(0.1f);
+
+        const auto sparkle = std::make_unique<SparkleEffect>();
+        sparkle->setTexture(ctx.textureManager->getEffectTexture(EffectTexture::Particle)->textureProperties);
+        sparkle->setColor(Color{GL_DEEP_ORANGE});
+        sparkle->setSize(0.05f);
+        sparkle->setLife(5000000);
+        sparkle->setParticleCount(500);
+        sparkle->init({0.0f, 0.0f});
+        const TracerTestHelper testHelper(ctx, tracer.get(), sparkle.get());
         const std::vector<std::string> instructions = {
             "ESC: Quit",
+            "C: Change SparkleEffect Color",
             "G: Grow Tracer",
             "K: Shrink Tracer",
             "M: Toggle Mouse Coordinates",
+            "E: Effect",
             "Mouse Wheel Down: Change Color",
             "Mouse Wheel Up: Explosive Color",
             "R: Toggle Rainbow Effect",

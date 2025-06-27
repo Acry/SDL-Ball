@@ -99,3 +99,57 @@ Game
 ## See
 
 [Todo](Structure_Todo.md)
+
+## Effects
+
+src/
+├── effects/
+│ ├── BaseEffect.h/.cpp // Abstrakte Basisklasse für alle Effekte
+│ ├── SparkleEffect.h/.cpp // Funken-Effekt
+│ ├── TransitionEffect.h/.cpp // Übergangs-Effekt
+│ ├── ParticleField.h/.cpp // Partikelfeld-Effekt  
+│ ├── TracerEffect.h/.cpp // Tracer-Effekt
+│ └── EffectDefinitions.h // Gemeinsame Konstanten und Strukturen
+├── EffectManager.h/.cpp // Nur Manager-Funktionalität
+└── objects/
+└── Tracer.h/.cpp // Bereits in separaten Dateien
+
+// BaseEffect.h
+#pragma once
+#include "EffectDefinitions.h"
+
+class BaseEffect {
+public:
+virtual ~BaseEffect() = default;
+
+    virtual void init(const position& pos) = 0;
+    virtual void draw(float deltaTime) = 0;
+    virtual bool isActive() const = 0;
+    
+    int getEffectId() const { return effectId; }
+    void setEffectId(int id) { effectId = id; }
+
+protected:
+int effectId = 0;
+effect_vars properties;
+};
+
+// BaseEffect.h
+#pragma once
+#include "EffectDefinitions.h"
+
+class BaseEffect {
+public:
+virtual ~BaseEffect() = default;
+
+    virtual void init(const position& pos) = 0;
+    virtual void draw(float deltaTime) = 0;
+    virtual bool isActive() const = 0;
+    
+    int getEffectId() const { return effectId; }
+    void setEffectId(int id) { effectId = id; }
+
+protected:
+int effectId = 0;
+effect_vars properties;
+};

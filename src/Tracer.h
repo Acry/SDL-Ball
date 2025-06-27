@@ -1,25 +1,6 @@
 #pragma once
 #include <epoxy/gl.h>
-
 #include "MovingObject.h"
-
-// static constexpr int MAX_PARTICLES = 100;
-
-// // Partikel-Arrays
-// GLfloat particleX[MAX_PARTICLES]{}; // X-Position der Partikel
-// GLfloat particleY[MAX_PARTICLES]{}; // Y-Position der Partikel
-// GLfloat particleRed[MAX_PARTICLES]{}; // Rot-Komponente der Partikelfarbe
-// GLfloat particleGreen[MAX_PARTICLES]{}; // Grün-Komponente der Partikelfarbe
-// GLfloat particleBlue[MAX_PARTICLES]{}; // Blau-Komponente der Partikelfarbe
-// GLfloat particleAlpha[MAX_PARTICLES]{}; // Transparenz der Partikel
-// GLfloat particleScale[MAX_PARTICLES]{}; // Skalierung der Partikel
-// bool particleActive[MAX_PARTICLES]{}; // Status der Partikel (aktiv/inaktiv)
-//
-// // Aktuelle Eigenschaften
-// GLfloat currentRed{1.0f}, currentGreen{0.0f}, currentBlue{0.0f}; // Aktuelle Farbe
-// int colorIndex{0}; // Farbindex für Farbrotation
-// GLfloat previousX{0.0f}, previousY{0.0f}; // Vorherige Position für Abstandsberechnung
-// int maxParticles{MAX_PARTICLES}; // Maximale Anzahl von Partikeln
 
 class Tracer final : public MovingObject {
     GLfloat x[100], y[100]; // Position

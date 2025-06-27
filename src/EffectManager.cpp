@@ -6,64 +6,7 @@
 // Each sparkle has its own position, velocity, size, color, and lifetime.
 // It simulates simple physics (gravity, friction, bounce) and fades out over time.
 // Used for visual feedback like collisions or explosions.
-Sparkle::Sparkle() {
-    bounce = 0;
-    f = 0;
-    active = true;
-}
 
-void Sparkle::draw(const float deltaTime) {
-    if (lifeleft > 0) {
-        // Update lifetime
-        lifeleft -= (int) (deltaTime * 1000.0f);
-
-        // Deactivate if out of visible area
-        if (p.x > 1.67 || p.y < -1.7 || p.x < -1.67) {
-            active = false;
-        }
-
-        // Update physics (gravity, bounce, friction)
-        v.y -= vars.gravity * deltaTime;
-        v.y -= bounce * deltaTime;
-
-        if (v.x < 0) {
-            v.x += f * deltaTime;
-        } else {
-            v.x -= f * deltaTime;
-        }
-
-        // Update position
-        p.x += v.x * deltaTime;
-        p.y += v.y * deltaTime;
-
-        // Draw the sparkle as a textured quad, fading out over its lifetime
-        glColor4f(vars.col[0], vars.col[1], vars.col[2],
-                  (1.0f / static_cast<float>(life)) * static_cast<float>(lifeleft));
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Für normale Transparenz
-        // Oder für additive Blending (leuchtende Effekte):
-        // glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-        const GLfloat curSize = size / static_cast<float>(life) * static_cast<float>(lifeleft);
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, vars.tex.textureProperties.texture);
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 0);
-        glVertex3f(p.x - curSize, p.y + curSize, 0.0);
-        glTexCoord2f(0, 1);
-        glVertex3f(p.x + curSize, p.y + curSize, 0.0);
-        glTexCoord2f(1, 1);
-        glVertex3f(p.x + curSize, p.y - curSize, 0.0);
-        glTexCoord2f(1, 0);
-        glVertex3f(p.x - curSize, p.y - curSize, 0.0);
-        glEnd();
-        glDisable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
-    } else {
-        active = false;
-    }
-}
 
 // The 'EffectsTransist' class implements a screen transition effect (fade in/out).
 // It draws a colored quad over the screen and animates its opacity for smooth transitions.
@@ -76,19 +19,19 @@ Fade::Fade() {
 void Fade::init() {
     age = 0;
     opacity = 0.0f;
-    vars.transition_half_done = 0;
+    effectProperties.transition_half_done = 0;
 }
 
 void Fade::draw(const float deltaTime) {
     age += (int) (deltaTime * 1000.0f);
 
-    float progress = std::min(1.0f, (float) age / (float) vars.life);
+    float progress = std::min(1.0f, (float) age / (float) effectProperties.life);
 
     if (progress < 0.5f) {
         opacity = progress * 2.0f; // 0->1 in erster Hälfte
     } else {
-        if (!vars.transition_half_done) {
-            vars.transition_half_done = 1;
+        if (!effectProperties.transition_half_done) {
+            effectProperties.transition_half_done = 1;
         }
         opacity = 1.0f - ((progress - 0.5f) * 2.0f); // 1->0 in zweiter Hälfte
     }
@@ -99,7 +42,7 @@ void Fade::draw(const float deltaTime) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glLoadIdentity();
     glDisable(GL_TEXTURE_2D);
-    glColor4f(vars.col[0], vars.col[1], vars.col[2], opacity);
+    glColor4f(effectProperties.col[0], effectProperties.col[1], effectProperties.col[2], opacity);
     glBegin(GL_QUADS);
     glVertex3f(-1.0f, 1.0f, 0.0);
     glVertex3f(1.0f, 1.0f, 0.0);
@@ -112,7 +55,7 @@ void Fade::draw(const float deltaTime) {
 // The 'particleFieldClass' manages a group of sparkles to create a particle field effect.
 // It spawns multiple sparkles from a given position, each with random direction and properties.
 // Used for effects like power-up collection or special bursts.
-void Particles::init(effect_vars varsP, position spawnPos) {
+void Particles::init(EffectProperties varsP, position spawnPos) {
     vars = varsP;
     spawnTimeout = 0;
     vars.active = true;
@@ -172,48 +115,48 @@ void Particles::move(position newPos) {
 // The 'effect_class' acts as a wrapper for different effect types (sparks, transition, particle field).
 // It initializes and manages the correct effect based on the type and delegates drawing.
 effect_class::effect_class() {
-    vars.active = false; // Not active on creation
+    effectProperties.active = false; // Not active on creation
     pf = nullptr;
     sparks = nullptr;
 }
 
 void effect_class::init(position p) {
-    vars.active = true;
+    effectProperties.active = true;
     spawn_pos = p;
 
-    switch (vars.type) {
+    switch (effectProperties.type) {
         case FX_SPARKS:
             // Initialize an array of sparkles for the spark effect
-            sparks = new Sparkle[vars.num];
+            sparks = new Sparkle[effectProperties.num];
             if (sparks == nullptr) {
-                SDL_Log("Konnte %d Funken nicht allokieren", vars.num);
+                SDL_Log("Konnte %d Funken nicht allokieren", effectProperties.num);
                 return;
             }
 
-            for (int i = 0; i < vars.num; i++) {
-                sparks[i].size = randomFloat(vars.size, 0);
-                int life = rand() % vars.life;
-                float angle = (RAD / vars.num - 1) * (randomFloat(vars.num, 0.0));
+            for (int i = 0; i < effectProperties.num; i++) {
+                sparks[i].size = randomFloat(effectProperties.size, 0);
+                int life = rand() % effectProperties.life;
+                float angle = (RAD / effectProperties.num - 1) * (randomFloat(effectProperties.num, 0.0));
 
                 sparks[i].life = life;
                 sparks[i].lifeleft = life;
-                sparks[i].v.x = (vars.speed * randomFloat(vars.speed * 2.0, 0.0)) * sin(angle);
-                sparks[i].v.y = (vars.speed * randomFloat(vars.speed * 2.0, 0.0)) * cos(angle);
+                sparks[i].v.x = (effectProperties.speed * randomFloat(effectProperties.speed * 2.0, 0.0)) * sin(angle);
+                sparks[i].v.y = (effectProperties.speed * randomFloat(effectProperties.speed * 2.0, 0.0)) * cos(angle);
 
-                sparks[i].vars = vars;
+                sparks[i].vars = effectProperties;
                 sparks[i].p = spawn_pos;
             }
             break;
 
         case FX_TRANSIT:
-            transit.vars = vars;
+            transit.effectProperties = effectProperties;
             transit.init();
             break;
 
         case FX_PARTICLEFIELD:
             pf = nullptr;
             pf = new Particles;
-            pf->init(vars, p);
+            pf->init(effectProperties, p);
             break;
         default:
             break;
@@ -223,9 +166,9 @@ void effect_class::init(position p) {
 void effect_class::draw(const float deltaTime) {
     bool stay = false;
 
-    switch (vars.type) {
+    switch (effectProperties.type) {
         case FX_SPARKS:
-            for (int i = 0; i < vars.num; i++) {
+            for (int i = 0; i < effectProperties.num; i++) {
                 if (sparks[i].active) {
                     sparks[i].draw(deltaTime);
                     stay = true;
@@ -235,7 +178,7 @@ void effect_class::draw(const float deltaTime) {
 
         case FX_TRANSIT:
             transit.draw(deltaTime);
-            if (transit.age <= vars.life)
+            if (transit.age <= effectProperties.life)
                 stay = true;
             break;
 
@@ -249,12 +192,12 @@ void effect_class::draw(const float deltaTime) {
     }
 
     // Verhindere Flackern bei Übergangseffekten
-    if (vars.effectId != -1 && vars.type != FX_TRANSIT)
+    if (effectProperties.effectId != -1 && effectProperties.type != FX_TRANSIT)
         stay = true;
 
     if (!stay) {
-        vars.active = false;
-        switch (vars.type) {
+        effectProperties.active = false;
+        switch (effectProperties.type) {
             case FX_SPARKS:
                 delete[] sparks;
                 break;
@@ -316,16 +259,16 @@ void EffectManager::registerEventListeners() {
 void EffectManager::set(int var, GLfloat val) {
     switch (var) {
         case FX_VAR_SPEED:
-            vars.speed = val;
+            effectProperties.speed = val;
             break;
         case FX_VAR_SPREAD:
-            vars.spread = val;
+            effectProperties.spread = val;
             break;
         case FX_VAR_SIZE:
-            vars.size = val;
+            effectProperties.size = val;
             break;
         case FX_VAR_GRAVITY:
-            vars.gravity = val;
+            effectProperties.gravity = val;
             break;
         default:
             break;
@@ -335,16 +278,16 @@ void EffectManager::set(int var, GLfloat val) {
 void EffectManager::set(int var, int val) {
     switch (var) {
         case FX_VAR_NUM:
-            vars.num = val;
+            effectProperties.num = val;
             break;
         case FX_VAR_LIFE:
-            vars.life = val;
+            effectProperties.life = val;
             break;
         case FX_VAR_TYPE:
-            vars.type = val;
+            effectProperties.type = val;
             break;
         case FX_VAR_COLDET:
-            vars.coldet = val;
+            effectProperties.collisionDetection = val;
             break;
         default:
             break;
@@ -354,9 +297,9 @@ void EffectManager::set(int var, int val) {
 void EffectManager::set(int var, GLfloat r, GLfloat g, GLfloat b) {
     switch (var) {
         case FX_VAR_COLOR:
-            vars.col[0] = r;
-            vars.col[1] = g;
-            vars.col[2] = b;
+            effectProperties.col[0] = r;
+            effectProperties.col[1] = g;
+            effectProperties.col[2] = b;
             break;
         default:
             break;
@@ -366,7 +309,7 @@ void EffectManager::set(int var, GLfloat r, GLfloat g, GLfloat b) {
 void EffectManager::set(int var, SpriteSheetAnimation tex) {
     switch (var) {
         case FX_VAR_TEXTURE:
-            vars.tex = tex;
+            effectProperties.texture = tex;
             break;
         default:
             break;
@@ -376,7 +319,7 @@ void EffectManager::set(int var, SpriteSheetAnimation tex) {
 void EffectManager::set(int var, position p) {
     switch (var) {
         case FX_VAR_RECTANGLE:
-            vars.rect = p;
+            effectProperties.rect = p;
             break;
         default:
             break;
@@ -386,8 +329,8 @@ void EffectManager::set(int var, position p) {
 int EffectManager::spawn(position p) {
     effectId++;
     effect_class tempEffect;
-    vars.effectId = effectId;
-    tempEffect.vars = vars;
+    effectProperties.effectId = effectId;
+    tempEffect.effectProperties = effectProperties;
     tempEffect.init(p);
     effects.push_back(tempEffect);
 
@@ -399,7 +342,7 @@ void EffectManager::draw(const float deltaTime) {
     for (auto it = effects.begin(); it != effects.end();) {
         it->draw(deltaTime);
 
-        if (!it->vars.active) {
+        if (!it->effectProperties.active) {
             it = effects.erase(it);
         } else {
             ++it;
@@ -410,14 +353,14 @@ void EffectManager::draw(const float deltaTime) {
         Tracer *tracer = pair.second;
         if (tracer->isActive()) {
             // Benutze die GameObject-Methode isActive()
-            tracer->draw(deltaTime);
+            tracer->draw();
         }
     }
 }
 
 int EffectManager::isActive(const int id) const {
     for (const auto &effect: effects) {
-        if (effect.vars.effectId == id && effect.vars.active) {
+        if (effect.effectProperties.effectId == id && effect.effectProperties.active) {
             return 1;
         }
     }
@@ -426,8 +369,8 @@ int EffectManager::isActive(const int id) const {
 
 void EffectManager::kill(int id) {
     for (auto &effect: effects) {
-        if (effect.vars.effectId == id) {
-            effect.vars.active = false;
+        if (effect.effectProperties.effectId == id) {
+            effect.effectProperties.active = false;
         }
     }
 }
@@ -513,7 +456,6 @@ void EffectManager::setTracerColor(int tracerId, bool explosive, const GLfloat c
         it->second->colorRotate(explosive, c);
     }
 }
-
 
 void EffectManager::setTracerSize(int tracerId, float width, float height) {
     auto it = tracers.find(tracerId);

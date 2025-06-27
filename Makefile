@@ -33,11 +33,13 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     MathHelper.cpp \
     MouseManager.cpp \
     Paddle.cpp \
+    Particle.cpp \
     PlayfieldBorder.cpp \
     SaveGameManager.cpp \
     Score.cpp \
     SettingsManager.cpp \
     SoundManager.cpp \
+    SparkleEffect.cpp \
     Speedometer.cpp \
     SpriteSheetAnimation.cpp \
     SpriteSheetAnimationManager.cpp \
@@ -315,6 +317,9 @@ TRACER_TEST_SOURCES := $(MANUAL_TEST_DIR)Tracer_Tests.cpp \
                        $(SOURCE_DIR)TextureManager.cpp \
                        $(SOURCE_DIR)TextureUtilities.cpp \
                        $(SOURCE_DIR)Tracer.cpp \
+                       $(SOURCE_DIR)Particle.cpp \
+                       $(SOURCE_DIR)SparkleEffect.cpp \
+                       $(SOURCE_DIR)MathHelper.cpp \
 
 TRACER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TRACER_TEST_SOURCES:.cpp=.o)))
 

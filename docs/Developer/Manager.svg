@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-        width="3440"
-        height="1440"
-        viewBox="0 0 910.16665 381"
+        width="2000"
+        height="1449.9474"
+        viewBox="0 0 529.16665 383.63191"
         version="1.1"
         id="svg1"
         xml:space="preserve"
@@ -25,19 +25,19 @@
    inkscape:deskcolor="#d1d1d1"
    inkscape:document-units="mm"
    inkscape:zoom="0.7263072"
-   inkscape:cx="1743.7525"
-   inkscape:cy="707.00111"
+   inkscape:cx="1007.1496"
+   inkscape:cy="733.16084"
    inkscape:window-width="3440"
    inkscape:window-height="1371"
    inkscape:window-x="0"
-   inkscape:window-y="0"
+   inkscape:window-y="32"
    inkscape:window-maximized="1"
    inkscape:current-layer="layer1" />
     <defs
             id="defs1">
         <rect
                 x="157.71742"
-                y="687.82321"
+                y="687.82318"
                 width="215.6445"
                 height="110.98633"
                 id="rect42"/>
@@ -69,28 +69,23 @@
     <g
             inkscape:label="Ebene 1"
             inkscape:groupmode="layer"
-            id="layer1"><rect
+            id="layer1"
+            transform="translate(0,0.77276671)"><rect
    style="fill:url(#pattern10);fill-opacity:1;stroke:none;stroke-width:1.56363"
-   id="rect6"
-   width="910.16669"
-   height="383.6319"
+   id="Background"
+   width="529.16669"
+   height="383.63193"
    x="0"
    y="-0.77276671"
    sodipodi:insensitive="true" />
-        <rect
-                style="fill:#ffd5d5;stroke:#ffff00;stroke-width:0.8;stroke-dasharray:0.8, 1.6;stroke-dashoffset:0"
-                id="rect56"
-                width="181.85776"
-                height="145.79532"
-                x="278.31808"
-                y="9.908762"/>
+
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1"
                 width="38.25"
                 height="21.128571"
-                x="66.674088"
-                y="346.96225"/>
+                x="67.402664"
+                y="352.42654"/>
 
 
         <rect
@@ -98,619 +93,513 @@
                 id="rect1-1-1-0"
                 width="38.25"
                 height="21.128571"
-                x="58.757729"
-                y="99.32312"/>
+                x="162.94344"
+                y="95.315979"/>
 
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-3"
                 width="38.25"
                 height="21.128571"
-                x="118.83124"
-                y="347.00061"/>
+                x="119.55981"
+                y="352.4649"/>
 
 
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="75.876015"
-                y="98.123016"
+                x="180.06172"
+                y="94.115875"
                 id="text1-7-3"><tspan
      sodipodi:role="line"
      id="tspan1-3-1"
      style="stroke-width:0.264583"
-     x="75.876015"
-     y="98.123016">EventManager</tspan></text>
+     x="180.06172"
+     y="94.115875">EventManager</tspan></text>
         <rect
                 style="fill:none;stroke:#4d4d4d;stroke-width:0.799999"
                 id="rect1-1-1-0-5"
                 width="34.971436"
                 height="18.578566"
-                x="105.21242"
-                y="64.43856"/>
+                x="107.03385"
+                y="95.767136"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="128.32652"
-                y="63.238457"
+                x="130.14796"
+                y="94.567024"
                 id="text1-7-3-9"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62"
      style="stroke-width:0.264583"
-     x="128.32652"
-     y="63.238457">ConfigFileManager</tspan></text>
+     x="130.14796"
+     y="94.567024">ConfigFileManager</tspan></text>
         <rect
                 style="fill:none;stroke:#4d4d4d;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7"
                 width="37.157146"
                 height="19.671427"
-                x="58.814571"
-                y="63.142807"/>
+                x="60.635998"
+                y="94.471375"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="77.56517"
-                y="61.942711"
+                x="79.386597"
+                y="93.271286"
                 id="text1-7-3-9-4"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1"
      style="stroke-width:0.264583"
-     x="77.56517"
-     y="61.942711">ThemeManager</tspan></text>
+     x="79.386597"
+     y="93.271286">ThemeManager</tspan></text>
         <rect
                 style="fill:none;stroke:#4d4d4d;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-1"
                 width="38.067856"
                 height="20.582146"
-                x="8.300621"
-                y="62.591137"/>
+                x="10.12205"
+                y="93.919701"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="28.876139"
-                y="61.391033"
+                x="30.697567"
+                y="92.719589"
                 id="text1-7-3-9-4-0"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-5"
      style="stroke-width:0.264583"
-     x="28.876139"
-     y="61.391033">SettingsManager</tspan></text>
+     x="30.697567"
+     y="92.719589">SettingsManager</tspan></text>
         <rect
                 style="fill:none;stroke:#800080;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-0"
                 width="38.25"
                 height="21.128571"
-                x="228.98189"
-                y="119.57006"/>
+                x="227.16046"
+                y="155.99863"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="247.73247"
-                y="118.36996"
+                x="245.3653"
+                y="154.79852"
                 id="text1-7-3-9-4-9"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-2"
      style="stroke-width:0.264583"
-     x="247.73247"
-     y="118.36996">SoundManager</tspan></text>
+     x="245.3653"
+     y="154.79852">SoundManager</tspan></text>
         <rect
                 style="fill:none;stroke:#000080;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-0-9"
                 width="38.25"
                 height="21.128571"
-                x="228.53227"
-                y="48.590591"/>
+                x="227.16046"
+                y="85.019165"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="247.28285"
-                y="47.39048"
+                x="242.65878"
+                y="83.819054"
                 id="text1-7-3-9-4-9-4"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-2-6"
      style="stroke-width:0.264583"
-     x="247.28285"
-     y="47.39048">TextManager</tspan></text>
+     x="242.65878"
+     y="83.819054">TextManager</tspan></text>
         <rect
                 style="fill:none;stroke:#000080;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-5"
                 width="38.25"
                 height="21.128571"
-                x="163.30673"
-                y="30.270853"/>
+                x="123.5996"
+                y="36.099426"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="182.05733"
-                y="29.070749"
+                x="142.35019"
+                y="34.899323"
                 id="text1-7-3-9-4-3"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-8"
      style="stroke-width:0.264583"
-     x="182.05733"
-     y="29.070749">DisplayManager</tspan></text>
+     x="142.35019"
+     y="34.899323">DisplayManager</tspan></text>
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-5-9"
                 width="38.25"
                 height="21.128571"
-                x="117.88538"
-                y="218.18773"/>
+                x="206.7711"
+                y="203.6163"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="134.51224"
-                y="216.98763"
+                x="223.39793"
+                y="202.4162"
                 id="text1-7-3-9-4-3-6"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-8-4"
      style="stroke-width:0.264583"
-     x="134.51224"
-     y="216.98763">LevelManager</tspan></text>
+     x="223.39793"
+     y="202.4162">LevelManager</tspan></text>
         <rect
                 style="fill:none;stroke:#ffff00;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-5-9-0"
                 width="38.25"
                 height="21.128571"
-                x="7.3809371"
-                y="164.8297"/>
+                x="8.4737959"
+                y="128.03683"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="24.007812"
-                y="163.62959"
+                x="25.100668"
+                y="126.83672"
                 id="text1-7-3-9-4-3-6-6"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-8-4-2"
      style="stroke-width:0.264583"
-     x="24.007812"
-     y="163.62959">MenuManager</tspan></text>
-        <rect
-                style="fill:none;stroke:#ffff00;stroke-width:0.799999"
-                id="rect1-1-1-0-5-7-5-9-0-6"
-                width="38.25"
-                height="21.128571"
-                x="353.7392"
-                y="18.534937"/>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="370.30679"
-                y="17.334833"
-                id="text1-7-3-9-4-3-6-6-7"><tspan
-     sodipodi:role="line"
-     id="tspan1-3-1-62-1-8-4-2-5"
-     style="stroke-width:0.264583"
-     x="370.30679"
-     y="17.334833">InputManager</tspan></text>
-        <rect
-                style="fill:none;stroke:#ffff00;stroke-width:0.799999"
-                id="rect1-1-1-0-5-7-5-9-0-6-2"
-                width="38.25"
-                height="21.128571"
-                x="282.52017"
-                y="54.269604"/>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="305.35028"
-                y="53.069485"
-                id="text1-7-3-9-4-3-6-6-7-8"><tspan
-     sodipodi:role="line"
-     id="tspan1-3-1-62-1-8-4-2-5-2"
-     style="stroke-width:0.264583"
-     x="305.35028"
-     y="53.069485">KeyboardManager</tspan></text>
-        <rect
-                style="fill:none;stroke:#ffff00;stroke-width:0.799999"
-                id="rect1-1-1-0-5-7-5-9-0-6-2-2"
-                width="38.25"
-                height="21.128571"
-                x="345.80042"
-                y="54.040203"/>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="363.8793"
-                y="52.840099"
-                id="text1-7-3-9-4-3-6-6-7-8-7"><tspan
-     sodipodi:role="line"
-     id="tspan1-3-1-62-1-8-4-2-5-2-6"
-     style="stroke-width:0.264583"
-     x="363.8793"
-     y="52.840099">MouseManager</tspan></text>
-        <rect
-                style="fill:none;stroke:#ffff00;stroke-width:0.799999"
-                id="rect1-1-1-0-5-7-5-9-0-6-2-2-5"
-                width="38.25"
-                height="21.128571"
-                x="402.69867"
-                y="88.254356"/>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="423.29642"
-                y="87.049309"
-                id="text1-7-3-9-4-3-6-6-7-8-7-9"><tspan
-     sodipodi:role="line"
-     id="tspan1-3-1-62-1-8-4-2-5-2-6-9"
-     style="stroke-width:0.264583"
-     x="423.29642"
-     y="87.049309">JoystickManager</tspan></text>
-        <rect
-                style="fill:none;stroke:#ffff00;stroke-width:0.799999"
-                id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0"
-                width="38.25"
-                height="21.128571"
-                x="403.32361"
-                y="57.719311"/>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="425.55859"
-                y="56.519207"
-                id="text1-7-3-9-4-3-6-6-7-8-7-9-7"><tspan
-     sodipodi:role="line"
-     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5"
-     style="stroke-width:0.264583"
-     x="425.55859"
-     y="56.519207">GamepadManager</tspan></text>
-        <rect
-                style="fill:none;stroke:#ffff00;stroke-width:0.799999"
-                id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0-8"
-                width="38.25"
-                height="21.128571"
-                x="402.50305"
-                y="127.84739"/>
-        <text
-                xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="427.33835"
-                y="126.64729"
-                id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0"><tspan
-     sodipodi:role="line"
-     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4"
-     style="stroke-width:0.264583"
-     x="427.33835"
-     y="126.64729">MicrophoneManager</tspan></text>
+     x="25.100668"
+     y="126.83672">MenuManager</tspan></text>
+
+
         <rect
                 style="fill:none;stroke:#ff6600;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-5-9-7"
                 width="49.068741"
                 height="28.341053"
-                x="188.81131"
-                y="197.58424"/>
+                x="80.254166"
+                y="201.2271"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="203.89723"
-                y="196.38414"
+                x="95.340088"
+                y="200.02699"
                 id="text1-7-3-9-4-3-6-7"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-8-4-5"
      style="stroke-width:0.264583"
-     x="203.89723"
-     y="196.38414">HudManager</tspan></text>
+     x="95.340088"
+     y="200.02699">HudManager</tspan></text>
         <rect
                 style="fill:none;stroke:#000080;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-5-9-7-8"
                 width="38.25"
                 height="21.128571"
-                x="228.19969"
-                y="13.997932"/>
+                x="227.16046"
+                y="50.426502"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="247.74544"
-                y="12.797831"
+                x="246.70621"
+                y="49.226402"
                 id="text1-7-3-9-4-3-6-7-9"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-8-4-5-3"
      style="stroke-width:0.264583"
-     x="247.74544"
-     y="12.797831">TextureManager</tspan></text>
+     x="246.70621"
+     y="49.226402">TextureManager</tspan></text>
         <rect
                 style="fill:none;stroke:#000080;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-5-9-6"
                 width="38.25"
                 height="21.128571"
-                x="229.96904"
-                y="81.305573"/>
+                x="227.16046"
+                y="117.73415"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="246.59593"
-                y="80.105469"
+                x="244.62941"
+                y="116.53404"
                 id="text1-7-3-9-4-3-6-0"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-8-4-4"
      style="stroke-width:0.264583"
-     x="246.59593"
-     y="80.105469">EffectManager</tspan></text>
+     x="244.62941"
+     y="116.53404">EffectManager</tspan></text>
         <rect
                 style="fill:none;stroke:#4d4d4d;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-5-9-6-7"
                 width="38.25"
                 height="21.128571"
-                x="6.320797"
-                y="128.62135"/>
+                x="11.056512"
+                y="249.56421"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="29.758417"
-                y="127.42125"
+                x="34.494129"
+                y="248.36411"
                 id="text1-7-3-9-4-3-6-0-7"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-8-4-4-6"
      style="stroke-width:0.264583"
-     x="29.758417"
-     y="127.42125">SaveGameManager</tspan></text>
+     x="34.494129"
+     y="248.36411">SaveGameManager</tspan></text>
         <rect
                 style="fill:none;stroke:#4d4d4d;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-5-9-6-7-1"
                 width="38.25"
                 height="21.128571"
-                x="6.8315482"
-                y="97.737381"/>
+                x="11.202976"
+                y="213.21596"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="30.269173"
-                y="96.537277"
+                x="34.640598"
+                y="212.01585"
                 id="text1-7-3-9-4-3-6-0-7-3"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-8-4-4-6-1"
      style="stroke-width:0.264583"
-     x="30.269173"
-     y="96.537277">HighscoreManager</tspan></text>
+     x="34.640598"
+     y="212.01585">HighscoreManager</tspan></text>
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-1-1-0-44"
                 width="38.25"
                 height="21.128571"
-                x="118.29694"
-                y="251.96855"/>
+                x="145.98267"
+                y="201.69713"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="143.40141"
-                y="250.76845"
+                x="171.08713"
+                y="200.49702"
                 id="text1-7-3-44"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-7"
      style="stroke-width:0.264583"
-     x="143.40141"
-     y="250.76845">BackgroundManager</tspan></text>
+     x="171.08713"
+     y="200.49702">BackgroundManager</tspan></text>
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-1-1-0-8"
                 width="38.25"
                 height="21.128571"
-                x="118.23917"
-                y="184.34644"/>
+                x="59.224876"
+                y="128.61072"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="138.48872"
-                y="183.14633"
+                x="79.474434"
+                y="127.41062"
                 id="text1-7-3-4"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-8"
      style="stroke-width:0.264583"
-     x="138.48872"
-     y="183.14633">CollsionManager</tspan></text>
+     x="79.474434"
+     y="127.41062">CollsionManager</tspan></text>
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-1-1-0-8-5"
                 width="38.25"
                 height="21.128571"
-                x="166.23875"
-                y="148.41782"/>
+                x="118.15304"
+                y="162.26067"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="186.4883"
-                y="147.21771"
+                x="138.40259"
+                y="161.06056"
                 id="text1-7-3-4-0"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-8-6"
      style="stroke-width:0.264583"
-     x="186.4883"
-     y="147.21771">GameManager</tspan></text>
+     x="138.40259"
+     y="161.06056">GameManager</tspan></text>
 
 
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="72.292137"
-                y="346.50299"
+                x="73.020714"
+                y="351.96729"
                 id="text3"><tspan
      sodipodi:role="line"
      id="tspan3"
      style="stroke-width:0.264583"
-     x="72.292137"
-     y="346.50299">Brick</tspan></text>
+     x="73.020714"
+     y="351.96729">Brick</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="129.04741"
-                y="345.81039"
+                x="129.77597"
+                y="351.27469"
                 id="text4"><tspan
      sodipodi:role="line"
      id="tspan4"
      style="stroke-width:0.264583"
-     x="129.04741"
-     y="345.81039">Powerup</tspan></text>
+     x="129.77597"
+     y="351.27469">Powerup</tspan></text>
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-365"
                 width="38.25"
                 height="21.128571"
-                x="167.0607"
-                y="347.52576"/>
+                x="167.78926"
+                y="352.99005"/>
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-3-6"
                 width="38.25"
                 height="21.128571"
-                x="219.21785"
-                y="347.56415"/>
+                x="219.94641"
+                y="353.02844"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="170.98224"
-                y="347.07635"
+                x="171.7108"
+                y="352.54065"
                 id="text3-3"><tspan
      sodipodi:role="line"
      id="tspan3-9"
      style="stroke-width:0.264583"
-     x="170.98224"
-     y="347.07635">Ball</tspan></text>
+     x="171.7108"
+     y="352.54065">Ball</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="227.0831"
-                y="347.10489"
+                x="227.81166"
+                y="352.56918"
                 id="text4-4"><tspan
      sodipodi:role="line"
      id="tspan4-8"
      style="stroke-width:0.264583"
-     x="227.0831"
-     y="347.10489">Paddle</tspan></text>
+     x="227.81166"
+     y="352.56918">Paddle</tspan></text>
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-3-6-3"
                 width="38.25"
                 height="21.128571"
-                x="269.02179"
-                y="347.60471"/>
+                x="270.11465"
+                y="329.39044"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="279.11203"
-                y="346.39966"
+                x="280.2049"
+                y="328.18539"
                 id="text4-4-3"><tspan
      sodipodi:role="line"
      id="tspan4-8-8"
      style="stroke-width:0.264583"
-     x="279.11203"
-     y="346.39966">Playfield</tspan></text>
+     x="280.2049"
+     y="328.18539">Playfield</tspan></text>
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-9"
                 width="41.019081"
                 height="31.11014"
-                x="67.309196"
-                y="303.68546"/>
+                x="68.037773"
+                y="309.14975"/>
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-3-0"
                 width="42.371414"
                 height="22.28772"
-                x="119.46635"
-                y="303.72385"/>
+                x="120.19492"
+                y="309.18814"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="83.745911"
-                y="302.48535"
+                x="84.474487"
+                y="307.94965"
                 id="text3-8"><tspan
      sodipodi:role="line"
      id="tspan3-8"
      style="stroke-width:0.264583"
-     x="83.745911"
-     y="302.48535">BrickManager</tspan></text>
+     x="84.474487"
+     y="307.94965">BrickManager</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="141.03845"
-                y="302.52374"
+                x="141.76701"
+                y="307.98804"
                 id="text4-5"><tspan
      sodipodi:role="line"
      id="tspan4-0"
      style="stroke-width:0.264583"
-     x="141.03845"
-     y="302.52374">PowerupManager</tspan></text>
+     x="141.76701"
+     y="307.98804">PowerupManager</tspan></text>
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-365-9"
                 width="38.25"
                 height="21.128571"
-                x="167.69582"
-                y="304.24899"/>
+                x="168.42438"
+                y="309.71329"/>
         <rect
                 style="fill:none;stroke:#ff0000;stroke-width:0.799999"
                 id="rect1-3-6-6"
                 width="38.25"
                 height="21.128571"
-                x="219.85297"
-                y="304.28735"/>
+                x="220.58153"
+                y="309.75165"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="182.43602"
-                y="303.04889"
+                x="183.16458"
+                y="308.51318"
                 id="text3-3-3"><tspan
      sodipodi:role="line"
      id="tspan3-9-8"
      style="stroke-width:0.264583"
-     x="182.43602"
-     y="303.04889">BallManager</tspan></text>
+     x="183.16458"
+     y="308.51318">BallManager</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="238.53688"
-                y="303.08725"
+                x="239.26544"
+                y="308.55154"
                 id="text4-4-5"><tspan
      sodipodi:role="line"
      id="tspan4-8-6"
      style="stroke-width:0.264583"
-     x="238.53688"
-     y="303.08725">PaddleManager</tspan></text>
+     x="239.26544"
+     y="308.55154">PaddleManager</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="238.46835"
-                y="295.44083"
+                x="239.19691"
+                y="300.90509"
                 id="text4-4-5-7"><tspan
      sodipodi:role="line"
      id="tspan4-8-6-9"
      style="stroke-width:0.264583"
-     x="238.46835"
-     y="295.44083">PlayerManager</tspan></text>
+     x="239.19691"
+     y="300.90509">PlayerManager</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="36.64732"
-                y="303.99481"
+                x="37.375889"
+                y="309.45911"
                 id="text5"><tspan
      sodipodi:role="line"
      id="tspan5"
      style="stroke-width:0.264583"
-     x="36.64732"
-     y="303.99481">GameActorManager</tspan></text>
+     x="37.375889"
+     y="309.45911">GameActorManager</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="25.828655"
-                y="345.72263"
+                x="26.557228"
+                y="351.18692"
                 id="text5-0"><tspan
      sodipodi:role="line"
      id="tspan5-6"
      style="stroke-width:0.264583"
-     x="25.828655"
-     y="345.72263">GameActor</tspan></text>
+     x="26.557228"
+     y="351.18692">GameActor</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="26.693556"
-                y="352.69363"
+                x="27.422129"
+                y="358.15793"
                 id="text5-0-3"><tspan
      sodipodi:role="line"
      id="tspan5-6-5"
      style="stroke-width:0.264583"
-     x="26.693556"
-     y="352.69363">ICollideable</tspan></text>
+     x="27.422129"
+     y="358.15793">ICollideable</tspan></text>
 
 
         <text
@@ -734,118 +623,118 @@
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="201.17558"
-                y="206.5863"
+                x="92.618439"
+                y="210.22916"
                 id="text43"><tspan
      sodipodi:role="line"
      id="tspan43"
      style="stroke-width:0.264583"
-     x="201.17558"
-     y="206.5863">Score</tspan></text>
+     x="92.618439"
+     y="210.22916">Score</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="206.58629"
-                y="216.37468"
+                x="98.029144"
+                y="220.01753"
                 id="text44"><tspan
      sodipodi:role="line"
      id="tspan44"
      style="stroke-width:0.264583"
-     x="206.58629"
-     y="216.37468">Highscore</tspan></text>
+     x="98.029144"
+     y="220.01753">Highscore</tspan></text>
         <rect
                 style="fill:none;stroke:#552200;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-5-8"
                 width="38.25"
                 height="21.128571"
-                x="103.87635"
-                y="100.10442"/>
+                x="109.34064"
+                y="128.51871"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="122.62692"
-                y="98.904327"
+                x="128.0912"
+                y="127.31861"
                 id="text1-7-3-9-4-3-62"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-8-8"
      style="stroke-width:0.264583"
-     x="122.62692"
-     y="98.904327">SceneManager</tspan></text>
+     x="128.0912"
+     y="127.31861">SceneManager</tspan></text>
         <rect
                 style="fill:none;stroke:#b3ff80;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-1-0"
                 width="40.441063"
                 height="43.20512"
-                x="56.818344"
-                y="11.649256"/>
+                x="63.739773"
+                y="36.784969"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="72.735458"
-                y="9.9339743"
+                x="79.656891"
+                y="35.069691"
                 id="text1-7-3-9-4-0-3"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-5-9"
      style="stroke-width:0.264583"
-     x="72.735458"
-     y="9.9339743">CodeManager</tspan></text>
+     x="79.656891"
+     y="35.069691">CodeManager</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="28.705563"
-                y="9.9781046"
+                x="35.626991"
+                y="35.113819"
                 id="text45"><tspan
      sodipodi:role="line"
      id="tspan45"
      style="stroke-width:0.264583"
-     x="28.705563"
-     y="9.9781046">main (EntryPoint)</tspan></text>
+     x="35.626991"
+     y="35.113819">main (EntryPoint)</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="362.68518"
-                y="187.00954"
+                x="417.32803"
+                y="124.35239"
                 id="text46"><tspan
    sodipodi:role="line"
    id="tspan46"
    style="stroke-width:0.264583"
-   x="363.42603"
-   y="187.00954">Init</tspan>
+   x="418.06888"
+   y="124.35239">Init</tspan>
             <tspan
                     sodipodi:role="line"
                     style="stroke-width:0.264583"
-                    x="363.42603"
-                    y="187.00954"
+                    x="418.06888"
+                    y="124.35239"
                     id="tspan47">Update</tspan>
             <tspan
                     sodipodi:role="line"
                     style="stroke-width:0.264583"
-                    x="363.42603"
-                    y="187.00954"
+                    x="418.06888"
+                    y="124.35239"
                     id="tspan48">Render</tspan>
             <tspan
                     sodipodi:role="line"
                     style="stroke-width:0.264583"
-                    x="363.42603"
-                    y="187.00954"
+                    x="418.06888"
+                    y="124.35239"
                     id="tspan50">Cleanup</tspan>
             <tspan
                     sodipodi:role="line"
                     style="stroke-width:0.264583"
-                    x="363.42603"
-                    y="187.00954"
+                    x="418.06888"
+                    y="124.35239"
                     id="tspan49"/></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="69.227989"
-                y="19.411352"
+                x="76.149422"
+                y="44.547066"
                 id="text51"><tspan
      sodipodi:role="line"
      id="tspan51"
      style="stroke-width:0.264583"
-     x="69.227989"
-     y="19.411352">Config</tspan></text>
+     x="76.149422"
+     y="44.547066">Config</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -860,127 +749,290 @@
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="68.841606"
-                y="28.169373"
+                x="75.763039"
+                y="53.305088"
                 id="text53"><tspan
      sodipodi:role="line"
      id="tspan53"
      style="stroke-width:0.264583"
-     x="68.841606"
-     y="28.169373">Theme</tspan></text>
+     x="75.763039"
+     y="53.305088">Theme</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="71.031113"
-                y="36.412216"
+                x="77.952545"
+                y="61.547932"
                 id="text54"><tspan
      sodipodi:role="line"
      id="tspan54"
      style="stroke-width:0.264583"
-     x="71.031113"
-     y="36.412216">Settings</tspan></text>
+     x="77.952545"
+     y="61.547932">Settings</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="67.954773"
-                y="45.106586"
+                x="74.876205"
+                y="70.242294"
                 id="text54-8"><tspan
      sodipodi:role="line"
      id="tspan54-0"
      style="stroke-width:0.264583"
-     x="67.954773"
-     y="45.106586">Scene</tspan></text>
+     x="74.876205"
+     y="70.242294">Scene</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="84.489151"
-                y="312.84171"
+                x="85.217728"
+                y="318.306"
                 id="text55"><tspan
      sodipodi:role="line"
      id="tspan55"
      style="stroke-width:0.264583"
-     x="84.489151"
-     y="312.84171">Brick Setup</tspan></text>
+     x="85.217728"
+     y="318.306">Brick Setup</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="139.2374"
-                y="310.86359"
+                x="139.96596"
+                y="316.32788"
                 id="text55-2"><tspan
      sodipodi:role="line"
      id="tspan55-7"
      style="stroke-width:0.264583"
-     x="139.2374"
-     y="310.86359">Powerup Setup</tspan></text>
+     x="139.96596"
+     y="316.32788">Powerup Setup</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="140.4066"
-                y="319.61783"
+                x="141.13516"
+                y="325.08212"
                 id="text55-2-0"><tspan
      sodipodi:role="line"
      id="tspan55-7-6"
      style="stroke-width:0.264583"
-     x="140.4066"
-     y="319.61783">Powerup Spawn</tspan></text>
+     x="141.13516"
+     y="325.08212">Powerup Spawn</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="86.113129"
-                y="321.23419"
+                x="86.841705"
+                y="326.69849"
                 id="text55-4"><tspan
      sodipodi:role="line"
      id="tspan55-0"
      style="stroke-width:0.264583"
-     x="86.113129"
-     y="321.23419">Brick control</tspan></text>
+     x="86.841705"
+     y="326.69849">Brick control</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="88.546188"
-                y="329.58499"
+                x="89.274765"
+                y="335.04929"
                 id="text56"><tspan
      sodipodi:role="line"
      id="tspan56"
      style="stroke-width:0.264583"
-     x="88.546188"
-     y="329.58499">e.g. emit score</tspan></text>
-        <rect
-                style="fill:none;stroke:#ffff00;stroke-width:0.799999"
-                id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0-8-0"
-                width="38.25"
-                height="21.128571"
-                x="342.26959"
-                y="127.08799"/>
+     x="89.274765"
+     y="335.04929">e.g. emit score</tspan></text>
+
+
+        <g
+                id="g1"
+                transform="translate(58.65,220.02857)"><rect
+     style="fill:#ffd5d5;stroke:#ffff00;stroke-width:0.8;stroke-dasharray:0.8, 1.6;stroke-dashoffset:0"
+     id="rect56"
+     width="181.85776"
+     height="145.79532"
+     x="278.31808"
+     y="9.908762"
+     inkscape:label="Input" />
+            <rect
+                    style="fill:none;stroke:#ffff00;stroke-width:0.799999"
+                    id="rect1-1-1-0-5-7-5-9-0-6"
+                    width="38.25"
+                    height="21.128571"
+                    x="353.7392"
+                    y="18.534937"/>
+            <text
+                    xml:space="preserve"
+                    style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                    x="370.30679"
+                    y="17.334833"
+                    id="text1-7-3-9-4-3-6-6-7"><tspan
+       sodipodi:role="line"
+       id="tspan1-3-1-62-1-8-4-2-5"
+       style="stroke-width:0.264583"
+       x="370.30679"
+       y="17.334833">InputManager</tspan></text>
+            <rect
+                    style="fill:none;stroke:#ffff00;stroke-width:0.799999"
+                    id="rect1-1-1-0-5-7-5-9-0-6-2"
+                    width="38.25"
+                    height="21.128571"
+                    x="282.52017"
+                    y="54.269604"/>
+            <text
+                    xml:space="preserve"
+                    style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                    x="305.35028"
+                    y="53.069485"
+                    id="text1-7-3-9-4-3-6-6-7-8"><tspan
+       sodipodi:role="line"
+       id="tspan1-3-1-62-1-8-4-2-5-2"
+       style="stroke-width:0.264583"
+       x="305.35028"
+       y="53.069485">KeyboardManager</tspan></text>
+            <rect
+                    style="fill:none;stroke:#ffff00;stroke-width:0.799999"
+                    id="rect1-1-1-0-5-7-5-9-0-6-2-2"
+                    width="38.25"
+                    height="21.128571"
+                    x="345.80042"
+                    y="54.040203"/>
+            <text
+                    xml:space="preserve"
+                    style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                    x="363.8793"
+                    y="52.840099"
+                    id="text1-7-3-9-4-3-6-6-7-8-7"><tspan
+       sodipodi:role="line"
+       id="tspan1-3-1-62-1-8-4-2-5-2-6"
+       style="stroke-width:0.264583"
+       x="363.8793"
+       y="52.840099">MouseManager</tspan></text>
+            <rect
+                    style="fill:none;stroke:#ffff00;stroke-width:0.799999"
+                    id="rect1-1-1-0-5-7-5-9-0-6-2-2-5"
+                    width="38.25"
+                    height="21.128571"
+                    x="402.69867"
+                    y="88.254356"/>
+            <text
+                    xml:space="preserve"
+                    style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                    x="423.29642"
+                    y="87.049309"
+                    id="text1-7-3-9-4-3-6-6-7-8-7-9"><tspan
+       sodipodi:role="line"
+       id="tspan1-3-1-62-1-8-4-2-5-2-6-9"
+       style="stroke-width:0.264583"
+       x="423.29642"
+       y="87.049309">JoystickManager</tspan></text>
+            <rect
+                    style="fill:none;stroke:#ffff00;stroke-width:0.799999"
+                    id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0"
+                    width="38.25"
+                    height="21.128571"
+                    x="403.32361"
+                    y="57.719311"/>
+            <text
+                    xml:space="preserve"
+                    style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                    x="425.55859"
+                    y="56.519207"
+                    id="text1-7-3-9-4-3-6-6-7-8-7-9-7"><tspan
+       sodipodi:role="line"
+       id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5"
+       style="stroke-width:0.264583"
+       x="425.55859"
+       y="56.519207">GamepadManager</tspan></text>
+            <rect
+                    style="fill:none;stroke:#ffff00;stroke-width:0.799999"
+                    id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0-8"
+                    width="38.25"
+                    height="21.128571"
+                    x="402.50305"
+                    y="127.84739"/>
+            <text
+                    xml:space="preserve"
+                    style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                    x="427.33835"
+                    y="126.64729"
+                    id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0"><tspan
+       sodipodi:role="line"
+       id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4"
+       style="stroke-width:0.264583"
+       x="427.33835"
+       y="126.64729">MicrophoneManager</tspan></text>
+            <rect
+                    style="fill:none;stroke:#ffff00;stroke-width:0.799999"
+                    id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0-8-0"
+                    width="38.25"
+                    height="21.128571"
+                    x="342.26959"
+                    y="127.08799"/>
+            <text
+                    xml:space="preserve"
+                    style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                    x="358.05685"
+                    y="125.88789"
+                    id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0-4"><tspan
+       sodipodi:role="line"
+       id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4-2"
+       style="stroke-width:0.264583"
+       x="358.05685"
+       y="125.88789">CamManager</tspan></text>
+            <rect
+                    style="fill:none;stroke:#ffff00;stroke-width:0.799999"
+                    id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0-8-0-5"
+                    width="38.25"
+                    height="21.128571"
+                    x="283.82449"
+                    y="126.9957"/>
+            <text
+                    xml:space="preserve"
+                    style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                    x="299.61176"
+                    y="125.7956"
+                    id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0-4-2"><tspan
+       sodipodi:role="line"
+       id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4-2-9"
+       style="stroke-width:0.264583"
+       x="299.61176"
+       y="125.7956">PenManager</tspan></text></g>
+
+
         <text
                 xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="358.05685"
-                y="125.88789"
-                id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0-4"><tspan
+                style="font-size:12.7px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="256.45715"
+                y="21.812946"
+                id="text1"><tspan
      sodipodi:role="line"
-     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4-2"
-     style="stroke-width:0.264583"
-     x="358.05685"
-     y="125.88789">CamManager</tspan></text>
-        <rect
-                style="fill:none;stroke:#ffff00;stroke-width:0.799999"
-                id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0-8-0-5"
-                width="38.25"
-                height="21.128571"
-                x="283.82449"
-                y="126.9957"/>
+     id="tspan1"
+     style="font-size:12.7px;stroke-width:0.264583"
+     x="256.45715"
+     y="21.812946">Manager, Overview</tspan></text>
         <text
                 xml:space="preserve"
-                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="299.61176"
-                y="125.7956"
-                id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0-4-2"><tspan
+                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="354.45001"
+                y="192.66293"
+                id="text2"><tspan
      sodipodi:role="line"
-     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4-2-9"
+     id="tspan2"
      style="stroke-width:0.264583"
-     x="299.61176"
-     y="125.7956">PenManager</tspan></text>
-        
-        
-        </g></svg>
+     x="354.45001"
+     y="192.66293">Autoplay</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="350.2019"
+                y="177.40646"
+                id="text2-1"><tspan
+     sodipodi:role="line"
+     id="tspan2-0"
+     style="stroke-width:0.264583"
+     x="350.2019"
+     y="177.40646">Timing</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="374.35284"
+                y="208.7657"
+                id="text2-7"><tspan
+     sodipodi:role="line"
+     id="tspan2-2"
+     style="stroke-width:0.264583"
+     x="374.35284"
+     y="208.7657">SpritesheetAnimation</tspan></text></g></svg>

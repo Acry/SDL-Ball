@@ -38,11 +38,8 @@ void Tracer::draw() const {
         if (active[i]) {
             const float halfWidth = width * s[i] * 0.5f;
             const float halfHeight = height * s[i] * 0.5f;
-            // Alpha zusätzlich basierend auf Index reduzieren
-            // TODO/FIXME check vertices order, UV coordinates are okay
             const float indexBasedAlpha = a[i] * (1.0f - static_cast<float>(i) / len);
             glColor4f(r[i], g[i], b[i], indexBasedAlpha);
-
             glBegin(GL_QUADS);
 
             // Links oben
@@ -131,7 +128,7 @@ void Tracer::updateParticles(const float deltaTime) {
     }
 }
 
-void Tracer::setLastPosition(GLfloat nx, GLfloat ny) {
+void Tracer::setLastPosition(const GLfloat nx, const GLfloat ny) {
     lastX = nx;
     lastY = ny;
 }
@@ -188,7 +185,7 @@ void Tracer::rainbowColorUpdate(const float deltaTime) {
     }
 }
 
-void Tracer::enableRainbow(bool enable) {
+void Tracer::enableRainbow(const bool enable) {
     m_rainbowEnabled = enable;
 }
 

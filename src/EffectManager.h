@@ -1,73 +1,20 @@
+// EffectManager.h
 #pragma once
 
 #include <list>
-#include "SpriteSheetAnimation.h"
 #include "MathHelper.h"
 #include "EventManager.h"
 #include "TextureManager.h"
 #include "Tracer.h"
+#include "EffectDefinitions.h"
 
-#define RAD 6.28318530718 // 2*PI
-
-// Effekttypen
-#define FX_SPARKS 0
-#define FX_FIRE 1
-#define FX_TRANSIT 2
-#define FX_PARTICLEFIELD 3
-#define FX_TRACER 4
-
-// Effekteigenschaften
-#define FX_VAR_TYPE 1
-#define FX_VAR_NUM 0
-#define FX_VAR_LIFE 2
-#define FX_VAR_SPEED 3
-#define FX_VAR_SPREAD 4
-#define FX_VAR_SIZE 5
-#define FX_VAR_GRAVITY 6
-#define FX_VAR_COLOR 7
-#define FX_VAR_TEXTURE 8
-#define FX_VAR_RECTANGLE 9
-#define FX_VAR_COLDET 10
-
-struct effect_vars {
-    int type;
-    int num;
-    int life;
-    float speed;
-    float spread;
-    float size;
-    float gravity;
-    float col[3];
-    SpriteSheetAnimation tex;
-    position rect;
-    bool coldet;
-    bool active;
-    int effectId;
-    int transition_half_done;
-};
-
-class Sparkle {
-public:
-    bool active;
-    GLfloat size;
-    GLfloat ang;
-    int life;
-    int lifeleft;
-    position p, v;
-    effect_vars vars;
-    GLfloat bounce, f;
-
-    Sparkle();
-
-    void draw(const float deltaTime);
-};
 
 class Fade {
     GLfloat opacity;
 
 public:
     int age;
-    effect_vars vars;
+    EffectProperties effectProperties;
 
     Fade();
 
@@ -84,9 +31,9 @@ class Particles {
 
 public:
     position p;
-    effect_vars vars;
+    EffectProperties vars;
 
-    void init(effect_vars varsP, position p);
+    void init(EffectProperties varsP, position p);
 
     void draw(const float deltaTime);
 
@@ -102,7 +49,7 @@ class effect_class {
 public:
     Fade transit;
     Particles *pf;
-    effect_vars vars;
+    EffectProperties effectProperties;
 
     effect_class();
 
@@ -113,7 +60,7 @@ public:
 
 class EffectManager {
     std::list<effect_class> effects;
-    effect_vars vars;
+    EffectProperties effectProperties;
     int effectId;
     EventManager *eventManager;
 
@@ -172,6 +119,7 @@ private:
     void registerEventListeners();
 
     // Map für Ball-zu-Tracer Zuordnungen
+    // BallManager sendet BallCreated, BallMoved und BallDestroyed Events
     std::unordered_map<int, int> objectTracers;
 
     void handleBallPaddleCollision(const EventData &data);
