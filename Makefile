@@ -34,12 +34,12 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     MouseManager.cpp \
     Paddle.cpp \
     Particle.cpp \
+    ParticleEffect.cpp \
     PlayfieldBorder.cpp \
     SaveGameManager.cpp \
     Score.cpp \
     SettingsManager.cpp \
     SoundManager.cpp \
-    SparkleEffect.cpp \
     Speedometer.cpp \
     SpriteSheetAnimation.cpp \
     SpriteSheetAnimationManager.cpp \
@@ -48,6 +48,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     TextureUtilities.cpp \
     ThemeManager.cpp \
     Tracer.cpp \
+    TransitionEffect.cpp \
     game_state.cpp \
     main.cpp \
 )
@@ -74,6 +75,7 @@ TEST_TARGETS := \
     test-texture \
     test-theme \
     test-tracer \
+    test-effects \
 
 AUTO_TEST_TARGETS := texture-automatic-test event-automatic-test collision-automatic-test
 TARGET=sdl-ball
@@ -318,8 +320,8 @@ TRACER_TEST_SOURCES := $(MANUAL_TEST_DIR)Tracer_Tests.cpp \
                        $(SOURCE_DIR)TextureUtilities.cpp \
                        $(SOURCE_DIR)Tracer.cpp \
                        $(SOURCE_DIR)Particle.cpp \
-                       $(SOURCE_DIR)SparkleEffect.cpp \
                        $(SOURCE_DIR)MathHelper.cpp \
+                       $(SOURCE_DIR)ParticleEffect.cpp \
 
 TRACER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TRACER_TEST_SOURCES:.cpp=.o)))
 
@@ -327,6 +329,33 @@ test-tracer: $(TRACER_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(TRACER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-tracer
 
 $(BUILD_DIR)Tracer_Tests.o: $(MANUAL_TEST_DIR)Tracer_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
+# Effects
+EFFECTS_TEST_SOURCES := $(MANUAL_TEST_DIR)Effects_Tests.cpp \
+                       $(MANUAL_TEST_DIR)TestHelper.cpp \
+                       $(SOURCE_DIR)DisplayManager.cpp \
+                       $(SOURCE_DIR)EventDispatcher.cpp \
+                       $(SOURCE_DIR)EventManager.cpp \
+                       $(SOURCE_DIR)GameObject.cpp \
+                       $(SOURCE_DIR)MovingObject.cpp \
+                       $(SOURCE_DIR)MouseManager.cpp \
+                       $(SOURCE_DIR)KeyboardManager.cpp \
+                       $(SOURCE_DIR)TextManager.cpp \
+                       $(SOURCE_DIR)TextureManager.cpp \
+                       $(SOURCE_DIR)TextureUtilities.cpp \
+                       $(SOURCE_DIR)TransitionEffect.cpp \
+                       $(SOURCE_DIR)Particle.cpp \
+                       $(SOURCE_DIR)MathHelper.cpp \
+                       $(SOURCE_DIR)ParticleEffect.cpp \
+
+EFFECTS_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECTS_TEST_SOURCES:.cpp=.o)))
+
+test-effects: $(EFFECTS_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(EFFECTS_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-effects
+
+$(BUILD_DIR)Effects_Tests.o: $(MANUAL_TEST_DIR)Effects_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################

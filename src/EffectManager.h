@@ -8,56 +8,6 @@
 #include "Tracer.h"
 #include "EffectDefinitions.h"
 
-
-class Fade {
-    GLfloat opacity;
-
-public:
-    int age;
-    EffectProperties effectProperties;
-
-    Fade();
-
-    void init();
-
-    void draw(const float deltaTime);
-};
-
-class Particles {
-    int spawnTimeout;
-    Sparkle *sparks;
-
-    void spawnSpark(int sparkNum);
-
-public:
-    position p;
-    EffectProperties vars;
-
-    void init(EffectProperties varsP, position p);
-
-    void draw(const float deltaTime);
-
-    void move(position p);
-
-    ~Particles();
-};
-
-class effect_class {
-    position spawn_pos;
-    Sparkle *sparks;
-
-public:
-    Fade transit;
-    Particles *pf;
-    EffectProperties effectProperties;
-
-    effect_class();
-
-    void init(position p);
-
-    void draw(const float deltaTime);
-};
-
 class EffectManager {
     std::list<effect_class> effects;
     EffectProperties effectProperties;

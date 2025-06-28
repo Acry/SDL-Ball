@@ -10,6 +10,6 @@ struct position {
     GLfloat y;
 };
 
-float randomFloat(const float total, const float negative);
+float randomFloat(float total, float negative);
 
 int randomInt(int min, int max);

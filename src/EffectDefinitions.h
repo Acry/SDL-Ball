@@ -4,12 +4,36 @@
 #include "TextureManager.h"
 #include "colors.h"
 
-// Effekttypen
-#define FX_SPARKS 0
-#define FX_FIRE 1
-#define FX_TRANSIT 2
-#define FX_PARTICLEFIELD 3
-#define FX_TRACER 4
+enum class ParticleEffectType {
+    Sparks = 0,
+    Fire = 1,
+    Smoke = 2,
+    Rain = 3,
+    Snow = 4,
+    Explosion = 5,
+    SPARKLE = 6,
+    PARTICLEFIELD = 7,
+    Tracer = 8,
+    // weitere Partikeleffekte
+};
+
+enum class EffectCategory {
+    Particle,
+    Transition,
+    Tracer,
+    // weitere Kategorien
+};
+
+enum class TransitionEffectType {
+    FadeIn = 0,
+    FadeOut = 1,
+    CrossFade = 2,
+    SlideIn = 3,
+    SlideOut = 4,
+    WipeIn = 5,
+    WipeOut = 6,
+    // weitere transitions
+};
 
 // Effekteigenschaften
 #define FX_VAR_TYPE 1
@@ -43,7 +67,7 @@
 // int maxParticles{MAX_PARTICLES}; // Maximale Anzahl von Partikeln
 
 struct BaseEffectProperties {
-    int type = 0;
+    EffectCategory category = EffectCategory::Particle;
     int life = 0;
     float size = 0.0f;
     Color color{1.0f, 1.0f, 1.0f, 1.0f};
@@ -52,15 +76,24 @@ struct BaseEffectProperties {
 };
 
 struct ParticleEffectProperties : public BaseEffectProperties {
-    int num = 0;
+    ParticleEffectType type = ParticleEffectType::Sparks;
+    int count = 0;
     float speed = 0.0f;
     float spread = 0.0f;
     float gravity = 0.0f;
     TextureResource texture;
     bool collisionDetection = false;
+    float directionAngle = 0.0f; // Hauptrichtung des Effekts in Grad
+    float directionVariance = 0.0f; // Wie stark die Richtung variieren kann
+
+    // Optionale Multi-Color-Unterstützung
+    std::vector<Color> colorPalette;
+    bool useColorPalette = false;
 };
 
 struct TransitionEffectProperties : public BaseEffectProperties {
+    TransitionEffectType type = TransitionEffectType::FadeIn;
     position rect = {0.0f, 0.0f};
-    int transition_half_done = 0;
+    float startOpacity = 0.0f;
+    float endOpacity = 1.0f;
 };

@@ -2,24 +2,29 @@
 
 Top: Fix all current manual Tests
 
-- [X] rethink collision (paddle collision points)
-  Mixed approach for now, on collision in GameObjectManagers
-  no convex paddle for now, just a simple rectangle, set angle
+- [ ] [Tracer.md](Effects/Tracer.md) (refactor)
+- [ ] Tracer-Tests
+- [ ] TracerManager-Tests
+- [ ] EffectsManagerTests
+
 - [ ] Paddle/PaddleManager real implementations in src
-- [ ] EffectManager.md
-- [ ] Collision.md
+- [ ] Ball/BallManager real implementations in src
+- [ ] Collision
 - [ ] PowerupManager
 - [ ] Powerups
 - [ ] Gun
-- [ ] Tracer
 
 Paddle-Spawn, Paddle Despawn - on level completed, Paddle explode
+
+- [X] rethink collision (paddle collision points)
+  Mixed approach for now, on collision in GameObjectManagers
+  no convex paddle for now, just a simple rectangle, set angle
 
 ## Connect the dots:
 
 - [ ] GameManager.md
 - [ ] CodeManager.md
-- [ ] SceneManager.md
+- [ ] SceneManager.md -> TransitionEffects
 
 run codeManager (setup game), run sceneManager, (simple menuManager?) run gameManager
 

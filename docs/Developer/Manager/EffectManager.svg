@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-        width="3440"
+        width="2000"
         height="1440"
-        viewBox="0 0 910.16665 381"
+        viewBox="0 0 529.16666 381"
         version="1.1"
         id="svg1"
         xml:space="preserve"
@@ -24,9 +24,9 @@
    inkscape:pagecheckerboard="0"
    inkscape:deskcolor="#d1d1d1"
    inkscape:document-units="mm"
-   inkscape:zoom="0.7263072"
-   inkscape:cx="1004.3959"
-   inkscape:cy="645.04386"
+   inkscape:zoom="0.3631536"
+   inkscape:cx="1590.2362"
+   inkscape:cy="563.1226"
    inkscape:window-width="1720"
    inkscape:window-height="1371"
    inkscape:window-x="1720"
@@ -45,7 +45,7 @@
             id="stop9"/></linearGradient>
         <rect
                 x="157.71742"
-                y="687.82321"
+                y="687.82318"
                 width="215.6445"
                 height="110.98633"
                 id="rect42"/>
@@ -89,11 +89,12 @@
             id="layer1"><rect
    style="fill:url(#pattern10);fill-opacity:1;stroke:none;stroke-width:1.56363"
    id="rect6"
-   width="910.16669"
-   height="383.6319"
+   width="529.16669"
+   height="381.77277"
    x="0"
    y="-0.77276671"
-   sodipodi:insensitive="true" />
+   sodipodi:insensitive="true"
+   inkscape:label="Background" />
 
 
         <text
@@ -220,191 +221,158 @@
                 id="rect1-3-6"
                 width="38.25"
                 height="21.128571"
-                x="324.42529"
-                y="213.74474"/>
+                x="11.583378"
+                y="186.72304"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="331.66086"
-                y="213.28548"
+                x="18.818943"
+                y="186.26378"
                 id="text4-4"><tspan
      sodipodi:role="line"
      id="tspan4-8"
      style="stroke-width:0.264583"
-     x="331.66086"
-     y="213.28548">Tracer</tspan></text>
+     x="18.818943"
+     y="186.26378">Tracer</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="277.93842"
-                y="238.78491"
+                x="51.389633"
+                y="241.61839"
                 id="text2"><tspan
      sodipodi:role="line"
      id="tspan2"
      style="font-size:3.52778px;stroke-width:0.264583"
-     x="277.93842"
-     y="238.78491">RainbowColors</tspan></text>
+     x="51.389633"
+     y="241.61839">RainbowColors</tspan></text>
         <rect
                 style="fill:none;stroke:#ffff00;stroke-width:0.799999"
                 id="rect1-1-1-0-5-7-5-9-0-6-2-2"
                 width="38.25"
                 height="21.128571"
-                x="359.8519"
-                y="29.1432"/>
+                x="274.3324"
+                y="114.66271"/>
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="377.93082"
-                y="27.943096"
+                x="292.41132"
+                y="113.46261"
                 id="text1-7-3-9-4-3-6-6-7-8-7"><tspan
      sodipodi:role="line"
      id="tspan1-3-1-62-1-8-4-2-5-2-6"
      style="stroke-width:0.264583"
-     x="377.93082"
-     y="27.943096">MouseManager</tspan></text>
+     x="292.41132"
+     y="113.46261">MouseManager</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="373.32666"
-                y="23.450817"
+                x="287.80716"
+                y="108.97033"
                 id="text3"><tspan
      sodipodi:role="line"
      id="tspan3"
      style="stroke-width:0.264583"
-     x="373.32666"
-     y="23.450817">TestOnly</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="191.83179"
-                y="162.46132"
-                id="text6"><tspan
-     sodipodi:role="line"
-     id="tspan6"
-     style="stroke-width:0.264583"
-     x="191.83179"
-     y="162.46132">Spark Effects (FX_SPARKS)</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="312.12912"
-                y="161.19345"
-                id="text7"><tspan
-     sodipodi:role="line"
-     id="tspan7"
-     style="stroke-width:0.264583"
-     x="312.12912"
-     y="161.19345">Particle Field Effects (FX_PARTICLEFIELD)</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="74.452927"
-                y="163.55647"
-                id="text8"><tspan
-     sodipodi:role="line"
-     id="tspan8"
-     style="stroke-width:0.264583"
-     x="74.452927"
-     y="163.55647">Fade/Transition Effects (FX_TRANSIT)</tspan></text>
+     x="287.80716"
+     y="108.97033">TestOnly</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="369.81595"
-                y="244.76762"
+                x="56.97403"
+                y="217.74593"
                 id="text10"><tspan
      sodipodi:role="line"
      id="tspan10"
      style="font-size:3.52778px;stroke-width:0.264583"
-     x="369.81595"
-     y="244.76762">Tracer gets the color from the brick it bounces off</tspan></text>
+     x="56.97403"
+     y="217.74593">Tracer gets the color from the brick it bounces off</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="349.59805"
-                y="252.0533"
+                x="36.756134"
+                y="225.0316"
                 id="text11"><tspan
      sodipodi:role="line"
      id="tspan11"
      style="font-size:3.52778px;stroke-width:0.264583"
-     x="349.59805"
-     y="252.0533">Should start in PaddleColor</tspan></text>
+     x="36.756134"
+     y="225.0316">Should start in PaddleColor</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="194.67747"
-                y="177.77641"
+                x="229.70956"
+                y="188.07997"
                 id="text12"><tspan
      sodipodi:role="line"
      id="tspan12"
      style="font-size:3.52778px;stroke-width:0.264583"
-     x="194.67747"
-     y="177.77641">SparkEffect takes x,y of brick and brick color</tspan></text>
+     x="229.70956"
+     y="188.07997">SparkEffect takes x,y of brick and brick color</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="287.0657"
-                y="173.58678"
+                x="319.26431"
+                y="186.9814"
                 id="text13"><tspan
      sodipodi:role="line"
      id="tspan13"
      style="font-size:3.52778px;stroke-width:0.264583"
-     x="287.0657"
-     y="173.58678">PaddleExplode Effect - Particle Field</tspan></text>
+     x="319.26431"
+     y="186.9814">PaddleExplode Effect - Particle Field</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="171.55528"
-                y="203.94154"
+                x="206.58737"
+                y="214.2451"
                 id="text14"><tspan
      sodipodi:role="line"
      id="tspan14"
      style="font-size:3.52778px;stroke-width:0.264583"
-     x="171.55528"
-     y="203.94154">Ball hit Paddle effect</tspan></text>
+     x="206.58737"
+     y="214.2451">Ball hit Paddle effect</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="177.0096"
-                y="185.42638"
+                x="212.04169"
+                y="195.72993"
                 id="text15"><tspan
      sodipodi:role="line"
      id="tspan15"
      style="font-size:3.52778px;stroke-width:0.264583"
-     x="177.0096"
-     y="185.42638">BallHitBrickEvent - Effect</tspan></text>
+     x="212.04169"
+     y="195.72993">BallHitBrickEvent - Effect</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="183.71095"
-                y="192.99126"
+                x="218.74304"
+                y="203.29482"
                 id="text15-0"><tspan
      sodipodi:role="line"
      id="tspan15-6"
      style="font-size:3.52778px;stroke-width:0.264583"
-     x="183.71095"
-     y="192.99126">BallDestroyedBrickEvent - Effect</tspan></text>
+     x="218.74304"
+     y="203.29482">BallDestroyedBrickEvent - Effect</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="270.12643"
-                y="183.42247"
+                x="302.32504"
+                y="196.81709"
                 id="text16"><tspan
      sodipodi:role="line"
      id="tspan16"
      style="font-size:3.52778px;stroke-width:0.264583"
-     x="270.12643"
-     y="183.42247">ExplosiveHitEvent</tspan></text>
+     x="302.32504"
+     y="196.81709">ExplosiveHitEvent</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="350.54962"
-                y="259.11606"
+                x="37.707703"
+                y="232.09435"
                 id="text16-8"><tspan
      sodipodi:role="line"
      id="tspan16-8"
      style="font-size:3.52778px;stroke-width:0.264583"
-     x="350.54962"
-     y="259.11606">ICollideable for Title-Scene?</tspan></text>
+     x="37.707703"
+     y="232.09435">ICollideable for Title-Scene?</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -419,36 +387,25 @@
         <text
                 xml:space="preserve"
                 style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="105.67341"
-                y="88.337814"
+                x="105.41582"
+                y="116.415"
                 id="text18"><tspan
      sodipodi:role="line"
      id="tspan18"
      style="stroke-width:0.264583"
-     x="105.67341"
-     y="88.337814">EffectClasses</tspan></text>
+     x="105.41582"
+     y="116.415">EffectClasses</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="288.16403"
-                y="140.38902"
-                id="text18-1"><tspan
-     sodipodi:role="line"
-     id="tspan18-5"
-     style="stroke-width:0.264583"
-     x="288.16403"
-     y="140.38902">Particles</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="85.012405"
-                y="130.9908"
+                x="80.890984"
+                y="144.64301"
                 id="text18-1-5"><tspan
      sodipodi:role="line"
      id="tspan18-5-6"
      style="stroke-width:0.264583"
-     x="85.012405"
-     y="130.9908">Transitions</tspan></text>
+     x="80.890984"
+     y="144.64301">Transitions</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:4.93889px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -485,14 +442,14 @@
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="248.05811"
-                y="238.78491"
+                x="21.509323"
+                y="241.61839"
                 id="text23"><tspan
      sodipodi:role="line"
      id="tspan23"
      style="font-size:3.52778px;stroke-width:0.264583"
-     x="248.05811"
-     y="238.78491">FireColors</tspan></text>
+     x="21.509323"
+     y="241.61839">FireColors</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -507,39 +464,6 @@
         <text
                 xml:space="preserve"
                 style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="45.514919"
-                y="233.09485"
-                id="text25"><tspan
-     sodipodi:role="line"
-     id="tspan25"
-     style="stroke-width:0.264583"
-     x="45.514919"
-     y="233.09485">Consolidate Colors.h</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="58.827114"
-                y="241.54561"
-                id="text25-5"><tspan
-     sodipodi:role="line"
-     id="tspan25-2"
-     style="stroke-width:0.264583"
-     x="58.827114"
-     y="241.54561">Consolidate Particles(Tracer)</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="74.578323"
-                y="250.1353"
-                id="text25-5-4"><tspan
-     sodipodi:role="line"
-     id="tspan25-2-3"
-     style="stroke-width:0.264583"
-     x="74.578323"
-     y="250.1353">Define DocumentationColor for Effects</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
                 x="41.164288"
                 y="88.521423"
                 id="text26"><tspan
@@ -551,36 +475,25 @@
         <text
                 xml:space="preserve"
                 style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="107.46429"
-                y="100.90713"
+                x="107.2067"
+                y="128.98431"
                 id="text27"><tspan
      sodipodi:role="line"
      id="tspan27"
      style="stroke-width:0.264583"
-     x="107.46429"
-     y="100.90713">BaseEffect</tspan></text>
+     x="107.2067"
+     y="128.98431">BaseEffect</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="103.09286"
-                y="114.02144"
+                x="128.33658"
+                y="144.93211"
                 id="text28"><tspan
      sodipodi:role="line"
      id="tspan28"
      style="stroke-width:0.264583"
-     x="103.09286"
-     y="114.02144">Particle</tspan></text>
-        <text
-                xml:space="preserve"
-                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="134.42143"
-                y="130.77856"
-                id="text30"><tspan
-     sodipodi:role="line"
-     id="tspan30"
-     style="stroke-width:0.264583"
-     x="134.42143"
-     y="130.77856">SparkleEffect</tspan></text>
+     x="128.33658"
+     y="144.93211">Particles</tspan></text>
         <text
                 xml:space="preserve"
                 style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
@@ -638,4 +551,110 @@
      id="tspan26-5"
      style="stroke-width:0.264583"
      x="38.222332"
-     y="74.004646">Colors.h</tspan></text></g></svg>
+     y="74.004646">Colors.h</tspan></text>
+        <rect
+                style="fill:none;stroke:#999999;stroke-width:0.799999"
+                id="rect33"
+                width="122.62275"
+                height="69.323959"
+                x="196.66907"
+                y="260.29358"/>
+        <text
+                xml:space="preserve"
+                style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="239.24738"
+                y="292.84982"
+                id="text33"><tspan
+     sodipodi:role="line"
+     id="tspan33"
+     style="font-size:3.52778px;stroke-width:0.264583"
+     x="239.24738"
+     y="292.84982">EffectFactory</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="261.07928"
+                y="313.08923"
+                id="text34"><tspan
+     sodipodi:role="line"
+     id="tspan34"
+     style="font-size:3.52778px;stroke-width:0.264583"
+     x="261.07928"
+     y="313.08923">class ParticleEffect : public BaseEffect</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="236.42334"
+                y="304.62006"
+                id="text35"><tspan
+     sodipodi:role="line"
+     id="tspan35"
+     style="font-size:3.52778px;stroke-width:0.264583"
+     x="236.42334"
+     y="304.62006">BaseEffect</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="224.40234"
+                y="276.05948"
+                id="text38"><tspan
+     sodipodi:role="line"
+     id="tspan38"
+     style="font-size:3.52778px;stroke-width:0.264583"
+     x="224.40234"
+     y="276.05948">EffectDefinitions</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="209.64868"
+                y="269.50232"
+                id="text39"><tspan
+     sodipodi:role="line"
+     id="tspan39"
+     style="font-size:3.52778px;stroke-width:0.264583"
+     x="209.64868"
+     y="269.50232">colors</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="229.86664"
+                y="284.62018"
+                id="text80"><tspan
+     sodipodi:role="line"
+     id="tspan80"
+     style="font-size:3.52778px;stroke-width:0.264583"
+     x="229.86664"
+     y="284.62018">EffectPresets</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:3.52778px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="262.83441"
+                y="321.41302"
+                id="text81"><tspan
+     sodipodi:role="line"
+     id="tspan81"
+     style="font-size:3.52778px;stroke-width:0.264583"
+     x="262.83441"
+     y="321.41302">class TransitionEffect : public BaseEffect</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="102.11441"
+                y="99.603699"
+                id="text33-4"><tspan
+     sodipodi:role="line"
+     id="tspan33-9"
+     style="font-size:6.35px;stroke-width:0.264583"
+     x="102.11441"
+     y="99.603699">EffectFactory.h</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:6.35px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="102.00687"
+                y="88.798172"
+                id="text80-0"><tspan
+     sodipodi:role="line"
+     id="tspan80-9"
+     style="font-size:6.35px;stroke-width:0.264583"
+     x="102.00687"
+     y="88.798172">EffectPresets.h</tspan></text></g></svg>
