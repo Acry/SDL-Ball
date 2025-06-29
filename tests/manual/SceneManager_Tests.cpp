@@ -113,7 +113,7 @@ public:
 
         if (currentTransition) {
             currentTransition->activate();
-            currentTransition->setTextures(lastTextureId, currentTextureId);
+            currentTransition->setTextures(currentTextureId, nextTextureId);
         }
     }
 
