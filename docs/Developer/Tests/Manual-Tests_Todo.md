@@ -3,6 +3,7 @@
 - [ ] autohide test instructions after 5 seconds
 - [ ] I to toggle instructions
 - [ ] Makefile is getting huge, clion has already problems
+  blocker: source structure
 
 ## Fixtures
 

@@ -2,17 +2,19 @@
 
 Top: Fix all current manual Tests
 
-- [ ] EffectsManagerTests (trigger event at mouse position)
-
-- [ ] Paddle/PaddleManager real implementations in src
-- [ ] Ball/BallManager real implementations in src
+Tests:
 
 - [ ] PowerupManager
-
 - [ ] CollisionManager
 
 - [ ] Powerups
 - [ ] Gun
+
+- [ ] EffectManager real implementations in src
+- [ ] Paddle/PaddleManager real implementations in src
+- [ ] Ball/BallManager real implementations in src
+
+- [ ] GameManager
 
 Solve logic issue kill, collide, render:
 Paddle-Spawn, Paddle Despawn - on level completed, Paddle explode

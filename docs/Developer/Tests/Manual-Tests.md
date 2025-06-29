@@ -5,15 +5,18 @@
 ## Currently implemented manual tests
 
 - test-backgroundManager
+- test-ball
 - test-ballManager (test-driven)
 - test-brickManager (try test-setup: class?)
 - test-codeManager (stub, early setup)
 - test-collisionManager (needs GameObjectManagers)
 - test-configFileManager
 - test-displayManager
-- test-effectManager (need texture changes, needs new test-setup)
+- test-effectManager (test-driven)
+- test-effects (particle effects: EffectFactory)
 - test-levelManager (uses test-setup: context)
-- test-paddle (needs: manager and class rework)
+- test-paddle and PaddleManager (PlayerManager) (test-driven)
+- test-sceneManager (transition effects, todo: FBO)
 - test-settingsManager
 - test-soundManager
 - test-spriteSheetAnimation
@@ -21,18 +24,22 @@
 - test-textManager
 - test-textureManager
 - test-themeManager
+- test-tracer
 
 ## Currently Working manual tests
 
-Before I fix all currently implemented Tests, I want to choose a final test-setup, so I can use it for all tests.
-
 - test-backgroundManager (uses test-setup: MyTestHelper)
+- test-ball
 - test-ballManager (test-driven)
 - test-brickManager (try test-setup: class?)
 - test-codeManager (stub, early setup)
 - test-configFileManager
 - test-displayManager
+- test-effectManager (test-driven)
+- test-effects (particle effects: EffectFactory)
 - test-levelManager (uses test-setup: context)
+- test-paddle and PaddleManager (PlayerManager) (test-driven)
+- test-sceneManager (transition effects, todo: FBO)
 - test-settingsManager
 - test-soundManager
 - test-spriteSheetAnimation
@@ -40,6 +47,7 @@ Before I fix all currently implemented Tests, I want to choose a final test-setu
 - test-textManager
 - test-textureManager
 - test-themeManager
+- test-tracer
 
 ## Planned manual tests (WIP)
 
@@ -74,6 +82,7 @@ Before I fix all currently implemented Tests, I want to choose a final test-setu
 - test-textManager
 - test-textureManager
 - test-themeManager
+- test-TracerManager
 
 ## Test-Setup
 
