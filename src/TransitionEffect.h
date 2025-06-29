@@ -27,8 +27,11 @@ public:
         opacity = properties.startOpacity;
     }
 
+    void setTexture(GLuint textureId) { currentTextureId = textureId; }
+
 private:
     TransitionEffectProperties properties;
     float opacity{0.0f};
     int age{0};
+    GLuint currentTextureId{0}; // Neue Variable für die Textur-ID
 };

@@ -106,6 +106,7 @@ public:
 
         if (currentTransition) {
             currentTransition->activate();
+            currentTransition->setTexture(currentTextureId);
         }
     }
 
