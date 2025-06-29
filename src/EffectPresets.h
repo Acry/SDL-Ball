@@ -55,18 +55,18 @@ namespace EffectPresets {
         ParticleEffectProperties props;
 
         props.type = ParticleEffectType::Smoke;
-        props.life = 5000 + randomInt(-1000, 1000);
-        props.size = 0.08f + randomFloat(0.03f, 0.015f);
-        float greyValue = 0.4f + randomFloat(0.2f, 0.1f);
-        props.color = {greyValue, greyValue, greyValue, 0.5f + randomFloat(0.2f, 0.1f)};
+        props.life = 3000 + randomInt(-300, 300);
+        props.size = 0.04f + randomFloat(0.02f, 0.01f);
+        float greyValue = 0.7f + randomFloat(0.2f, 0.1f);
+        props.color = {greyValue, greyValue, greyValue, 0.2f + randomFloat(0.1f, 0.05f)};
         props.active = false;
         props.effectId = 3;
-        props.count = 100 + randomInt(-20, 20);
-        props.speed = 0.1f + randomFloat(0.05f, 0.025f);
-        props.spread = 90.0f + randomFloat(20.0f, 10.0f);
-        props.gravity = -0.01f + randomFloat(0.005f, 0.0025f);
-        props.directionAngle = 90.0f + randomFloat(10.0f, 5.0f);
-        props.directionVariance = 15.0f + randomFloat(10.0f, 5.0f);
+        props.count = 200 + randomInt(-30, 30);
+        props.speed = 0.2f + randomFloat(0.1f, 0.05f);
+        props.spread = 30.0f + randomFloat(10.0f, 5.0f);
+        props.gravity = -0.08f + randomFloat(0.01f, 0.005f);
+        props.directionAngle = 0.0f; // Nach rechts gerichtet - scheint in eurem System nach oben zu sein
+        props.directionVariance = 5.0f + randomFloat(5.0f, 2.5f);
 
         return props;
     }
