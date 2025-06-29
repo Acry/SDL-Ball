@@ -14,6 +14,7 @@ class TestHelper {
     TextManager &m_textManager;
     IEventManager *m_eventManager;
     const std::filesystem::path screenshotPath = "./screenshots/";
+    bool showInstructions = true;
 
 public:
     float m_mouseX;
@@ -54,5 +55,5 @@ public:
 
     bool m_showMouseCoords;
 
-    void renderInstructions(float deltaTime, const std::vector<std::string> &instructions) const;
+    void renderInstructions(const float deltaTime, const std::vector<std::string> &instructions);
 };

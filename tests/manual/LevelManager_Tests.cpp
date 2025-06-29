@@ -124,7 +124,7 @@ public:
         }
     }
 
-    void renderLevel(const float deltaTime, const std::vector<std::string> &instructions) const {
+    void renderLevel(const float deltaTime, const std::vector<std::string> &instructions) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         drawGrid();
@@ -178,7 +178,7 @@ public:
 int main() {
     try {
         LevelTestContext ctx;
-        const LevelTestHelper testHelper(ctx);
+        LevelTestHelper testHelper(ctx);
         const EventDispatcher eventDispatcher(&ctx.eventManager);
 
         const std::vector<std::string> instructions = {

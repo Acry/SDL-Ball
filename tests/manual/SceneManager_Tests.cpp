@@ -169,7 +169,7 @@ public:
         }
     }
 
-    void render(const float deltaTime, const std::vector<std::string> &instructions) const {
+    void render(const float deltaTime, const std::vector<std::string> &instructions) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (currentTextureId >= 0) {

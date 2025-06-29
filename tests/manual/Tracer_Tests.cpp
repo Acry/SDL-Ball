@@ -121,7 +121,7 @@ public:
         }
     }
 
-    void render(const float deltaTime, const std::vector<std::string> &instructions) const {
+    void render(const float deltaTime, const std::vector<std::string> &instructions) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         drawGrid();
         drawCenterLines();
@@ -143,7 +143,7 @@ int main() {
 
         tracer->setSize(0.1f);
 
-        const TracerTestHelper testHelper(ctx, tracer.get());
+        TracerTestHelper testHelper(ctx, tracer.get());
         const std::vector<std::string> instructions = {
             "ESC: Quit",
             "G: Grow Tracer",

@@ -155,23 +155,37 @@ void TestHelper::drawMouseCoordinates() const {
     glColor4fv(oldColor);
 }
 
-void TestHelper::renderInstructions(const float deltaTime, const std::vector<std::string> &instructions) const {
-    GLfloat oldColor[4];
-    glGetFloatv(GL_CURRENT_COLOR, oldColor);
-    glColor4f(GL_BRIGHT_ORANGE);
-    float yPos = 0.95f;
-    constexpr auto currentFont = Fonts::Menu;
-    const auto height = m_textManager.getHeight(currentFont);
-    for (const auto &instruction: instructions) {
-        const auto offest = height * 0.7f; // 90% der Schriftgröße als Offset
-        m_textManager.write(instruction, currentFont, true, 0.7f, 0.0f, yPos);
-        yPos -= offest;
+void TestHelper::renderInstructions(const float deltaTime, const std::vector<std::string> &instructions) {
+    static float elapsedTime = 0.0f;
+    static bool timerActive = true;
+
+    if (showInstructions) {
+        if (timerActive) {
+            elapsedTime += deltaTime;
+
+            if (elapsedTime > 5.0f) {
+                timerActive = false;
+                showInstructions = false;
+            }
+        }
+
+        GLfloat oldColor[4];
+        glGetFloatv(GL_CURRENT_COLOR, oldColor);
+        glColor4f(GL_BRIGHT_ORANGE);
+        float yPos = 0.95f;
+        constexpr auto currentFont = Fonts::Menu;
+        const auto height = m_textManager.getHeight(currentFont);
+        for (const auto &instruction: instructions) {
+            const auto offset = height * 0.7f;
+            m_textManager.write(instruction, currentFont, true, 0.7f, 0.0f, yPos);
+            yPos -= offset;
+        }
+        if (m_textManager.getAnnouncementCount() > 0) {
+            m_textManager.updateAnnouncements(deltaTime);
+            m_textManager.drawAnnouncements(deltaTime);
+        }
+        glColor4fv(oldColor);
     }
-    if (m_textManager.getAnnouncementCount() > 0) {
-        m_textManager.updateAnnouncements(deltaTime);
-        m_textManager.drawAnnouncements(deltaTime);
-    }
-    glColor4fv(oldColor);
 }
 
 TestHelper::~TestHelper() {
@@ -181,6 +195,9 @@ TestHelper::~TestHelper() {
 
 void TestHelper::handleKeyPress(const KeyboardEventData &data) {
     switch (data.key) {
+        case SDLK_i:
+            showInstructions = !showInstructions;
+            break;
         case SDLK_m:
             m_showMouseCoords = !m_showMouseCoords;
             break;

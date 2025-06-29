@@ -23,7 +23,7 @@ int main() {
         return EXIT_FAILURE;
     }
     const EventDispatcher eventDispatcher(&eventManager);
-    const TestHelper testHelper(textManager, &eventManager);
+    TestHelper testHelper(textManager, &eventManager);
 
     const std::vector<std::string> instructions = {
         "S: Create Screenshot",

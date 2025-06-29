@@ -30,7 +30,7 @@ public:
                                   [this](const EventData &data) { handlePaddleDestroyed(data); }, this);
     }
 
-    const std::vector<std::unique_ptr<ParticleEffect> > &getEffects() const {
+    [[nodiscard]] const std::vector<std::unique_ptr<ParticleEffect> > &getEffects() const {
         return effects;
     }
 
@@ -69,7 +69,7 @@ public:
         if (!displayManager.init(0, 1024, 768, false)) {
             throw std::runtime_error("Could not initialize display");
         }
-        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Ball Test");
+        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: EffectManager Test");
         textManager.setTheme("../tests/themes/test");
         textureManager = std::make_unique<TextureManager>();
         if (!textureManager->setSpriteTheme("../themes/default")) {
@@ -93,7 +93,7 @@ public:
         TestHelper::handleKeyPress(data);
         const position mousePos = {m_mouseX, m_mouseY};
         if (data.key >= SDLK_1 && data.key <= SDLK_6) {
-            EventData eventData{mousePos.x, mousePos.y};
+            const EventData eventData{mousePos.x, mousePos.y};
             switch (data.key) {
                 case SDLK_1:
                     ctx.eventManager.emit(GameEvent::BallHitBrick, eventData);
@@ -125,7 +125,7 @@ public:
         }
     }
 
-    void render(const float deltaTime, const std::vector<std::string> &instructions) const {
+    void render(const float deltaTime, const std::vector<std::string> &instructions) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         for (const auto &effect: ctx.testEffectManager->getEffects()) {
@@ -142,12 +142,14 @@ int main() {
     try {
         EffectManagerTestContext ctx;
         const EventDispatcher eventDispatcher(&ctx.eventManager);
-        const EffectManagerTestHelper testHelper(ctx);
+        EffectManagerTestHelper testHelper(ctx);
 
         const std::vector<std::string> instructions = {
             "1: BallHitBrick-Event",
             "2: BallHitWall-Event",
             "3: PaddleDestroyed-Event",
+            "M: Draw Mouse Coordinates",
+            "S: Screenshot",
             "ESC: Beenden"
         };
 

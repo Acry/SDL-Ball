@@ -123,7 +123,7 @@ public:
         TestHelper::handleMouseCoordinatesNormalized(data);
     }
 
-    void render(const float deltaTime, const std::vector<std::string> &instructions) const {
+    void render(const float deltaTime, const std::vector<std::string> &instructions) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (currentEffect) {
@@ -147,7 +147,7 @@ int main() {
     try {
         EffectsTestContext ctx;
         const EventDispatcher eventDispatcher(&ctx.eventManager);
-        const EffectsTestHelper testHelper(ctx);
+        EffectsTestHelper testHelper(ctx);
         const std::vector<std::string> instructions = {
             "ESC: Quit",
             "0: No Effect",

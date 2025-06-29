@@ -93,7 +93,7 @@ int main() {
     if (!textManager->setTheme("../tests/themes/test")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
-    const MyTestHelper testHelper(*textManager, &eventManager);
+    MyTestHelper testHelper(*textManager, &eventManager);
     textureManager = new TextureManager();
 
     if (!textureManager->setBackgroundTheme(themePath)) {
