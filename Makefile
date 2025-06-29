@@ -344,7 +344,6 @@ EFFECTS_TEST_SOURCES := $(MANUAL_TEST_DIR)Effects_Tests.cpp \
                        $(SOURCE_DIR)TextManager.cpp \
                        $(SOURCE_DIR)TextureManager.cpp \
                        $(SOURCE_DIR)TextureUtilities.cpp \
-                       $(SOURCE_DIR)TransitionEffect.cpp \
                        $(SOURCE_DIR)Particle.cpp \
                        $(SOURCE_DIR)MathHelper.cpp \
                        $(SOURCE_DIR)ParticleEffect.cpp \

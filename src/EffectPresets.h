@@ -55,18 +55,18 @@ namespace EffectPresets {
         ParticleEffectProperties props;
 
         props.type = ParticleEffectType::Smoke;
-        props.life = 3000 + randomInt(-300, 300);
-        props.size = 0.04f + randomFloat(0.02f, 0.01f);
+        props.life = 8000 + randomInt(-800, 800); // Deutlich erhöhte Lebensdauer
+        props.size = 0.06f + randomFloat(0.02f, 0.01f);
         float greyValue = 0.7f + randomFloat(0.2f, 0.1f);
-        props.color = {greyValue, greyValue, greyValue, 0.2f + randomFloat(0.1f, 0.05f)};
+        props.color = {greyValue, greyValue, greyValue, 0.3f + randomFloat(0.1f, 0.05f)};
         props.active = false;
         props.effectId = 3;
-        props.count = 200 + randomInt(-30, 30);
-        props.speed = 0.2f + randomFloat(0.1f, 0.05f);
-        props.spread = 30.0f + randomFloat(10.0f, 5.0f);
-        props.gravity = -0.08f + randomFloat(0.01f, 0.005f);
-        props.directionAngle = 0.0f; // Nach rechts gerichtet - scheint in eurem System nach oben zu sein
-        props.directionVariance = 5.0f + randomFloat(5.0f, 2.5f);
+        props.count = 250 + randomInt(-30, 30);
+        props.speed = 0.05f + randomFloat(0.03f, 0.01f);
+        props.spread = 60.0f + randomFloat(15.0f, 5.0f);
+        props.gravity = -0.09f + randomFloat(0.01f, 0.005f); // Etwas stärkere negative Gravitation
+        props.directionAngle = 0.0f;
+        props.directionVariance = 5.0f;
 
         return props;
     }
