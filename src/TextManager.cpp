@@ -25,12 +25,12 @@ TextManager::TextManager() : fontInfo{} {
     TTF_Init();
 }
 
-bool isUtf8StartByte(unsigned char byte) {
+bool isUtf8StartByte(const unsigned char byte) {
     // 0xC0 = 11000000, prüft auf führendes Bit-Muster 11xxxxxx
     return (byte & 0xC0) == 0xC0;
 }
 
-int getUtf8ByteCount(unsigned char byte) {
+int getUtf8ByteCount(const unsigned char byte) {
     if ((byte & 0x80) == 0) return 1; // 0xxxxxxx - ASCII (1 Byte)
     if ((byte & 0xE0) == 0xC0) return 2; // 110xxxxx - 2 Bytes (z.B. ö)
     if ((byte & 0xF0) == 0xE0) return 3; // 1110xxxx - 3 Bytes

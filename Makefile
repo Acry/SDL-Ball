@@ -67,6 +67,7 @@ TEST_TARGETS := \
     test-effect \
     test-level \
     test-paddle \
+    test-scenes \
     test-setting \
     test-sound \
     test-spritesheet \
@@ -338,8 +339,6 @@ EFFECTS_TEST_SOURCES := $(MANUAL_TEST_DIR)Effects_Tests.cpp \
                        $(SOURCE_DIR)DisplayManager.cpp \
                        $(SOURCE_DIR)EventDispatcher.cpp \
                        $(SOURCE_DIR)EventManager.cpp \
-                       $(SOURCE_DIR)GameObject.cpp \
-                       $(SOURCE_DIR)MovingObject.cpp \
                        $(SOURCE_DIR)MouseManager.cpp \
                        $(SOURCE_DIR)KeyboardManager.cpp \
                        $(SOURCE_DIR)TextManager.cpp \
@@ -356,6 +355,29 @@ test-effects: $(EFFECTS_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(EFFECTS_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-effects
 
 $(BUILD_DIR)Effects_Tests.o: $(MANUAL_TEST_DIR)Effects_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
+# Scenes
+SCENE_TEST_SOURCES := $(MANUAL_TEST_DIR)SceneManager_Tests.cpp \
+                      $(MANUAL_TEST_DIR)TestHelper.cpp \
+                      $(SOURCE_DIR)DisplayManager.cpp \
+                      $(SOURCE_DIR)EventDispatcher.cpp \
+                      $(SOURCE_DIR)EventManager.cpp \
+                      $(SOURCE_DIR)KeyboardManager.cpp \
+                      $(SOURCE_DIR)MathHelper.cpp \
+                      $(SOURCE_DIR)MouseManager.cpp \
+                      $(SOURCE_DIR)TextManager.cpp \
+                      $(SOURCE_DIR)TextureManager.cpp \
+                      $(SOURCE_DIR)TextureUtilities.cpp \
+                      $(SOURCE_DIR)TransitionEffect.cpp \
+
+SCENE_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SCENE_TEST_SOURCES:.cpp=.o)))
+
+test-scenes: $(SCENE_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(SCENE_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-scenes
+
+$(BUILD_DIR)SceneManager_Tests.o: $(MANUAL_TEST_DIR)SceneManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################

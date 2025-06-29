@@ -66,7 +66,6 @@ void TransitionEffect::draw() {
         case TransitionEffectType::FadeIn:
         case TransitionEffectType::FadeOut:
         case TransitionEffectType::CrossFade:
-            // Vollbild-Fade-Effekt
             glColor4f(properties.color.r, properties.color.g, properties.color.b, opacity);
             glBegin(GL_QUADS);
             glVertex3f(-1.0f, 1.0f, 0.0);
@@ -78,7 +77,6 @@ void TransitionEffect::draw() {
 
         case TransitionEffectType::SlideIn:
         case TransitionEffectType::SlideOut:
-            // Gleitendes Rechteck
             glColor4f(properties.color.r, properties.color.g, properties.color.b, 1.0f);
             glBegin(GL_QUADS);
             glVertex3f(properties.rect.x, 1.0f, 0.0);

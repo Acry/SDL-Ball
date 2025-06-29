@@ -107,3 +107,147 @@ const float targetFrameTime = 1.0f / 60.0f; // 60 FPS
     }
 
 }
+
+## Option
+
+// CodeManager.h
+#pragma once
+#include "IEventManager.h"
+#include "ConfigFileManager.h"
+#include "SettingsManager.h"
+#include "ThemeManager.h"
+#include "DisplayManager.h"
+#include "TextureManager.h"
+#include "TextManager.h"
+#include "SceneManager.h"
+#include "GameManager.h"
+
+class CodeManager {
+private:
+// Pointer für alle Manager
+std::unique_ptr<IEventManager> eventManager;
+std::unique_ptr<ConfigFileManager> configFileManager;
+std::unique_ptr<SettingsManager> settingsManager;
+std::unique_ptr<ThemeManager> themeManager;
+std::unique_ptr<DisplayManager> displayManager;
+std::unique_ptr<TextureManager> textureManager;
+std::unique_ptr<TextManager> textManager;
+std::unique_ptr<SceneManager> sceneManager;
+std::unique_ptr<GameManager> gameManager;
+
+    bool isInitialized = false;
+    bool isRunning = false;
+
+    void initEventListeners();
+    void onLevelThemeRequested(const ThemeData &data);
+    void applyTheme(const std::string &themeName);
+
+public:
+CodeManager();
+~CodeManager();
+
+    bool initialize();
+    void run();
+    void shutdown();
+
+};
+
+#include "CodeManager.h"
+
+CodeManager::CodeManager() = default;
+
+CodeManager::~CodeManager() {
+shutdown();
+}
+
+bool CodeManager::initialize() {
+if (isInitialized) return true;
+
+    // Alle Manager in der richtigen Reihenfolge erstellen
+    eventManager = std::make_unique<EventManager>();
+    configFileManager = std::make_unique<ConfigFileManager>();
+    settingsManager = std::make_unique<SettingsManager>();
+    displayManager = std::make_unique<DisplayManager>();
+    textureManager = std::make_unique<TextureManager>();
+    textManager = std::make_unique<TextManager>();
+    themeManager = std::make_unique<ThemeManager>();
+    sceneManager = std::make_unique<SceneManager>();
+    gameManager = std::make_unique<GameManager>();
+
+    // Manager initialisieren
+    if (!eventManager->init() || 
+        !configFileManager->init() ||
+        !settingsManager->init() ||
+        !displayManager->init() ||
+        !textureManager->init() ||
+        !textManager->init() ||
+        !themeManager->init() ||
+        !sceneManager->init() ||
+        !gameManager->init()) {
+        return false;
+    }
+
+    initEventListeners();
+    isInitialized = true;
+    return true;
+
+}
+
+void CodeManager::run() {
+if (!isInitialized) return;
+
+    isRunning = true;
+    while (isRunning) {
+        // Event-Verarbeitung
+        eventManager->processEvents();
+        
+        // Update-Logik
+        gameManager->update();
+        sceneManager->update();
+        
+        // Rendering
+        displayManager->clear();
+        sceneManager->render();
+        displayManager->swap();
+        
+        // Prüfen, ob das Programm beendet werden soll
+        if (eventManager->shouldQuit()) {
+            isRunning = false;
+        }
+    }
+
+}
+
+void CodeManager::shutdown() {
+if (!isInitialized) return;
+
+    isRunning = false;
+    
+    // Manager in umgekehrter Reihenfolge herunterfahren
+    gameManager.reset();
+    sceneManager.reset();
+    themeManager.reset();
+    textManager.reset();
+    textureManager.reset();
+    displayManager.reset();
+    settingsManager.reset();
+    configFileManager.reset();
+    eventManager.reset();
+    
+    isInitialized = false;
+
+}
+
+void CodeManager::initEventListeners() {
+// Event-Listener registrieren
+// z.B.: eventManager->addListener(EventType::THEME_REQUESTED,
+// std::bind(&CodeManager::onLevelThemeRequested, this, std::placeholders::_1));
+}
+
+void CodeManager::onLevelThemeRequested(const ThemeData &data) {
+applyTheme(data.themeName);
+}
+
+void CodeManager::applyTheme(const std::string &themeName) {
+themeManager->applyTheme(themeName);
+}

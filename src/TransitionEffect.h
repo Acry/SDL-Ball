@@ -2,7 +2,7 @@
 #pragma once
 #include "BaseEffect.h"
 
-class TransitionEffect : public BaseEffect {
+class TransitionEffect final : public BaseEffect {
 public:
     TransitionEffect();
 
