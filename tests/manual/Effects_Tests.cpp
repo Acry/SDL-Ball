@@ -5,7 +5,6 @@
 #include "DisplayManager.hpp"
 #include "EffectFactory.h"
 #include "EventDispatcher.h"
-#include "MovingObject.h"
 #include "KeyboardManager.h"
 #include "MouseManager.h"
 #include "TestHelper.h"
@@ -148,8 +147,6 @@ int main() {
     try {
         EffectsTestContext ctx;
         const EventDispatcher eventDispatcher(&ctx.eventManager);
-
-
         const EffectsTestHelper testHelper(ctx);
         const std::vector<std::string> instructions = {
             "ESC: Quit",

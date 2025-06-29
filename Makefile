@@ -64,7 +64,7 @@ TEST_TARGETS := \
     test-collision \
     test-config \
     test-display \
-    test-effect \
+    test-effectManager \
     test-level \
     test-paddle \
     test-scenes \
@@ -335,18 +335,18 @@ $(BUILD_DIR)Tracer_Tests.o: $(MANUAL_TEST_DIR)Tracer_Tests.cpp
 ###############################################################################
 # Effects
 EFFECTS_TEST_SOURCES := $(MANUAL_TEST_DIR)Effects_Tests.cpp \
-                       $(MANUAL_TEST_DIR)TestHelper.cpp \
-                       $(SOURCE_DIR)DisplayManager.cpp \
-                       $(SOURCE_DIR)EventDispatcher.cpp \
-                       $(SOURCE_DIR)EventManager.cpp \
-                       $(SOURCE_DIR)MouseManager.cpp \
-                       $(SOURCE_DIR)KeyboardManager.cpp \
-                       $(SOURCE_DIR)TextManager.cpp \
-                       $(SOURCE_DIR)TextureManager.cpp \
-                       $(SOURCE_DIR)TextureUtilities.cpp \
-                       $(SOURCE_DIR)Particle.cpp \
-                       $(SOURCE_DIR)MathHelper.cpp \
-                       $(SOURCE_DIR)ParticleEffect.cpp \
+                        $(MANUAL_TEST_DIR)TestHelper.cpp \
+                        $(SOURCE_DIR)DisplayManager.cpp \
+                        $(SOURCE_DIR)EventDispatcher.cpp \
+                        $(SOURCE_DIR)EventManager.cpp \
+                        $(SOURCE_DIR)KeyboardManager.cpp \
+                        $(SOURCE_DIR)MathHelper.cpp \
+                        $(SOURCE_DIR)MouseManager.cpp \
+                        $(SOURCE_DIR)Particle.cpp \
+                        $(SOURCE_DIR)ParticleEffect.cpp \
+                        $(SOURCE_DIR)TextManager.cpp \
+                        $(SOURCE_DIR)TextureManager.cpp \
+                        $(SOURCE_DIR)TextureUtilities.cpp \
 
 EFFECTS_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECTS_TEST_SOURCES:.cpp=.o)))
 
@@ -468,25 +468,24 @@ $(BUILD_DIR)Ball_Tests.o: $(MANUAL_TEST_DIR)Ball_Tests.cpp
 
 ###############################################################################
 # EffectManager
-EFFECT_TEST_SOURCES := $(MANUAL_TEST_DIR)EffectManager_Tests.cpp \
-                       $(SOURCE_DIR)DisplayManager.cpp \
-                       $(SOURCE_DIR)EffectManager.cpp \
-                       $(SOURCE_DIR)EventDispatcher.cpp \
-                       $(SOURCE_DIR)EventManager.cpp \
-                       $(SOURCE_DIR)MathHelper.cpp \
-                       $(SOURCE_DIR)MouseManager.cpp \
-                       $(SOURCE_DIR)KeyboardManager.cpp \
-                       $(SOURCE_DIR)MovingObject.cpp \
-                       $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                       $(SOURCE_DIR)TextManager.cpp \
-                       $(SOURCE_DIR)TextureManager.cpp \
-                       $(SOURCE_DIR)TextureUtilities.cpp \
-                       # $(SOURCE_DIR)Tracer.cpp \
+EFFECTMANAGER_TEST_SOURCES := $(MANUAL_TEST_DIR)EffectManager_Tests.cpp \
+                              $(MANUAL_TEST_DIR)TestHelper.cpp \
+                              $(SOURCE_DIR)DisplayManager.cpp \
+                              $(SOURCE_DIR)EventDispatcher.cpp \
+                              $(SOURCE_DIR)EventManager.cpp \
+                              $(SOURCE_DIR)KeyboardManager.cpp \
+                              $(SOURCE_DIR)MathHelper.cpp \
+                              $(SOURCE_DIR)MouseManager.cpp \
+                              $(SOURCE_DIR)Particle.cpp \
+                              $(SOURCE_DIR)ParticleEffect.cpp \
+                              $(SOURCE_DIR)TextManager.cpp \
+                              $(SOURCE_DIR)TextureManager.cpp \
+                              $(SOURCE_DIR)TextureUtilities.cpp \
 
-EFFECT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECT_TEST_SOURCES:.cpp=.o)))
+EFFECTMANAGER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECTMANAGER_TEST_SOURCES:.cpp=.o)))
 
-test-effect: $(EFFECT_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(EFFECT_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-effect
+test-effectManager: $(EFFECTMANAGER_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(EFFECTMANAGER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-effectManager
 
 $(BUILD_DIR)EffectManager_Tests.o: $(MANUAL_TEST_DIR)EffectManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
@@ -494,15 +493,15 @@ $(BUILD_DIR)EffectManager_Tests.o: $(MANUAL_TEST_DIR)EffectManager_Tests.cpp
 ###############################################################################
 # TextureManager - Themes
 TEXTURE_MANAGER_TEST_SOURCES := $(MANUAL_TEST_DIR)TextureManager_Tests.cpp \
-                            $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                            $(SOURCE_DIR)DisplayManager.cpp \
-                            $(SOURCE_DIR)TextManager.cpp \
-                            $(SOURCE_DIR)TextureManager.cpp \
-                            $(SOURCE_DIR)TextureUtilities.cpp \
-                            $(SOURCE_DIR)EventManager.cpp \
-                            $(SOURCE_DIR)MouseManager.cpp \
-                            $(SOURCE_DIR)EventDispatcher.cpp \
-                            $(MANUAL_TEST_DIR)TestHelper.cpp \
+                                $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                                $(SOURCE_DIR)DisplayManager.cpp \
+                                $(SOURCE_DIR)TextManager.cpp \
+                                $(SOURCE_DIR)TextureManager.cpp \
+                                $(SOURCE_DIR)TextureUtilities.cpp \
+                                $(SOURCE_DIR)EventManager.cpp \
+                                $(SOURCE_DIR)MouseManager.cpp \
+                                $(SOURCE_DIR)EventDispatcher.cpp \
+                                $(MANUAL_TEST_DIR)TestHelper.cpp \
 
 TEXTURE_MANAGER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXTURE_MANAGER_TEST_SOURCES:.cpp=.o)))
 

@@ -1,30 +1,28 @@
 # EffectManager
 
-Vereinfachtes Beispiel für den EffectManager
+The `EffectManager` is a manager designed to map `GameEvents` to effects.
+It listens to specific game events and triggers corresponding visual effects using the `EffectFactory`.
 
-```c++
-class EffectManager {
-public:
-EffectManager(EventManager* eventManager, TextureManager* textureManager)
-: m_eventManager(eventManager), m_effectFactory(textureManager) {
+## Key Responsibilities
 
-        // Auf GameEvents hören
-        m_eventManager->subscribe<BrickDestroyedEvent>([this](const BrickDestroyedEvent& event) {
-            // Brick wurde zerstört, erzeuge Funken-Effekt
-            auto effect = m_effectFactory.createSparkEffect(event.position);
-            m_activeEffects.push_back(std::move(effect));
-        });
-        
-        // Weitere Event-Handling...
-    }
-    
-    // Update und Draw-Methoden...
+- **Event Handling**: Registers listeners for game events from GameEvents.h.
+- **Effect Creation**: Uses the `EffectFactory` to create effects dynamically based on event data.
+- **Effect Management**: Stores and updates active effects.
 
-private:
-EventManager* m_eventManager;
-EffectFactory m_effectFactory;
-std::vector<std::unique_ptr<ParticleEffect>> m_activeEffects;
-};
-```
+## Methods Overview
+
+- **Event Registration**:
+    - `registerEventListeners()`: Registers event listeners for specific game events.
+
+- **Event Handlers**:
+    - `handleBallBrickCollision(const EventData &data)`: Creates a spark effect at the collision position.
+
+- **Effect Retrieval**:
+    - `getEffects() const`: Returns a list of currently active effects.
+
+## Integration
+
+The `EffectManager` integrates with the `EventManager` to dynamically respond to game events. It uses the
+`EffectFactory` to generate effects based on predefined presets, ensuring consistent visual representation.
 
 ![EffectManager.svg](EffectManager.svg)
