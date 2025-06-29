@@ -62,22 +62,46 @@ void TransitionEffect::draw() {
 
     switch (properties.type) {
         case TransitionEffectType::FadeIn:
+            // Zuerst aktuelle Textur rendern
+            if (currentTextureId > 0) {
+                renderTexture(currentTextureId, 1.0f);
+            }
+            // Dann nächste Textur mit Opacity
+            if (nextTextureId > 0) {
+                renderTexture(nextTextureId, opacity);
+            }
+            break;
+
         case TransitionEffectType::FadeOut:
+            // Nur aktuelle Textur mit abnehmender Opacity
+            if (currentTextureId > 0) {
+                renderTexture(currentTextureId, 1.0f - opacity);
+            }
+            // Hintergrund schwarz oder nächste Textur
+            if (nextTextureId > 0) {
+                renderTexture(nextTextureId, 1.0f);
+            }
+            break;
+
         case TransitionEffectType::CrossFade:
-            glDisable(GL_TEXTURE_2D);
-            glColor4f(properties.color.r, properties.color.g, properties.color.b, opacity);
-            glBegin(GL_QUADS);
-            glVertex3f(-1.0f, 1.0f, 0.0);
-            glVertex3f(1.0f, 1.0f, 0.0);
-            glVertex3f(1.0f, -1.0f, 0.0);
-            glVertex3f(-1.0f, -1.0f, 0.0);
-            glEnd();
+            // Beide Texturen mit entgegengesetzter Opacity
+            if (currentTextureId > 0) {
+                renderTexture(currentTextureId, 1.0f - opacity);
+            }
+            if (nextTextureId > 0) {
+                renderTexture(nextTextureId, opacity);
+            }
             break;
 
         case TransitionEffectType::SlideIn:
+            // Aktuelle Textur statisch
             if (currentTextureId > 0) {
+                renderTexture(currentTextureId, 1.0f);
+            }
+            // Nächste Textur schiebt sich rein
+            if (nextTextureId > 0) {
                 glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, currentTextureId);
+                glBindTexture(GL_TEXTURE_2D, nextTextureId);
                 glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
                 glBegin(GL_QUADS);
                 glTexCoord2f(0.0f, 0.0f);
@@ -89,10 +113,16 @@ void TransitionEffect::draw() {
                 glTexCoord2f(0.0f, 1.0f);
                 glVertex3f(properties.rect.x, 1.0f, 0.0);
                 glEnd();
+                glDisable(GL_TEXTURE_2D);
             }
             break;
 
         case TransitionEffectType::SlideOut:
+            // Nächste Textur statisch im Hintergrund
+            if (nextTextureId > 0) {
+                renderTexture(nextTextureId, 1.0f);
+            }
+            // Aktuelle Textur schiebt sich raus
             if (currentTextureId > 0) {
                 glEnable(GL_TEXTURE_2D);
                 glBindTexture(GL_TEXTURE_2D, currentTextureId);
@@ -107,46 +137,55 @@ void TransitionEffect::draw() {
                 glTexCoord2f(0.0f, 1.0f);
                 glVertex3f(properties.rect.x, 1.0f, 0.0);
                 glEnd();
+                glDisable(GL_TEXTURE_2D);
             }
             break;
 
         case TransitionEffectType::WipeIn:
+            // Aktuelle Textur im Hintergrund
             if (currentTextureId > 0) {
+                renderTexture(currentTextureId, 1.0f);
+            }
+            // Nächste Textur wird aufgedeckt
+            if (nextTextureId > 0) {
                 glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, currentTextureId);
+                glBindTexture(GL_TEXTURE_2D, nextTextureId);
                 glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
                 glBegin(GL_QUADS);
-                // Texturkoordinaten anpassen, um nur den sichtbaren Teil zu zeigen
-                float texCoordX = (properties.rect.x + 1.0f) / 2.0f; // Von -1,1 auf 0,1 normalisieren
                 glTexCoord2f(0.0f, 0.0f);
                 glVertex3f(-1.0f, -1.0f, 0.0);
-                glTexCoord2f(texCoordX, 0.0f);
+                glTexCoord2f(1.0f, 0.0f);
                 glVertex3f(properties.rect.x, -1.0f, 0.0);
-                glTexCoord2f(texCoordX, 1.0f);
+                glTexCoord2f(1.0f, 1.0f);
                 glVertex3f(properties.rect.x, 1.0f, 0.0);
                 glTexCoord2f(0.0f, 1.0f);
                 glVertex3f(-1.0f, 1.0f, 0.0);
                 glEnd();
+                glDisable(GL_TEXTURE_2D);
             }
             break;
 
         case TransitionEffectType::WipeOut:
+            // Nächste Textur im Hintergrund
+            if (nextTextureId > 0) {
+                renderTexture(nextTextureId, 1.0f);
+            }
+            // Aktuelle Textur wird verdeckt
             if (currentTextureId > 0) {
                 glEnable(GL_TEXTURE_2D);
                 glBindTexture(GL_TEXTURE_2D, currentTextureId);
                 glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
                 glBegin(GL_QUADS);
-                // Texturkoordinaten anpassen, um nur den sichtbaren Teil zu zeigen
-                float texCoordX = (1.0f - properties.rect.x) / 2.0f; // Von -1,1 auf 0,1 normalisieren
-                glTexCoord2f(texCoordX, 0.0f);
+                glTexCoord2f(0.0f, 0.0f);
                 glVertex3f(properties.rect.x, -1.0f, 0.0);
                 glTexCoord2f(1.0f, 0.0f);
                 glVertex3f(1.0f, -1.0f, 0.0);
                 glTexCoord2f(1.0f, 1.0f);
                 glVertex3f(1.0f, 1.0f, 0.0);
-                glTexCoord2f(texCoordX, 1.0f);
+                glTexCoord2f(0.0f, 1.0f);
                 glVertex3f(properties.rect.x, 1.0f, 0.0);
                 glEnd();
+                glDisable(GL_TEXTURE_2D);
             }
             break;
     }
@@ -157,4 +196,22 @@ void TransitionEffect::draw() {
 
 bool TransitionEffect::isActive() const {
     return properties.active;
+}
+
+// Hilfsmethode zum Rendern einer Textur mit Opazität
+void TransitionEffect::renderTexture(GLuint textureId, float alpha) {
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glColor4f(1.0f, 1.0f, 1.0f, alpha);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex3f(-1.0f, -1.0f, 0.0f);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex3f(1.0f, -1.0f, 0.0f);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex3f(1.0f, 1.0f, 0.0f);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex3f(-1.0f, 1.0f, 0.0f);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
 }

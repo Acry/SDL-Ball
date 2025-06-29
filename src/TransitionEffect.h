@@ -29,9 +29,16 @@ public:
 
     void setTexture(GLuint textureId) { currentTextureId = textureId; }
 
+    void setTextures(GLuint currentTexId, GLuint nextTexId) {
+        currentTextureId = currentTexId;
+        nextTextureId = nextTexId;
+    }
+
 private:
     TransitionEffectProperties properties;
     float opacity{0.0f};
     int age{0};
     GLuint currentTextureId{0}; // Neue Variable für die Textur-ID
+    GLuint nextTextureId{0}; // Nächste Szene
+    void renderTexture(GLuint textureId, float alpha);
 };

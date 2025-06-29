@@ -85,6 +85,13 @@ public:
             SDL_Log("Fehler beim Laden der Textur: %s", scene.textureName.c_str());
         }
 
+        // Lade die nächste Textur für den Übergang
+        int nextSceneIndex = (currentSceneIndex + 1) % scenes.size();
+        GLuint nextTextureId = -1;
+        if (texture nextTex; ctx.textureManager->load(scenes[nextSceneIndex].textureName, nextTex)) {
+            nextTextureId = nextTex.textureProperties.id;
+        }
+
         switch (scene.transitionType) {
             case 1: currentTransition = ctx.effectFactory->createFadeInEffect();
                 break;
@@ -106,7 +113,7 @@ public:
 
         if (currentTransition) {
             currentTransition->activate();
-            currentTransition->setTexture(currentTextureId);
+            currentTransition->setTextures(lastTextureId, currentTextureId);
         }
     }
 
