@@ -1,4 +1,4 @@
-# physics
+# Physics
 
 Box2D
 https://github.com/erincatto/box2d
@@ -112,4 +112,4 @@ Vector3 cohesion(0, 0, 0);     // Zusammenhalt des Schwarms
 
 nun, ich habe dabei eher an gegner gedacht, die dann spawnen.
 
-wie bei arkanoid und bombjack
+Wie bei [Arkanoid](../../Game/Intro.md/#Arkanoid) und Bomb Jack see: [enemies](Enemies.md)

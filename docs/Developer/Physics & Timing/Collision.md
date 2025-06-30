@@ -3,6 +3,7 @@
 Im Weltraum spielt die Masse bei Kollisionen nach wie vor eine entscheidende Rolle, da die Grundgesetze der Physik,
 insbesondere der Impulserhaltungssatz, auch dort gelten. Wenn zwei Stahlkugeln im Weltraum kollidieren, hängt die
 Änderung ihrer Bewegungsrichtung und -geschwindigkeit von ihren Massen und ihren Geschwindigkeiten vor der Kollision ab.
+
 Details zur Kollision:
 Impulserhaltung: Der Gesamtimpuls (Masse × Geschwindigkeit) des Systems bleibt vor und nach der Kollision erhalten,
 solange keine äußeren Kräfte wirken. Das bedeutet, dass die kleinere Kugel (mit geringerer Masse) nach der Kollision

@@ -1,19 +1,18 @@
 # Game History
 
-https://en.wikipedia.org/wiki/Breakout_(video_game)
-
-[ ] bring my own researches into this ( find first =) )
+[ ] bring my own researches into this, find it first =)
 
 ## Clean Sweep
 
 Clean Sweep is a seminal block breaker video game developed and published by Ramtek for the arcade in May 1974.
+The game uses TTL instead of a CPU and is among the first video games to use RAM to store the game state and ROM to
+store graphics.
+
 ![18131824-clean-sweep-arcade-player-1-start.png](18131824-clean-sweep-arcade-player-1-start.png)
 
 ![18131824-clean-sweep-arcade-player-1-start.png](18131824-clean-sweep-arcade-player-1-start.png)
 
 https://www.arcade-museum.com/Videogame/clean-sweep
-The game uses TTL instead of a CPU and is among the first video games to use RAM to store the game state and ROM to
-store graphics.
 
 http://www.thealmightyguru.com/Wiki/index.php?title=Clean_Sweep
 
@@ -27,9 +26,10 @@ Mame Set Version :0.230Cpu :Netlist CPU DeviceCpu Clock :1000 Mhz
 ## Breakout
 
 Atari 2600, 1976
+
 https://atari.com/pages/breakout?srsltid=AfmBOorhHtA2S0oXoYLhtrpe8O4zG_ldgQn9MUzpIRjFNIrOektR3S-B
 
-Breakout is an arcade video game developed and published by Atari, Inc.[7] and released on May 13, 1976.[2] Breakout was
+Breakout is an arcade video game developed and published by Atari, Inc. and released on May 13, 1976. Breakout was
 released in Japanese arcades by Namco. The game was designed by Nolan Bushnell and Steve Bristow and prototyped via
 discrete logic chips by Steve Wozniak with assistance from Steve Jobs.
 
@@ -41,15 +41,20 @@ The arcade version of Breakout uses a monochrome display underneath a translucen
 
 ## Arkanoid
 
-https://www.youtube.com/watch?v=fA6cfcL7sm8&t=352s
+See: [Arkanoid](Themes/Arkanoid/Arkanoid.md)
 
-## More Clones
+## Clones and Remakes
 
 https://www.youtube.com/watch?v=SIUrwg6WV
 
 https://www.youtube.com/watch?v=BeiLZVXxpiI
-DX-Ball 1995 - Michael P. Welch, based on Megaball by Ed and Al Mackey
-DX-Ball 2 1996
-Shatter 2009 - remastered 2022
-Ricochet Lost Worlds: Recharged. 2006
-Ricochet Infinity 2007
+
+- DX-Ball, 1995 - Michael P. Welch, based on Megaball by Ed and Al Mackey
+- DX-Ball 2, 1996
+- Ricochet Lost Worlds: Recharged, 2006
+- Ricochet Infinity, 2007
+- Shatter, 2009 - remastered 2022
+
+## Resources
+
+https://en.wikipedia.org/wiki/Breakout_(video_game)

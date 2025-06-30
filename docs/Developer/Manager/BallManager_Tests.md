@@ -176,6 +176,6 @@ fortgeschrittene Algorithmen für Kollisionserkennung und -behandlung bieten.
 
 Diese Ansätze können kombiniert werden, um die Effizienz und Genauigkeit der Kollisionserkennung zu verbessern.
 
-../Physics & Timing/Collision.md
-../Physics & Timing/Physcis.md
-../Physics & Timing/Timing.md
+[Physics.md](../Physics%20%26%20Timing/Physics.md)
+[Timing.md](../Physics%20%26%20Timing/Timing.md)
+[Collision.md](../Physics%20%26%20Timing/Collision.md)
