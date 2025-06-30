@@ -2,7 +2,10 @@
 
 ![old logo](images/old-logo.png)
 
-Some working manual tests:
+**Game is currently not building.**
+`make tests` to run manual tests.
+
+Some manual tests:
 
 https://github.com/user-attachments/assets/6edef4a5-070b-4f8f-8329-65b208e1741a
 
@@ -20,15 +23,11 @@ Check out the following commit for the fixed code, while the rest stays the same
 
 ## Work in Progress
 
-**Game is currently not building.**
-
-`make tests` to run manual tests.
-
 I am going to modernize the code in my spare time for educational purposes.
-I spent a week on refactoring so far, and I am not done yet. Not every checkout builds.
-I am currently working on a refactoring of the code to make it more modern and maintainable.
-Current Target is OpenGL 4.6 and SDL3.
-Probably I have time on weekends to work on it. Feel free to commit pull requests.
+
+The current Target is OpenGL 4.6 and SDL3.
+
+Feel free to commit pull requests.
 
 See: [get started](docs/Developer/GetInvolved.md)
 or

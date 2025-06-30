@@ -1,6 +1,6 @@
 # Current issues
 
-Top: Fix all current manual Tests
+Top: Fix all manual tests warnings
 
 Tests:
 
@@ -33,15 +33,12 @@ Paddle-Spawn, Paddle Despawn - on level completed, Paddle explode
 
 ## Connect the dots:
 
-- [ ] GameManager.md
-- [ ] CodeManager.md
-- [ ] SceneManager.md -> TransitionEffects
+- [ ] [CodeManager.md](Manager/CodeManager.md) ->
+- [ ] [SceneManager.md](Manager/SceneManager.md) -> TransitionEffects
+- [ ] [GameManager.md](Manager/GameManager.md) -> Game
+-
 
 run codeManager (setup game), run sceneManager, (simple menuManager?) run gameManager
-
-scene 1-2 for ten seconds, autoplay, then scene 3-4 for ten seconds, autoplay, then scene 5,6 for ten seconds, autoplay
-
-images instead of scenes 1-6
 
 ScoreManager
 HudManager

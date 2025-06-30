@@ -1,37 +1,41 @@
 // PlayfieldBorder.h
 #pragma once
 
+#include "EventManager.h"
 #include "GameObject.h"
-#include "SpriteSheetAnimation.h"
 #include "ICollideable.h"
 
 class PlayfieldBorder final : public GameObject, public ICollideable {
-
 public:
     enum class Side { Left, Right, Top };
 
-    PlayfieldBorder(Side side, EventManager *eventManager);
+    PlayfieldBorder(Side side, const texture &tex, EventManager *eventManager);
+
+    void setActive(bool) override {
+    }
+
+    void update() {
+    }
 
     void init() override;
 
-    void draw(float deltaTime) override;
+    void createDisplayList();
 
-    void update(float) override {
-    }
+    void draw() const override;
 
     // ICollideable Implementierung
-    float getPosX() const override { return pos_x; }
-    float getPosY() const override { return pos_y; }
-    float getWidth() const override { return width; }
-    float getHeight() const override { return height; }
+    [[nodiscard]] float getPosX() const override { return pos_x; }
+    [[nodiscard]] float getPosY() const override { return pos_y; }
+    [[nodiscard]] float getWidth() const override { return width; }
+    [[nodiscard]] float getHeight() const override { return height; }
+    [[nodiscard]] bool isActive() const override { return true; }
 
-    bool isActive() const override { return GameObject::isActive(); }
+    CollisionType getCollisionType() const override;
 
-    int getCollisionType() const override;
+    void onCollision(const ICollideable *other, float hitX, float hitY);
 
-    void onCollision(ICollideable *other, float hitX, float hitY) override;
-    void createDisplayList();
 private:
     Side side;
-    GLuint dl = 0;
+    GLuint displayList = 0;
+    EventManager *eventManager;
 };

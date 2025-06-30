@@ -60,11 +60,13 @@ OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
 TEST_TARGETS := \
     test-background \
     test-ball \
+    test-border \
     test-brick \
     test-collision \
     test-config \
     test-display \
     test-effectManager \
+    test-effects \
     test-level \
     test-menu \
     test-paddle \
@@ -77,7 +79,6 @@ TEST_TARGETS := \
     test-texture \
     test-theme \
     test-tracer \
-    test-effects \
 
 AUTO_TEST_TARGETS := texture-automatic-test event-automatic-test collision-automatic-test
 TARGET=sdl-ball
@@ -254,29 +255,6 @@ test-spritesheet-manager: $(SPRITESHEETMANAGER_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) -I$(SOURCE_DIR) $(SPRITESHEETMANAGER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-spritesheet-manager
 
 $(BUILD_DIR)SpriteSheetAnimationManager_Tests.o: $(MANUAL_TEST_DIR)SpriteSheetAnimationManager_Tests.cpp
-	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
-
-###############################################################################
-# Border-Tests
-BORDER_TEST_SOURCES := $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp \
-                       $(MANUAL_TEST_DIR)MockEventManager.cpp \
-                       $(SOURCE_DIR)PlayfieldBorder.cpp \
-                       $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                       $(SOURCE_DIR)DisplayManager.cpp \
-                       $(SOURCE_DIR)TextureManager.cpp \
-                       $(SOURCE_DIR)TextManager.cpp \
-                       $(SOURCE_DIR)TextureUtilities.cpp \
-                       $(SOURCE_DIR)EventManager.cpp
-
-BORDER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BORDER_TEST_SOURCES:.cpp=.o)))
-
-border-test: $(BORDER_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(BORDER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)border-test
-
-$(BUILD_DIR)PlayfieldBorder_Tests.o: $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp
-	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
-
-$(BUILD_DIR)MockEventManager.o: $(MANUAL_TEST_DIR)MockEventManager.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
@@ -599,6 +577,29 @@ test-brick: $(BRICK_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(BRICK_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-brick
 
 $(BUILD_DIR)BrickManager_Tests.o: $(MANUAL_TEST_DIR)BrickManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
+# Border-Tests
+BORDER_TEST_SOURCES := $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp \
+                       $(MANUAL_TEST_DIR)TestHelper.cpp \
+                       $(SOURCE_DIR)CollisionManager.cpp \
+                       $(SOURCE_DIR)DisplayManager.cpp \
+                       $(SOURCE_DIR)EventDispatcher.cpp \
+                       $(SOURCE_DIR)EventManager.cpp \
+                       $(SOURCE_DIR)KeyboardManager.cpp \
+                       $(SOURCE_DIR)MouseManager.cpp \
+                       $(SOURCE_DIR)PlayfieldBorder.cpp \
+                       $(SOURCE_DIR)TextManager.cpp \
+                       $(SOURCE_DIR)TextureManager.cpp \
+                       $(SOURCE_DIR)TextureUtilities.cpp \
+
+BORDER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BORDER_TEST_SOURCES:.cpp=.o)))
+
+test-border: $(BORDER_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(BORDER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-border
+
+$(BUILD_DIR)PlayfieldBorder_Tests.o: $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################

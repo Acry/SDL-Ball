@@ -1,12 +1,11 @@
 // PlayfieldBorder.cpp
 #include <epoxy/gl.h>
-#include "PlayfieldBorder.h"
-#include "EventManager.h"
-#include "config.h"
 
-PlayfieldBorder::PlayfieldBorder(Side side, EventManager *eventMgr)
-    : GameObject(eventMgr), side(side) {
-    // eventMgr an GameObject-Konstruktor weitergeben
+#include "config.h"
+#include "PlayfieldBorder.h"
+
+PlayfieldBorder::PlayfieldBorder(const Side side, const texture &tex, EventManager *eventManager)
+    : GameObject(tex), side(side), eventManager(eventManager) {
     init();
 }
 
@@ -27,68 +26,23 @@ void PlayfieldBorder::init() {
         width = 2.0f - PILLAR_WIDTH * 2;
         height = PILLAR_WIDTH;
     }
-}
-
-void PlayfieldBorder::draw(float) {
-    if (dl)
-        glCallList(dl);
-}
-
-void PlayfieldBorder::onCollision(ICollideable *other, const float hitX, const float hitY) {
-    switch (other->getCollisionType()) {
-        case static_cast<int>(CollisionType::Ball): {
-            EventData data{};
-            data.posX = hitX;
-            data.posY = hitY;
-            data.sender = this;
-            data.target = dynamic_cast<const GameObject*>(other);
-
-            switch (side) {
-                case Side::Left:
-                    eventManager->emit(GameEvent::BallHitLeftBorder, data);
-                    break;
-                case Side::Right:
-                    eventManager->emit(GameEvent::BallHitRightBorder, data);
-                    break;
-                case Side::Top:
-                    eventManager->emit(GameEvent::BallHitTopBorder, data);
-                    break;
-            }
-        }
-        break;
-
-        case static_cast<int>(CollisionType::Paddle): {
-            EventData data{};
-            data.posX = hitX;
-            data.posY = hitY;
-            data.sender = this;
-            data.target = dynamic_cast<const GameObject*>(other);
-
-            if (side == Side::Left) {
-                eventManager->emit(GameEvent::PaddleHitLeftBorder, data);
-            } else {
-                eventManager->emit(GameEvent::PaddleHitRightBorder, data);
-            }
-        }
-        break;
-        default: ;
-    }
+    createDisplayList();
 }
 
 void PlayfieldBorder::createDisplayList() {
-    if (dl) {
-        glDeleteLists(dl, 1);
+    if (displayList != 0) {
+        glDeleteLists(displayList, 1);
     }
 
-    dl = glGenLists(1);
-    glNewList(dl, GL_COMPILE);
+    displayList = glGenLists(1);
+    glNewList(displayList, GL_COMPILE);
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture->textureProperties.texture);
-    glColor4f(texture->textureProperties.glTexColorInfo[0],
-              texture->textureProperties.glTexColorInfo[1],
-              texture->textureProperties.glTexColorInfo[2],
-              texture->textureProperties.glTexColorInfo[3]);
+    glBindTexture(GL_TEXTURE_2D, textureProperties.id);
+    glColor4f(textureProperties.textureColor[0],
+              textureProperties.textureColor[1],
+              textureProperties.textureColor[2],
+              textureProperties.textureColor[3]);
     glBegin(GL_QUADS);
 
     if (side == Side::Left) {
@@ -147,11 +101,58 @@ void PlayfieldBorder::createDisplayList() {
     glEndList();
 }
 
-int PlayfieldBorder::getCollisionType() const {
+void PlayfieldBorder::draw() const {
+    if (displayList != 0) {
+        glCallList(displayList);
+    }
+}
+
+void PlayfieldBorder::onCollision(const ICollideable *other, const float hitX, const float hitY) {
+    switch (other->getCollisionType()) {
+        case CollisionType::Ball: {
+            EventData data{};
+            data.posX = hitX;
+            data.posY = hitY;
+            data.sender = this;
+            data.target = dynamic_cast<const GameObject *>(other);
+
+            switch (side) {
+                case Side::Left:
+                    eventManager->emit(GameEvent::BallHitLeftBorder, data);
+                    break;
+                case Side::Right:
+                    eventManager->emit(GameEvent::BallHitRightBorder, data);
+                    break;
+                case Side::Top:
+                    eventManager->emit(GameEvent::BallHitTopBorder, data);
+                    break;
+            }
+        }
+        break;
+
+        case CollisionType::Paddle: {
+            EventData data{};
+            data.posX = hitX;
+            data.posY = hitY;
+            data.sender = this;
+            data.target = dynamic_cast<const GameObject *>(other);
+
+            if (side == Side::Left) {
+                eventManager->emit(GameEvent::PaddleHitLeftBorder, data);
+            } else {
+                eventManager->emit(GameEvent::PaddleHitRightBorder, data);
+            }
+        }
+        break;
+        default: ;
+    }
+}
+
+CollisionType PlayfieldBorder::getCollisionType() const {
     switch (side) {
-        case Side::Left: return static_cast<int>(CollisionType::BorderLeft);
-        case Side::Right: return static_cast<int>(CollisionType::BorderRight);
-        case Side::Top: return static_cast<int>(CollisionType::BorderTop);
-        default: return static_cast<int>(CollisionType::None);
+        case Side::Left: return CollisionType::BorderLeft;
+        case Side::Right: return CollisionType::BorderRight;
+        case Side::Top: return CollisionType::BorderTop;
+        default: return CollisionType::None;
     }
 }

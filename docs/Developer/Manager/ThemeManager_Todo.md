@@ -1,5 +1,7 @@
 # ThemeManager Todo
 
+[ThemeManager](ThemeManager.md)
+
 Themes: Classic / Retro / 3.1 / Arkanoid / Internal theme
 
 ## current
@@ -34,7 +36,7 @@ Themes: Classic / Retro / 3.1 / Arkanoid / Internal theme
 
 ### 3.1 Theme
 
-- [ ] normal Ball spritesheet
+- [ ] Normal Ball spritesheet
 - [ ] Animate Paddle texture
 - [ ] Animate Glue layer
 
@@ -46,4 +48,4 @@ Themes: Classic / Retro / 3.1 / Arkanoid / Internal theme
 
 - [ ] Make the game playable without datafiles (random levels, no samplers)
 - [ ] fill-colors or shaders
-- [ ] Ingame (static), minimalistic
+- [ ] In game (static), minimalistic

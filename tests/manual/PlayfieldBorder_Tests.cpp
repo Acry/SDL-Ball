@@ -1,176 +1,107 @@
 // PlayfieldBorder_Tests.cpp
-// test-border
-
-// ###############################################################################
-// # Border-Tests
-// BORDER_TEST_SOURCES := $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp \
-//                        $(MANUAL_TEST_DIR)MockEventManager.cpp \
-//                        $(SOURCE_DIR)PlayfieldBorder.cpp \
-//                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-//                        $(SOURCE_DIR)Display.cpp \
-//                        $(SOURCE_DIR)TextureManager.cpp \
-//                        $(SOURCE_DIR)TextManager.cpp \
-//                        $(SOURCE_DIR)TextureUtilities.cpp \
-//                        $(SOURCE_DIR)EventManager.cpp
-//
-// BORDER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(BORDER_TEST_SOURCES:.cpp=.o)))
-//
-// border-test: $(BORDER_TEST_OBJECTS)
-// 	$(CXX) $(DEBUG_FLAGS) $(BORDER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)border-test
-//
-// $(BUILD_DIR)PlayfieldBorder_Tests.o: $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp
-// 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
-//
-// $(BUILD_DIR)MockEventManager.o: $(MANUAL_TEST_DIR)MockEventManager.cpp
-// 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
-//
-// ###############################################################################
 #include <cstdlib>
 
-#include "TextureManager.h"
-#include "Display.hpp"
-#include "PlayfieldBorder.h"
+#include "DisplayManager.hpp"
+#include "CollisionManager.h"
+#include "TestHelper.h"
 #include "TextManager.h"
-#include "EventManager.h"
-#include "ICollideable.h"
-#include "MockEventManager.h"
+#include "EventDispatcher.h"
+#include "KeyboardManager.h"
+#include "MouseManager.h"
 
-class ICollideable;
-
-// Mock-Klassen für Tests
-class MockBall : public ICollideable {
+class BorderTestContext {
 public:
-    float posX = 0.0f;
-    float posY = 0.0f;
+    EventManager eventManager;
+    MouseManager mouseManager;
+    KeyboardManager keyboardManager;
+    DisplayManager displayManager;
+    TextManager textManager;
+    CollisionManager collisionManager;
 
-    float getPosX() const override { return posX; }
-    float getPosY() const override { return posY; }
-    float getWidth() const override { return 0.018f; }
-    float getHeight() const override { return 0.018f; }
-    bool isActive() const override { return true; }
-    int getCollisionType() const override { return static_cast<int>(CollisionType::Ball); }
-
-    void onCollision(ICollideable *, float, float) override {
+    BorderTestContext()
+        : mouseManager(&eventManager),
+          keyboardManager(&eventManager),
+          displayManager(&eventManager),
+          collisionManager(&eventManager) {
+        if (!displayManager.init(0, 1024, 768, false)) {
+            throw std::runtime_error("Could not initialize display");
+        }
+        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: CollisionManager Test");
+        textManager.setTheme("../tests/themes/test");
     }
 };
 
-class MockPaddle : public ICollideable {
+class BorderTestHelper final : public TestHelper {
+    BorderTestContext &ctx;
+
 public:
-    float posX = 0.0f;
-    float posY = -0.9f;
+    explicit BorderTestHelper(BorderTestContext &context)
+        : TestHelper(context.textManager, &context.eventManager), ctx(context) {
+    }
 
-    float getPosX() const override { return posX; }
-    float getPosY() const override { return posY; }
-    float getWidth() const override { return 0.062f; }
-    float getHeight() const override { return 0.016f; }
-    bool isActive() const override { return true; }
-    int getCollisionType() const override { return static_cast<int>(CollisionType::Paddle); }
+    void handleKeyPress(const KeyboardEventData &data) override {
+        TestHelper::handleKeyPress(data);
+    }
 
-    void onCollision(ICollideable *, float, float) override {
+    void handleMouseButton(const MouseEventData &data) override {
+        TestHelper::handleMouseButton(data);
+        if (data.button == SDL_BUTTON_LEFT) {
+        }
+    }
+
+    void handleMouseCoordinatesNormalized(const MouseCoordinatesNormalizedEventData &data) override {
+        TestHelper::handleMouseCoordinatesNormalized(data);
+    }
+
+    void render(const float deltaTime, const std::vector<std::string> &instructions) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        drawGrid();
+        drawCenterLines();
+        renderInstructions(deltaTime, instructions);
+        drawMouseCoordinates();
+        SDL_GL_SwapWindow(ctx.displayManager.sdlWindow);
+    }
+
+private:
+    static void drawRect(const float x, const float y, const float w, const float h, const float r, const float g,
+                         const float b) {
+        glColor3f(r, g, b);
+        glBegin(GL_QUADS);
+        glVertex2f(x, y);
+        glVertex2f(x + w, y);
+        glVertex2f(x + w, y + h);
+        glVertex2f(x, y + h);
+        glEnd();
     }
 };
 
 int main() {
-    Display display(0, 1024, 768, false);
-    if (display.sdlWindow == nullptr) {
-        SDL_Log("Display konnte nicht initialisiert werden");
-        return EXIT_FAILURE;
-    }
-    TextManager textManager;
-    if (!textManager.setTheme("../themes/default")) {
-        SDL_Log("Fehler beim Laden des Font-Themes");
-    }
-    MockEventManager eventManager;
-    MockBall mockBall;
-    MockPaddle mockPaddle;
+    try {
+        BorderTestContext ctx;
+        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        BorderTestHelper testHelper(ctx);
 
-    const TextureManager textureManager;
-    SpriteSheetAnimation tex;
+        const std::vector<std::string> instructions = {
+            "M: Draw Mouse Coordinates",
+            "S: Screenshot",
+            "ESC: Beenden"
+        };
 
-    SpriteSheetAnimation texBorder;
-    const std::filesystem::path borderTexPath = "../themes/default/gfx/border.png";
-    const std::filesystem::path borderPropsPath = "../themes/default/gfx/border.txt";
-    if (!textureManager.load(borderTexPath, texBorder)) {
-        SDL_Log("Fehler beim Laden der Border-Textur: %s", borderTexPath.c_str());
-        return EXIT_FAILURE;
-    }
-    textureManager.readTexProps(borderPropsPath, texBorder);
+        bool running = true;
+        auto lastFrameTime = std::chrono::high_resolution_clock::now();
 
-    // PlayfieldBorder-Objekte erzeugen
-    PlayfieldBorder leftBorder(PlayfieldBorder::Side::Left, texBorder, &eventManager);
-    PlayfieldBorder rightBorder(PlayfieldBorder::Side::Right, texBorder, &eventManager);
-    PlayfieldBorder topBorder(PlayfieldBorder::Side::Top, texBorder, &eventManager);
-
-    std::vector<std::string> instructions = {
-        "1: Ball-Border-Top collision",
-        "2: Ball-Border-Left collision",
-        "3: Ball-Border-Right collision",
-        "4: Paddle-Border-Left collision",
-        "5: Paddle-Border-Right collision",
-        "ESC: Quit"
-    };
-
-    Uint32 lastTime = SDL_GetTicks();
-    bool running = true;
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-
-    while (running) {
-        // Zeit für Animation und Update aktualisieren
-        Uint32 currentTime = SDL_GetTicks();
-        float deltaTime = (currentTime - lastTime) / 1000.0f;
-        lastTime = currentTime;
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                running = false;
-            }
-            if (event.type == SDL_WINDOWEVENT) {
-                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    display.resize(event.window.data1, event.window.data2);
-                }
-            }
-            if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
-                    running = false;
-                } else if (event.key.keysym.sym == SDLK_1) {
-                    // Setze den Kollisionspunkt auf der oberen Kante
-                    float hitX = 0.0f;
-                    float hitY = topBorder.getPosY();
-                    topBorder.onCollision(&mockBall, hitX, hitY);
-                } else if (event.key.keysym.sym == SDLK_2) {
-                    float hitX = leftBorder.getPosX() + leftBorder.getWidth();
-                    float hitY = 0.0f;
-                    leftBorder.onCollision(&mockBall, hitX, hitY);
-                } else if (event.key.keysym.sym == SDLK_3) {
-                    float hitX = rightBorder.getPosX() - rightBorder.getWidth();
-                    float hitY = 0.0f;
-                    rightBorder.onCollision(&mockBall, hitX, hitY);
-                } else if (event.key.keysym.sym == SDLK_4) {
-                    float hitX = leftBorder.getPosX() + leftBorder.getWidth();
-                    float hitY = mockPaddle.getPosY();
-                    leftBorder.onCollision(&mockPaddle, hitX, hitY);
-                } else if (event.key.keysym.sym == SDLK_5) {
-                    float hitX = rightBorder.getPosX() - rightBorder.getWidth();
-                    float hitY = mockPaddle.getPosY();
-                    rightBorder.onCollision(&mockPaddle, hitX, hitY);
-                }
-            }
+        while (running) {
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+            lastFrameTime = currentTime;
+            running = eventDispatcher.processEvents();
+            testHelper.render(deltaTime, instructions);
         }
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Spielfeldränder zeichnen
-        leftBorder.draw(deltaTime);
-        rightBorder.draw(deltaTime);
-        topBorder.draw(deltaTime); // should not be visible
-
-        float yPos = 0.9f;
-        for (const auto &instruction: instructions) {
-            textManager.write(instruction, Fonts::Menu, true, 0.75f, -0.0f, yPos);
-            yPos -= 0.07f;
-        }
-        SDL_GL_SwapWindow(display.sdlWindow);
-        SDL_Delay(16); // ~60fps
+        return EXIT_SUCCESS;
+    } catch (const std::exception &e) {
+        SDL_Log("Error: %s", e.what());
+        return EXIT_FAILURE;
     }
-    return EXIT_SUCCESS;
 }
