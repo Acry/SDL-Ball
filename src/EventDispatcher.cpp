@@ -12,6 +12,7 @@ bool EventDispatcher::processEvents() const {
                 running = false;
                 break;
 
+            // Display events
             case SDL_WINDOWEVENT:
                 if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
                     WindowEventData data{event.window.data1, event.window.data2};
@@ -19,6 +20,7 @@ bool EventDispatcher::processEvents() const {
                 }
                 break;
 
+            // Mouse events
             case SDL_MOUSEMOTION: {
                 MouseEventData data{static_cast<float>(event.motion.x), static_cast<float>(event.motion.y)};
                 eventManager->emit(GameEvent::MouseMoved, data);
@@ -60,6 +62,7 @@ bool EventDispatcher::processEvents() const {
                 break;
             }
 
+            // Keyboard events
             case SDL_KEYDOWN: // Menu öffnen -> KeyboardManager -> emit(GameEvent::OpenenMenu);
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     running = false;
