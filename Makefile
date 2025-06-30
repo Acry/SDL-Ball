@@ -66,6 +66,7 @@ TEST_TARGETS := \
     test-display \
     test-effectManager \
     test-level \
+    test-menu \
     test-paddle \
     test-scenes \
     test-setting \
@@ -530,6 +531,27 @@ test-collision: $(COLLISION_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(COLLISION_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-collision
 
 $(BUILD_DIR)Collision_Tests.o: $(MANUAL_TEST_DIR)Collision_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
+# MenuManager
+MENU_TEST_SOURCES := $(MANUAL_TEST_DIR)MenuManager_Tests.cpp \
+                          $(MANUAL_TEST_DIR)TestHelper.cpp \
+                          $(SOURCE_DIR)CollisionManager.cpp \
+                          $(SOURCE_DIR)DisplayManager.cpp \
+                          $(SOURCE_DIR)EventDispatcher.cpp \
+                          $(SOURCE_DIR)EventManager.cpp \
+                          $(SOURCE_DIR)KeyboardManager.cpp \
+                          $(SOURCE_DIR)MouseManager.cpp \
+                          $(SOURCE_DIR)TextManager.cpp \
+                          $(SOURCE_DIR)TextureUtilities.cpp \
+
+MENU_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(MENU_TEST_SOURCES:.cpp=.o)))
+
+test-menu: $(MENU_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(MENU_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-menu
+
+$(BUILD_DIR)MenuManager_Tests.o: $(MANUAL_TEST_DIR)MenuManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################

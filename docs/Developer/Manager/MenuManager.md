@@ -1,5 +1,8 @@
 # MenuManager
 
+emit event MenuOpened
+emit event MenuClosed
+
 - [ ] create MenuStructure and flow
 - [ ] MenuManager
 - [ ] change difficulty in Menu

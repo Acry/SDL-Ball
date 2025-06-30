@@ -19,6 +19,7 @@
 - test-effectManager (test-driven)
 - test-effects (particle effects: EffectFactory)
 - test-levelManager (uses test-setup: context)
+- test-menuManager (test-driven, stub)
 - test-paddle and PaddleManager (PlayerManager) (test-driven)
 - test-sceneManager (transition effects, todo: FBO)
 - test-settingsManager
@@ -43,6 +44,7 @@
 - test-effectManager (test-driven)
 - test-effects (particle effects: EffectFactory)
 - test-levelManager (uses test-setup: context)
+- test-menuManager (test-driven, stub)
 - test-paddle and PaddleManager (PlayerManager) (test-driven)
 - test-sceneManager (transition effects, todo: FBO)
 - test-settingsManager
