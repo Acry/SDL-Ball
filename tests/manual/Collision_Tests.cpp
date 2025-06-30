@@ -9,7 +9,7 @@
 #include "KeyboardManager.h"
 #include "MouseManager.h"
 
-class SimpleCollideable : public ICollideable {
+class SimpleCollideable final : public ICollideable {
     float x, y, w, h;
     bool active;
     CollisionType type;
@@ -77,17 +77,14 @@ public:
     void handleMouseButton(const MouseEventData &data) override {
         TestHelper::handleMouseButton(data);
         if (data.button == SDL_BUTTON_LEFT) {
-            SDL_Log("M (%.2f, %.2f)", m_mouseX, m_mouseY);
             if (ctx.collisionManager.pointInsideRect(obj1, m_mouseX, m_mouseY)) {
                 dragging1 = !dragging1;
                 dragOffsetX = m_mouseX - obj1.getPosX();
                 dragOffsetY = m_mouseY - obj1.getPosY();
-                SDL_Log("Collide obj1 at (%.2f, %.2f)", m_mouseX, m_mouseY);
             } else if (ctx.collisionManager.pointInsideRect(obj2, m_mouseX, m_mouseY)) {
                 dragging2 = !dragging2;
                 dragOffsetX = m_mouseX - obj2.getPosX();
                 dragOffsetY = m_mouseY - obj2.getPosY();
-                SDL_Log("Collide obj2 at (%.2f, %.2f)", m_mouseX, m_mouseY);
             }
         }
     }
@@ -103,17 +100,23 @@ public:
 
     void render(const float deltaTime, const std::vector<std::string> &instructions) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        drawGrid();
+
 
         drawRect(obj1.getPosX(), obj1.getPosY(), obj1.getWidth(), obj1.getHeight(), 1.0f, 0.0f, 0.0f);
         drawRect(obj2.getPosX(), obj2.getPosY(), obj2.getWidth(), obj2.getHeight(), 0.0f, 0.0f, 1.0f);
-        //bool collided = ctx.collisionManager.checkCollision(obj1, obj2);
-        //if (collided) {
-        //    SDL_Log("Collision detected between obj1 and obj2");
-        //    float hitX, hitY;
-        //    ctx.collisionManager.checkCollision(obj1, obj2, hitX, hitY);
-        //    SDL_Log("Collision point: (%f, %f)", hitX, hitY);
-        //}
+
+        if (ctx.collisionManager.checkCollision(obj1, obj2)) {
+            const float x1 = std::max(obj1.getPosX(), obj2.getPosX());
+            const float y1 = std::max(obj1.getPosY(), obj2.getPosY());
+            const float x2 = std::min(obj1.getPosX() + obj1.getWidth(), obj2.getPosX() + obj2.getWidth());
+            const float y2 = std::min(obj1.getPosY() + obj1.getHeight(), obj2.getPosY() + obj2.getHeight());
+            const float w = x2 - x1;
+            if (const float h = y2 - y1; w > 0 && h > 0) {
+                drawRect(x1, y1, w, h, 1.0f, 1.0f, 0.0f);
+            }
+        }
+
+        drawGrid();
         drawCenterLines();
         renderInstructions(deltaTime, instructions);
         drawMouseCoordinates();
@@ -121,7 +124,8 @@ public:
     }
 
 private:
-    void drawRect(float x, float y, float w, float h, float r, float g, float b) {
+    static void drawRect(const float x, const float y, const float w, const float h, const float r, const float g,
+                         const float b) {
         glColor3f(r, g, b);
         glBegin(GL_QUADS);
         glVertex2f(x, y);
