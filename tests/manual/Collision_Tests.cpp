@@ -77,11 +77,11 @@ public:
     void handleMouseButton(const MouseEventData &data) override {
         TestHelper::handleMouseButton(data);
         if (data.button == SDL_BUTTON_LEFT) {
-            if (ctx.collisionManager.pointInsideRect(obj1, m_mouseX, m_mouseY)) {
+            if (CollisionManager::pointInsideRect(obj1, m_mouseX, m_mouseY)) {
                 dragging1 = !dragging1;
                 dragOffsetX = m_mouseX - obj1.getPosX();
                 dragOffsetY = m_mouseY - obj1.getPosY();
-            } else if (ctx.collisionManager.pointInsideRect(obj2, m_mouseX, m_mouseY)) {
+            } else if (CollisionManager::pointInsideRect(obj2, m_mouseX, m_mouseY)) {
                 dragging2 = !dragging2;
                 dragOffsetX = m_mouseX - obj2.getPosX();
                 dragOffsetY = m_mouseY - obj2.getPosY();
