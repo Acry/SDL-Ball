@@ -2,6 +2,7 @@
 
 - [ ] Makefile is getting huge, clion has already problems
   blocker: source structure
+- [ ] use the same setup with test-context for all tests
 
 ## Fixtures
 

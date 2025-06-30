@@ -11,13 +11,7 @@ there are a lot of things to do.
 
 GameObjects: Balls, Paddle, Bricks, Powerups, Tracer, etc.
 
-- [ ] BallManager, rework
-- [ ] BallManager_Tests
-
-- [ ] Player rework the PlayerManager is the PaddleManager
-- [ ] Player_Tests
-
-- [ ] Brick_Tests
+- [ ] Player_Tests, missing lives etc
 
 - [ ] Powerup_Tests
 - [ ] PowerupManager, rework
@@ -60,6 +54,7 @@ ___
 - [ ] setting titleScreenShow ? / intro-scenes, skip all. themeSwitch-scene, asked if classic, retro or current theme
 - [ ] Fade in Paddle?
 - [ ] Fade in Ball?
+- [ ] Lift in with a hub?
 - [ ] fix speedometer
 
 ## Auxiliary
@@ -77,7 +72,12 @@ ___
   When the game is done with classic Theme, try emscripten to play in browser, after that, move on to SDL3 and Shaders
 
 - [ ] Emscripten and SDL3 - far away
-- [ ] use shaders, start with backgroundManager
+- [ ] use shaders, start with backgroundManager or splash screen
 - [ ] using a physics engine at this point might be overkill.
-- [ ] use OpenGL debug callbacks - think this is not worth for legacy gl
+- [ ] use OpenGL debug callbacks - think this is not worth for legacy gl anymore
+
 - [ ] ScreenshotManager with UI?
+
+- [ ] Splash screen
+  ![current-logo.png](../../images/current-logo.png)
+  music: [see](../../tests/themes/test/music/)

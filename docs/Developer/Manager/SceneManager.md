@@ -3,7 +3,8 @@
 Angenommen ich habe eine Szene Titel. Ein 3D Logo mit Sternenhintergund auf dem ein feuerball der durch den bildschirm
 bounced.
 
-Nach ein paar Sekunden, wird an die Game Scene übergeben, der GameManager bekommt den param: autoplay true, spielt ein
+Nach ein paar Sekunden, wird an die Game Scene übergeben, der GameManager bekommt den
+param: [autoplay](../misc/Autoplay.md) true, spielt ein
 paar sekunden. Dann geht es zur Scene highscore, auf der werden die highscores schön präsentiert. dann wieder autoplay,
 dann eine szene mit game-credits - you get the idea.
 
@@ -600,5 +601,5 @@ Dieses Design unterstützt:
 - Vollständig interaktive Szenen mit 3D-Inhalten
 - Automatische Übergänge mit Effekten
 - Jede Szene kann ihre Nachfolgeszene und Parameter definieren
-- Integration mit dem GameManager für Autoplay-Funktionalität
+- Integration mit dem GameManager für [Autoplay-Funktionalität](../misc/Autoplay.md)
 - Flexible Konfiguration und Ablaufsteuerung

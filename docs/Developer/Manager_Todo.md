@@ -1,7 +1,7 @@
 ## Missing Managers
 
 SceneManager:
-Autoplay, Credits Hauptmenü, Spiel, Pause, Game Over)
+[Autoplay](misc/Autoplay.md), Credits Hauptmenü, Spiel, Pause, Game Over)
 SaveGameManager,
 HighScoreManager,
 MenuManager
@@ -9,7 +9,7 @@ HudManager: clock, leben, score, level
 
 ## GameObject Managers
 
-### collide
+### Collide
 
 Die Init-Methode ist in den Actors m.E. nicht nötig. Von Beginn an war im Hinterkopf, dass die GameObjects/Actors
 so wenig wie möglich Logik enthalten, weil die Manager-Klassen die Logik übernehmen sollen.
