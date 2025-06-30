@@ -2,6 +2,10 @@
 
 `../../../tests/manual`
 
+## Currently RED tests
+
+- test-borders
+
 ## Currently implemented manual tests
 
 - test-backgroundManager
@@ -9,7 +13,7 @@
 - test-ballManager (test-driven)
 - test-brickManager (try test-setup: class?)
 - test-codeManager (stub, early setup)
-- test-collisionManager (needs GameObjectManagers)
+- test-collisionManager
 - test-configFileManager
 - test-displayManager
 - test-effectManager (test-driven)
@@ -33,6 +37,7 @@
 - test-ballManager (test-driven)
 - test-brickManager (try test-setup: class?)
 - test-codeManager (stub, early setup)
+- test-collisionManager
 - test-configFileManager
 - test-displayManager
 - test-effectManager (test-driven)

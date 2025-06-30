@@ -18,7 +18,9 @@ public:
 
     // Spezialisierte Kollisionserkennung mit Kollisionspunkt
     bool checkCollision(const ICollideable &obj1, const ICollideable &obj2,
-                               float &hitX, float &hitY) const;
+                        float &hitX, float &hitY) const;
+
+    static bool pointInsideRect(const ICollideable &obj, float px, float py);
 
 private:
     IEventManager *eventManager;

@@ -1,323 +1,163 @@
 // Collision_Tests.cpp
 #include <cstdlib>
-#include <SDL2/SDL_log.h>
 
-#include "Ball.h"
-#include "Paddle.h"
-#include "Brick.h"
-#include "TextureManager.h"
 #include "DisplayManager.hpp"
 #include "CollisionManager.h"
-#include "difficulty_settings.h"
-#include "PlayfieldBorder.h"
-#include "SoundManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
+#include "EventDispatcher.h"
+#include "KeyboardManager.h"
+#include "MouseManager.h"
 
-#undef EASY
-#undef NORMAL
-#undef HARD
+class SimpleCollideable : public ICollideable {
+    float x, y, w, h;
+    bool active;
+    CollisionType type;
 
-#define DEBUG_DRAW_BALL_BOUNDING_BOXES 0
+public:
+    SimpleCollideable(float x, float y, float w, float h, CollisionType type)
+        : x(x), y(y), w(w), h(h), active(true), type(type) {
+    }
+
+    float getPosX() const override { return x; }
+    float getPosY() const override { return y; }
+    float getWidth() const override { return w; }
+    float getHeight() const override { return h; }
+    bool isActive() const override { return active; }
+    void setActive(bool value) override { active = value; }
+    CollisionType getCollisionType() const override { return type; }
+
+    void setPosition(float nx, float ny) {
+        x = nx;
+        y = ny;
+    }
+};
+
+
+class CollisionManagerTestContext {
+public:
+    EventManager eventManager;
+    MouseManager mouseManager;
+    KeyboardManager keyboardManager;
+    DisplayManager displayManager;
+    TextManager textManager;
+    CollisionManager collisionManager;
+
+    CollisionManagerTestContext()
+        : mouseManager(&eventManager),
+          keyboardManager(&eventManager),
+          displayManager(&eventManager),
+          collisionManager(&eventManager) {
+        if (!displayManager.init(0, 1024, 768, false)) {
+            throw std::runtime_error("Could not initialize display");
+        }
+        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: CollisionManager Test");
+        textManager.setTheme("../tests/themes/test");
+    }
+};
+
+class CollisionManagerTestHelper final : public TestHelper {
+    CollisionManagerTestContext &ctx;
+    SimpleCollideable obj1;
+    SimpleCollideable obj2;
+    bool dragging1 = false, dragging2 = false;
+    float dragOffsetX = 0, dragOffsetY = 0;
+
+public:
+    explicit CollisionManagerTestHelper(CollisionManagerTestContext &context)
+        : TestHelper(context.textManager, &context.eventManager), ctx(context),
+          obj1(-0.5f, -0.5f, 0.3f, 0.3f, CollisionType::Ball),
+          obj2(0.2f, 0.2f, 0.3f, 0.3f, CollisionType::Paddle) {
+    }
+
+    void handleKeyPress(const KeyboardEventData &data) override {
+        TestHelper::handleKeyPress(data);
+    }
+
+    void handleMouseButton(const MouseEventData &data) override {
+        TestHelper::handleMouseButton(data);
+        if (data.button == SDL_BUTTON_LEFT) {
+            SDL_Log("M (%.2f, %.2f)", m_mouseX, m_mouseY);
+            if (ctx.collisionManager.pointInsideRect(obj1, m_mouseX, m_mouseY)) {
+                dragging1 = !dragging1;
+                dragOffsetX = m_mouseX - obj1.getPosX();
+                dragOffsetY = m_mouseY - obj1.getPosY();
+                SDL_Log("Collide obj1 at (%.2f, %.2f)", m_mouseX, m_mouseY);
+            } else if (ctx.collisionManager.pointInsideRect(obj2, m_mouseX, m_mouseY)) {
+                dragging2 = !dragging2;
+                dragOffsetX = m_mouseX - obj2.getPosX();
+                dragOffsetY = m_mouseY - obj2.getPosY();
+                SDL_Log("Collide obj2 at (%.2f, %.2f)", m_mouseX, m_mouseY);
+            }
+        }
+    }
+
+    void handleMouseCoordinatesNormalized(const MouseCoordinatesNormalizedEventData &data) override {
+        TestHelper::handleMouseCoordinatesNormalized(data);
+        if (dragging1) {
+            obj1.setPosition(data.x - dragOffsetX, data.y - dragOffsetY);
+        } else if (dragging2) {
+            obj2.setPosition(data.x - dragOffsetX, data.y - dragOffsetY);
+        }
+    }
+
+    void render(const float deltaTime, const std::vector<std::string> &instructions) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        drawGrid();
+
+        drawRect(obj1.getPosX(), obj1.getPosY(), obj1.getWidth(), obj1.getHeight(), 1.0f, 0.0f, 0.0f);
+        drawRect(obj2.getPosX(), obj2.getPosY(), obj2.getWidth(), obj2.getHeight(), 0.0f, 0.0f, 1.0f);
+        //bool collided = ctx.collisionManager.checkCollision(obj1, obj2);
+        //if (collided) {
+        //    SDL_Log("Collision detected between obj1 and obj2");
+        //    float hitX, hitY;
+        //    ctx.collisionManager.checkCollision(obj1, obj2, hitX, hitY);
+        //    SDL_Log("Collision point: (%f, %f)", hitX, hitY);
+        //}
+        drawCenterLines();
+        renderInstructions(deltaTime, instructions);
+        drawMouseCoordinates();
+        SDL_GL_SwapWindow(ctx.displayManager.sdlWindow);
+    }
+
+private:
+    void drawRect(float x, float y, float w, float h, float r, float g, float b) {
+        glColor3f(r, g, b);
+        glBegin(GL_QUADS);
+        glVertex2f(x, y);
+        glVertex2f(x + w, y);
+        glVertex2f(x + w, y + h);
+        glVertex2f(x, y + h);
+        glEnd();
+    }
+};
 
 int main() {
-    EventManager eventManager;
-    DisplayManager displayManager(&eventManager);
-    if (!displayManager.init(0, 1024, 768, false)) {
-        SDL_Log("Could not initialize display");
+    try {
+        CollisionManagerTestContext ctx;
+        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        CollisionManagerTestHelper testHelper(ctx);
+
+        const std::vector<std::string> instructions = {
+            "M: Draw Mouse Coordinates",
+            "S: Screenshot",
+            "ESC: Beenden"
+        };
+
+        bool running = true;
+        auto lastFrameTime = std::chrono::high_resolution_clock::now();
+
+        while (running) {
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+            lastFrameTime = currentTime;
+            running = eventDispatcher.processEvents();
+            testHelper.render(deltaTime, instructions);
+        }
+
+        return EXIT_SUCCESS;
+    } catch (const std::exception &e) {
+        SDL_Log("Error: %s", e.what());
         return EXIT_FAILURE;
     }
-    SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Collision Test");
-
-    TextManager textManager;
-    if (!textManager.setTheme("../themes/default")) {
-        SDL_Log("Fehler beim Laden des Font-Themes");
-    }
-
-    TestHelper testHelper(textManager, &eventManager);
-
-    const CollisionManager collisionManager(&eventManager);
-
-    SoundManager soundManager;
-    if (!soundManager.setTheme("../themes/default")) {
-        SDL_Log("Fehler beim Laden des Sound-Themes");
-    }
-    soundManager.registerEvents(&eventManager);
-
-    TextureManager textureManager;
-    if (!textureManager.setSpriteTheme("../themes/default")) {
-        SDL_Log("Fehler beim Laden des Texture-Themes");
-        return EXIT_FAILURE;
-    }
-
-    // Brick brick;
-    std::vector<Brick> bricks;
-    constexpr int BRICK_ROWS = 3;
-    // Bricks initialisieren
-    for (int row = 0; row < BRICK_ROWS; row++) {
-        constexpr int BRICK_COLS = 7;
-        for (int col = 0; col < BRICK_COLS; col++) {
-            Brick brick(&eventManager);
-            // Positionen berechnen (Anpassung nach Bedarf)
-            float x = -0.8f + col * 0.25f;
-            float y = 0.5f - row * 0.12f;
-            brick.setPosition(x, y);
-            brick.texture = textureManager.getBrickTexture(BrickTexture::Base);
-            bricks.push_back(brick);
-        }
-    }
-
-    Ball ball(&eventManager);
-    ball.texture = textureManager.getBallTexture(BallTexture::Normal);
-
-    Paddle paddle(&eventManager);
-    paddle.texture = textureManager.getPaddleTexture(PaddleTexture::Base);
-
-    PlayfieldBorder leftBorder(PlayfieldBorder::Side::Left, &eventManager);
-    leftBorder.texture = textureManager.getMiscTexture(MiscTexture::Border);
-    leftBorder.createDisplayList();
-    PlayfieldBorder rightBorder(PlayfieldBorder::Side::Right, &eventManager);
-    rightBorder.texture = textureManager.getMiscTexture(MiscTexture::Border);
-    rightBorder.createDisplayList();
-    PlayfieldBorder topBorder(PlayfieldBorder::Side::Top, &eventManager);
-    topBorder.texture = textureManager.getMiscTexture(MiscTexture::Border);
-    topBorder.createDisplayList();
-
-    std::vector<std::string> instructions = {
-        "1: Ball speed EASY",
-        "2: Ball speed NORMAL",
-        "3: Ball speed HARD",
-        "r: Reset ball",
-        "g: Ball grow",
-        "s: Ball shrink",
-        "m: max ball speed",
-        "p: Log ball speed",
-        "ESC: Quit",
-        "A: Auto-Paddle"
-    };
-
-    SDL_WarpMouseInWindow(displayManager.sdlWindow, displayManager.currentW / 2, displayManager.currentH / 2);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-    Uint32 lastTime = SDL_GetTicks();
-    bool running = true;
-    GLfloat normalizedMouseX, normalizedMouseY;
-    bool update = true;
-    bool autoPaddle = false;
-
-    float currentSpeed;
-    while (running) {
-        Uint32 currentTime = SDL_GetTicks();
-        float deltaTime = (currentTime - lastTime) / 1000.0f;
-        lastTime = currentTime;
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                running = false;
-            }
-            if (event.type == SDL_WINDOWEVENT) {
-                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    displayManager.resize(event.window.data1, event.window.data2);
-                }
-            }
-            if (event.type == SDL_MOUSEBUTTONDOWN) {
-                if (event.button.button == SDL_BUTTON_LEFT) {
-                    if (ball.glued) {
-                        ball.launchFromPaddle();
-                    }
-                }
-            }
-            if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
-                    running = false;
-                }
-                float moveStep = 0.09f; // Konstanter, kleiner Wert für Tastatureingabe
-                switch (event.key.keysym.sym) {
-                    case SDLK_LEFT:
-                        paddle.moveTo(paddle.pos_x - moveStep, deltaTime);
-                        break;
-                    case SDLK_RIGHT:
-                        paddle.moveTo(paddle.pos_x + moveStep, deltaTime);
-                        break;
-                    // Für Taste 1: EASY-Einstellungen
-                    case SDLK_1:
-                        ball.setSpeed(DifficultySettings::BallSpeed::EASY, DifficultySettings::MaxBallSpeed::EASY);
-                        SDL_Log("Ballgeschwindigkeit: EASY (%.2f/%.2f)", ball.velocity,
-                                DifficultySettings::MaxBallSpeed::EASY);
-                        break;
-                    // Für Taste 2: NORMAL-Einstellungen
-                    case SDLK_2:
-                        ball.setSpeed(DifficultySettings::BallSpeed::NORMAL, DifficultySettings::MaxBallSpeed::NORMAL);
-                        SDL_Log("Ballgeschwindigkeit: NORMAL (%.2f/%.2f)", ball.velocity,
-                                DifficultySettings::MaxBallSpeed::NORMAL);
-                        break;
-                    // Für Taste 3: HARD-Einstellungen
-                    case SDLK_3:
-                        ball.setSpeed(DifficultySettings::BallSpeed::HARD, DifficultySettings::MaxBallSpeed::HARD);
-                        SDL_Log("Ballgeschwindigkeit: HARD (%.2f/%.2f)", ball.velocity,
-                                DifficultySettings::MaxBallSpeed::HARD);
-                        break;
-                    case SDLK_g:
-                        ball.grow(ball.getWidth() * 1.5f);
-                        break;
-                    case SDLK_s:
-                        ball.grow(ball.getWidth() * 0.7f);
-                        break;
-                    case SDLK_m:
-                        testHelper.m_showMouseCoords = !testHelper.m_showMouseCoords;
-                        break;
-                    case SDLK_p: // Aktuelle Geschwindigkeit ausgeben
-                        currentSpeed = std::sqrt(ball.xvel * ball.xvel + ball.yvel * ball.yvel);
-                        SDL_Log("Aktuelle Ballgeschwindigkeit: %.2f", currentSpeed);
-                        break;
-                    case SDLK_r: // reset ball
-                        ball.init();
-                        break;
-                    case SDLK_u: // toggle update
-                        update = !update;
-                        break;
-                    case SDLK_x: // Maximalgeschwindigkeit testen
-                        // Sehr hohen Wert setzen, der die Maximalgeschwindigkeit überschreiten sollte
-                        ball.setSpeed(DifficultySettings::MaxBallSpeed::HARD, DifficultySettings::MaxBallSpeed::HARD);
-                        // Dieser Wert sollte auf die maximale Geschwindigkeit begrenzt werden
-                        SDL_Log("Ballgeschwindigkeit auf Maximum gesetzt: %.2f", ball.velocity);
-                        break;
-                    case SDLK_PLUS:
-                    case SDLK_KP_PLUS:
-                        // Erhöhe die Geschwindigkeit um einen kleinen Wert
-                        currentSpeed = ball.velocity + 0.05f;
-                        ball.setSpeed(currentSpeed, DifficultySettings::MaxBallSpeed::HARD);
-                        break;
-                    case SDLK_MINUS:
-                    case SDLK_KP_MINUS:
-                        currentSpeed = std::max(0.05f, ball.velocity - 0.05f);
-                        ball.setSpeed(currentSpeed, DifficultySettings::MaxBallSpeed::HARD);
-                        break;
-                    case SDLK_a:
-                        autoPaddle = !autoPaddle;
-                        break;
-                    default: ;
-                }
-            }
-            if (event.type == SDL_MOUSEMOTION) {
-                normalizedMouseX = (event.motion.x - displayManager.viewportX - displayManager.viewportW / 2.0f) * (
-                                       2.0f / displayManager.viewportW);
-                normalizedMouseY = (event.motion.y - displayManager.viewportY - displayManager.viewportH / 2.0f) * -1 * (
-                                       2.0f / displayManager.viewportH);
-            }
-            paddle.moveTo(normalizedMouseX, deltaTime);
-        }
-        testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
-
-#pragma region update
-        if (update) {
-            if (ball.active) {
-                ball.update(deltaTime);
-            }
-            paddle.update(deltaTime);
-
-            // Auto-Paddle-Mechanik
-            if (autoPaddle) {
-                // Ballflugbahn vorhersagen statt nur aktuelle Position zu verfolgen
-                float predictedX = ball.pos_x;
-                float predictedY = ball.pos_y;
-                float velX = ball.xvel;
-                float velY = ball.yvel;
-
-                // Nur für aufsteigende Bälle die Vorhersage berechnen
-                if (velY > 0) {
-                    // Einfache Vorhersage: Wie weit fliegt der Ball horizontal,
-                    // bis er die Paddlehöhe erreicht?
-                    if (float timeToReachPaddle = (paddle.pos_y - predictedY) / velY; timeToReachPaddle > 0) {
-                        predictedX += velX * timeToReachPaddle;
-                    }
-                }
-
-                // Kleiner zufälliger Fehler für realistischeres Verhalten (nur alle 0.5 Sekunden neu berechnen)
-                static float lastErrorTime = 0.0f;
-                static float errorOffset = 0.0f;
-
-                if (float autoPaddleTime = 0.0f; autoPaddleTime - lastErrorTime > 0.5f) {
-                    lastErrorTime = autoPaddleTime;
-                    errorOffset = ((rand() % 100) / 100.0f - 0.5f) * 0.1f;
-                }
-
-                // Paddlemitte zur vorhergesagten Ballposition bewegen, mit kleinem Fehler
-                float target = (predictedX + ball.width / 2.0f + errorOffset) - paddle.getWidth() / 2.0f;
-
-                // Auf Spielfeldgrenzen beschränken
-                if (target < -1.0f) target = -1.0f;
-                if (target > 1.0f - paddle.getWidth()) target = 1.0f - paddle.getWidth();
-
-                // Sanfte Bewegung zum Ziel
-                float currentX = paddle.pos_x;
-                float moveSpeed = 1.5f; // Anpassbarer Wert - höher = schnellere Reaktion
-                float newX = currentX + (target - currentX) * moveSpeed * deltaTime * 10.0f;
-
-                paddle.moveTo(newX, deltaTime);
-            }
-
-            if (ball.glued) {
-                ball.pos_y = paddle.pos_y + paddle.height;
-                ball.pos_x = paddle.pos_x + paddle.getWidth() / 2.0f - ball.getWidth() / 2.0f;
-            }
-
-
-            soundManager.play();
-        }
-#pragma endregion update
-
-#pragma region draw
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        if (ball.active) {
-            paddle.draw(deltaTime);
-            ball.draw(deltaTime);
-        }
-        for (auto &brick: bricks) {
-            if (brick.isActive()) {
-                brick.draw(deltaTime);
-            }
-        }
-        leftBorder.draw(deltaTime);
-        rightBorder.draw(deltaTime);
-        topBorder.draw(deltaTime); // should not be visible
-#if DEBUG_DRAW_BALL_BOUNDING_BOXES
-        GLfloat oldColor[4];
-        glGetFloatv(GL_CURRENT_COLOR, oldColor);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glColor4f(1.0f, 1.0f, 1.0f, 0.1f); // Weiß für die Paddle-Farbe
-        glBegin(GL_QUADS);
-        // unten links
-        glVertex3f(ball.pos_x, ball.pos_y + ball.height, 0.0f);
-        // unten rechts
-        glVertex3f(ball.pos_x + ball.width, ball.pos_y + ball.height, 0.0f);
-        // oben rechts
-        glVertex3f(ball.pos_x + ball.width, ball.pos_y, 0.0f);
-        // oben links
-        glVertex3f(ball.pos_x, ball.pos_y, 0.0f);
-        glEnd();
-        glDisable(GL_BLEND);
-        glColor4fv(oldColor);
-#endif
-
-        testHelper.renderInstructions(deltaTime, instructions);
-
-        GLfloat oldColor2[4];
-        glGetFloatv(GL_CURRENT_COLOR, oldColor2);
-        glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-
-        char tempText2[64];
-        sprintf(tempText2, "B: %.2f, %.2f", ball.pos_x, ball.pos_y);
-        textManager.write(tempText2, Fonts::IntroDescription, false, 1.0f, ball.pos_x, ball.pos_y);
-
-        char tempText3[64];
-        sprintf(tempText3, "P: %.2f, %.2f", paddle.pos_x, paddle.pos_y);
-        textManager.write(tempText3, Fonts::IntroDescription, false, 1.0f, paddle.pos_x, paddle.pos_y);
-        glColor4fv(oldColor2);
-        testHelper.drawMouseCoordinates();
-        SDL_GL_SwapWindow(displayManager.sdlWindow);
-#pragma endregion draw
-    }
-    return EXIT_SUCCESS;
 }

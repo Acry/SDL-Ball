@@ -119,3 +119,8 @@ bool CollisionManager::checkCollision(const ICollideable &obj1, const ICollideab
 
     return true;
 }
+
+bool CollisionManager::pointInsideRect(const ICollideable &obj, float px, float py) {
+    return px >= obj.getPosX() && px <= obj.getPosX() + obj.getWidth() &&
+           py >= obj.getPosY() && py <= obj.getPosY() + obj.getHeight();
+}

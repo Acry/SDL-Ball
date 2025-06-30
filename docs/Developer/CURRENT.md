@@ -5,8 +5,6 @@ Top: Fix all current manual Tests
 Tests:
 
 - [ ] PowerupManager
-- [ ] CollisionManager
-
 - [ ] Powerups
 - [ ] Gun
 
@@ -30,7 +28,7 @@ Paddle-Spawn, Paddle Despawn - on level completed, Paddle explode
 - [ ] Title Scene
 - [ ] Title Scene Test
 
-- [ ] GameManager mit Autoplay
+- [ ] GameManager mit [Autoplay](misc/Autoplay.md)
 - [ ] SceneManager -> FBO -> TransitionEffect Title Scene <-> Autoplay Game Scene
 
 ## Connect the dots:

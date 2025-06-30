@@ -515,21 +515,14 @@ $(BUILD_DIR)TextureManager_Tests.o: $(MANUAL_TEST_DIR)TextureManager_Tests.cpp
 # CollisionManager
 COLLISION_TEST_SOURCES := $(MANUAL_TEST_DIR)Collision_Tests.cpp \
                           $(MANUAL_TEST_DIR)TestHelper.cpp \
-                          $(SOURCE_DIR)Ball.cpp \
-                          $(SOURCE_DIR)Paddle.cpp \
-                          $(SOURCE_DIR)Brick.cpp \
-                          $(SOURCE_DIR)GameObject.cpp \
-                          $(SOURCE_DIR)MovingObject.cpp \
-                          $(SOURCE_DIR)GrowableObject.cpp \
-                          $(SOURCE_DIR)DisplayManager.cpp \
-                          $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                          $(SOURCE_DIR)TextManager.cpp \
-                          $(SOURCE_DIR)TextureManager.cpp \
-                          $(SOURCE_DIR)TextureUtilities.cpp \
                           $(SOURCE_DIR)CollisionManager.cpp \
-                          $(SOURCE_DIR)PlayfieldBorder.cpp \
+                          $(SOURCE_DIR)DisplayManager.cpp \
+                          $(SOURCE_DIR)EventDispatcher.cpp \
                           $(SOURCE_DIR)EventManager.cpp \
-                          $(SOURCE_DIR)SoundManager.cpp \
+                          $(SOURCE_DIR)KeyboardManager.cpp \
+                          $(SOURCE_DIR)MouseManager.cpp \
+                          $(SOURCE_DIR)TextManager.cpp \
+                          $(SOURCE_DIR)TextureUtilities.cpp \
 
 COLLISION_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(COLLISION_TEST_SOURCES:.cpp=.o)))
 
