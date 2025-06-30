@@ -481,15 +481,6 @@ public:
         }
     }
 
-    void handleMouseButton(const MouseEventData &data) override {
-        TestHelper::handleMouseButton(data);
-        if (data.button == SDL_BUTTON_LEFT) {
-            //if (ctx.paddleManager) {
-            //    ctx.paddleManager->spawn(m_mouseX, m_mouseY, false);
-            //}
-        }
-    }
-
     void render(const float deltaTime, const std::vector<std::string> &instructions) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         drawGrid();
