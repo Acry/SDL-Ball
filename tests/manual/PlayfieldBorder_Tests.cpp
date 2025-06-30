@@ -10,6 +10,7 @@
 #include "MouseManager.h"
 #include "PlayfieldBorder.h"
 
+
 class BorderTestContext {
 public:
     EventManager eventManager;
@@ -54,6 +55,26 @@ public:
 
     void handleKeyPress(const KeyboardEventData &data) override {
         TestHelper::handleKeyPress(data);
+        switch (data.key) {
+            case SDLK_1: {
+                const LevelData testLevelDataDropping{
+                    .themeName = "",
+                    .dropSpeed = 5000,
+                };
+                ctx.eventManager.emit(GameEvent::LevelLoaded, testLevelDataDropping);
+            }
+            break;
+            case SDLK_2: {
+                const LevelData testLevelData{
+                    .themeName = "",
+                    .dropSpeed = 0,
+                };
+                ctx.eventManager.emit(GameEvent::LevelLoaded, testLevelData);
+            }
+            break;
+            default:
+                break;
+        }
     }
 
     void handleMouseButton(const MouseEventData &data) override {
@@ -70,6 +91,7 @@ public:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         ctx.leftBorder->draw();
         ctx.rightBorder->draw();
+        ctx.topBorder->update(deltaTime);
         ctx.topBorder->draw();
         drawGrid();
         drawCenterLines();
@@ -98,6 +120,8 @@ int main() {
         BorderTestHelper testHelper(ctx);
 
         const std::vector<std::string> instructions = {
+            "1: Emit Dropping Level",
+            "2: Emit Static Level",
             "M: Draw Mouse Coordinates",
             "S: Screenshot",
             "ESC: Beenden"

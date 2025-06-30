@@ -14,8 +14,7 @@ public:
     void setActive(bool) override {
     }
 
-    void update() {
-    }
+    void update(const float deltaTime);
 
     void init() override;
 
@@ -30,7 +29,7 @@ public:
     [[nodiscard]] float getHeight() const override { return height; }
     [[nodiscard]] bool isActive() const override { return true; }
 
-    CollisionType getCollisionType() const override;
+    [[nodiscard]] CollisionType getCollisionType() const override;
 
     void onCollision(const ICollideable *other, float hitX, float hitY);
 
@@ -38,4 +37,9 @@ private:
     Side side;
     GLuint displayList = 0;
     EventManager *eventManager;
+
+    void handleLevelLoaded(const LevelData &data);
+
+    float dropSpeed;
+    float dropTimerMs = 0.0f;
 };

@@ -10,10 +10,10 @@ scrollInfoScruct scrollInfo.drop
 ## levels complete
 
 struct vars {
-    int numlevels;
+int numlevels;
 
 if (player.level == var.numlevels) {
-    int numlevels;
+int numlevels;
 
 ## load level
 

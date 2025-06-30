@@ -6,6 +6,10 @@
 
 PlayfieldBorder::PlayfieldBorder(const Side side, const texture &tex, EventManager *eventManager)
     : GameObject(tex), side(side), eventManager(eventManager) {
+    if (side == Side::Top) {
+        eventManager->addListener(GameEvent::LevelLoaded,
+                                  [this](const LevelData &data) { handleLevelLoaded(data); }, this);
+    }
     init();
 }
 
@@ -43,62 +47,82 @@ void PlayfieldBorder::createDisplayList() {
               textureProperties.textureColor[1],
               textureProperties.textureColor[2],
               textureProperties.textureColor[3]);
-    glBegin(GL_QUADS);
 
-    if (side == Side::Left) {
-        // Bottom-left corner.
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(-1.0f, -1.0f, 0.1f);
 
-        // Bottom-right corner.
+    const float left = pos_x;
+    const float right = pos_x + width;
+    const float bottom = pos_y;
+    const float top = pos_y + height;
+
+    if (side == Side::Top) {
+        glBegin(GL_QUADS);
         glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(-1.0f + PILLAR_WIDTH, -1.0f, 0.1f);
-
-        // Top-right corner.
-        glTexCoord2f(1.0f, -1.0f);
-        glVertex3f(-1.0f + PILLAR_WIDTH, 1.0f, 0.1f);
-
-        // Top-left corner.
-        glTexCoord2f(0.0f, -1.0f);
-        glVertex3f(-1.0f, 1.0f, 0.1f);
-    } else if (side == Side::Right) {
-        // Bottom-left corner.
+        glVertex3f(left, bottom, 0.1f);
         glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(1.0f - PILLAR_WIDTH, -1.0f, 0.1f);
-
-        // Bottom-right corner.
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(1.0f, -1.0f, 0.1f);
-
-        // Top-right corner.
-        glTexCoord2f(0.0f, -1.0f);
-        glVertex3f(1.0f, +1.0f, 0.1f);
-
-        // Top-left corner.
-        glTexCoord2f(1.0f, -1.0f);
-        glVertex3f(1.0f - PILLAR_WIDTH, +1.0f, 0.1f);
-    } else if (side == Side::Top) {
-        // Bottom-left corner.
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(-1.0f + PILLAR_WIDTH, 1.0f, 0.1f);
-
-        // Bottom-right corner.
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex3f(1.0f - PILLAR_WIDTH, 1.0f, 0.1f);
-
-        // Top-right corner.
+        glVertex3f(right, bottom, 0.1f);
         glTexCoord2f(0.0f, 1.0f);
-        glVertex3f(1.0f - PILLAR_WIDTH, 1.0f + PILLAR_WIDTH, 0.1f);
-
-        // Top-left corner.
+        glVertex3f(right, top, 0.1f);
         glTexCoord2f(0.0f, 0.0f);
-        glVertex3f(-1.0f + PILLAR_WIDTH, 1.0f + PILLAR_WIDTH, 0.1f);
+        glVertex3f(left, top, 0.1f);
+        glEnd();
+
+        // Füllfläche zwischen ursprünglichem Top und aktueller Border
+        if (pos_y <= 1.0f && pos_y < PLAYFIELD_TOP_BORDER) {
+            glDisable(GL_TEXTURE_2D);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glBegin(GL_QUADS);
+            // Obere Kante: Schwarz
+            glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+            glVertex3f(left, PLAYFIELD_TOP_BORDER, 0.05f);
+            glVertex3f(right, PLAYFIELD_TOP_BORDER, 0.05f);
+            // Untere Kante: grau
+            glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
+            glVertex3f(right, top, 0.05f);
+            glVertex3f(left, top, 0.05f);
+            glEnd();
+            glDisable(GL_BLEND);
+            glEnable(GL_TEXTURE_2D);
+        }
+    } else if (side == Side::Left) {
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(left, bottom, 0.1f);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(right, bottom, 0.1f);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(right, top, 0.1f);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(left, top, 0.1f);
+        glEnd();
+    } else if (side == Side::Right) {
+        glBegin(GL_QUADS);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(left, bottom, 0.1f);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(right, bottom, 0.1f);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(right, top, 0.1f);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(left, top, 0.1f);
+        glEnd();
     }
 
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
     glEndList();
+}
+
+void PlayfieldBorder::update(const float deltaTime) {
+    if (side == Side::Top && dropSpeed > 0.0f) {
+        dropTimerMs += deltaTime * 1000.0f;
+        if (dropTimerMs >= dropSpeed) {
+            pos_y -= BRICK_HEIGHT;
+            dropTimerMs = 0.0f;
+            createDisplayList();
+        }
+    }
 }
 
 void PlayfieldBorder::draw() const {
@@ -146,6 +170,17 @@ void PlayfieldBorder::onCollision(const ICollideable *other, const float hitX, c
         break;
         default: ;
     }
+}
+
+void PlayfieldBorder::handleLevelLoaded(const LevelData &data) {
+    if (side == Side::Top && data.dropSpeed > 0.0f) {
+        dropSpeed = data.dropSpeed;
+        dropTimerMs = 0.0f;
+    } else {
+        dropSpeed = 0.0f;
+        dropTimerMs = 0.0f;
+    }
+    init();
 }
 
 CollisionType PlayfieldBorder::getCollisionType() const {
