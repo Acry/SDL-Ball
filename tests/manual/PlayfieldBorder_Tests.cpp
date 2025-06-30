@@ -8,6 +8,7 @@
 #include "EventDispatcher.h"
 #include "KeyboardManager.h"
 #include "MouseManager.h"
+#include "PlayfieldBorder.h"
 
 class BorderTestContext {
 public:
@@ -16,7 +17,11 @@ public:
     KeyboardManager keyboardManager;
     DisplayManager displayManager;
     TextManager textManager;
+    std::unique_ptr<TextureManager> textureManager;
     CollisionManager collisionManager;
+    std::unique_ptr<PlayfieldBorder> leftBorder;
+    std::unique_ptr<PlayfieldBorder> rightBorder;
+    std::unique_ptr<PlayfieldBorder> topBorder;
 
     BorderTestContext()
         : mouseManager(&eventManager),
@@ -26,8 +31,16 @@ public:
         if (!displayManager.init(0, 1024, 768, false)) {
             throw std::runtime_error("Could not initialize display");
         }
-        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: CollisionManager Test");
+        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Border Test");
         textManager.setTheme("../tests/themes/test");
+        textureManager = std::make_unique<TextureManager>();
+        if (!textureManager->setSpriteTheme("../themes/default")) {
+            throw std::runtime_error("Error loading texture theme");
+        }
+        auto *borderTex = textureManager->getMiscTexture(MiscTexture::Border);
+        leftBorder = std::make_unique<PlayfieldBorder>(PlayfieldBorder::Side::Left, *borderTex, &eventManager);
+        rightBorder = std::make_unique<PlayfieldBorder>(PlayfieldBorder::Side::Right, *borderTex, &eventManager);
+        topBorder = std::make_unique<PlayfieldBorder>(PlayfieldBorder::Side::Top, *borderTex, &eventManager);
     }
 };
 
@@ -55,7 +68,9 @@ public:
 
     void render(const float deltaTime, const std::vector<std::string> &instructions) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        ctx.leftBorder->draw();
+        ctx.rightBorder->draw();
+        ctx.topBorder->draw();
         drawGrid();
         drawCenterLines();
         renderInstructions(deltaTime, instructions);
