@@ -48,6 +48,9 @@ enum class GameEvent {
     LevelLoaded, // LevelManager: Level loaded event
     LevelStarted, // GameManager: Level started event
 
+    FontThemeRequested, // TextManager: Font theme requested event
+    FontThemeChanged, // TextManager: Font theme changed event
+
     BrickDestroyed, // BrickManager: Brick destroyed event
     LevelCleared, // BrickManager: Level cleared event
 

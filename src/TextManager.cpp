@@ -443,7 +443,7 @@ bool TextManager::loadAllFonts() {
     return createFontTextures(fontFiles, fontSizes);
 }
 
-TextAnnouncement::TextAnnouncement(std::string msg, Fonts fontId, int ttl, TextManager *mgr)
+TextAnnouncement::TextAnnouncement(std::string msg, const Fonts fontId, const int ttl, TextManager *mgr)
     : message(std::move(msg)), font(fontId), lifetime(ttl), textManager(mgr) {
     age = 0;
     zoom = 0.0f;
