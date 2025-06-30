@@ -15,17 +15,17 @@ class SimpleCollideable final : public ICollideable {
     CollisionType type;
 
 public:
-    SimpleCollideable(float x, float y, float w, float h, CollisionType type)
+    SimpleCollideable(const float x, const float y, const float w, const float h, const CollisionType type)
         : x(x), y(y), w(w), h(h), active(true), type(type) {
     }
 
-    float getPosX() const override { return x; }
-    float getPosY() const override { return y; }
-    float getWidth() const override { return w; }
-    float getHeight() const override { return h; }
-    bool isActive() const override { return active; }
-    void setActive(bool value) override { active = value; }
-    CollisionType getCollisionType() const override { return type; }
+    [[nodiscard]] float getPosX() const override { return x; }
+    [[nodiscard]] float getPosY() const override { return y; }
+    [[nodiscard]] float getWidth() const override { return w; }
+    [[nodiscard]] float getHeight() const override { return h; }
+    [[nodiscard]] bool isActive() const override { return active; }
+    void setActive(const bool value) override { active = value; }
+    [[nodiscard]] CollisionType getCollisionType() const override { return type; }
 
     void setPosition(float nx, float ny) {
         x = nx;
