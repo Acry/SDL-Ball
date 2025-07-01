@@ -213,7 +213,6 @@ bool DisplayManager::screenshot(const std::filesystem::path &pathName) const {
 }
 
 bool DisplayManager::initOpenGL(const unsigned int flags) {
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
@@ -230,6 +229,8 @@ bool DisplayManager::initOpenGL(const unsigned int flags) {
     // Tiefenpuffer-Präzision erhöhen
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
     sdlWindow = SDL_CreateWindow("SDL-Ball",
                                  SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
                                  SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
@@ -244,6 +245,18 @@ bool DisplayManager::initOpenGL(const unsigned int flags) {
     glcontext = SDL_GL_CreateContext(sdlWindow);
     if (glcontext == nullptr) {
         SDL_Log("Error:%s", SDL_GetError());
+        SDL_DestroyWindow(sdlWindow);
+        SDL_Quit();
+        return false;
+    }
+
+    GLint drawBuffer;
+    glGetIntegerv(GL_DRAW_BUFFER, &drawBuffer);
+    SDL_Log("Draw Buffer nach CreateContext: %s", drawBuffer == GL_BACK ? "Back-Buffer" : "Front-Buffer");
+
+    if (SDL_GL_MakeCurrent(sdlWindow, glcontext) < 0) {
+        SDL_Log("Error:%s", SDL_GetError());
+        SDL_GL_DeleteContext(glcontext);
         SDL_DestroyWindow(sdlWindow);
         SDL_Quit();
         return false;
@@ -266,13 +279,6 @@ bool DisplayManager::initOpenGL(const unsigned int flags) {
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &doubleBuffered);
     SDL_Log("Double buffering %s", doubleBuffered ? "aktiviert" : "deaktiviert");
 
-    if (SDL_GL_MakeCurrent(sdlWindow, glcontext) < 0) {
-        SDL_Log("Error:%s", SDL_GetError());
-        SDL_GL_DeleteContext(glcontext);
-        SDL_DestroyWindow(sdlWindow);
-        SDL_Quit();
-        return false;
-    }
     /* Enable smooth shading */
     // glShadeModel(GL_SMOOTH);
 
