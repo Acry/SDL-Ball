@@ -5,13 +5,12 @@ PREFIX?=/usr/
 DATADIR?=$(PREFIX)share/sdl-ball/themes/
 BINDIR?=$(PREFIX)/bin/
 
-DATADIR=$(shell readlink -f ../themes)/
 #append -DWITH_WIIUSE to compile with WIIUSE support!
 #append -DNOSOUND to compile WITHOUT sound support
 
 CXX?=g++
 
-CXXFLAGS+=-Wall `sdl-config --cflags` -DDATADIR=\"$(DATADIR)\"
+CXXFLAGS+=-Wall `sdl-config --cflags` -DDATADIR="\"$(DATADIR)\""
 
 #append -lwiiuse to compile with WIIUSE support
 #remove -lSDL_mixer if compiling with -DNOSOUND
