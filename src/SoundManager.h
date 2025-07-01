@@ -22,8 +22,10 @@ class SoundManager {
     std::vector<sampleQueuedItem> q;
 
     bool loadAllSounds();
-    bool loadSample(const std::string& fullSamplePath, const int sampleNum);
 
+    bool loadSample(const std::string &fullSamplePath, const int sampleNum);
+
+    Mix_Music *currentMusic = nullptr;
     int currentChannels = 0;
     int breakSoundIndex = 0;
 
@@ -43,4 +45,10 @@ public:
     void registerEvents(EventManager *evManager);
 
     ~SoundManager();
+
+    bool loadMusic(const std::string &musicPath);
+
+    void playMusic(int loops = -1); // -1 = Endlosschleife
+
+    void stopMusic();
 };

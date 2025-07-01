@@ -38,7 +38,7 @@ bool SoundManager::init() {
     return true;
 }
 
-bool SoundManager::loadSample(const std::string& fullSamplePath, const int sampleNum) {
+bool SoundManager::loadSample(const std::string &fullSamplePath, const int sampleNum) {
     sample[sampleNum] = Mix_LoadWAV(fullSamplePath.c_str());
     if (!sample[sampleNum]) {
         SDL_Log("SoundManager '%s' :%s", fullSamplePath.c_str(), Mix_GetError());
@@ -91,7 +91,7 @@ void SoundManager::play() {
     // Queue durchlaufen und gleiche Samples zusammenfassen
     for (auto &it: q) {
         bool same = false;
-        for (auto &[s, p, volume, num] : pl) {
+        for (auto &[s, p, volume, num]: pl) {
             if (s == it.s) {
                 same = true;
                 num++;
@@ -168,6 +168,10 @@ SoundManager::~SoundManager() {
         // Weitere Events...
     }
     clearTheme();
+    if (currentMusic) {
+        Mix_FreeMusic(currentMusic);
+        currentMusic = nullptr;
+    }
     Mix_CloseAudio();
     Mix_Quit();
 }
@@ -249,4 +253,27 @@ bool SoundManager::loadAllSounds() {
     }
 
     return allSamplesLoaded;
+}
+
+bool SoundManager::loadMusic(const std::string &musicPath) {
+    if (currentMusic) {
+        Mix_FreeMusic(currentMusic);
+        currentMusic = nullptr;
+    }
+    currentMusic = Mix_LoadMUS(musicPath.c_str());
+    if (!currentMusic) {
+        SDL_Log("Mix_LoadMUS failed: %s", Mix_GetError());
+        return false;
+    }
+    return true;
+}
+
+void SoundManager::playMusic(int loops) {
+    if (currentMusic) {
+        Mix_PlayMusic(currentMusic, loops);
+    }
+}
+
+void SoundManager::stopMusic() {
+    Mix_HaltMusic();
 }
