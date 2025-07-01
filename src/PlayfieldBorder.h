@@ -40,6 +40,6 @@ private:
 
     void handleLevelLoaded(const LevelData &data);
 
-    float dropSpeed;
+    int dropSpeed{};
     float dropTimerMs = 0.0f;
 };

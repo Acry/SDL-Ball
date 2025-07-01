@@ -56,33 +56,53 @@ void PlayfieldBorder::createDisplayList() {
 
     if (side == Side::Top) {
         glBegin(GL_QUADS);
+
+        // Bottom left
         glTexCoord2f(1.0f, 0.0f);
         glVertex3f(left, bottom, 0.1f);
-        glTexCoord2f(1.0f, 0.0f);
+
+        // Bottom right
+        glTexCoord2f(1.0f, 1.0f);
         glVertex3f(right, bottom, 0.1f);
+
+        // Top right
         glTexCoord2f(0.0f, 1.0f);
         glVertex3f(right, top, 0.1f);
+
+        // Top Left
         glTexCoord2f(0.0f, 0.0f);
         glVertex3f(left, top, 0.1f);
+
         glEnd();
 
         // Füllfläche zwischen ursprünglichem Top und aktueller Border
         if (pos_y <= 1.0f && pos_y < PLAYFIELD_TOP_BORDER) {
-            glDisable(GL_TEXTURE_2D);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glBegin(GL_QUADS);
-            // Obere Kante: Schwarz
-            glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-            glVertex3f(left, PLAYFIELD_TOP_BORDER, 0.05f);
-            glVertex3f(right, PLAYFIELD_TOP_BORDER, 0.05f);
-            // Untere Kante: grau
-            glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
-            glVertex3f(right, top, 0.05f);
-            glVertex3f(left, top, 0.05f);
-            glEnd();
-            glDisable(GL_BLEND);
             glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, textureProperties.id);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+            // texture coordinates from top border to PLAYFIELD_TOP_BORDER (1.0f)
+            const float repeatS = (PLAYFIELD_TOP_BORDER - top) / height;
+
+            glBegin(GL_QUADS);
+
+            // Bottom left
+            glTexCoord2f(1.0f, 0.0f); // U = 1.0 (rechte Kante der Textur)
+            glVertex3f(left, top, 0.05f);
+
+            // Bottom right
+            glTexCoord2f(1.0f, 1.0f); // U = 1.0
+            glVertex3f(right, top, 0.05f);
+
+            // Top right
+            glTexCoord2f(1.0f - repeatS, 1.0f); // U = 1.0 - repeatS (z. B. 0.29 bei repeatS = 0.71)
+            glVertex3f(right, PLAYFIELD_TOP_BORDER, 0.05f);
+
+            // Top Left
+            glTexCoord2f(1.0f - repeatS, 0.0f); // U = 1.0 - repeatS
+            glVertex3f(left, PLAYFIELD_TOP_BORDER, 0.05f);
+
+            glEnd();
         }
     } else if (side == Side::Left) {
         glBegin(GL_QUADS);
@@ -115,7 +135,7 @@ void PlayfieldBorder::createDisplayList() {
 }
 
 void PlayfieldBorder::update(const float deltaTime) {
-    if (side == Side::Top && dropSpeed > 0.0f) {
+    if (side == Side::Top && dropSpeed > 0 && pos_y >= -1.0f) {
         dropTimerMs += deltaTime * 1000.0f;
         if (dropTimerMs >= dropSpeed) {
             pos_y -= BRICK_HEIGHT;
@@ -173,7 +193,7 @@ void PlayfieldBorder::onCollision(const ICollideable *other, const float hitX, c
 }
 
 void PlayfieldBorder::handleLevelLoaded(const LevelData &data) {
-    if (side == Side::Top && data.dropSpeed > 0.0f) {
+    if (side == Side::Top && data.dropSpeed > 0) {
         dropSpeed = data.dropSpeed;
         dropTimerMs = 0.0f;
     } else {
