@@ -99,18 +99,6 @@ public:
         drawMouseCoordinates();
         SDL_GL_SwapWindow(ctx.displayManager.sdlWindow);
     }
-
-private:
-    static void drawRect(const float x, const float y, const float w, const float h, const float r, const float g,
-                         const float b) {
-        glColor3f(r, g, b);
-        glBegin(GL_QUADS);
-        glVertex2f(x, y);
-        glVertex2f(x + w, y);
-        glVertex2f(x + w, y + h);
-        glVertex2f(x, y + h);
-        glEnd();
-    }
 };
 
 int main() {
