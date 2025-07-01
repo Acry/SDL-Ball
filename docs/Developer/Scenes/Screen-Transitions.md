@@ -1,6 +1,8 @@
 # Screen Transitions
 
-Those are effects and go to? the effectManager!
+[SceneManager](../Manager/SceneManager.md)
+
+Those are effects and go to? the [effectManager](../Manager/EffectManager.md)!
 
 Use framebuffers to render scenes to textures, then draw these textures as full-screen quads with transformations (for
 sliding) or shaders (for complex effects like cube or bar stripe).

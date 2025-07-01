@@ -6,23 +6,22 @@
 #include "ThemeManager.h"
 
 class CodeManager {
-    IEventManager &eventManager;
-    ConfigFileManager &configFileManager;
-    SettingsManager &settingsManager;
-    ThemeManager &themeManager;
+    std::unique_ptr<IEventManager> eventManager;
+    std::unique_ptr<ConfigFileManager> configFileManager;
+    std::unique_ptr<SettingsManager> settingsManager;
+    std::unique_ptr<ThemeManager> themeManager;
 
 public:
-    CodeManager(IEventManager &em, ConfigFileManager &cfm,
-                SettingsManager &sm, ThemeManager &tm);
+    CodeManager::CodeManager();
 
     ~CodeManager();
 
     bool init();
 
 private:
-    void onLevelThemeRequested(const ThemeData &data);
+    void onLevelThemeRequested(const ThemeData &data) const;
 
-    void applyTheme(const std::string &themeName);
+    void applyTheme(const std::string &themeName) const;
 
     void initEventListeners();
 };

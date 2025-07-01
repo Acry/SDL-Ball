@@ -1,12 +1,9 @@
 # TextManager_TODO
 
-add EventManager via constructor
-
-listen to FontThemeRequested
-in setTheme, fire FontThemeChanged
-
 ## test
 
-change theme in test via EventManager
-
-use TestContext-Setup and eventDispatcher
+- use TestContext-Setup
+  I am not sure about that anymore.
+  screenshot will work only from main thread,
+  except if I want to mess with threading or
+  rework the testHelper

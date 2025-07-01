@@ -1,7 +1,5 @@
 # Shader-basierter Ansatz für Tracer und EffectManager
 
-
-
 Ein moderner Ansatz für visuelle Effekte wie den Tracer wäre, auf Shader zu setzen.
 Gerade in einem 2D-Spiel können Fragment-Shader die Partikeldarstellung erheblich optimieren und flexibilisieren.
 
@@ -17,7 +15,8 @@ Gerade in einem 2D-Spiel können Fragment-Shader die Partikeldarstellung erhebli
     - Dynamische Farbverläufe
     - Physikalisch plausiblere Partikelverhalten
 
-"RainbowTracer" könnte z.B. durch einen Shader realisiert werden, der die Farbe der Partikel basierend auf ihrer Position und Zeit interpoliert.
+"RainbowTracer" könnte z.B. durch einen Shader realisiert werden, der die Farbe der Partikel basierend auf ihrer
+Position und Zeit interpoliert.
 
 3. **Konfigurierbarkeit**:
     - Einfache Anpassung von Partikelverhalten durch Shader-Parameter
@@ -98,28 +97,28 @@ Ein moderner Tracer könnte einen speziellen Fragment-Shader verwenden, der weic
 in vec2 TexCoord;
 out vec4 FragColor;
 
-uniform vec4 uColor;       // Basisfarbe mit Alpha
-uniform float uTime;       // Aktuelle Zeit seit Start des Effekts
-uniform float uLifetime;   // Gesamtlebensdauer
-uniform float uSize;       // Partikelgröße
+uniform vec4 uColor;// Basisfarbe mit Alpha
+uniform float uTime;// Aktuelle Zeit seit Start des Effekts
+uniform float uLifetime;// Gesamtlebensdauer
+uniform float uSize;// Partikelgröße
 
 void main() {
     // Berechne normalisierte Position vom Zentrum (0-1)
     vec2 center = vec2(0.5, 0.5);
     float dist = distance(TexCoord, center);
-    
+
     // Zeitfaktor (1.0 am Anfang, 0.0 am Ende)
     float timeRatio = 1.0 - clamp(uTime / uLifetime, 0.0, 1.0);
-    
+
     // Weicher Kreis mit Glow-Effekt
     float alpha = smoothstep(0.5, 0.0, dist);
-    
+
     // Farbverlauf basierend auf Lebenszeit
     vec3 colorMod = mix(uColor.rgb, vec3(1.0, 1.0, 1.0), dist * 0.5);
-    
+
     // Abnehmende Intensität über Lebensdauer
     float intensity = timeRatio * timeRatio;
-    
+
     // Endgültige Farbe
     FragColor = vec4(colorMod, alpha * intensity * uColor.a);
 }
@@ -256,5 +255,6 @@ Für den Übergang zu einem shader-basierten EffectManager:
     - Dann weitere Effekte konvertieren
     - Kompatibilität mit altem System bewahren
 
-Dieser Ansatz kombiniert moderne GPU-Nutzung mit den Vorteilen des Event-basierten Designs und ermöglicht gleichzeitig ein hochgradig anpassbares Theming-System.
+Dieser Ansatz kombiniert moderne GPU-Nutzung mit den Vorteilen des Event-basierten Designs und ermöglicht gleichzeitig
+ein hochgradig anpassbares Theming-System.
 

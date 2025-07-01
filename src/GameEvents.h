@@ -6,10 +6,10 @@
 #include <SDL2/SDL_keycode.h>
 
 #include "BrickTypes.h"
-#include "colors.h"
 #include "GameObject.h"
 #include "ICollideable.h"
 #include "PowerupTypes.h"
+#include "colors.h"
 
 enum class GameEvent {
     // Collision events
@@ -43,13 +43,24 @@ enum class GameEvent {
 
     LevelRequested,
     LevelChanged,
+
     LevelThemeRequested,
     LevelThemeChanged,
+
     LevelLoaded, // LevelManager: Level loaded event
     LevelStarted, // GameManager: Level started event
 
     FontThemeRequested, // TextManager: Font theme requested event
     FontThemeChanged, // TextManager: Font theme changed event
+
+    ThemeRequested, // ThemeManager: Theme requested event
+    ThemeChanged, // ThemeManager: Theme changed event
+
+    SettingsLoadRequested,
+    SettingsLoaded, // SettingsManager: Settings loaded event
+
+    SettingsSaveRequested,
+    SettingsSaved, // SettingsManager: Settings saved event
 
     BrickDestroyed, // BrickManager: Brick destroyed event
     LevelCleared, // BrickManager: Level cleared event

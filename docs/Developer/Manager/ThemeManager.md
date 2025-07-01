@@ -2,6 +2,14 @@
 
 Die ThemeManager-Klasse ist für die Verwaltung von Spielthemen (Grafiken, Sounds, Level) zuständig.
 
+Nun könnte der codemanager den eventmanager und alle nötigen manager laden.
+dann kann der thememanager prüfen welche themes verfügbar und welches gewünscht ist.
+er ermittiert das event ThemeRequested, // ThemeManager: Theme requested event
+
+Die Listener können dann auf das Event reagieren und die entsprechenden Ressourcen laden.
+wenn der ThemeManager rücklüfer hat, sendet er das Event:
+ThemeChanged, // ThemeManager: Theme changed event
+
 Hier sind die Hauptkomponenten:
 
 Datenstrukturen
@@ -41,7 +49,8 @@ Hilfsfunktionen:
 getDefaultTheme(): Liefert Name des Standard-Themes
 themeHasResource(): Prüft, ob eine Ressource in einem Theme existiert
 
-Die Klasse arbeitet eng mit dem ConfigFileManager zusammen und bietet eine zentrale Schnittstelle für das Laden von themenspezifischen Ressourcen im gesamten Spiel.
+Die Klasse arbeitet eng mit dem ConfigFileManager zusammen und bietet eine zentrale Schnittstelle für das Laden von
+themenspezifischen Ressourcen im gesamten Spiel.
 
 ## Responsibilities
 
@@ -52,6 +61,7 @@ Handles the themes, loads the theme file and applies it to the game
 The game should run without any theme
 
 Themes:
+
 - Fonts
 - gfx
 - sound
@@ -95,10 +105,12 @@ Der `ThemeManager` ist eine zentrale Komponente für die Themenverwaltung im Pro
     - Implementiert eine Hierarchie zur Suche (nutzerspezifisch → global → default)
     - Behandelt Fehler, wenn Dateien nicht gefunden werden
 
-Der `ThemeManager` arbeitet eng mit dem `ConfigFileManager` zusammen, um die korrekten Verzeichnisse für Themen zu finden, und bietet eine zentrale Schnittstelle für das Laden von themenspezifischen Ressourcen.
+Der `ThemeManager` arbeitet eng mit dem `ConfigFileManager` zusammen, um die korrekten Verzeichnisse für Themen zu
+finden, und bietet eine zentrale Schnittstelle für das Laden von themenspezifischen Ressourcen.
 
-In der Todo-Liste gibt es einen Eintrag "rethink the role of the ThemeManager", was darauf hindeutet, dass seine Funktion möglicherweise überarbeitet werden sollte, ähnlich wie bei der Beobachtung zur Umbenennung von `Texture` zu `TextureAnimation`.
-
+In der Todo-Liste gibt es einen Eintrag "rethink the role of the ThemeManager", was darauf hindeutet, dass seine
+Funktion möglicherweise überarbeitet werden sollte, ähnlich wie bei der Beobachtung zur Umbenennung von `Texture` zu
+`TextureAnimation`.
 
 ## Vergleich der Theme-Verwaltung
 
@@ -120,8 +132,8 @@ Im ursprünglichen Code war die Theme-Verwaltung verteilt auf mehrere einfache K
    ```
 
 2. **Funktionen**:
-   - `useTheme(string path, string theme)` - Versucht eine Datei in verschiedenen Theme-Verzeichnissen zu finden
-   - `getThemes()` - Durchsucht Verzeichnisse nach Themes und gibt Informationen zurück
+    - `useTheme(string path, string theme)` - Versucht eine Datei in verschiedenen Theme-Verzeichnissen zu finden
+    - `getThemes()` - Durchsucht Verzeichnisse nach Themes und gibt Informationen zurück
 
 3. **Standardeinstellungen** in `main()`:
    ```cpp
@@ -138,4 +150,5 @@ Die neue ThemeManager-Klasse, die wir entworfen haben, bietet folgende Verbesser
 4. **Verbesserte Fehlerbehandlung**
 5. **Bessere Struktur** durch eine dedizierte Klasse
 
-Die grundlegende Funktionalität ist ähnlich, aber der neue ThemeManager ist flexibler und bietet eine bessere Codeorganisation mit mehr Funktionen.
+Die grundlegende Funktionalität ist ähnlich, aber der neue ThemeManager ist flexibler und bietet eine bessere
+Codeorganisation mit mehr Funktionen.

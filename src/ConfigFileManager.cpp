@@ -68,6 +68,7 @@ bool ConfigFileManager::checkDir(const std::string &dir) {
     return true;
 }
 
+// FIXME: To ThemeManager
 std::string ConfigFileManager::getUserThemeDir() const {
     return programRoot + "themes";
 }
@@ -75,4 +76,3 @@ std::string ConfigFileManager::getUserThemeDir() const {
 std::string ConfigFileManager::getGlobalThemeDir() {
     return DATADIR "themes";
 }
-

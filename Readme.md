@@ -11,6 +11,8 @@ https://github.com/user-attachments/assets/6edef4a5-070b-4f8f-8329-65b208e1741a
 
 https://github.com/user-attachments/assets/4cc262ef-ef83-4190-9624-29d8ae54b69c
 
+## About
+
 I pulled the Repository via <https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=sdl-ball>.
 With sound enabled, the rendering was broken for me.
 I had to initialize the soundClass before creating the window and opengl-context.
@@ -40,9 +42,10 @@ What I am currently on: [Current](docs/Developer/CURRENT.md)
 - Theming is more versatile
 - Event driven architecture
 - Projection change to 2D-Orthographic
+- Removed glu
 - Using OpenGL 3.1 compatibility profile See: [Projection](docs/Developer/OpenGL/Projection.md)
 - no Windows support (macOS should be easy to add)
-- no WiiMote support (currently)
+- no WiiMote support (yet)
 - sound always enabled
 - positional sound does recognize the Y-axis
 - Animation can be played once

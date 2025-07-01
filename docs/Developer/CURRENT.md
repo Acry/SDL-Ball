@@ -4,32 +4,31 @@ Top: Fix all manual tests warnings
 
 Tests:
 
-- [ ] PowerupManager
-- [ ] Powerups
-- [ ] Gun
-
 - [ ] EffectManager real implementations in src
 - [ ] Paddle/PaddleManager real implementations in src
 - [ ] Ball/BallManager real implementations in src
 
 - [ ] GameManager
 
-Solve logic issue kill, collide, render:
-Paddle-Spawn, Paddle Despawn - on level completed, Paddle explode
+- [ ] PowerupManager
+- [ ] Powerups
+
+- [ ] Gun
 
 - [X] rethink collision (paddle collision points)
   Mixed approach for now, on collision in GameObjectManagers
   no convex paddle for now, just a simple rectangle, set angle
 
+- [ ] GameManager mit [Autoplay](misc/Autoplay.md)
+
 - [ ] [Tracer.md](Effects/Tracer.md) (refactor)
 - [ ] Tracer-Tests
 - [ ] TracerManager-Tests
 
-- [ ] Title Scene
-- [ ] Title Scene Test
+Brick-> shrink away on life lost or explode
 
-- [ ] GameManager mit [Autoplay](misc/Autoplay.md)
-- [ ] SceneManager -> FBO -> TransitionEffect Title Scene <-> Autoplay Game Scene
+Solve logic issue kill, collide, render:
+Paddle-Spawn, Paddle Despawn - on level completed, Paddle explode
 
 ## Connect the dots:
 
@@ -46,3 +45,10 @@ HudManager
 MenuManager, HighScoreManager, SaveGameManager
 
 PlayGame: key, or movement brings up Want to play Game? hides after 5 seconds
+
+- [ ] HudManager
+- [ ] MenuManager
+- [ ] Title Scene
+- [ ] Title Scene Test
+- [ ] SplashScene -> music
+- [ ] SceneManager -> FBO -> TransitionEffect Title Scene <-> Autoplay Game Scene

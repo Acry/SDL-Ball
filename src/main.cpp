@@ -2,8 +2,8 @@
 
 int main() {
     CodeManager codeManager;
-    codeManager.initialize();
-    codeManager.run();
-    codeManager.shutdown();
+    codeManager.init();
+    //codeManager.run();
+    //codeManager.shutdown();
     return EXIT_SUCCESS;
 }

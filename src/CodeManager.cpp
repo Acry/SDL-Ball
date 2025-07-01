@@ -1,55 +1,55 @@
 // CodeManager.cpp
 #include "CodeManager.h"
+#include "EventManager.h"
 
-CodeManager::CodeManager(IEventManager &em, ConfigFileManager &cfm,
-                         SettingsManager &sm, ThemeManager &tm)
-    : eventManager(em)
-      , configFileManager(cfm)
-      , settingsManager(sm)
-      , themeManager(tm) {
-}
+CodeManager::CodeManager() = default;
 
 bool CodeManager::init() {
-    initEventListeners();
+    eventManager = std::make_unique<EventManager>();
+    // Init Soundmanager
+    // init SplashScene: new logo, new music
+    configFileManager = std::make_unique<ConfigFileManager>("");
+    settingsManager = std::make_unique<SettingsManager>(*configFileManager);
+    themeManager = std::make_unique<ThemeManager>(*configFileManager);
 
-    // Initial-Theme aus Settings laden
-    const auto &settings = settingsManager.getSettings();
+    const auto &settings = settingsManager->getSettings();
     applyTheme(settings.gfxTheme);
-
+    initEventListeners();
+    // emit requests
     return true;
 }
 
 void CodeManager::initEventListeners() {
-    eventManager.addListener(
+    eventManager->addListener(
         GameEvent::LevelThemeRequested,
         [this](const ThemeData &data) { onLevelThemeRequested(data); },
         this
     );
 }
 
-void CodeManager::onLevelThemeRequested(const ThemeData &data) {
+void CodeManager::onLevelThemeRequested(const ThemeData &data) const {
     const auto &requestedTheme = data.levelsTheme.subThemeName;
 
-    if (themeManager.themeExists(requestedTheme)) {
+    if (themeManager->themeExists(requestedTheme)) {
         applyTheme(requestedTheme);
     } else {
         applyTheme(ThemeManager::getDefaultTheme());
     }
 }
 
-void CodeManager::applyTheme(const std::string &themeName) {
-    if (themeManager.setCurrentTheme(themeName)) {
+void CodeManager::applyTheme(const std::string &themeName) const {
+    if (themeManager->setCurrentTheme(themeName)) {
         ThemeData newTheme;
-        newTheme.spritesTheme = {"gfx", themeManager.getThemeFilePath("gfx")};
-        newTheme.fontsTheme = {"font", themeManager.getThemeFilePath("font")};
-        newTheme.levelsTheme = {"levels", themeManager.getThemeFilePath("levels.txt")};
-        newTheme.backgroundTheme = {"bg", themeManager.getThemeFilePath("gfx/bg")};
-        newTheme.soundTheme = {"snd", themeManager.getThemeFilePath("snd")};
+        newTheme.spritesTheme = {"gfx", themeManager->getThemeFilePath("gfx")};
+        newTheme.fontsTheme = {"font", themeManager->getThemeFilePath("font")};
+        newTheme.levelsTheme = {"levels", themeManager->getThemeFilePath("levels.txt")};
+        newTheme.backgroundTheme = {"bg", themeManager->getThemeFilePath("gfx/bg")};
+        newTheme.soundTheme = {"snd", themeManager->getThemeFilePath("snd")};
 
-        eventManager.emit(GameEvent::LevelThemeChanged, newTheme);
+        eventManager->emit(GameEvent::LevelThemeChanged, newTheme);
     }
 }
 
 CodeManager::~CodeManager() {
-    eventManager.removeListener(GameEvent::LevelThemeRequested, this);
+    eventManager->removeListener(GameEvent::LevelThemeRequested, this);
 }
