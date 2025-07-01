@@ -180,11 +180,12 @@ void TestHelper::renderInstructions(const float deltaTime, const std::vector<std
             m_textManager.write(instruction, currentFont, true, 0.7f, 0.0f, yPos);
             yPos -= offset;
         }
-        if (m_textManager.getAnnouncementCount() > 0) {
-            m_textManager.updateAnnouncements(deltaTime);
-            m_textManager.drawAnnouncements(deltaTime);
-        }
+
         glColor4fv(oldColor);
+    }
+    if (m_textManager.getAnnouncementCount() > 0) {
+        m_textManager.updateAnnouncements(deltaTime);
+        m_textManager.drawAnnouncements(deltaTime);
     }
 }
 
