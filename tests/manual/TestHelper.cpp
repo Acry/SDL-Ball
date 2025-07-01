@@ -281,12 +281,37 @@ bool TestHelper::screenshot() const {
         return false;
     }
 
+    GLenum fbStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (fbStatus != GL_FRAMEBUFFER_COMPLETE) {
+        SDL_Log("Framebuffer incomplete: 0x%x", fbStatus);
+        fclose(outFile);
+        return false;
+    }
+
     // Lese Framebuffer
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glReadPixels(vpX, vpY, vpW, vpH, GL_BGR, GL_UNSIGNED_BYTE, pixels.get());
 
+    bool isEmpty = true;
+    const GLubyte *pixelData = pixels.get();
+    for (size_t i = 0; i < pixelCount; i += CHANNELS) {
+        // Prüfe, ob der Pixel nicht komplett schwarz ist (BGR = 0, 0, 0)
+        if (pixelData[i] != 0 || pixelData[i + 1] != 0 || pixelData[i + 2] != 0) {
+            isEmpty = false;
+            break;
+        }
+    }
+
+    if (isEmpty) {
+        SDL_Log("Screenshot ist empty or full black");
+        fclose(outFile);
+        return false;
+    }
+
     if (glGetError() != GL_NO_ERROR) {
         SDL_Log("Failed reading OpenGL framebuffer.");
+        SDL_Log("glReadPixels error: 0x%x", glGetError());
+        SDL_Log("Viewport: x=%d y=%d w=%d h=%d", viewport[0], viewport[1], viewport[2], viewport[3]);
         fclose(outFile);
         return false;
     }
