@@ -8,11 +8,14 @@
 #include <set>
 
 #include "TextManager.h"
+
+#include "GameEvents.h"
+#include "IEventManager.h"
 #include "TextureUtilities.h"
 
 #define DEBUG_ATLAS 0
 
-TextManager::TextManager() : fontInfo{} {
+TextManager::TextManager(IEventManager *evtMgr) : eventManager(evtMgr), fontInfo{} {
     for (auto &i: fontInfo) {
         i.texture = 0;
         for (Uint32 j = 0; j < CHARS; j++) {
@@ -22,7 +25,17 @@ TextManager::TextManager() : fontInfo{} {
     for (auto &i: fontInfo) {
         i.texture = 0;
     }
+    init();
+}
+
+bool TextManager::init() {
     TTF_Init();
+    if (TTF_Init() == -1) {
+        SDL_Log("TTF_Init: %s", TTF_GetError());
+    }
+    eventManager->addListener(GameEvent::FontThemeRequested,
+                              [this](const ThemeData &data) { handleFontThemeRequested(data); }, this);
+    return true;
 }
 
 bool isUtf8StartByte(const unsigned char byte) {
@@ -314,6 +327,9 @@ void TextManager::clearTheme() {
 }
 
 TextManager::~TextManager() {
+    if (eventManager) {
+        eventManager->removeListener(GameEvent::FontThemeRequested, this);
+    }
     clearTheme();
     TTF_Quit();
 }
@@ -331,6 +347,8 @@ bool TextManager::setTheme(const std::string &themeName) {
         SDL_Log("Error getting font theme: %s", currentTheme.c_str());
         return false;
     }
+    currentThemeData.fontsTheme.subThemePath = currentTheme;
+    eventManager->emit(GameEvent::FontThemeChanged, currentThemeData);
     return true;
 }
 
@@ -549,4 +567,9 @@ void TextManager::drawAnnouncements(const float deltaTime) const {
 
 size_t TextManager::getAnnouncementCount() const {
     return announcements.size();
+}
+
+void TextManager::handleFontThemeRequested(const ThemeData &data) {
+    currentThemeData = data;
+    setTheme(data.fontsTheme.subThemePath);
 }

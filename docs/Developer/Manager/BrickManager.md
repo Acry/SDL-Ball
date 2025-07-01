@@ -39,7 +39,9 @@ void BrickManager::onBallHitBrick(const CollisionData& data) {
 ## BrickManager tests
 
 use test helper and test context
-implement dropping levels
+implement dropping levels, see Border implementation
+
+```c++
 
 ## BrickManager collision
 

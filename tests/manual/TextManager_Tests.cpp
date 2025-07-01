@@ -6,6 +6,9 @@
 #include <vector>
 
 #include "DisplayManager.hpp"
+#include "EventDispatcher.h"
+#include "KeyboardManager.h"
+#include "MouseManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
 
@@ -20,6 +23,10 @@ struct TextTest {
 
 int main() {
     EventManager eventManager;
+
+    const EventDispatcher eventDispatcher(&eventManager);
+    MouseManager mouseManager(&eventManager);
+    KeyboardManager keyboardManager(&eventManager);
     DisplayManager displayManager(&eventManager);
     if (!displayManager.init(0, 1024, 768, false)) {
         SDL_Log("Could not initialize display");
@@ -27,10 +34,20 @@ int main() {
     }
     SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Text Test");
 
-    TextManager textManager;
+    TextManager textManager(&eventManager);
+
+    eventManager.addListener(
+        GameEvent::FontThemeChanged,
+        [&textManager](const ThemeData &data) {
+            textManager.addAnnouncement("New Font Theme", 2000, Fonts::AnnounceGood);
+        },
+        nullptr
+    );
+
     if (!textManager.setTheme("../tests/themes/test")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }
+
 
     TestHelper testHelper(textManager, &eventManager);
     constexpr float yPos = 0.6f;
@@ -48,6 +65,8 @@ int main() {
     const std::vector<std::string> instructions = {
         "1: Good Announcement",
         "2: Bad Announcement",
+        "3: Load Test Theme via event",
+        "4: Load Default Theme via event",
         "M: Toggle Mouse Coordinates",
         "S: Create Screenshot",
         "ESC: Quit"
@@ -55,57 +74,24 @@ int main() {
 
     bool running = true;
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
-    GLfloat normalizedMouseX = 0.0f, normalizedMouseY = 0.0f;
     while (running) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
         lastFrameTime = currentTime;
 
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_QUIT:
-                    running = false;
-                    break;
-                case SDL_KEYDOWN:
-                    if (event.key.keysym.sym == SDLK_ESCAPE)
-                        running = false;
-                    else if (event.key.keysym.sym == SDLK_1) {
-                        textManager.addAnnouncement("Well Done!", 2500, Fonts::AnnounceGood);
-                    } else if (event.key.keysym.sym == SDLK_2) {
-                        textManager.addAnnouncement("GAME OVER!", 10000, Fonts::AnnounceBad);
-                    } else if (event.key.keysym.sym == SDLK_m) {
-                        testHelper.m_showMouseCoords = !testHelper.m_showMouseCoords;
-                    } else if (event.key.keysym.sym == SDLK_s) {
-                        const std::filesystem::path screenshotPath = "./screenshots/";
-                        if (!std::filesystem::exists(screenshotPath)) {
-                            std::filesystem::create_directories(screenshotPath);
-                        }
-                        if (displayManager.screenshot(screenshotPath)) {
-                            textManager.addAnnouncement("Screenshot saved.", 1500, Fonts::AnnounceGood);
-                        } else {
-                            textManager.addAnnouncement("Screenshot not created.", 1500, Fonts::AnnounceBad);
-                        }
-                    }
-                    break;
-                case SDL_WINDOWEVENT:
-                    if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-                        displayManager.resize(event.window.data1, event.window.data2);
-                    }
-                    break;
-                case SDL_MOUSEMOTION: {
-                    normalizedMouseX = (event.motion.x - displayManager.viewportX - displayManager.viewportW / 2.0f) * (
-                                           2.0f / displayManager.viewportW);
-                    normalizedMouseY = (event.motion.y - displayManager.viewportY - displayManager.viewportH / 2.0f) * -
-                                       1 * (
-                                           2.0f / displayManager.viewportH);
-                }
-                default:
-                    break;
-            }
-        }
+        running = eventDispatcher.processEvents();
 
-        testHelper.updateMousePosition(normalizedMouseX, normalizedMouseY);
+        if (const Uint8 *state = SDL_GetKeyboardState(nullptr); state[SDL_SCANCODE_1]) {
+            textManager.addAnnouncement("Well Done!", 2500, Fonts::AnnounceGood);
+        } else if (state[SDL_SCANCODE_2]) {
+            textManager.addAnnouncement("GAME OVER!", 10000, Fonts::AnnounceBad);
+        } else if (state[SDL_SCANCODE_3]) {
+            const ThemeData testThemeData = {.fontsTheme = {"test", "../tests/themes/test"}};
+            eventManager.emit(GameEvent::FontThemeRequested, testThemeData);
+        } else if (state[SDL_SCANCODE_4]) {
+            const ThemeData themeData = {.fontsTheme = {"default", "../themes/default"}};
+            eventManager.emit(GameEvent::FontThemeRequested, themeData);
+        }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -113,6 +99,7 @@ int main() {
         testHelper.drawCenterLines();
         testHelper.renderInstructions(deltaTime, instructions);
 
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         // font heights
         for (int i = 0; i < static_cast<int>(Fonts::Count); i++) {
             std::string heightInfo = "Font " + std::to_string(i) + " height: " +
@@ -120,16 +107,12 @@ int main() {
             textManager.write(heightInfo, Fonts::MenuHighscore, false, 1.0f, 0.25f, 0.0 - i * 0.08f);
         }
         // render theme fonts
-        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
         textManager.write("TOP-LEFT", Fonts::IntroDescription, false, 1.0f, -1.0f, 1.0f);
         for (const auto &[text, font, centered, scale, x, y]: tests) {
             textManager.write(text, font, centered, scale, x, y);
         }
 
-        if (textManager.getAnnouncementCount() > 0) {
-            textManager.updateAnnouncements(deltaTime);
-            textManager.drawAnnouncements(deltaTime);
-        }
         testHelper.drawMouseCoordinates();
         SDL_GL_SwapWindow(displayManager.sdlWindow);
     }

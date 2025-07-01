@@ -49,7 +49,7 @@ int main() {
         return EXIT_FAILURE;
     }
     SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Sound Test");
-    TextManager textManager;
+    TextManager textManager(&eventManager);
     if (!textManager.setTheme("../tests/themes/test")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
         return EXIT_FAILURE;

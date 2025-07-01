@@ -89,7 +89,7 @@ int main() {
 
     const std::filesystem::path themePath = "../themes/default";
 
-    textManager = new TextManager;
+    textManager = new TextManager(&eventManager);
     if (!textManager->setTheme("../tests/themes/test")) {
         SDL_Log("Fehler beim Laden des Font-Themes");
     }

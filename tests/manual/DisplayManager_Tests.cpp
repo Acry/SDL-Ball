@@ -18,7 +18,7 @@ int main() {
     }
     SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: Display Test");
 
-    TextManager textManager;
+    TextManager textManager(&eventManager);
     if (!textManager.setTheme("../themes/default")) {
         SDL_Log("Error loading font theme");
         return EXIT_FAILURE;

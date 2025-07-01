@@ -7,6 +7,10 @@
 #include <map>
 #include <string>
 
+#include "GameEvents.h"
+
+class IEventManager;
+
 // PRINTABLE_CHARS =  96; // 128 - 32 = 96 characters
 constexpr Uint32 CHARS = 128; // 0-127 ASCII characters
 enum class Fonts {
@@ -30,13 +34,15 @@ struct fontInfo {
     GLuint texture;
     GLfloat height; // Maximalhöhe der Schriftart in OpenGL-normalisierten Werten (0.0-1.0)
     characterUvCoordinates uv[CHARS];
-    int ascent;    // Obere Höhe über der Baseline
-    int descent;   // Untere Höhe unter der Baseline
-    int lineSkip;  // Empfohlener Zeilenabstand
+    int ascent; // Obere Höhe über der Baseline
+    int descent; // Untere Höhe unter der Baseline
+    int lineSkip; // Empfohlener Zeilenabstand
 };
 
 class TextManager {
+    IEventManager *eventManager;
     std::string currentTheme;
+    ThemeData currentThemeData;
 
     bool loadAllFonts();
 
@@ -57,7 +63,9 @@ class TextManager {
     std::list<TextAnnouncement> announcements;
 
 public:
-    TextManager();
+    explicit TextManager(IEventManager *evtMgr);
+
+    bool init();
 
     ~TextManager();
 
@@ -74,6 +82,8 @@ public:
     void drawAnnouncements(const float deltaTime) const;
 
     size_t getAnnouncementCount() const;
+
+    void handleFontThemeRequested(const ThemeData &data);
 };
 
 class TextAnnouncement {

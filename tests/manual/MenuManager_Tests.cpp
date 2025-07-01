@@ -127,6 +127,7 @@ public:
         : mouseManager(&eventManager),
           keyboardManager(&eventManager),
           displayManager(&eventManager),
+          textManager(&eventManager),
           collisionManager(&eventManager),
           menuManager(textManager) {
         if (!displayManager.init(0, 1024, 768, false)) {

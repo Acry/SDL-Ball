@@ -31,7 +31,8 @@ public:
     SceneManagerTestContext()
         : mouseManager(&eventManager),
           keyboardManager(&eventManager),
-          displayManager(&eventManager) {
+          displayManager(&eventManager),
+          textManager(&eventManager) {
         if (!displayManager.init(0, 1024, 768, false)) {
             throw std::runtime_error("Could not initialize display");
         }

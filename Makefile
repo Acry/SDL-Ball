@@ -57,6 +57,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
 $(shell mkdir -p $(BUILD_DIR))
 
 OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SOURCES:.cpp=.o)))
+
 TEST_TARGETS := \
     test-background \
     test-ball \
@@ -376,12 +377,14 @@ $(BUILD_DIR)ThemeManager_Tests.o: $(MANUAL_TEST_DIR)ThemeManager_Tests.cpp
 # TextManager
 TEXT_TEST_SOURCES := $(MANUAL_TEST_DIR)TextManager_Tests.cpp \
                      $(MANUAL_TEST_DIR)TestHelper.cpp \
-                     $(SOURCE_DIR)SpriteSheetAnimation.cpp \
-                     $(SOURCE_DIR)TextManager.cpp \
                      $(SOURCE_DIR)DisplayManager.cpp \
+                     $(SOURCE_DIR)EventDispatcher.cpp \
+                     $(SOURCE_DIR)EventManager.cpp \
+                     $(SOURCE_DIR)KeyboardManager.cpp \
+                     $(SOURCE_DIR)MouseManager.cpp \
+                     $(SOURCE_DIR)TextManager.cpp \
                      $(SOURCE_DIR)TextureManager.cpp \
                      $(SOURCE_DIR)TextureUtilities.cpp \
-                     $(SOURCE_DIR)EventManager.cpp \
 
 TEXT_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(TEXT_TEST_SOURCES:.cpp=.o)))
 

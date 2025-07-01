@@ -20,7 +20,7 @@ int main() {
 
     const std::filesystem::path themePath = "../themes/default";
 
-    TextManager textManager;
+    TextManager textManager(&eventManager);
     if (!textManager.setTheme("../tests/themes/test")) {
         SDL_Log("Error loading font theme %s", themePath.c_str());
         return EXIT_FAILURE;
