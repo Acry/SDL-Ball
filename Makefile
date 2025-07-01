@@ -41,6 +41,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     SettingsManager.cpp \
     SoundManager.cpp \
     Speedometer.cpp \
+    SplashScreen.cpp \
     SpriteSheetAnimation.cpp \
     SpriteSheetAnimationManager.cpp \
     TextManager.cpp \
@@ -74,6 +75,7 @@ TEST_TARGETS := \
     test-scenes \
     test-setting \
     test-sound \
+    test-splash \
     test-spritesheet \
     test-spritesheet-manager \
     test-text \
@@ -410,6 +412,24 @@ test-sound: $(SOUND_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(SOUND_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-sound
 
 $(BUILD_DIR)SoundManager_Tests.o: $(MANUAL_TEST_DIR)SoundManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
+# Splash
+SPLASH_TEST_SOURCES := $(MANUAL_TEST_DIR)SplashScene_Tests.cpp \
+                      $(SOURCE_DIR)SplashScreen.cpp \
+                      $(SOURCE_DIR)TextureUtilities.cpp \
+                      $(SOURCE_DIR)TextureManager.cpp \
+                      $(SOURCE_DIR)EventManager.cpp \
+                      $(SOURCE_DIR)SoundManager.cpp \
+                      $(SOURCE_DIR)DisplayManager.cpp
+
+SPLASH_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SPLASH_TEST_SOURCES:.cpp=.o)))
+
+test-splash: $(SPLASH_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(SPLASH_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-splash
+
+$(BUILD_DIR)SplashScene_Tests.o: $(MANUAL_TEST_DIR)SplashScene_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
