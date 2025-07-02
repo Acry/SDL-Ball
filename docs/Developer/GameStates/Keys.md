@@ -27,3 +27,10 @@ SDLK_F1
 
 fullscreen
 SDLK_F11
+
+TAB MENU
+ESC QUIT
+
+<- -> A D move paddle
+
+W UP shop

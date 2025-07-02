@@ -1,6 +1,6 @@
 # Scenes
 
-- AutoplayScene
+- AutoplayScene [Autoplay](misc/Autoplay.md)
 - CreditsScene
 
 - GameOverScene
@@ -20,6 +20,8 @@ TutorialScenes/InstructionsScene
 - GameDescription 1 Controls
 - GameDescription 2 Mechanics
 - GameDescription 3 PowerUps
+
+floating Scene -> MainMenu
 
 ## See
 

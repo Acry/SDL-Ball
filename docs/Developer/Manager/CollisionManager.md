@@ -76,13 +76,15 @@ if (CollisionManager::checkBallPaddleCollision(ball, paddle, colPoint)) {
 
 ## collision side
 
+```c++
 enum class CollisionSide {
-None,
-Top,
-Bottom,
-Left,
-Right
+   None,
+   Top,
+   Bottom,
+   Left,
+   Right
 };
+```
 
 ## Kollisionsbehandlung basierend auf der Form und Masse der Objekte ist sehr sinnvoll.
 
@@ -113,4 +115,29 @@ Circle,
 Rectangle,
 Convex,
 Line,
-CompoundShape // Für komplexere Objekte aus mehreren G
+CompoundShape // Für komplexere Objekte aus mehreren Geometrien
+
+## GameObjects/Actors
+
+Die Init-Methode ist in den Actors m.E. nicht nötig. Von Beginn an war im Hinterkopf, dass die GameObjects/Actors
+so wenig wie möglich Logik enthalten, weil die Manager-Klassen die Logik übernehmen sollen.
+
+Wir könnten ICollideable auf die grundlegenden geometrischen Eigenschaften reduzieren und die Kollisionslogik in die
+Manager verschieben.
+
+```c++
+// ICollideable.h
+#pragma once
+
+class ICollideable {
+public:
+    virtual ~ICollideable() = default;
+
+    // Nur grundlegende Geometrie
+    virtual float getPosX() const = 0;
+    virtual float getPosY() const = 0;
+    virtual float getWidth() const = 0;
+    virtual float getHeight() const = 0;
+    virtual bool isActive() const = 0;
+};
+```

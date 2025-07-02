@@ -2,6 +2,7 @@
 
 ## Brick Types
 
+```c++
 enum class BrickType {
 None,
 Blue,
@@ -18,6 +19,9 @@ Explosive,
 Doom,
 Base
 };
+```
+
+## Score System
 
 int BrickManager::getBaseScore(BrickType type) {
 switch(type) {
@@ -76,7 +80,9 @@ Power-up "Drop" lässt alle Bricks nach unten fallen
 ## BrickFade
 
 Sollte ich shrinking und fading kombinieren?
-colliding, but active
+No, shrink to 0
+
+not colliding, but active
 
 // In Brick.h
 class Brick : public GameObject {

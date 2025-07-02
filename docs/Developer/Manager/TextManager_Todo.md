@@ -1,5 +1,9 @@
 # TextManager_TODO
 
+## events
+
+- [ ] TextureManager event, emit Sprites cached?
+
 ## test
 
 - use TestContext-Setup

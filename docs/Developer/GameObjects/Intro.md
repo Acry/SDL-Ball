@@ -15,7 +15,7 @@ Die Spielobjekte sollten möglichst "dumm" sein und nur ihre grundlegenden Eigen
 
 ## Abstract classes
 
-- [GameObject](GameObject.md)
+- [GameObject](GameObjects.md)
 - [MovingObject](MovingObject.md)
 - [GrowableObject](GrowableObject.md)
 - ICollidable

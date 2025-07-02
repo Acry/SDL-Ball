@@ -21,6 +21,9 @@ eventManager.addListener(GameEvent::BallHitTopBorder,
 );
 ```
 
+- [ ] use enum, no define
+- [ ] Sound test: write current sound
+
 ## future
 
 - [ ] mod support for music and samples (demonstrate in Retro theme)

@@ -37,3 +37,4 @@ if (currentTime - lastKeyPressTime >= KEY_REPEAT_DELAY) {
 - Führt die Aktion nur aus wenn genug Zeit vergangen ist
 - Ermöglicht flüssiges Durchlaufen der Level beim Halten der Taste
 - Verhindert zu schnelles Durchschalten durch die Verzögerung
+- 

@@ -3,6 +3,8 @@
 The `EffectManager` is a manager designed to map `GameEvents` to effects.
 It listens to specific game events and triggers corresponding visual effects using the `EffectFactory`.
 
+Setting: eyeCandy = false, disables the effect manager.
+
 ## Key Responsibilities
 
 - **Event Handling**: Registers listeners for game events from GameEvents.h.

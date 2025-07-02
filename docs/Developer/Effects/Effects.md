@@ -2,8 +2,9 @@
 
 ![EffectManager.svg](../Manager/EffectManager.svg)
 
-Schlüsselkomponenten und Beziehungen
-Basisklassen:
+## Schlüsselkomponenten und Beziehungen
+
+### Basisklassen
 
 BaseEffect: Abstrakte Basisklasse mit grundlegenden Methoden (init, update, draw, isActive)
 BaseEffectProperties: Grundlegende Eigenschaften aller Effekte (Kategorie, Lebensdauer, Größe, Farbe)
@@ -14,7 +15,7 @@ ParticleEffectProperties: Erweitert die Basiseigenschaften um partikelspezifisch
 Geschwindigkeit, Ausbreitung)
 ParticleEffect: Implementierung, die mehrere Partikel verwaltet
 
-Effektfactory und Presets:
+### Effektfactory und Presets
 
 EffectPresets: Liefert vorkonfigurierte ParticleEffectProperties (z.B. für Feuer, Rauch)
 EffectFactory: Erstellt komplette Effekte mit zusätzlichen Konfigurationen wie Texturen und Farbpaletten
@@ -28,5 +29,6 @@ ParticleEffect (verwaltet eine Gruppe von Partikeln)
 ↓
 Particle (einzelne Partikel mit Position, Geschwindigkeit, Aussehen)
 
-Sonderfälle:
-Tracer: Ein spezieller Effekt, der statt von BaseEffect von MovingObject erbt
+### Sonderfälle
+
+[Tracer](Tracer.md): Ein spezieller Effekt, der statt von BaseEffect von MovingObject erbt
