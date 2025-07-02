@@ -1,5 +1,6 @@
 // MenuManager_Tests.cpp
 #include <cstdlib>
+#include <utility>
 
 #include "DisplayManager.hpp"
 #include "CollisionManager.h"
@@ -17,19 +18,19 @@ class TestMenuItem final : public ICollideable {
     GameEvent event;
 
 public:
-    TestMenuItem(float x, float y, float w, float h, const std::string &label, GameEvent event)
-        : x(x), y(y), w(w), h(h), active(true), label(label), event(event) {
+    TestMenuItem(float x, float y, float w, float h, std::string label, GameEvent event)
+        : x(x), y(y), w(w), h(h), active(true), label(std::move(label)), event(event) {
     }
 
-    float getPosX() const override { return x; }
-    float getPosY() const override { return y; }
-    float getWidth() const override { return w; }
-    float getHeight() const override { return h; }
-    bool isActive() const override { return active; }
-    void setActive(bool value) override { active = value; }
-    CollisionType getCollisionType() const override { return CollisionType::None; }
-    const std::string &getLabel() const { return label; }
-    GameEvent getEvent() const { return event; }
+    [[nodiscard]] float getPosX() const override { return x; }
+    [[nodiscard]] float getPosY() const override { return y; }
+    [[nodiscard]] float getWidth() const override { return w; }
+    [[nodiscard]] float getHeight() const override { return h; }
+    [[nodiscard]] bool isActive() const override { return active; }
+    void setActive(const bool value) override { active = value; }
+    [[nodiscard]] CollisionType getCollisionType() const override { return CollisionType::None; }
+    [[nodiscard]] const std::string &getLabel() const { return label; }
+    [[nodiscard]] GameEvent getEvent() const { return event; }
 };
 
 struct MainMenu {
@@ -89,11 +90,11 @@ public:
 
     void show() { visible = true; }
     void hide() { visible = false; }
-    bool isVisible() const { return visible; }
+    [[nodiscard]] bool isVisible() const { return visible; }
     void addItem(const TestMenuItem &item) { items.push_back(item); }
     int hoveredIndex = -1;
 
-    int handleMouse(float mx, float my) {
+    int handleMouse(const float mx, const float my) const {
         for (size_t i = 0; i < items.size(); ++i) {
             if (CollisionManager::pointInsideRect(items[i], mx, my)) {
                 return static_cast<int>(i);
