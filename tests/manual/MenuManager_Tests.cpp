@@ -275,7 +275,7 @@ public:
         if (!displayManager.init(0, 1024, 768, false)) {
             throw std::runtime_error("Could not initialize display");
         }
-        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: CollisionManager Test");
+        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: MenuManager Test");
         textManager.setTheme("../tests/themes/test");
     }
 };
