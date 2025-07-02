@@ -11,9 +11,13 @@ bool CodeManager::init() {
     configFileManager = std::make_unique<ConfigFileManager>("");
     settingsManager = std::make_unique<SettingsManager>(*configFileManager);
     themeManager = std::make_unique<ThemeManager>(*configFileManager);
+    displayManager = std::make_unique<DisplayManager>(eventManager.get());
+    soundManager = std::make_unique<SoundManager>();
+    textManager = std::make_unique<TextManager>(eventManager.get());
 
     const auto &settings = settingsManager->getSettings();
     applyTheme(settings.gfxTheme);
+
     initEventListeners();
     // emit requests
     return true;

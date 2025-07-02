@@ -7,14 +7,12 @@
 #include "../../src/ThemeManager.h"
 
 void testThemeChange() {
-    // Manager erstellen
     ConfigFileManager configFileManager("./test_config"); // Testverzeichnis
     EventManager eventManager;
     SettingsManager settingsManager(configFileManager);
     ThemeManager themeManager(configFileManager);
 
-    // CodeManager mit allen Abhängigkeiten erstellen
-    CodeManager codeManager(eventManager, configFileManager, settingsManager, themeManager);
+    CodeManager codeManager;
 
     // Event-Listener für Theme-Änderungen
     eventManager.addListener(GameEvent::LevelThemeChanged,

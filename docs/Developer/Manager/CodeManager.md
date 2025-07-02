@@ -7,7 +7,7 @@ steuert den Ablauf. Er spricht direkt mit dem SettingsManager, dem Theme-Manager
 Der [EventManager](EventManager.md) ist die zentrale Kommunikationsschnittstelle.
 
 ```text
-SettingsManager → ThemeManager → TextureManager → GameManager
+SettingsManager → ThemeManager → TextureManager → SceneManager
        ↑               ↑             ↑
        └───────────────┴─────────────┘
               ConfigFileManager
@@ -251,3 +251,119 @@ applyTheme(data.themeName);
 void CodeManager::applyTheme(const std::string &themeName) {
 themeManager->applyTheme(themeName);
 }
+
+## sketching splashscene
+
+codeManager.initSplashScene()
+
+// CodeManager.h
+#pragma once
+#include <thread>
+#include <atomic>
+#include "SplashScreen.h"
+
+class CodeManager {
+private:
+std::unique_ptr<SplashScreen> splashScreen;
+std::atomic<bool> isInitialized;
+std::atomic<bool> splashSceneRunning;
+std::thread initThread;
+
+    void asyncInit();
+
+public:
+CodeManager();
+~CodeManager();
+
+    bool init();
+    void initSplashScene();
+    void run();
+    void shutdown();
+
+};
+
+// CodeManager.cpp
+#include "CodeManager.h"
+#include <chrono>
+#include <epoxy/gl.h>
+#include <SDL2/SDL.h>
+
+CodeManager::CodeManager() : isInitialized(false), splashSceneRunning(false) {}
+
+CodeManager::~CodeManager() {
+if (initThread.joinable()) {
+initThread.join();
+}
+}
+
+void CodeManager::asyncInit() {
+// Initialisierung der Manager
+eventManager = std::make_unique<EventManager>();
+configFileManager = std::make_unique<ConfigFileManager>("");
+settingsManager = std::make_unique<SettingsManager>(*configFileManager);
+themeManager = std::make_unique<ThemeManager>(*configFileManager);
+displayManager = std::make_unique<DisplayManager>(eventManager.get());
+soundManager = std::make_unique<SoundManager>();
+textManager = std::make_unique<TextManager>(eventManager.get());
+
+    // Weitere Initialisierung
+    const auto &settings = settingsManager->getSettings();
+    applyTheme(settings.gfxTheme);
+    initEventListeners();
+
+    // Initialisierung abgeschlossen
+    isInitialized = true;
+    splashSceneRunning = false;
+
+}
+
+void CodeManager::initSplashScene() {
+splashSceneRunning = true;
+
+    // SplashScreen erstellen
+    TextureManager textureManager;
+    texture tex;
+    textureManager.load("../images/current-logo.png", tex);
+    splashScreen = std::make_unique<SplashScreen>(&tex.textureProperties);
+
+    SoundManager soundManager;
+    soundManager.loadMusic("../tests/themes/test/music/Pixel Breaker.mp3");
+    soundManager.playMusic();
+
+    // Initialisierung im Hintergrund starten
+    initThread = std::thread(&CodeManager::asyncInit, this);
+
+    // SplashScene anzeigen
+    SDL_Event event;
+    auto lastFrameTime = std::chrono::high_resolution_clock::now();
+    while (splashSceneRunning) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                splashSceneRunning = false;
+            }
+        }
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        const float deltaTime = std::chrono::duration<float>(currentTime - lastFrameTime).count();
+        lastFrameTime = currentTime;
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        splashScreen->draw();
+        SDL_GL_SwapWindow(displayManager->sdlWindow);
+
+        // Beenden der SplashScene, wenn Initialisierung abgeschlossen
+        if (isInitialized) {
+            splashSceneRunning = false;
+        }
+    }
+
+}
+
+bool CodeManager::init() {
+initSplashScene();
+return isInitialized;
+}
+
+void CodeManager::run() {
+// Hauptprogramm-Logik
+}
+
