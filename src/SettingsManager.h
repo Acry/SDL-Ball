@@ -1,17 +1,10 @@
-// settings_manager.h
+// SettingsManager.h
 #pragma once
 
-#include "ConfigFileManager.h"
 #include <string>
 #include <fstream>
 #include <SDL2/SDL.h>
 
-// TODO: Die settings Struktur könnte in mehrere logische Gruppen aufgeteilt werden:
-// - Audio
-// - Video
-// - Steuerung
-// - Gameplay
-// Will use json for settings version 3.1 anymways
 struct settings {
     std::string sndTheme, gfxTheme, lvlTheme;
     bool cfgRes[2];
@@ -40,7 +33,7 @@ class SettingsManager {
     settings defaultSettings{}; // Compile-time Defaults aus config.h
     settings loadedSettings{}; // Aus Datei geladene Settings
     settings currentSettings{}; // Aktuelle Runtime-Settings
-    ConfigFileManager &configFileManager;
+    std::string settingsFilePath;
 
     void setDefaults();
 
@@ -53,7 +46,7 @@ class SettingsManager {
     [[nodiscard]] bool hasChanged() const;
 
 public:
-    explicit SettingsManager(ConfigFileManager &cf);
+    explicit SettingsManager(const std::string &settingsFile);
 
     // Verhindere Kopieren
     SettingsManager(const SettingsManager &) = delete;

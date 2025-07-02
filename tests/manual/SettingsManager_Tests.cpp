@@ -1,21 +1,9 @@
-#include "ConfigFileManager.h"
-#include <iostream>
-#include <cassert>
-
+// SettingsManager_Tests.cpp
 #include "SettingsManager.h"
 
-void testSettingsFile(const ConfigFileManager &config) {
-    std::cout << "\nTest SettingsFile:\n";
-    std::cout << "Settings file path: " << config.getSettingsFile() << "\n";
-}
 
 int main() {
-    ConfigFileManager config("./test");
-    // was macht der Konstruktor?
-    SettingsManager settings(config);
-    // set defaults - .defaultSettings
-    // init: loadSettings, validateSettings, resetToLoaded
-    testSettingsFile(config);
-
+    // This test will write the default to the build dir
+    SettingsManager settings("test-settings.txt");
     return EXIT_SUCCESS;
 }

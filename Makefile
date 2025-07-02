@@ -73,7 +73,7 @@ TEST_TARGETS := \
     test-menu \
     test-paddle \
     test-scenes \
-    test-setting \
+    test-settings \
     test-sound \
     test-splash \
     test-spritesheet \
@@ -85,6 +85,7 @@ TEST_TARGETS := \
 
 AUTO_TEST_TARGETS := \
     automatic-test-config \
+    automatic-test-settings \
 
 TARGET=sdl-ball-remastered
 
@@ -151,12 +152,11 @@ $(BUILD_DIR)ConfigFileManager.o: $(SOURCE_DIR)ConfigFileManager.cpp
 # SettingsManagerTests
 SETTINGS_TEST_SOURCES := $(MANUAL_TEST_DIR)SettingsManager_Tests.cpp \
                          $(SOURCE_DIR)SettingsManager.cpp \
-                         $(SOURCE_DIR)ConfigFileManager.cpp \
 
 SETTINGS_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SETTINGS_TEST_SOURCES:.cpp=.o)))
 
-test-setting: $(SETTINGS_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(SETTINGS_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)test-setting
+test-settings: $(SETTINGS_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(SETTINGS_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)test-settings
 
 $(BUILD_DIR)SettingsManager_Tests.o: $(MANUAL_TEST_DIR)SettingsManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
@@ -706,12 +706,25 @@ $(BUILD_DIR)LevelManager_aTests.o: $(AUTOMATIC_TEST_DIR)LevelManager_aTests.cpp
 ###############################################################################
 # automatic-test-config
 CONFIG_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)ConfigFileManager_aTests.cpp \
-                        $(SOURCE_DIR)ConfigFileManager.cpp
+                        $(SOURCE_DIR)ConfigFileManager.cpp \
 
 CONFIG_ATEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CONFIG_ATEST_SOURCES:.cpp=.o)))
-automatic-test-config: $(CONFIG_ATEST_OBJECTS)
 
+automatic-test-config: $(CONFIG_ATEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(CONFIG_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)automatic-test-config
 
 $(BUILD_DIR)ConfigFileManager_aTests.o: $(AUTOMATIC_TEST_DIR)ConfigFileManager_aTests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
+
+###############################################################################
+# settings-test-aettings
+SETTING_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)SettingsManager_aTests.cpp \
+                        $(SOURCE_DIR)SettingsManager.cpp \
+
+SETTING_ATEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(SETTING_ATEST_SOURCES:.cpp=.o)))
+
+automatic-test-settings: $(SETTING_ATEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(SETTING_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)automatic-test-settings
+
+$(BUILD_DIR)SettingsManager_aTests.o: $(AUTOMATIC_TEST_DIR)SettingsManager_aTests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
