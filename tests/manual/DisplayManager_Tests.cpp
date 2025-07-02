@@ -23,7 +23,7 @@ int main() {
         SDL_Log("Error loading font theme");
         return EXIT_FAILURE;
     }
-    const EventDispatcher eventDispatcher(&eventManager);
+    EventDispatcher eventDispatcher(&eventManager);
     TestHelper testHelper(textManager, &eventManager);
 
     const std::vector<std::string> instructions = {

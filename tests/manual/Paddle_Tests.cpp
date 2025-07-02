@@ -499,7 +499,7 @@ int main() {
     try {
         PaddleTestContext ctx;
         PaddleTestHelper testHelper(ctx);
-        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        EventDispatcher eventDispatcher(&ctx.eventManager);
         const std::vector<std::string> instructions = {
             "W: Spawn Paddle",
             "DEL: DeSpawn Paddle",

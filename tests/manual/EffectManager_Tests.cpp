@@ -142,7 +142,7 @@ public:
 int main() {
     try {
         EffectManagerTestContext ctx;
-        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        EventDispatcher eventDispatcher(&ctx.eventManager);
         EffectManagerTestHelper testHelper(ctx);
 
         const std::vector<std::string> instructions = {

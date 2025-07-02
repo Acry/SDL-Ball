@@ -60,7 +60,7 @@ int main() {
         SDL_Log("Fehler beim Laden des Font-Themes");
         return EXIT_FAILURE;
     }
-    const EventDispatcher eventDispatcher(&eventManager);
+    EventDispatcher eventDispatcher(&eventManager);
     MyTestHelper testHelper(textManager, &eventManager);
 
     TextureManager textureManager;

@@ -238,7 +238,7 @@ private:
 int main() {
     try {
         SceneManagerTestContext ctx;
-        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        EventDispatcher eventDispatcher(&ctx.eventManager);
         SceneManagerTest testHelper(ctx);
 
         const std::vector<std::string> instructions = {

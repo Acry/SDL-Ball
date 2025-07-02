@@ -590,7 +590,7 @@ int main() {
     try {
         BallTestContext ctx;
         BallTestHelper testHelper(ctx);
-        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        EventDispatcher eventDispatcher(&ctx.eventManager);
         const std::vector<std::string> instructions = {
             "LMB: Spawn Ball",
             "Vertical Mouse Wheel: Select Ball",

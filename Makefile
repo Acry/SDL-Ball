@@ -27,7 +27,6 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     EventDispatcher.cpp \
     EventManager.cpp \
     GrowableObject.cpp \
-    InputManager.cpp \
     KeyboardManager.cpp \
     LevelManager.cpp \
     MathHelper.cpp \
@@ -591,6 +590,7 @@ BRICK_TEST_SOURCES := $(MANUAL_TEST_DIR)BrickManager_Tests.cpp \
                       $(SOURCE_DIR)Brick.cpp \
                       $(SOURCE_DIR)BrickManager.cpp \
                       $(SOURCE_DIR)DisplayManager.cpp \
+                      $(SOURCE_DIR)EventDispatcher.cpp \
                       $(SOURCE_DIR)EventManager.cpp \
                       $(SOURCE_DIR)GameObject.cpp \
                       $(SOURCE_DIR)LevelManager.cpp \

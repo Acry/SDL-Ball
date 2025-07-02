@@ -24,7 +24,7 @@ struct TextTest {
 int main() {
     EventManager eventManager;
 
-    const EventDispatcher eventDispatcher(&eventManager);
+    EventDispatcher eventDispatcher(&eventManager);
     MouseManager mouseManager(&eventManager);
     KeyboardManager keyboardManager(&eventManager);
     DisplayManager displayManager(&eventManager);

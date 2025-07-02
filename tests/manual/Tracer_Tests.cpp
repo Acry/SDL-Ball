@@ -139,7 +139,7 @@ public:
 int main() {
     try {
         TracerTestContext ctx;
-        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        EventDispatcher eventDispatcher(&ctx.eventManager);
         const auto tracer = std::make_unique<Tracer>(*ctx.textureManager->getEffectTexture(EffectTexture::Tail));
 
         tracer->setSize(0.1f);

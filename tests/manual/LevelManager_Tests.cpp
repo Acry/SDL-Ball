@@ -180,7 +180,7 @@ int main() {
     try {
         LevelTestContext ctx;
         LevelTestHelper testHelper(ctx);
-        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        EventDispatcher eventDispatcher(&ctx.eventManager);
 
         const std::vector<std::string> instructions = {
             "S: Create Screenshot",

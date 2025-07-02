@@ -105,7 +105,7 @@ public:
 int main() {
     try {
         BorderTestContext ctx;
-        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        EventDispatcher eventDispatcher(&ctx.eventManager);
         BorderTestHelper testHelper(ctx);
 
         const std::vector<std::string> instructions = {

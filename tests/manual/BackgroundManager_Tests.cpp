@@ -111,7 +111,7 @@ int main() {
 
     levelManager->loadLevel(currentLevel);
 
-    const EventDispatcher eventDispatcher(&eventManager);
+    EventDispatcher eventDispatcher(&eventManager);
 
     const std::vector<std::string> instructions = {
         "Rendering Background based on level",

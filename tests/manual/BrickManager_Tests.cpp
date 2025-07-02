@@ -47,7 +47,7 @@ int main() {
 
     auto levelCount = levelManager.getLevelCount();
 
-    const EventDispatcher eventDispatcher(&eventManager);
+    EventDispatcher eventDispatcher(&eventManager);
     const std::vector<std::string> instructions = {
         "S: Create Screenshot",
         "M: Toggle Mouse Coordinates",

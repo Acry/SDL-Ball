@@ -147,7 +147,7 @@ public:
 int main() {
     try {
         EffectsTestContext ctx;
-        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        EventDispatcher eventDispatcher(&ctx.eventManager);
         EffectsTestHelper testHelper(ctx);
         const std::vector<std::string> instructions = {
             "ESC: Quit",

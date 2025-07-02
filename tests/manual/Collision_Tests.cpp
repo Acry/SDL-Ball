@@ -139,7 +139,7 @@ private:
 int main() {
     try {
         CollisionManagerTestContext ctx;
-        const EventDispatcher eventDispatcher(&ctx.eventManager);
+        EventDispatcher eventDispatcher(&ctx.eventManager);
         CollisionManagerTestHelper testHelper(ctx);
 
         const std::vector<std::string> instructions = {
