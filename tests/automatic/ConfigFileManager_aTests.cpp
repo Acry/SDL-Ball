@@ -1,6 +1,6 @@
 // ConfigFileManager_aTests.cpp
 #include <gtest/gtest.h>
-#include "../../src/ConfigFileManager.h"
+#include "ConfigFileManager.h"
 #include <filesystem>
 
 class ConfigFileManagerTest : public ::testing::Test {
@@ -9,14 +9,12 @@ protected:
     ConfigFileManager *configManager;
 
     void SetUp() override {
-        // Testverzeichnis erstellen
         std::filesystem::create_directory(testDir);
         configManager = new ConfigFileManager(testDir);
     }
 
     void TearDown() override {
         delete configManager;
-        // Testverzeichnis aufräumen
         std::filesystem::remove_all(testDir);
     }
 };
@@ -41,7 +39,7 @@ TEST_F(ConfigFileManagerTest, ThemeDirectoriesExist) {
 }
 
 TEST_F(ConfigFileManagerTest, CheckDirCreatesDirectory) {
-    std::string newDir = testDir + "/newdir";
+    const std::string newDir = testDir + "/newdir";
     EXPECT_TRUE(ConfigFileManager::checkDir(newDir));
     EXPECT_TRUE(std::filesystem::exists(newDir));
 }

@@ -1,11 +1,12 @@
-#include "ConfigFileManager.h"
+// ConfigFileManager.cpp
 
 #include <algorithm>
-
-#include "config.h"
 #include <sys/stat.h>
 #include <cstdlib>
 #include <utility>
+
+#include "ConfigFileManager.h"
+#include "config.h"
 
 ConfigFileManager::ConfigFileManager(std::string root) : programRoot(std::move(root)) {
     init();
@@ -68,7 +69,6 @@ bool ConfigFileManager::checkDir(const std::string &dir) {
     return true;
 }
 
-// FIXME: To ThemeManager
 std::string ConfigFileManager::getUserThemeDir() const {
     return programRoot + "themes";
 }

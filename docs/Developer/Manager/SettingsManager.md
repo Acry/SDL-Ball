@@ -1,5 +1,7 @@
 # SettingsManager
 
+See: [Settings](../misc/Settings.md)
+
 - default
 - loaded
 - current
@@ -12,22 +14,22 @@ Grundsätzlich haben wir 3 Typen von Settings:
 
 Hält loaded, defaults und current settings.
 
-SettingsManager nutzt ConfigFileManager 
+SettingsManager nutzt ConfigFileManager
 
-Kandidaten die den settingsManager nutzen:
-- GameManager
+## Kandidaten, die den settingsManager nutzen
 
-Momentan vermute ich, dass es das beste wäre, wenn nur der GameManager mit dem SettingsManager redet.
-
-- DisplayManager
-- SoundManager
-- ThemeManager
-- ControllerManager
 - BackgroundManager
-- EffectManager
+- CodeManager
+- ControllerManager
+- DisplayManager
+- HighscoreManager
 - LevelManager
-- MenuManager
+- SaveGameManager
+- SceneManager
+- SoundManager
+- TextureManager
+- ThemeManager
 
-Weitere 
-See: [Settings](../misc/Settings.md)
-See: [Managers](../Managers.md)
+## Future
+
+- add JSON support

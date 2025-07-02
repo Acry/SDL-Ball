@@ -12,12 +12,7 @@
 // Default Game meta-information
 #define VERSION "3.1"
 #define SAVEGAME_VERSION 2
-#define GAME_NAME "SDL-Ball"
-
-// Game Difficulties
-#define EASY   0
-#define NORMAL 1
-#define HARD   2
+#define GAME_NAME "SDL-Ball-remastered"
 
 // Dateipfade und Verzeichnisse
 #define CONFIG_FILE        "settings.cfg"
@@ -98,12 +93,10 @@
 #define DEFAULT_RES_X           1920
 #define DEFAULT_RES_Y           1080
 
-#define PI 3.14159265
-#define RAD 6.28318531
-
-#define BOUNCE_ANGLE_RANGE 2.61799388 // // 150 Grad in Radiant
-#define MIN_BOUNCE_ANGLE 0.261799388 // 15 Grad in Radiant
-
+// Game Difficulties
+#define EASY   0
+#define NORMAL 1
+#define HARD   2
 #define DEFAULT_DIFFICULTY    EASY
 
 // Breite der Säulen (Pfeiler) am Spielfeldrand

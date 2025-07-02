@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=SDL-Ball
+Name=SDL-Ball-Remastered
 GenericName=Breakout/BrickBreaker
-Exec=sdl-ball
-Icon=sdl-ball
+Exec=sdl-ball-remastered
+Icon=sdl-ball-remastered
 Type=Application
 Comment=A DX-Ball/MegaBall/Breakout clone
 Categories=Game;ActionGame;ArcadeGame;
