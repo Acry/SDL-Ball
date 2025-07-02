@@ -5,6 +5,7 @@
 class IInputManager {
 protected:
     IEventManager *eventManager;
+    bool menuInputExclusive = false;
 
 public:
     explicit IInputManager(IEventManager *evtMgr) : eventManager(evtMgr) {

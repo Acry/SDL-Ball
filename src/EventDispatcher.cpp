@@ -2,9 +2,20 @@
 
 #include "EventDispatcher.h"
 
-bool EventDispatcher::processEvents() const {
+EventDispatcher::EventDispatcher(IEventManager *evtMgr) : eventManager(evtMgr) {
+    running = true;
+    eventManager->addListener(GameEvent::QuitRequested, [this](const EventData &) {
+        // Hier kannst du z.B. ein Member-Flag setzen, um das Programm zu beenden
+        this->running = false;
+    }, this);
+}
+
+EventDispatcher::~EventDispatcher() {
+    eventManager->removeListener(GameEvent::QuitRequested, this);
+}
+
+bool EventDispatcher::processEvents() {
     SDL_Event event;
-    bool running = true;
 
     while (SDL_PollEvent(&event)) {
         switch (event.type) {

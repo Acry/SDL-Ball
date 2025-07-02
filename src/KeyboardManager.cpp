@@ -19,16 +19,32 @@ void KeyboardManager::cleanup() {
 }
 
 void KeyboardManager::handleKeyPressedEvent(const KeyboardEventData &data) {
-    if (data.key == DEFAULT_KEY_LEFT) {
-        leftKeyPressed = true;
-        updatePaddleMovement();
-    } else if (data.key == DEFAULT_KEY_RIGHT) {
-        rightKeyPressed = true;
-        updatePaddleMovement();
+    if (data.key == SDLK_TAB) {
+        eventManager->emit(GameEvent::MenuKeyPressed, data);
+        menuInputExclusive = !menuInputExclusive;
+        return;
+    }
+
+    if (!menuInputExclusive) {
+        if (data.key == DEFAULT_KEY_LEFT) {
+            leftKeyPressed = true;
+            updatePaddleMovement();
+        } else if (data.key == DEFAULT_KEY_RIGHT) {
+            rightKeyPressed = true;
+            updatePaddleMovement();
+        }
     }
 }
 
 void KeyboardManager::handleKeyReleasedEvent(const KeyboardEventData &data) {
+    if (menuInputExclusive) {
+        if (data.key == SDLK_RETURN || data.key == SDLK_KP_ENTER ||
+            data.key == SDLK_UP || data.key == SDLK_DOWN ||
+            data.key == SDLK_LEFT || data.key == SDLK_RIGHT) {
+            eventManager->emit(GameEvent::MenuKeyReleased, data);
+        }
+        return;
+    }
     if (data.key == DEFAULT_KEY_LEFT) {
         leftKeyPressed = false;
         updatePaddleMovement();

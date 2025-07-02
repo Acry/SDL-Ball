@@ -80,6 +80,10 @@ enum class GameEvent {
     WindowResized,
     QuitRequested,
 
+    MenuKeyPressed,
+    MenuKeyReleased, // MenuManager: Key pressed in menu
+    MenuOpened,
+    MenuClosed,
     SceneChangedRequested,
     SceneChanged,
     ScreenshotRequested,

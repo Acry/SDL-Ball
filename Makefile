@@ -717,7 +717,7 @@ $(BUILD_DIR)ConfigFileManager_aTests.o: $(AUTOMATIC_TEST_DIR)ConfigFileManager_a
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
 
 ###############################################################################
-# settings-test-aettings
+# automatic-test-settings
 SETTING_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)SettingsManager_aTests.cpp \
                         $(SOURCE_DIR)SettingsManager.cpp \
 

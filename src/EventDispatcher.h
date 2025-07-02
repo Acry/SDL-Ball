@@ -3,11 +3,13 @@
 
 class EventDispatcher {
 public:
-    explicit EventDispatcher(IEventManager *evtMgr) : eventManager(evtMgr) {
-    }
+    explicit EventDispatcher(IEventManager *evtMgr);
 
-    [[nodiscard]] bool processEvents() const;
+    ~EventDispatcher();
+
+    [[nodiscard]] bool processEvents();
 
 private:
     IEventManager *eventManager;
+    bool running;
 };
