@@ -47,7 +47,7 @@ bool DisplayManager::init(const int display, const int width, const int height, 
         currentH = height > 0 ? height : 720; // Fallback-Wert
     }
 
-    if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
+    if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) {
         SDL_Log("\nError: Unable to initialize SDL:%s\n", SDL_GetError());
         return false;
     }
