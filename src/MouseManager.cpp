@@ -68,7 +68,6 @@ void MouseManager::handleMouseMovedEvent(const MouseEventData &data) {
     eventManager->emit(GameEvent::MouseCoordinatesNormalized, newData);
 }
 
-
 void MouseManager::handleResizeViewportEvent(const ViewportEventData &data) {
     viewportX = static_cast<float>(data.viewportX);
     viewportY = static_cast<float>(data.viewportY);
@@ -83,6 +82,14 @@ void MouseManager::handleMouseButtonPressedEvent(const MouseEventData &data) {
     mouseX = data.x;
     mouseY = data.y;
     normalizedMouseCoordinates();
+    if (data.button == SDL_BUTTON_X2) {
+        // „Forward“
+        // Zweiter Daumenknopf
+        menuInputExclusive = !menuInputExclusive;
+        // This is unclean:
+        KeyboardEventData keyData{SDLK_TAB, true};
+        eventManager->emit(GameEvent::MenuKeyPressed, keyData);
+    }
     const MouseEventData newData{normalizedX, normalizedY, data.button};
     eventManager->emit(GameEvent::MouseButtonPressedNormalized, newData);
 }

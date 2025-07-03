@@ -65,8 +65,7 @@ public:
                 this->hide();
                 const EventData data;
                 eventManager->emit(GameEvent::MenuClosed, data);
-                eventManager->removeListener(GameEvent::MouseCoordinatesNormalized, this);
-                eventManager->removeListener(GameEvent::KeyReleased, this);
+                removeListeners();
             } else {
                 this->show();
                 const EventData data;
@@ -80,6 +79,7 @@ public:
                 }, this);
                 eventManager->addListener(GameEvent::MouseButtonReleasedNormalized, [this](const MouseEventData &data) {
                     if (!this->isVisible()) return;
+                    if (data.button != SDL_BUTTON_LEFT) return; // Nur linker Mausklick
                     int idx = this->handleMouse(data.x, data.y);
                     if (idx >= 0 && idx < static_cast<int>(items.size())) {
                         hoveredIndex = idx;
@@ -93,11 +93,15 @@ public:
         }, this);
     }
 
-    ~TestMenuManager() {
-        eventManager->removeListener(GameEvent::MenuKeyPressed, this);
+    void removeListeners() {
         eventManager->removeListener(GameEvent::MouseCoordinatesNormalized, this);
         eventManager->removeListener(GameEvent::MenuKeyReleased, this);
         eventManager->removeListener(GameEvent::MouseButtonReleasedNormalized, this);
+    }
+
+    ~TestMenuManager() {
+        eventManager->removeListener(GameEvent::MenuKeyPressed, this);
+        removeListeners();
     }
 
     void show() { visible = true; }
