@@ -301,6 +301,7 @@ bool DisplayManager::initOpenGL(const unsigned int flags) {
 }
 
 DisplayManager::~DisplayManager() {
+    eventManager->removeListener(GameEvent::WindowResized, this);
     SDL_DestroyWindow(sdlWindow);
     SDL_GL_DeleteContext(glcontext);
     SDL_Quit();
