@@ -64,6 +64,7 @@ TEST_TARGETS := \
     test-border \
     test-brick \
     test-collision \
+    test-controller \
     test-config \
     test-display \
     test-effectManager \
@@ -131,6 +132,18 @@ remove-config:
 ###############################################################################
 # MANUAL TEST TARGETS
 # This section contains the manual test targets for various components of the project.
+###############################################################################
+# ControllerManagerTests
+CONTROLLER_TEST_SOURCES := $(MANUAL_TEST_DIR)ControllerManager_Tests.cpp \
+
+CONTROLLER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CONTROLLER_TEST_SOURCES:.cpp=.o)))
+
+test-controller: $(CONTROLLER_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(CONTROLLER_TEST_OBJECTS) $(shell sdl2-config --libs) -o $(BUILD_DIR)test-controller
+
+$(BUILD_DIR)ControllerManager_Tests.o: $(MANUAL_TEST_DIR)ControllerManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
 ###############################################################################
 # ConfigManagerTests
 CONFIG_TEST_SOURCES := $(MANUAL_TEST_DIR)ConfigFileManager_Tests.cpp \

@@ -12,51 +12,7 @@ abfragen.
 
 Kurzes Beispiel für die Initialisierung und Event-Verarbeitung:
 
-```c++
-#include <SDL.h>
-#include <iostream>
-
-int main() {
-SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
-
-    // Öffne den ersten erkannten Gamecontroller
-    SDL_GameController *controller = nullptr;
-    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-        if (SDL_IsGameController(i)) {
-            controller = SDL_GameControllerOpen(i);
-            if (controller) {
-                std::cout << "Controller gefunden: " << SDL_GameControllerName(controller) << std::endl;
-                break;
-            }
-        }
-    }
-
-    if (!controller) {
-        std::cout << "Kein Gamecontroller gefunden!" << std::endl;
-        SDL_Quit();
-        return 1;
-    }
-
-    bool running = true;
-    SDL_Event event;
-    while (running) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT)
-                running = false;
-            if (event.type == SDL_CONTROLLERBUTTONDOWN) {
-                std::cout << "Button gedrückt: " << (int)event.cbutton.button << std::endl;
-            }
-            if (event.type == SDL_CONTROLLERAXISMOTION) {
-                std::cout << "Achse: " << (int)event.caxis.axis << " Wert: " << event.caxis.value << std::endl;
-            }
-        }
-    }
-
-    SDL_GameControllerClose(controller);
-    SDL_Quit();
-    return 0;
-}
-```
+see ControllerManager_Tests.cpp
 
 Die Events wie SDL_CONTROLLERBUTTONDOWN findest du in der SDL2-Headerdatei SDL_events.h.
 
@@ -70,3 +26,19 @@ SDL_CONTROLLERAXISMOTION
 SDL_CONTROLLERDEVICEADDED
 SDL_CONTROLLERDEVICEREMOVED
 Die zugehörigen Strukturen findest du ebenfalls in den SDL2-Headern, z.B. SDL_ControllerButtonEvent für Button-Events.
+
+// SDL_events.h - SDL2-compatible event types
+
+    /* Game controller events */
+    SDL_CONTROLLERAXISMOTION  = 0x650, /**< Game controller axis motion */
+    SDL_CONTROLLERBUTTONDOWN,          /**< Game controller button pressed */
+    SDL_CONTROLLERBUTTONUP,            /**< Game controller button released */
+    SDL_CONTROLLERDEVICEADDED,         /**< A new Game controller has been inserted into the system */
+    SDL_CONTROLLERDEVICEREMOVED,       /**< An opened Game controller has been removed */
+    SDL_CONTROLLERDEVICEREMAPPED,      /**< The controller mapping was updated */
+    SDL_CONTROLLERTOUCHPADDOWN,        /**< Game controller touchpad was touched */
+    SDL_CONTROLLERTOUCHPADMOTION,      /**< Game controller touchpad finger was moved */
+    SDL_CONTROLLERTOUCHPADUP,          /**< Game controller touchpad finger was lifted */
+    SDL_CONTROLLERSENSORUPDATE,        /**< Game controller sensor was updated */
+    SDL_CONTROLLERUPDATECOMPLETE_RESERVED_FOR_SDL3,
+    SDL_CONTROLLERSTEAMHANDLEUPDATED,  /**< Game controller Steam handle has changed */
