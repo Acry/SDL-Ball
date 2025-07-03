@@ -2,14 +2,13 @@
 #include <cstdlib>
 #include <utility>
 
-#include "DisplayManager.hpp"
 #include "CollisionManager.h"
-#include "TestHelper.h"
-#include "TextManager.h"
+#include "DisplayManager.hpp"
 #include "EventDispatcher.h"
 #include "KeyboardManager.h"
 #include "MouseManager.h"
-
+#include "TestHelper.h"
+#include "TextManager.h"
 
 class TestMenuItem final : public ICollideable {
     float x, y, w, h;
@@ -246,23 +245,95 @@ public:
 
         // Fill
         glColor4f(0.15f, 0.15f, 0.15f, 0.8f);
-        glBegin(GL_QUADS);
-        glVertex2f(menuX, menuY);
-        glVertex2f(menuX + menuW, menuY);
-        glVertex2f(menuX + menuW, menuY + menuH);
-        glVertex2f(menuX, menuY + menuH);
-        glEnd();
+        drawRoundedRect(menuX, menuY, menuW, menuH);
+        // glBegin(GL_QUADS);
+        // glVertex2f(menuX, menuY);
+        // glVertex2f(menuX + menuW, menuY);
+        // glVertex2f(menuX + menuW, menuY + menuH);
+        // glVertex2f(menuX, menuY + menuH);
+        // glEnd();
+        //
+        //
+        // // Border
+        // glColor3f(1.0f, 1.0f, 1.0f);
+        // glLineWidth(2.0f);
+        // glBegin(GL_LINE_LOOP);
+        // glVertex2f(menuX, menuY);
+        // glVertex2f(menuX + menuW, menuY);
+        // glVertex2f(menuX + menuW, menuY + menuH);
+        // glVertex2f(menuX, menuY + menuH);
+        // glEnd();
         glDisable(GL_BLEND);
+    }
 
-        // Border
-        glColor3f(1.0f, 1.0f, 1.0f);
-        glLineWidth(2.0f);
-        glBegin(GL_LINE_LOOP);
-        glVertex2f(menuX, menuY);
-        glVertex2f(menuX + menuW, menuY);
-        glVertex2f(menuX + menuW, menuY + menuH);
-        glVertex2f(menuX, menuY + menuH);
+    // Hilfsfunktion zum Zeichnen eines abgerundeten Rechtecks
+    void drawRoundedRect(float x, float y, float w, float h, float radius = 0.1f, int segments = 16,
+                         float r = 0.3f, float g = 0.3f, float b = 0.3f, bool drawBorder = true) const {
+        // Füllfarbe setzen
+        // glColor3f(r, g, b);
+        glColor4f(0.15f, 0.15f, 0.15f, 0.8f);
+
+
+        // Ecken (Viertelkreise) in gleicher Farbe
+        float cx[4] = {x + radius, x + w - radius, x + w - radius, x + radius};
+        float cy[4] = {y + radius, y + radius, y + h - radius, y + h - radius};
+        float startAngle[4] = {M_PI, 1.5f * M_PI, 0.0f, 0.5f * M_PI};
+
+        for (int i = 0; i < 4; ++i) {
+            glBegin(GL_TRIANGLE_FAN);
+            glVertex2f(cx[i], cy[i]);
+            for (int j = 0; j <= segments; ++j) {
+                float angle = startAngle[i] + (j / (float) segments) * (M_PI / 2.0f);
+                glVertex2f(cx[i] + cosf(angle) * radius, cy[i] + sinf(angle) * radius);
+            }
+            glEnd();
+        }
+
+        // Dann die vier Kanten als Rechtecke
+        glBegin(GL_QUADS);
+        // Oben
+        glVertex2f(x + radius, y);
+        glVertex2f(x + w - radius, y);
+        glVertex2f(x + w - radius, y + radius);
+        glVertex2f(x + radius, y + radius);
+        // Unten
+        glVertex2f(x + radius, y + h - radius);
+        glVertex2f(x + w - radius, y + h - radius);
+        glVertex2f(x + w - radius, y + h);
+        glVertex2f(x + radius, y + h);
+        // Links
+        glVertex2f(x, y + radius);
+        glVertex2f(x + radius, y + radius);
+        glVertex2f(x + radius, y + h - radius);
+        glVertex2f(x, y + h - radius);
+        // Rechts
+        glVertex2f(x + w - radius, y + radius);
+        glVertex2f(x + w, y + radius);
+        glVertex2f(x + w, y + h - radius);
+        glVertex2f(x + w - radius, y + h - radius);
         glEnd();
+
+        // Zuletzt die zentrale Fläche
+        glBegin(GL_QUADS);
+        glVertex2f(x + radius, y + radius);
+        glVertex2f(x + w - radius, y + radius);
+        glVertex2f(x + w - radius, y + h - radius);
+        glVertex2f(x + radius, y + h - radius);
+        glEnd();
+
+        // Optional: Weißer Rahmen
+        if (drawBorder) {
+            glColor3f(1.0f, 1.0f, 1.0f);
+            glLineWidth(2.0f);
+            glBegin(GL_LINE_LOOP);
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 0; j <= segments; ++j) {
+                    float angle = startAngle[i] + (j / (float) segments) * (M_PI / 2.0f);
+                    glVertex2f(cx[i] + cosf(angle) * radius, cy[i] + sinf(angle) * radius);
+                }
+            }
+            glEnd();
+        }
     }
 
 private:
