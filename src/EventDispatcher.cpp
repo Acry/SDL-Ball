@@ -5,7 +5,6 @@
 EventDispatcher::EventDispatcher(IEventManager *evtMgr) : eventManager(evtMgr) {
     running = true;
     eventManager->addListener(GameEvent::QuitRequested, [this](const EventData &) {
-        // Hier kannst du z.B. ein Member-Flag setzen, um das Programm zu beenden
         this->running = false;
     }, this);
 }

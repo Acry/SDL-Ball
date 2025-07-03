@@ -78,6 +78,17 @@ public:
                 eventManager->addListener(GameEvent::MenuKeyReleased, [this](const KeyboardEventData &data) {
                     this->onKeyReleased(data);
                 }, this);
+                eventManager->addListener(GameEvent::MouseButtonReleasedNormalized, [this](const MouseEventData &data) {
+                    if (!this->isVisible()) return;
+                    int idx = this->handleMouse(data.x, data.y);
+                    if (idx >= 0 && idx < static_cast<int>(items.size())) {
+                        hoveredIndex = idx;
+                        const auto &item = items[hoveredIndex];
+                        SDL_Log("Menu item clicked: %d", hoveredIndex);
+                        EventData eventData;
+                        eventManager->emit(item.getEvent(), eventData);
+                    }
+                }, this);
             }
         }, this);
     }
@@ -86,6 +97,7 @@ public:
         eventManager->removeListener(GameEvent::MenuKeyPressed, this);
         eventManager->removeListener(GameEvent::MouseCoordinatesNormalized, this);
         eventManager->removeListener(GameEvent::MenuKeyReleased, this);
+        eventManager->removeListener(GameEvent::MouseButtonReleasedNormalized, this);
     }
 
     void show() { visible = true; }

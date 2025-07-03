@@ -72,11 +72,16 @@ enum class GameEvent {
     KeyPressed,
     KeyReleased,
     KeyboardPaddleMove,
-    MouseMoved,
-    MouseCoordinatesNormalized,
-    MouseButtonPressed,
-    MouseButtonReleased,
-    MouseWheelScrolled,
+
+    MouseButtonPressed, // MouseManager internal
+    MouseButtonPressedNormalized, // MouseManager external
+    MouseButtonReleased, // MouseManager internal
+    MouseButtonReleasedNormalized, // MouseManager external
+    MouseCoordinatesNormalized, // MouseManager external
+    MouseMoved, // MouseManager internal
+    MouseWheelScrolled, // MouseManager internal
+    MouseWheelScrolledNormalized, // MouseManager external
+
     WindowResized,
     QuitRequested,
 

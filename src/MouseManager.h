@@ -6,15 +6,23 @@ class MouseManager final : public IInputManager {
 public:
     explicit MouseManager(IEventManager *evtMgr);
 
+    void registerEventListeners();
+
     ~MouseManager() override;
 
     void cleanup() override;
 
     void normalizedMouseCoordinates();
 
-    void handleMouseEvent(const MouseEventData &data);
+    void handleMouseMovedEvent(const MouseEventData &data);
 
     void handleResizeViewportEvent(const ViewportEventData &data);
+
+    void handleMouseButtonPressedEvent(const MouseEventData &data);
+
+    void handleMouseButtonReleasedEvent(const MouseEventData &data);
+
+    void handleMouseWheelScrolledEvent(const MouseEventData &data);
 
     [[nodiscard]] float getNormalizedX() const { return normalizedX; }
     [[nodiscard]] float getNormalizedY() const { return normalizedY; }

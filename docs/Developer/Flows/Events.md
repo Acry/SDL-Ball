@@ -1,15 +1,15 @@
 # Events
 
-EventDispatcher
-// GameEvents.h
-GameEvents
-IEventManager
-EventManager
+GameEvents.h
+EventDispatcher -> IEventManager
+
+Beispiel: EventDispatcher sendet KeyPressed/KeyReleased, KeyboardManager hört EXKLUSIV auf: KeyPressed/KeyReleased
+Andere Komponenten sollten nicht auf KeyPressed/KeyReleased hören, sondern nur z.B. auf GameEvent::KeyboardEvent.
 
 So trennen wir den EventDispatcher von den InputManagern, ich keine direkte Kopplung zum DisplayManager, der sendet ein
 Viewport event.
 
-## future structure
+## Future structure
 
 ```c++
 // Event.h
