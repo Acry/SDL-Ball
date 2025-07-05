@@ -44,7 +44,7 @@ Orange
 Quit current game
 Leave SDL-Ball
 
-## Widgets
+## Common Widgets
 
 - Menu Labels (static text) — e.g., GAME SETTINGS, Windowed Mode, Model Detail, etc.
 - Drop-down / Selectors — each setting like Model Detail, Textures, Shadows, Lighting, Effects has a left and right
@@ -53,13 +53,20 @@ Leave SDL-Ball
 - Sliders — for Brightness and Volume, adjustable by dragging a handle.
 - Highlight Bar — a visual indicator showing which setting is currently selected (here, Shadows).
 
+## Thoughts
+
+items-struct: hover color, selected color, text color, background color
+should I close the menu on click outside?
+
+## Menu Structure
+
 ## Old Menu
 
 ![Bildschirmfoto vom 2025-05-08 15-42-26.png](../../screenshots/Bildschirmfoto%20vom%202025-05-08%2015-42-26.png)
 
-## Notes
+## Existing Frameworks
 
-## C
+### C
 
 It would be easier and faster to use an existing library.
 
@@ -71,6 +78,6 @@ https://github.com/Immediate-Mode-UI/Nuklear
 https://github.com/raysan5/raygui is a header-only library for creating GUIs in C, with 5.5k LoC and part of raylib,
 which is a C library for game development: https://github.com/raysan5/raylib
 
-## C++
+### C++
 
 https://github.com/ocornut/imgui

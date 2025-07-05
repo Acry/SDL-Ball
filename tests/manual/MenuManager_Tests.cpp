@@ -1,6 +1,8 @@
 // MenuManager_Tests.cpp
 #include <cstdlib>
 #include <utility>
+#include <memory>
+#include <vector>
 
 #include "CollisionManager.h"
 #include "DisplayManager.hpp"
@@ -15,10 +17,12 @@ class TestMenuItem final : public ICollideable {
     bool active;
     std::string label;
     GameEvent event;
+    std::shared_ptr<std::vector<TestMenuItem> > subMenu; // optionales Submenü
 
 public:
-    TestMenuItem(float x, float y, float w, float h, std::string label, GameEvent event)
-        : x(x), y(y), w(w), h(h), active(true), label(std::move(label)), event(event) {
+    TestMenuItem(float x, float y, float w, float h, std::string label, GameEvent event,
+                 std::shared_ptr<std::vector<TestMenuItem> > subMenu = nullptr)
+        : x(x), y(y), w(w), h(h), active(true), label(std::move(label)), event(event), subMenu(std::move(subMenu)) {
     }
 
     [[nodiscard]] float getPosX() const override { return x; }
@@ -30,6 +34,7 @@ public:
     [[nodiscard]] CollisionType getCollisionType() const override { return CollisionType::None; }
     [[nodiscard]] const std::string &getLabel() const { return label; }
     [[nodiscard]] GameEvent getEvent() const { return event; }
+    std::shared_ptr<std::vector<TestMenuItem> > getSubMenu() const { return subMenu; }
 };
 
 struct MainMenu {
@@ -39,10 +44,17 @@ struct MainMenu {
     }
 
     static std::vector<TestMenuItem> create() {
+        auto settingsSubMenu = std::make_shared<std::vector<TestMenuItem> >(std::vector<TestMenuItem>{
+            TestMenuItem(-0.3f, 0.05f, 0.6f, 0.08f, "Audio", GameEvent::None),
+            TestMenuItem(-0.3f, -0.05f, 0.6f, 0.08f, "Video", GameEvent::None)
+        });
+
         return {
-            TestMenuItem(-0.3f, 0.05f, 0.6, 0.08f, "New Game", GameEvent::LevelRequested),
-            TestMenuItem(-0.3f, -0.05f, 0.6f, 0.08f, "Settings", GameEvent::SettingsLoadRequested),
-            TestMenuItem(-0.3f, -0.15f, 0.6f, 0.08f, "Quit", GameEvent::QuitRequested)
+            TestMenuItem(-0.3f, 0.05f, 0.6, 0.08f, "Game Menu", GameEvent::LevelRequested), // open sub menu
+            TestMenuItem(-0.3f, -0.05f, 0.6f, 0.08f, "Settings", GameEvent::SettingsLoadRequested, settingsSubMenu),
+            // open sub menu
+            // Themes
+            TestMenuItem(-0.3f, -0.15f, 0.6f, 0.08f, "Quit SDL-Ball", GameEvent::QuitRequested)
         };
     }
 };
@@ -58,7 +70,10 @@ public:
         for (const auto &item: MainMenu::create()) {
             addItem(item);
         }
+        menuStack.push_back(items);
+
         hoveredIndex = 0;
+
         eventManager->addListener(GameEvent::MenuKeyPressed, [this](const KeyboardEventData &) {
             if (this->isVisible()) {
                 this->hide();
@@ -69,25 +84,54 @@ public:
                 this->show();
                 const EventData data;
                 eventManager->emit(GameEvent::MenuOpened, data);
-                eventManager->addListener(GameEvent::MouseCoordinatesNormalized,
-                                          [this](const MouseCoordinatesNormalizedEventData &data) {
-                                              this->hoveredIndex = this->handleMouse(data.x, data.y);
-                                          }, this);
-                eventManager->addListener(GameEvent::MenuKeyReleased, [this](const KeyboardEventData &data) {
-                    this->onKeyReleased(data);
-                }, this);
-                eventManager->addListener(GameEvent::MouseButtonReleasedNormalized, [this](const MouseEventData &data) {
-                    if (!this->isVisible()) return;
-                    if (data.button != SDL_BUTTON_LEFT) return; // Nur linker Mausklick
-                    int idx = this->handleMouse(data.x, data.y);
-                    if (idx >= 0 && idx < static_cast<int>(items.size())) {
-                        hoveredIndex = idx;
-                        const auto &item = items[hoveredIndex];
-                        SDL_Log("Menu item clicked: %d", hoveredIndex);
-                        EventData eventData;
-                        eventManager->emit(item.getEvent(), eventData);
-                    }
-                }, this);
+                addListeners();
+            }
+        }, this);
+    }
+
+    void openSubMenu(const std::shared_ptr<std::vector<TestMenuItem> > &subMenu) {
+        if (subMenu) {
+            menuStack.push_back(*subMenu);
+            items = *subMenu;
+            hoveredIndex = 0;
+        }
+    }
+
+    void backToPreviousMenu() {
+        if (menuStack.size() > 1) {
+            menuStack.pop_back();
+            items = menuStack.back();
+            hoveredIndex = 0;
+        }
+    }
+
+    void addListeners() {
+        eventManager->addListener(GameEvent::MouseCoordinatesNormalized,
+                                  [this](const MouseCoordinatesNormalizedEventData &data) {
+                                      this->hoveredIndex = this->handleMouse(data.x, data.y);
+                                  }, this);
+        eventManager->addListener(GameEvent::MenuKeyReleased, [this](const KeyboardEventData &data) {
+            this->onKeyReleased(data);
+        }, this);
+        eventManager->addListener(GameEvent::MouseButtonReleasedNormalized, [this](const MouseEventData &data) {
+            if (!this->isVisible()) return;
+            if (!(data.button != SDL_BUTTON_LEFT || data.button != SDL_BUTTON_X1)) return; // Nur linker Mausklick
+            int idx = this->handleMouse(data.x, data.y);
+
+            if (data.button == SDL_BUTTON_X1) {
+                backToPreviousMenu();
+                return;
+            }
+            if (idx >= 0 && idx < static_cast<int>(items.size())) {
+                hoveredIndex = idx;
+                const auto &item = items[hoveredIndex];
+                if (item.getSubMenu()) {
+                    openSubMenu(item.getSubMenu());
+                } else if (item.getEvent() != GameEvent::None) {
+                    SDL_Log("Menu item selected: %d", hoveredIndex);
+                    EventData eventData;
+                    eventManager->emit(item.getEvent(), eventData);
+                }
             }
         }, this);
     }
@@ -134,13 +178,20 @@ public:
             else hoveredIndex = 0;
             return;
         }
+        if (data.key == SDLK_LEFT) {
+            backToPreviousMenu();
+            return;
+        }
         if (data.key == SDLK_RETURN || data.key == SDLK_KP_ENTER) {
             SDL_Log("Menu item selected: %d", hoveredIndex);
             if (hoveredIndex >= 0 && hoveredIndex < static_cast<int>(items.size())) {
                 const auto &item = items[hoveredIndex];
-                SDL_Log("Selected event: %d", static_cast<int>(item.getEvent()));
-                EventData eventData;
-                eventManager->emit(item.getEvent(), eventData);
+                if (item.getSubMenu()) {
+                    openSubMenu(item.getSubMenu());
+                } else {
+                    EventData eventData;
+                    eventManager->emit(item.getEvent(), eventData);
+                }
             }
         }
     }
@@ -277,6 +328,7 @@ public:
         // Ecken (Viertelkreise) in gleicher Farbe
         float cx[4] = {x + radius, x + w - radius, x + w - radius, x + radius};
         float cy[4] = {y + radius, y + radius, y + h - radius, y + h - radius};
+        // Math::PI = 3.14159265358979323846f;
         float startAngle[4] = {M_PI, 1.5f * M_PI, 0.0f, 0.5f * M_PI};
 
         for (int i = 0; i < 4; ++i) {
@@ -341,6 +393,7 @@ private:
     const float menuY = -0.5f;
     const float menuW = 0.8f;
     const float menuH = 1.0f;
+    std::vector<std::vector<TestMenuItem> > menuStack;
 };
 
 class MenuManagerTestContext {

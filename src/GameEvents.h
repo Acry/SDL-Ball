@@ -94,6 +94,8 @@ enum class GameEvent {
     ScreenshotRequested,
     ScreenshotCreated,
     ViewportResized,
+
+    None,
 };
 
 struct ViewportEventData {
