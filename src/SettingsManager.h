@@ -1,9 +1,8 @@
 // SettingsManager.h
 #pragma once
 
-#include <string>
-#include <fstream>
 #include <SDL2/SDL.h>
+#include <string>
 
 struct settings {
     std::string sndTheme, gfxTheme, lvlTheme;

@@ -1,5 +1,6 @@
 // SettingsManager.cpp
 #include <SDL2/SDL.h>
+#include <fstream>
 
 #include "config.h"
 #include "SettingsManager.h"
