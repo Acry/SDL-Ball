@@ -1,8 +1,8 @@
 # Arch Linux
-PREFIX?=/usr/
+PREFIX?=/usr
 
 # Arch Linux
-DATADIR?=$(PREFIX)share/sdl-ball/themes/
+DATADIR?=$(PREFIX)/share/sdl-ball/themes/
 BINDIR?=$(PREFIX)/bin/
 
 #append -DWITH_WIIUSE to compile with WIIUSE support!
