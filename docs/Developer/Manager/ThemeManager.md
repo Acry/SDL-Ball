@@ -1,5 +1,11 @@
 # ThemeManager
 
+Knows the themes
+
+## Overview
+
+Handles the themes, loads the theme file and applies it to the game.
+
 Die ThemeManager-Klasse ist für die Verwaltung von Spielthemen (Grafiken, Sounds, Level) zuständig.
 
 Nun könnte der codemanager den eventmanager und alle nötigen manager laden.
@@ -7,24 +13,31 @@ dann kann der thememanager prüfen welche themes verfügbar und welches gewünsc
 er ermittiert das event ThemeRequested, // ThemeManager: Theme requested event
 
 Die Listener können dann auf das Event reagieren und die entsprechenden Ressourcen laden.
-wenn der ThemeManager rücklüfer hat, sendet er das Event:
+Wenn der ThemeManager rücklüfer hat, sendet er das Event:
+
 ThemeChanged, // ThemeManager: Theme changed event
 
 Hier sind die Hauptkomponenten:
 
-Datenstrukturen
-themeInfo: Struktur zur Speicherung von Theme-Metadaten
-name: Name des Themes
-snd, gfx, lvl: Flags für vorhandene Ressourcentypen
-valid: Theme enthält mindestens einen Ressourcentyp
+## Details
 
-Haupt-Attribute
+### Datenstrukturen
+
+themeInfo: Struktur zur Speicherung von Theme-Metadaten
+
+- name: Name des Themes
+- snd, gfx, lvl: Flags für vorhandene Ressourcentypen
+- valid: Theme enthält mindestens einen Ressourcentyp
+
+### Haupt-Attribute
+
 themes: Liste aller verfügbaren Themes
 currentTheme: Aktuell ausgewähltes Theme
 configFileManager: Referenz für Dateisystempfade
 pathCache: Cache für bereits aufgelöste Ressourcenpfade
 
-Kernfunktionalitäten
+### Kernfunktionalitäten
+
 Theme-Erkennung (scanThemes):
 
 Durchsucht User- und globale Theme-Verzeichnisse
@@ -52,43 +65,46 @@ themeHasResource(): Prüft, ob eine Ressource in einem Theme existiert
 Die Klasse arbeitet eng mit dem ConfigFileManager zusammen und bietet eine zentrale Schnittstelle für das Laden von
 themenspezifischen Ressourcen im gesamten Spiel.
 
-## Responsibilities
+### Theming
 
-Handles the themes, loads the theme file and applies it to the game
+Current SubThemes:
 
-## Theming
-
-The game should run without any theme
-
-Themes:
-
-- Fonts
-- gfx
-- sound
-- Levels
 - Backgrounds
+- Fonts
+- Levels
+- Music
+- Sound
+- Sprites
 
 Should have a default theme
 When theme is another theme-folder, it can be incrementally loaded and apply only the changes
 
-Backgrounds should be handled separately
+Backgrounds should be handled separately? no -> incrementally
 
+???
 UI (HUD)
 UI (Menu)
-
 GameObjects
-
 Effects
 
-## Theme Pathes
+### Theme Paths
 
 Get from [ConfigFileManager](ConfigFileManager.md)
-Order should be:
-from private to system
 
-## Die Rolle von ThemeManager.cpp
+Themes can be stored in this place in that order:
 
-Der `ThemeManager` ist eine zentrale Komponente für die Themenverwaltung im Projekt und hat folgende Hauptfunktionen:
+`~/.config/sdl-ball-remastered/themes/` - user dir
+or the installation dir of the included themes
+`~/.local/share/sdl-ball-remastered/themes/` - local dir
+`/usr/share/sdl-ball-remastered/themes/` -global dir
+
+The ThemeManager will walk trought these directories and look for themes.
+
+### Theme Names
+
+What about theme unique names?
+
+## Die Rolle von ThemeManager.cpp -> Overview
 
 1. **Themen-Erkennung:**
     - Durchsucht Verzeichnisse nach Themen-Ordnern
@@ -105,50 +121,6 @@ Der `ThemeManager` ist eine zentrale Komponente für die Themenverwaltung im Pro
     - Implementiert eine Hierarchie zur Suche (nutzerspezifisch → global → default)
     - Behandelt Fehler, wenn Dateien nicht gefunden werden
 
-Der `ThemeManager` arbeitet eng mit dem `ConfigFileManager` zusammen, um die korrekten Verzeichnisse für Themen zu
-finden, und bietet eine zentrale Schnittstelle für das Laden von themenspezifischen Ressourcen.
+## Theming -> docs
 
-In der Todo-Liste gibt es einen Eintrag "rethink the role of the ThemeManager", was darauf hindeutet, dass seine
-Funktion möglicherweise überarbeitet werden sollte, ähnlich wie bei der Beobachtung zur Umbenennung von `Texture` zu
-`TextureAnimation`.
-
-## Vergleich der Theme-Verwaltung
-
-Ich sehe mir den älteren Quellcode im Vergleich zum neuen ThemeManager an:
-
-Im ursprünglichen Code war die Theme-Verwaltung verteilt auf mehrere einfache Komponenten:
-
-1. **Structure und Settings**:
-   ```cpp
-   struct themeInfo {
-     string name;
-     bool snd,gfx,lvl,valid;
-   };
-   
-   struct settings {
-     string sndTheme,gfxTheme,lvlTheme;
-     // weitere Einstellungen
-   }
-   ```
-
-2. **Funktionen**:
-    - `useTheme(string path, string theme)` - Versucht eine Datei in verschiedenen Theme-Verzeichnissen zu finden
-    - `getThemes()` - Durchsucht Verzeichnisse nach Themes und gibt Informationen zurück
-
-3. **Standardeinstellungen** in `main()`:
-   ```cpp
-   setting.gfxTheme="default";
-   setting.sndTheme="default";
-   setting.lvlTheme="default";
-   ```
-
-Die neue ThemeManager-Klasse, die wir entworfen haben, bietet folgende Verbesserungen:
-
-1. **Zentralisierte Verwaltung** statt verstreuter Funktionen
-2. **Erweiterte Funktionalität** wie Theme-Hierarchie und Vererbung
-3. **Effiziente Ressourcennutzung** durch Caching
-4. **Verbesserte Fehlerbehandlung**
-5. **Bessere Struktur** durch eine dedizierte Klasse
-
-Die grundlegende Funktionalität ist ähnlich, aber der neue ThemeManager ist flexibler und bietet eine bessere
-Codeorganisation mit mehr Funktionen.
+Instructions to build a theme: ?page=themes

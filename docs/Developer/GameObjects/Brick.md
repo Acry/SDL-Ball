@@ -4,34 +4,39 @@
 
 ```c++
 enum class BrickType {
-None,
-Blue,
-Yellow,
-Cement,
-Glass,
-Green,
-Grey,
-Purple,
-White,
-Invisible,
-Red,
-Explosive,
-Doom,
-Base
+    None,
+    Blue,
+    Yellow,
+    Cement,
+    Glass,
+    Green,
+    Grey,
+    Purple,
+    White,
+    Invisible,
+    Red,
+    Explosive,
+    Doom,
+    Base
 };
 ```
 
-## Score System
+## Scores
 
+See: [Score.md](../misc/Score.md)
+
+```c++
 int BrickManager::getBaseScore(BrickType type) {
-switch(type) {
-case BrickType::Cement:    return 300;
-case BrickType::Glass:     return 200;
-case BrickType::Invisible: return 250;
-case BrickType::Explosive: return 400;
-default:                   return 100;
+    switch(type) {
+        case BrickType::Cement:    return 300;
+        case BrickType::Glass:     return 200;
+        case BrickType::Invisible: return 250;
+        case BrickType::Explosive: return 400;
+        default:                   return 100;
+        }
 }
-}
+```
+
 Bei Typ '3' (Zementsteine): Der Score wird auf 300 gesetzt, wenn der Stein "breakable" wird.
 player.score += score * player.multiply * var.averageBallSpeed; //Speed bonus
 see score
@@ -79,11 +84,15 @@ Power-up "Drop" lässt alle Bricks nach unten fallen
 
 ## BrickFade
 
+Der ursprüngliche Brick-Fade-Effekt verkleinert den Stein und macht ihn transparent, dann nimmt er die ursprüngliche
+Größe wieder an, ist aber völlig transparent.
+
 Sollte ich shrinking und fading kombinieren?
 No, shrink to 0
 
 not colliding, but active
 
+```c++
 // In Brick.h
 class Brick : public GameObject {
 private:
@@ -126,6 +135,7 @@ public:
     [[nodiscard]] bool isCollisionEnabled() const { return active && !destroyed; }
 
 };
+```
 
 ## Brick Shrink
 

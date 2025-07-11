@@ -1,6 +1,7 @@
 # Verdrahtung von ThemeManager, SettingsManager und ConfigManager
 
-Basierend auf den aktuellen Implementierungen schlage ich folgendes Konzept für die Zuständigkeiten und Verdrahtung der Manager vor:
+Basierend auf den aktuellen Implementierungen schlage ich folgendes Konzept für die Zuständigkeiten und Verdrahtung der
+Manager vor:
 
 ## Zuständigkeiten
 
@@ -142,4 +143,6 @@ void applySettings() {
 }
 ```
 
-Diese Architektur bietet eine klare Trennung der Zuständigkeiten und erlaubt flexible Theme-Verwaltung. Die drei Manager könnten in einer eigenen Klasse wie `GameResources` oder `GameContext` gebündelt werden, um die Abhängigkeiten zentral zu verwalten.
+Diese Architektur bietet eine klare Trennung der Zuständigkeiten und erlaubt flexible Theme-Verwaltung. Die drei Manager
+könnten in einer eigenen Klasse wie `GameResources` oder `GameContext` gebündelt werden, um die Abhängigkeiten zentral
+zu verwalten.

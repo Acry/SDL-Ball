@@ -1,9 +1,37 @@
 # ConfigManager
 
+Knows the directories
+
 Der ConfigFileManager verwaltet alle wichtigen Pfade und Verzeichnisse für Konfigurationsdateien, Spielstände,
 Highscores und Screenshots deiner Anwendung. Er sorgt dafür, dass diese Verzeichnisse existieren und legt sie bei Bedarf
 an. Die Klasse unterstützt dabei sowohl benutzerdefinierte als auch automatisch ermittelte Wurzelverzeichnisse (z.B.
-nach XDG-Standard oder im Home-Verzeichnis).
+nach [XDG-Standard](https://specifications.freedesktop.org/basedir-spec/latest/) oder im Home-Verzeichnis).
+
+## Archive - no installation required
+
+```text
+/sdl-ball-remastered
+  /config/
+    screenshots/
+    savegames/
+    highscores/
+    /themes
+  SDL-Ball-Remastered
+```
+
+```bash
+make release-archive-zst
+make release-archive-zip
+```
+
+```makefile
+release-archive-zst: THEME_DIRECTORY=./themes/
+release-archive-zst: $(BUILD_DIR)$(TARGET)
+	$(CXX) $(RELEASE_FLAGS) $(OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)$(TARGET)
+```
+
+Currently, ./build/SDL-Ball-remastered/screenshots/ themes/
+settings.cfg
 
 ## Kernaufgaben
 
@@ -20,28 +48,20 @@ Beim Erstellen eines ConfigFileManager mit leerem Pfad sucht er automatisch das 
 initialisiert alle Pfade. Die Methoden wie getSettingsFile() oder getScreenshotDir() liefern dann die fertigen Pfade
 zurück.
 
-___
-
-Knows the places
-
-Reads and writes configuration files.
 Currently, it creates the config-folder for [settings.txt](../misc/Settings.md), and the screenshot-folder.
-
-___
 
 ```bash
 [carsten@carsten-desktop .config]$ cd sdl-ball/
 [carsten@carsten-desktop sdl-ball]$ ls
-highscores.txt savegame.sav screenshots settings.cfg themes
+screenshots settings.cfg
 ```
 
-old_main.cpp
+`old_main.cpp`
 
 ```c++
 #ifndef DATADIR
   #define DATADIR "themes/"
 #endif
-
 ```
 
 Makefile
@@ -54,27 +74,32 @@ PREFIX?=/usr/
 DATADIR?=$(PREFIX)share/sdl-ball/themes/
 ```
 
-## Notes
+## References
 
-$XDG_RUNTIME_DIR
+[FSH](https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html)
+[XDG-Docs-Arch](https://wiki.archlinux.org/title/XDG_user_directories)
+
+## Notes - Linux based distros
+
+`$XDG_RUNTIME_DIR`
 
 Konfigurationsdateien:
-$XDG_CONFIG_HOME (meistens ~/.config/)
+`$XDG_CONFIG_HOME (meistens ~/.config/)`
 
 Benutzerspezifische Daten:
-$XDG_DATA_HOME (meistens ~/.local/share/)
+`$XDG_DATA_HOME (meistens ~/.local/share/)`
 
 Laufzeitdaten (temporär, pro Session):
-$XDG_RUNTIME_DIR (z.\ B. /run/user/$(id -u)/)
+`$XDG_RUNTIME_DIR (z.\ B. /run/user/$(id -u)/)`
 
 Das sorgt für bessere Integration in moderne Linux-Desktops und vermeidet "Dotfile-Spam" im Home-Verzeichnis.
 
-$XDG_RUNTIME_DIR wird im Linux-Umfeld für temporäre, benutzerspezifische Laufzeitdaten verwendet. Typische
+`$XDG_RUNTIME_DIR` wird im Linux-Umfeld für temporäre, benutzerspezifische Laufzeitdaten verwendet. Typische
 Anwendungsfälle sind:
 
 - Speichern von temporären Sockets, Pipes oder Lockfiles, die nur während der aktuellen Benutzersitzung benötigt werden.
 - Ablegen von Dateien, die nach einem Neustart oder Logout automatisch gelöscht werden sollen.
 - Kommunikation zwischen Prozessen eines Benutzers (z. B. für Desktop-Umgebungen, Daemons oder IPC).
 
-Der Pfad ist nur für den aktuellen Benutzer zugänglich und wird beim Login automatisch angelegt (z. B. /run/user/$(id
--u)/).
+Der Pfad ist nur für den aktuellen Benutzer zugänglich und wird beim Login automatisch angelegt (z. B.
+`/run/user/$(id-u)/`).

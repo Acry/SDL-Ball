@@ -1,29 +1,25 @@
 # SettingsManager
 
-Der SettingsManager kapselt das Laden, Validieren, Verwalten und Speichern aller relevanten Spieleinstellungen und sorgt
-dafür, dass immer konsistente Werte verwendet werden.
+Knows the settings
+
+Reads and writes configuration files.
+Holds loaded, defaults und current settings.
+
+## Setting types
 
 See: [Settings](../misc/Settings.md)
 
-- default
-- loaded
-- current
-
 Grundsätzlich haben wir 3 Typen von Settings:
 
-`default` - aus config.h - compileTime settings
-`loaded` - gespeicherte Settings des Spielers
-`current` - und die runtime settings
-
-Hält loaded, defaults und current settings.
+`defaultSettings` - aus config.h - compileTime settings
+`loadedSettings` - gespeicherte Settings des Spielers
+`currentSettings` - und die runtime settings
 
 SettingsManager nutzt [ConfigFileManager](ConfigFileManager.md)
 
-## Kernaufgaben
+## Tasks
 
 Der SettingsManager verwaltet die Spieleinstellungen zentral.
-
-Er übernimmt folgende Aufgaben:
 
 Default-Werte setzen:
 Im Konstruktor werden mit setDefaults() die Standardwerte aus config.h geladen und als defaultSettings gespeichert.
@@ -32,41 +28,40 @@ Initialisierung:
 Die Methode init() lädt die Einstellungen aus der Datei (über ConfigFileManager). Falls das Laden fehlschlägt, werden
 die Defaults gesetzt und gespeichert. Nach dem Laden werden die Werte validiert (validateSettings()).
 
-Laden und Speichern:
+## Load
 
 loadSettings() liest die Einstellungen aus der Datei und speichert sie in loadedSettings.
 writeSettings() schreibt die aktuellen Einstellungen (currentSettings) zurück in die Datei.
 
-Validierung:
-validateSettings() prüft z.B. die Auflösung und den Schwierigkeitsgrad auf sinnvolle Werte und korrigiert sie ggf.
+Änderungserkennung, sollte obsolete sein. emit event settings changed.
+CodeManager DisplayManager, SoundManager, etc. können auf Änderungen reagieren.
 
-Zustandsverwaltung:
-Es gibt drei Settings-Strukturen:
+## Save
 
-defaultSettings: Kompilierte Standardwerte
-loadedSettings: Aus Datei geladene Werte
-currentSettings: Aktuelle Werte zur Laufzeit (können verändert werden)
-
-Änderungserkennung:
 hasChanged() prüft, ob sich die aktuellen Einstellungen von den geladenen unterscheiden. Im Destruktor werden geänderte
 Einstellungen automatisch gespeichert.
 
-Getter/Setter:
-Es gibt Methoden, um z.B. den Schwierigkeitsgrad oder den Fullscreen-Modus abzufragen oder zu setzen.
+[MenuManager](MenuManager.md) is the only runtime component that can change settings, emits settingChangedFromMenu?
+
+## Validation
+
+`validateSettings()` prüft z.B. die Auflösung und den Schwierigkeitsgrad auf sinnvolle Werte und korrigiert sie ggf.
+
+## Apply
 
 ## Kandidaten, die den settingsManager nutzen
 
-- BackgroundManager
-- CodeManager
-- ControllerManager
-- DisplayManager
-- HighscoreManager
-- LevelManager
-- SaveGameManager
-- SceneManager
-- SoundManager
-- TextureManager
-- ThemeManager
+- [BackgroundManager](BackgroundManager.md)
+- [CodeManager](CodeManager.md)
+- [ControllerManager](ControllerManager.md)
+- [DisplayManager](DisplayManager.md)
+- [HighscoreManager](HighscoreManager.md)
+- [LevelManager](LevelManager.md)
+- [SaveGameManager](SaveGameManager.md)
+- [SceneManager](SceneManager.md)
+- [SoundManager](SoundManager.md)
+- [TextureManager](TextureManager.md)
+- [ThemeManager](ThemeManager.md)
 
 ## Future
 
@@ -76,5 +71,19 @@ TODO: Die settings Struktur könnte in mehrere logische Gruppen aufgeteilt werde
 
 - Audio
 - Video
-- Steuerung
+- Control
 - Gameplay
+- Themes
+- etc.
+
+Player Name?
+
+### First run
+
+Beim ersten Start des Spiels wird die Datei settings.txt nicht gefunden. Der SettingsManager setzt dann die
+Standardwerte aus config.h als aktuelle Einstellungen (currentSettings) und speichert sie in der Datei.
+Außerdem sett er das Flag `firstRun` auf true, um anzuzeigen, dass es sich um den ersten Start handelt.
+Dann wird der Spieler gefragt, ob er das Classic-Theme oder das modern theme nutzen möchte.
+
+Theme Auswahl: Screenshot selectable.
+Classic, modern, retro, etc.

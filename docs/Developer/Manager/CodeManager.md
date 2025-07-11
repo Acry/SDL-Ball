@@ -14,16 +14,19 @@ SettingsManager → ThemeManager → TextureManager → SceneManager
                  CodeManager
 ```
 
-In `main` liefe dann der CodeManager und würde die andere Manager initialisieren.
 Der GameManager startet die GameLoop, wenn der CodeManager das Event `GameStart` auslöst.
 
+```c++
 int main() {
-CodeManager codeManager;
-codeManager.initialize();
-codeManager.run();
-codeManager.shutdown();
-return EXIT_SUCCESS;
+    CodeManager codeManager;
+    codeManager.initialize();
+    codeManager.run();
+    codeManager.shutdown();
+    return EXIT_SUCCESS;
 }
+```
+
+```c++
 
 public:
 CodeManager() : isRunning(false) {}
@@ -77,10 +80,10 @@ CodeManager() : isRunning(false) {}
     }
 
 private:
-std::unique_ptr<SceneManager> sceneManager;
-std::unique_ptr<EventManager> eventManager;
-std::unique_ptr<GameObjectManager> gameObjectManager;
-bool isRunning;
+    std::unique_ptr<SceneManager> sceneManager;
+    std::unique_ptr<EventManager> eventManager;
+    std::unique_ptr<GameObjectManager> gameObjectManager;
+    bool isRunning;
 };
 
 void run() {
@@ -107,9 +110,11 @@ const float targetFrameTime = 1.0f / 60.0f; // 60 FPS
     }
 
 }
+```
 
 ## Option
 
+```c++
 // CodeManager.h
 #pragma once
 #include "IEventManager.h"
@@ -151,6 +156,9 @@ CodeManager();
     void shutdown();
 
 };
+```
+
+```c++
 
 #include "CodeManager.h"
 
@@ -251,8 +259,11 @@ applyTheme(data.themeName);
 void CodeManager::applyTheme(const std::string &themeName) {
 themeManager->applyTheme(themeName);
 }
+```
 
-## sketching splashscene
+## sketching SplashScene
+
+```c++
 
 codeManager.initSplashScene()
 
@@ -366,4 +377,4 @@ return isInitialized;
 void CodeManager::run() {
 // Hauptprogramm-Logik
 }
-
+```

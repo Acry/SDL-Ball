@@ -6,12 +6,14 @@ Themes: Classic / Retro / 3.1 / Arkanoid / Internal theme
 
 ## current
 
+ThemeManager::initThemeRoots() should use config gameName internally, not hardcoded, like "sdl-ball-remastered"
+
 ### Classic Theme
 
 - [ ] Bring back classic border
 - [ ] Bring back classic paddle
 
-## future
+## Future
 
 ### Playfield borders
 
@@ -28,24 +30,27 @@ Themes: Classic / Retro / 3.1 / Arkanoid / Internal theme
 
 - [ ] ThemeManager to cmdline, validate themes?
 
-### Retro Theme (Clean Sweep)
+### Retro Theme (Clean Sweep)?
 
 - Retro [Theme](Themes/Retro.md)
 - [ ] simple GPU-Sounds? (SoundManager_Todo.md)
   [See:](../../Game/Intro.md) Clean Sweep, Breakout, Arkanoid, DX-Ball, Megaball, Shatter, Ricochet
 
-### 3.1 Theme
+### Modern Theme
 
 - [ ] Normal Ball spritesheet
 - [ ] Animate Paddle texture
 - [ ] Animate Glue layer
 
-### Arkanoid Theme
-
-- [Arkanoid ](Themes/Araknoid.md) smaller playfield
-
 ### Internal Theme
+
+Claim: The game should run without any theme, no texture, no sound, no levels, no backgrounds.
 
 - [ ] Make the game playable without datafiles (random levels, no samplers)
 - [ ] fill-colors or shaders
 - [ ] In game (static), minimalistic
+- [ ] sound->gpu or internal mods, graphics (xpm)?
+
+### Arkanoid Theme
+
+- [Arkanoid ](Themes/Araknoid.md) smaller playfield

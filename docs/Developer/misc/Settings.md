@@ -1,5 +1,37 @@
 # Settings
 
+## old settings explained
+
+README: 1.4.6 Config options explained
+
+- clearscreen [0/1] - clears the scene before drawing (looks pretty funny if you dont)
+- eyecandy [0/1] - turns on nice particle effects and trails, saves a few cpu cycles to turn it off
+- resx - horizontal resolution
+- resy - vertical resolution
+- showbg [0/1] - show the background image
+- fullscreen [0/1] - use full-screen mode
+- particlecollide [0/1] - use collision detection for particles, looks nice but might a cpu hog
+- sound [0/1] - use sound effects (sound effects will allways be loaded) (requires compiled with sound support)
+- stereo [0/1] - use stereo, some people don't like stereo, might save a few cpu cycles to turn it off
+- controlmaxspeed - the max speed the paddle can travel with when using non-mouse controllers.
+- 10 is VERY fast, this acts as sensitivity for WiiMote and analog joystick.
+- controlaccel - the acceleration that the paddle gains when using digital joystick or keyboard for controlling.
+- controlstartspeed - the starting speed (the "lowest" speed) of the paddle when using digital joystick or keyboard.
+- rightkey - SDLK number of the key that makes the paddle travel right
+- leftkey - same as above, but left.
+- nextkey - Select next powerup.
+- buykey - Buy selected powerup.
+- prevkey - Select previous powerup.
+- shootkey - the key that makes the guns shoot and releases the ball.
+- Check this site for sdl key numbers: http://kobesearch.cpan.org/htdocs/SDL_Perl/SDL/Constants.pm.html#SDLK_0-
+- joyisdigital [0/1] - if this is 1, the joystick acts as a "dump"/digital joystick (behaving excatly like the keyboard)
+- if this is 0, the joystick acts as a analog/precise joystick.
+- joycal* - callibration values from the joystick callibration process.
+- joyenabled [1/0] - if 1 then joystick is enabled (set to 0 if you experience random movement/controlling error)
+- sndtheme - Case sensetive name of the sound-theme dir to use.
+- gfxtheme - Case sensetive name of the gfx-theme dir to use.
+- lvltheme - Case sensetive name of the level-theme dir to use.
+
 ## Key-Value System
 
 Ja, eine bessere Lösung wäre ein flexibleres Key-Value System zu implementieren. Hier ein Vorschlag:

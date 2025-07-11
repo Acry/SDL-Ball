@@ -9,7 +9,7 @@
         id="svg1"
         xml:space="preserve"
         inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
-        sodipodi:docname="Manager.svg"
+        sodipodi:docname="Managers.svg"
         xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
         xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -25,13 +25,13 @@
    inkscape:deskcolor="#d1d1d1"
    inkscape:document-units="mm"
    inkscape:zoom="0.7263072"
-   inkscape:cx="1007.1496"
-   inkscape:cy="733.16084"
-   inkscape:window-width="3440"
+   inkscape:cx="914.90212"
+   inkscape:cy="945.19234"
+   inkscape:window-width="1720"
    inkscape:window-height="1371"
-   inkscape:window-x="0"
+   inkscape:window-x="1720"
    inkscape:window-y="32"
-   inkscape:window-maximized="1"
+   inkscape:window-maximized="0"
    inkscape:current-layer="layer1" />
     <defs
             id="defs1">
@@ -692,37 +692,37 @@
         <text
                 xml:space="preserve"
                 style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
-                x="417.32803"
-                y="124.35239"
+                x="445.37802"
+                y="28.545244"
                 id="text46"><tspan
    sodipodi:role="line"
    id="tspan46"
    style="stroke-width:0.264583"
-   x="418.06888"
-   y="124.35239">Init</tspan>
+   x="446.11887"
+   y="28.545244">Init</tspan>
             <tspan
                     sodipodi:role="line"
                     style="stroke-width:0.264583"
-                    x="418.06888"
-                    y="124.35239"
+                    x="446.11887"
+                    y="28.545244"
                     id="tspan47">Update</tspan>
             <tspan
                     sodipodi:role="line"
                     style="stroke-width:0.264583"
-                    x="418.06888"
-                    y="124.35239"
+                    x="446.11887"
+                    y="28.545244"
                     id="tspan48">Render</tspan>
             <tspan
                     sodipodi:role="line"
                     style="stroke-width:0.264583"
-                    x="418.06888"
-                    y="124.35239"
+                    x="446.11887"
+                    y="28.545244"
                     id="tspan50">Cleanup</tspan>
             <tspan
                     sodipodi:role="line"
                     style="stroke-width:0.264583"
-                    x="418.06888"
-                    y="124.35239"
+                    x="446.11887"
+                    y="28.545244"
                     id="tspan49"/></text>
         <text
                 xml:space="preserve"
@@ -839,13 +839,13 @@
         <g
                 id="g1"
                 transform="translate(58.65,220.02857)"><rect
-     style="fill:#ffd5d5;stroke:#ffff00;stroke-width:0.8;stroke-dasharray:0.8, 1.6;stroke-dashoffset:0"
-     id="rect56"
-     width="181.85776"
-     height="145.79532"
-     x="278.31808"
-     y="9.908762"
-     inkscape:label="Input" />
+   style="fill:#ffd5d5;stroke:#ffff00;stroke-width:0.8;stroke-dasharray:0.8, 1.6;stroke-dashoffset:0"
+   id="rect56"
+   width="181.85776"
+   height="145.79532"
+   x="278.31808"
+   y="9.908762"
+   inkscape:label="Input" />
             <rect
                     style="fill:none;stroke:#ffff00;stroke-width:0.799999"
                     id="rect1-1-1-0-5-7-5-9-0-6"
@@ -859,11 +859,11 @@
                     x="370.30679"
                     y="17.334833"
                     id="text1-7-3-9-4-3-6-6-7"><tspan
-       sodipodi:role="line"
-       id="tspan1-3-1-62-1-8-4-2-5"
-       style="stroke-width:0.264583"
-       x="370.30679"
-       y="17.334833">InputManager</tspan></text>
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5"
+     style="stroke-width:0.264583"
+     x="370.30679"
+     y="17.334833">IInputManager</tspan></text>
             <rect
                     style="fill:none;stroke:#ffff00;stroke-width:0.799999"
                     id="rect1-1-1-0-5-7-5-9-0-6-2"
@@ -877,11 +877,11 @@
                     x="305.35028"
                     y="53.069485"
                     id="text1-7-3-9-4-3-6-6-7-8"><tspan
-       sodipodi:role="line"
-       id="tspan1-3-1-62-1-8-4-2-5-2"
-       style="stroke-width:0.264583"
-       x="305.35028"
-       y="53.069485">KeyboardManager</tspan></text>
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2"
+     style="stroke-width:0.264583"
+     x="305.35028"
+     y="53.069485">KeyboardManager</tspan></text>
             <rect
                     style="fill:none;stroke:#ffff00;stroke-width:0.799999"
                     id="rect1-1-1-0-5-7-5-9-0-6-2-2"
@@ -895,11 +895,11 @@
                     x="363.8793"
                     y="52.840099"
                     id="text1-7-3-9-4-3-6-6-7-8-7"><tspan
-       sodipodi:role="line"
-       id="tspan1-3-1-62-1-8-4-2-5-2-6"
-       style="stroke-width:0.264583"
-       x="363.8793"
-       y="52.840099">MouseManager</tspan></text>
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6"
+     style="stroke-width:0.264583"
+     x="363.8793"
+     y="52.840099">MouseManager</tspan></text>
             <rect
                     style="fill:none;stroke:#ffff00;stroke-width:0.799999"
                     id="rect1-1-1-0-5-7-5-9-0-6-2-2-5"
@@ -913,11 +913,11 @@
                     x="423.29642"
                     y="87.049309"
                     id="text1-7-3-9-4-3-6-6-7-8-7-9"><tspan
-       sodipodi:role="line"
-       id="tspan1-3-1-62-1-8-4-2-5-2-6-9"
-       style="stroke-width:0.264583"
-       x="423.29642"
-       y="87.049309">JoystickManager</tspan></text>
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6-9"
+     style="stroke-width:0.264583"
+     x="423.29642"
+     y="87.049309">JoystickManager</tspan></text>
             <rect
                     style="fill:none;stroke:#ffff00;stroke-width:0.799999"
                     id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0"
@@ -931,11 +931,11 @@
                     x="425.55859"
                     y="56.519207"
                     id="text1-7-3-9-4-3-6-6-7-8-7-9-7"><tspan
-       sodipodi:role="line"
-       id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5"
-       style="stroke-width:0.264583"
-       x="425.55859"
-       y="56.519207">GamepadManager</tspan></text>
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5"
+     style="stroke-width:0.264583"
+     x="425.55859"
+     y="56.519207">GamepadManager</tspan></text>
             <rect
                     style="fill:none;stroke:#ffff00;stroke-width:0.799999"
                     id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0-8"
@@ -949,11 +949,11 @@
                     x="427.33835"
                     y="126.64729"
                     id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0"><tspan
-       sodipodi:role="line"
-       id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4"
-       style="stroke-width:0.264583"
-       x="427.33835"
-       y="126.64729">MicrophoneManager</tspan></text>
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4"
+     style="stroke-width:0.264583"
+     x="427.33835"
+     y="126.64729">MicrophoneManager</tspan></text>
             <rect
                     style="fill:none;stroke:#ffff00;stroke-width:0.799999"
                     id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0-8-0"
@@ -967,11 +967,11 @@
                     x="358.05685"
                     y="125.88789"
                     id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0-4"><tspan
-       sodipodi:role="line"
-       id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4-2"
-       style="stroke-width:0.264583"
-       x="358.05685"
-       y="125.88789">CamManager</tspan></text>
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4-2"
+     style="stroke-width:0.264583"
+     x="358.05685"
+     y="125.88789">CamManager</tspan></text>
             <rect
                     style="fill:none;stroke:#ffff00;stroke-width:0.799999"
                     id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0-8-0-5"
@@ -985,11 +985,11 @@
                     x="299.61176"
                     y="125.7956"
                     id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0-4-2"><tspan
-       sodipodi:role="line"
-       id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4-2-9"
-       style="stroke-width:0.264583"
-       x="299.61176"
-       y="125.7956">PenManager</tspan></text></g>
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4-2-9"
+     style="stroke-width:0.264583"
+     x="299.61176"
+     y="125.7956">PenManager</tspan></text></g>
 
 
         <text

@@ -1,28 +1,37 @@
 # MenuManager
 
-TAB - open Menu with exclusive input
+First, I decided to completly rewrite the Menu.
+Currently, I do not use any textures, like in the old code. That may change, to decorate the menu with some images or
+effects.
+However, for now, I want to focus on the functionality and the claim, that the game shall be runnable without any
+textures.
 
-Typical video game settings menu.
+`TAB` - toggles Menu with exclusive input
+`Enter` or KpEnter selects the current item
+Left go back, needs solution.
+
 **The MenuManager is the only component that can change the settings.**
-IInputManager.h : `bool menuInputExclusive = false;`
+See: SettingsManager::setDefaults()
 
-see: SettingsManager::setDefaults()
+Input is exclusive, so the game does not react to any input while the menu is open.
+IInputManager.h : `bool menuInputExclusive = false;`
 
 ## TODO
 
+- [ ] Currently, I do struggle a bit with using different input methods in the menu.
+- [ ] Working towards scrolling content.
 - [ ] change difficulty in Menu
-
-
-- [ ] HighscoreMenu
-- [ ] LevelSelectMenu
+- [ ] HighscoreMenu ?
+- [ ] LevelSelectMenu -> Gameplay
 
 Blocker: Controller Manager
+Blocker: InputMethods issue
 
 - [ ] Controller support (events)
 
 ## Common Widgets
 
-- Menu Labels (static text) — e.g., GAME SETTINGS, Windowed Mode, Model Detail, etc.
+- Menu Labels (static text)
 - Drop-down / Selectors — each setting like Model Detail, Textures, Shadows, Lighting, Effects has a left and right
   arrow to change options (e.g., High, Extra High).
 - Toggles — (RadioButtons/CheckBoxes) for settings like Console, which can be On or Off.
@@ -32,38 +41,42 @@ Blocker: Controller Manager
 
 ## Thoughts
 
-- items-struct: hover color, selected color, text color, background color
+- items-struct: hover color, selected color, text color, background color?
 - should I close the menu on click outside?
-
-- Add base colors to ceratain menu-items?
+- Add base colors to certain menu-items?
   Orange
   Quit current game
   Leave SDL-Ball
 
 - [ ] confirmation Dialog?
 
-## Menu Structure
+## Menu Structure - sketch
 
 - Main Menu
     - Gameplay
         - Toggle Autoplay
         - Toggle enemies
-        - Difficulty
-            - Easy
-            - Normal
-            - Hard
-            - Insane
-        - New Game
-            - restart level
-            - random level
-            - next level
-            - previous level
-            - select level
-        - Load Game
-        - Quit Current Game
+        - Difficulty (should be toggleable, so I need to free left and right arrows)
+          - Easy
+          - Normal
+          - Hard
+          - Insane
+            - New Game
+                - restart level
+                - random level
+                - next level
+                - previous level
+                - select level
+        - Load Game / save game
+            - Quit Current Game
     - Settings
     - Graphics
+        - Effects on/off
+        - Resolution
+        - Fullscreen
     - Audio
+        - Music Volume
+        - Sound Effects Volume
     - Controls
         - Keyboard
         - Mouse
@@ -79,9 +92,9 @@ Blocker: Controller Manager
 
 ### C
 
-It would be easier and faster to use an existing library.
+It would be easier and faster to use an existing library, but here we are.
 
-I have done an SDL3, shader-based OpenGL 4.6 port of [microui] https://github.com/rxi/microui/, which is a minimalistic
+I have done a SDL3, shader-based OpenGL 4.6 port of [microui](https://github.com/rxi/microui/), which is a minimalistic
 immediate mode UI library.
 
 https://github.com/Immediate-Mode-UI/Nuklear

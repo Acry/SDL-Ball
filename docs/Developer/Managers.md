@@ -1,21 +1,14 @@
 # ManagerClasses
 
-![Manager Overview](Manager.svg)
-
-## Setting-Types
-
-Grundsätzlich haben wir 3 Typen von Einstellungen:
-
-- default aus config.h - compileTime settings
-- loaded - gespeicherte Settings des Spielers
-- current - und die runtime settings
+![Manager Overview](Manager/Managers.svg)
 
 ## Manager-Types
 
 InputManager: MouseManager, KeyboardManager, JoystickManager, ControllerManager
 GameObjectManager: BallManager, BrickManager, PaddleManager, PowerupManager
-
-VideoManager: [DisplayManager](Manager/DisplayManager.md), [TextureManager](Manager/TextureManager.md), , , , UIManager
+VideoManager: [DisplayManager](Manager/DisplayManager.md), [TextureManager](Manager/TextureManager.md), EffectsManager,
+AnimationManager
+AudioManager: [SoundManager](Manager/SoundManager.md)
 
 ## Alphabetical Overview
 
@@ -45,70 +38,6 @@ them to the gameObjects
 [TextManager](Manager/TextManager.md) - TextRendering
 [TextureManager](Manager/TextureManager.md)
 [ThemeManager](Manager/ThemeManager.md) - handles the themes, loads the theme file and applies it to the game
-[UIManager](Manager/UIManager.md) - handles the UI, loads the UI file and applies it to the game (HUD)
-
-## Notes
-
-Das System entwickelt sich gut und folgt jetzt einem klaren Event-basierten Design:
-
-1. `EventManager`:
-
-- Verwaltet verschiedene Event-Typen mit entsprechenden Callbacks
-- Generische Implementierung durch Template-basierte Maps
-- Saubere Trennung zwischen Event-Emission und -Handling
-
-2. `CollisionManager`:
-
-- Erkennt Kollisionen (AABB)
-- Emittiert spezifische Collision-Events
-- Berechnet Kollisionspunkte
-
-3. `BrickManager`:
-
-- Reagiert auf Events (BallHitBrick, LevelLoaded)
-- Verwaltet Brick-Zustände und -Typen
-
-4. `LevelManager`:
-
-- Lädt Level-Daten
-- Verarbeitet Level- und Theme-Requests
-- Kommuniziert über Events
-
-Die Kommunikation läuft jetzt durchgängig über das Event-System statt direkter Methodenaufrufe. Das macht das System:
-
-- Modularer
-- Besser testbar
-- Leichter erweiterbar
-- Lose gekoppelt
-
-## Sketch
-
-Code Manager:
-Bootstraps the game, initializing all managers (scene manager, event manager, game object manager, etc.).
-Runs the main game loop, computing deltaTime using std::chrono.
-Passes deltaTime to the scene manager’s update method.
-
-Settings/Theme Managers:
-Used by scenes or game objects for configuration (e.g., frame rate caps) or rendering (e.g., visual styles).
-
-Event Manager
-EventDispatcher
-
-Scene Manager:
-Manages scenes (e.g., MainMenuScene, GameScene, etc.).
-Calls the active scene’s update and render methods, passing deltaTime to update.
-
-GameScene (a specific scene):
-Represents the game itself.
-Calls the GameObjectManager’s update method with deltaTime to update game objects.
-Handles rendering of game objects (via GameObjectManager or directly).
-
-GameManager - orchestrates the game flow
-Game Object Manager
-
-Timing:
-Lives in the Code Manager, as it drives the game loop and provides consistent deltaTime to all systems.
-deltaTime flows from CodeManager → SceneManager → GameScene → GameObjectManager.
 
 ## See also
 
