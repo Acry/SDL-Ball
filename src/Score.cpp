@@ -1,31 +1,53 @@
-// HUD
+// Score.cpp
 #include "Score.h"
 #include "TextManager.h"
 
-void Score::reset() {
-    lastScoreTick = SDL_GetTicks();
-    tempScore = 0;
-    score = 0;
+Score::Score(TextManager &textManager)
+    : text(textManager),
+      timeSinceLastUpdate(0.0f),
+      tempScore(0),
+      score(0) {
     tempText[0] = '0';
     tempText[1] = '\0';
 }
 
-void Score::update(const int point) {
-    score = point;
+void Score::reset() {
+    tempScore = 0;
+    score = 0;
+    tempText[0] = '0';
+    tempText[1] = '\0';
+    timeSinceLastUpdate = 0.0f;
 }
 
-void Score::draw() {
-    const int dif = score - tempScore;
-
+void Score::update(const float deltaTime) {
+    const int diff = score - tempScore;
     if (tempScore != score) {
-        if (lastScoreTick + 50 < SDL_GetTicks()) {
-            tempScore += static_cast<float>(dif) / 7.0f + 1.0f;
-            if (tempScore > score)
-                tempScore = score;
-            lastScoreTick = SDL_GetTicks();
+        // Akkumuliere die Zeit seit dem letzten Update
+        timeSinceLastUpdate += deltaTime;
 
+        // Update alle 50ms (0.05 Sekunden)
+        if (timeSinceLastUpdate >= 0.05f) {
+            if (diff > 0)
+                tempScore += static_cast<float>(diff) / 7.0f + 1.0f;
+            else
+                tempScore += static_cast<float>(diff) / 7.0f - 1.0f;
+
+            // Begrenzung, damit tempScore nicht über das Ziel hinausläuft
+            if ((diff > 0 && tempScore > score) || (diff < 0 && tempScore < score))
+                tempScore = score;
+
+            timeSinceLastUpdate = 0.0f;
             sprintf(tempText, "%i", tempScore);
         }
     }
-    text.write(tempText, FONT_HIGHSCORE, false, 0.75f, -0.9f, 0.9f);
+}
+
+
+void Score::draw() const {
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    text.write(tempText, Fonts::Highscore, false, 0.75f, -0.94f, 0.97f);
+}
+
+void Score::addPoints(const int points) {
+    score += points;
 }

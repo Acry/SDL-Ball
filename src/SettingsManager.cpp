@@ -1,12 +1,13 @@
 // SettingsManager.cpp
 #include <SDL2/SDL.h>
 #include <fstream>
+#include <utility>
 
 #include "config.h"
 #include "SettingsManager.h"
 
-SettingsManager::SettingsManager(const std::string &settingsFile)
-    : settingsFilePath(settingsFile) {
+SettingsManager::SettingsManager(std::string settingsFile)
+    : settingsFilePath(std::move(settingsFile)) {
     setDefaults();
     init();
 }
@@ -148,12 +149,12 @@ bool SettingsManager::validateSettings() {
     // Schwierigkeitsgrad validieren
     if (loadedSettings.startingDifficulty < EASY ||
         loadedSettings.startingDifficulty > HARD) {
-        SDL_Log("Ungültiger Schwierigkeitsgrad %d, setze auf %d",
+        SDL_Log("Unknown Difficulty %d, setting default: %d",
                 loadedSettings.startingDifficulty, DEFAULT_DIFFICULTY);
         loadedSettings.startingDifficulty = DEFAULT_DIFFICULTY;
     }
 
-    // oO ... weitere Validierungen
+    // ... weitere Validierungen
 
     return true;
 }
@@ -213,7 +214,6 @@ void SettingsManager::setFullscreen(const bool value) {
             currentSettings.res_x = 0;
             currentSettings.res_y = 0;
         } else {
-            // TODO: try loaded settings
             currentSettings.res_x = DEFAULT_RES_X;
             currentSettings.res_y = DEFAULT_RES_Y;
         }

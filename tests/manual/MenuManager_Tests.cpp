@@ -34,7 +34,7 @@ public:
     [[nodiscard]] CollisionType getCollisionType() const override { return CollisionType::None; }
     [[nodiscard]] const std::string &getLabel() const { return label; }
     [[nodiscard]] GameEvent getEvent() const { return event; }
-    std::shared_ptr<std::vector<TestMenuItem> > getSubMenu() const { return subMenu; }
+    [[nodiscard]] std::shared_ptr<std::vector<TestMenuItem> > getSubMenu() const { return subMenu; }
 };
 
 struct MainMenu {
@@ -44,17 +44,18 @@ struct MainMenu {
     }
 
     static std::vector<TestMenuItem> create() {
-        auto settingsSubMenu = std::make_shared<std::vector<TestMenuItem> >(std::vector<TestMenuItem>{
+        const auto settingsSubMenu = std::make_shared<std::vector<TestMenuItem> >(std::vector{
             TestMenuItem(-0.3f, 0.05f, 0.6f, 0.08f, "Audio", GameEvent::None),
             TestMenuItem(-0.3f, -0.05f, 0.6f, 0.08f, "Video", GameEvent::None)
         });
 
         return {
-            TestMenuItem(-0.3f, 0.05f, 0.6, 0.08f, "Game Menu", GameEvent::LevelRequested), // open sub menu
-            TestMenuItem(-0.3f, -0.05f, 0.6f, 0.08f, "Settings", GameEvent::SettingsLoadRequested, settingsSubMenu),
-            // open sub menu
-            // Themes
-            TestMenuItem(-0.3f, -0.15f, 0.6f, 0.08f, "Quit SDL-Ball", GameEvent::QuitRequested)
+            TestMenuItem(-0.3f, 0.05f, 0.6f, 0.08f, "Gameplay", GameEvent::None),
+            TestMenuItem(-0.3f, -0.05f, 0.6f, 0.08f, "Themes", GameEvent::None),
+            TestMenuItem(-0.3f, -0.15f, 0.6f, 0.08f, "Settings", GameEvent::None, settingsSubMenu),
+            TestMenuItem(-0.3f, -0.25f, 0.6f, 0.08f, "Quit SDL-Ball", GameEvent::QuitRequested),
+            //TestMenuItem(-0.3f, -0.35f, 0.6f, 0.08f, "More", GameEvent::None),
+            //TestMenuItem(-0.3f, -0.45f, 0.6f, 0.08f, "even More", GameEvent::None),
         };
     }
 };
@@ -64,6 +65,10 @@ class TestMenuManager {
     IEventManager *eventManager;
     std::vector<TestMenuItem> items;
     bool visible = false;
+
+    enum class InputMode { Mouse, Keyboard };
+
+    mutable InputMode inputMode = InputMode::Keyboard;
 
 public:
     TestMenuManager(TextManager &tm, IEventManager *evtMgr) : textManager(tm), eventManager(evtMgr) {
@@ -94,6 +99,7 @@ public:
             menuStack.push_back(*subMenu);
             items = *subMenu;
             hoveredIndex = 0;
+            keyboardIndex = 0;
         }
     }
 
@@ -102,6 +108,7 @@ public:
             menuStack.pop_back();
             items = menuStack.back();
             hoveredIndex = 0;
+            keyboardIndex = 0;
         }
     }
 
@@ -109,9 +116,11 @@ public:
         eventManager->addListener(GameEvent::MouseCoordinatesNormalized,
                                   [this](const MouseCoordinatesNormalizedEventData &data) {
                                       this->hoveredIndex = this->handleMouse(data.x, data.y);
+                                      inputMode = InputMode::Mouse;
                                   }, this);
         eventManager->addListener(GameEvent::MenuKeyReleased, [this](const KeyboardEventData &data) {
             this->onKeyReleased(data);
+            inputMode = InputMode::Keyboard;
         }, this);
         eventManager->addListener(GameEvent::MouseButtonReleasedNormalized, [this](const MouseEventData &data) {
             if (!this->isVisible()) return;
@@ -152,8 +161,9 @@ public:
     [[nodiscard]] bool isVisible() const { return visible; }
     void addItem(const TestMenuItem &item) { items.push_back(item); }
     int hoveredIndex = -1;
+    int keyboardIndex = 0;
 
-    int handleMouse(const float mx, const float my) const {
+    [[nodiscard]] int handleMouse(const float mx, const float my) const {
         for (size_t i = 0; i < items.size(); ++i) {
             if (CollisionManager::pointInsideRect(items[i], mx, my)) {
                 return static_cast<int>(i);
@@ -168,14 +178,15 @@ public:
               data.key == SDLK_LEFT || data.key == SDLK_RIGHT)) {
             return;
         }
+        inputMode = InputMode::Keyboard;
         if (data.key == SDLK_UP) {
-            if (hoveredIndex > 0) hoveredIndex--;
-            else hoveredIndex = static_cast<int>(items.size()) - 1;
+            if (keyboardIndex > 0) keyboardIndex--;
+            else keyboardIndex = static_cast<int>(items.size()) - 1;
             return;
         }
         if (data.key == SDLK_DOWN) {
-            if (hoveredIndex < static_cast<int>(items.size()) - 1) hoveredIndex++;
-            else hoveredIndex = 0;
+            if (keyboardIndex < static_cast<int>(items.size()) - 1) keyboardIndex++;
+            else keyboardIndex = 0;
             return;
         }
         if (data.key == SDLK_LEFT) {
@@ -183,9 +194,10 @@ public:
             return;
         }
         if (data.key == SDLK_RETURN || data.key == SDLK_KP_ENTER) {
-            SDL_Log("Menu item selected: %d", hoveredIndex);
-            if (hoveredIndex >= 0 && hoveredIndex < static_cast<int>(items.size())) {
-                const auto &item = items[hoveredIndex];
+            int idx = (inputMode == InputMode::Mouse) ? hoveredIndex : keyboardIndex;
+            SDL_Log("Menu item selected: %d", idx);
+            if (idx >= 0 && idx < static_cast<int>(items.size())) {
+                const auto &item = items[idx];
                 if (item.getSubMenu()) {
                     openSubMenu(item.getSubMenu());
                 } else {
@@ -198,6 +210,7 @@ public:
 
     void render() const {
         drawMenuBackground();
+        // drawMenuTitle();
         const GLfloat fontHeight = textManager.getHeight(Fonts::IntroHighscore);
         textManager.write(
             MainMenu::title(),
@@ -208,7 +221,10 @@ public:
             menuY + menuH - fontHeight * 0.2f
         );
         for (size_t i = 0; i < items.size(); ++i) {
-            if (static_cast<int>(i) == hoveredIndex) {
+            bool selected = (inputMode == InputMode::Mouse)
+                                ? (static_cast<int>(i) == hoveredIndex)
+                                : (static_cast<int>(i) == keyboardIndex);
+            if (selected) {
                 drawHoveredItem(items[i]);
             } else {
                 drawItem(items[i]);
@@ -318,8 +334,8 @@ public:
     }
 
     // Hilfsfunktion zum Zeichnen eines abgerundeten Rechtecks
-    void drawRoundedRect(float x, float y, float w, float h, float radius = 0.1f, int segments = 16,
-                         float r = 0.3f, float g = 0.3f, float b = 0.3f, bool drawBorder = true) const {
+    static void drawRoundedRect(float x, float y, float w, float h, float radius = 0.1f, int segments = 16,
+                                float r = 0.3f, float g = 0.3f, float b = 0.3f, bool drawBorder = true) {
         // Füllfarbe setzen
         // glColor3f(r, g, b);
         glColor4f(0.15f, 0.15f, 0.15f, 0.8f);

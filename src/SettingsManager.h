@@ -45,7 +45,7 @@ class SettingsManager {
     [[nodiscard]] bool hasChanged() const;
 
 public:
-    explicit SettingsManager(const std::string &settingsFile);
+    explicit SettingsManager(std::string settingsFile);
 
     // Verhindere Kopieren
     SettingsManager(const SettingsManager &) = delete;

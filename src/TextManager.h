@@ -59,7 +59,7 @@ class TextManager {
 
     void clearTheme();
 
-    fontInfo fontInfo[static_cast<int>(Fonts::Count)];
+    fontInfo fontInfos[static_cast<int>(Fonts::Count)];
     std::list<TextAnnouncement> announcements;
 
 public:

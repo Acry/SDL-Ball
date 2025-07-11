@@ -74,5 +74,5 @@ std::string ConfigFileManager::getUserThemeDir() const {
 }
 
 std::string ConfigFileManager::getGlobalThemeDir() {
-    return DATADIR "themes";
+    return THEME_DIRECTORY "themes";
 }

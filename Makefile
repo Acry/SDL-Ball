@@ -1,14 +1,15 @@
+# make -j33 PREFIX=/usr THEME_DIRECTORY=/games/sdl-ball-themes/
 PREFIX?=~/.local
-
-DATADIR?=$(PREFIX)share/sdl-ball-remastered/themes/
+THEME_DIRECTORY?=$(PREFIX)/share/sdl-ball-remastered/themes/
 BINDIR?=$(PREFIX)/bin/
 
-CXX = clang++
+CXX ?= clang++
 
 COMMON_FLAGS := -std=c++23 -Wall -Wextra -mtune=native $(shell sdl2-config --cflags)
 LDFLAGS := -lepoxy $(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf -lSDL2_mixer
-DEBUG_FLAGS := -ggdb -gdwarf-5 -O0 -Wall -DDEBUG -fdebug-types-section -DDATADIR="\"./../\"" $(COMMON_FLAGS)
-RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS)
+# Currently I use the local parent as data-dir during debug
+DEBUG_FLAGS := -ggdb -gdwarf-5 -O0 -Wall -DDEBUG -fdebug-types-section -DTHEME_DIRECTORY="\"../\"" $(COMMON_FLAGS)
+RELEASE_FLAGS := -O3 -DNDEBUG $(COMMON_FLAGS) -DTHEME_DIRECTORY="\"$(THEME_DIRECTORY)\""
 
 # directories
 BUILD_DIR := build/
@@ -20,6 +21,8 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     BackgroundManager.cpp \
     Ball.cpp \
     Brick.cpp \
+    Clock.cpp \
+    CodeManager.cpp \
     CollisionManager.cpp \
     ConfigFileManager.cpp \
     DisplayManager.cpp \
@@ -63,12 +66,14 @@ TEST_TARGETS := \
     test-ball \
     test-border \
     test-brick \
+    test-code \
     test-collision \
     test-controller \
     test-config \
     test-display \
     test-effectManager \
     test-effects \
+    test-hud \
     test-level \
     test-menu \
     test-paddle \
@@ -119,8 +124,8 @@ install-bin:
 	cp $(BUILD_DIR)$(TARGET) $(DESTDIR)$(BINDIR)
 
 install-data:
-	mkdir -p $(DESTDIR)$(DATADIR)
-	cp -p -R themes/* $(DESTDIR)$(DATADIR)
+	mkdir -p $(DESTDIR)$(THEME_DIRECTORY)
+	cp -p -R themes/* $(DESTDIR)$(THEME_DIRECTORY)
 
 remove-config:
 	rm -R ~/.config/sdl-ball-remastered
@@ -131,7 +136,7 @@ remove-config:
 
 ###############################################################################
 # MANUAL TEST TARGETS
-# This section contains the manual test targets for various components of the project.
+# This section contains the manual test targets for the components of the project.
 ###############################################################################
 # ControllerManagerTests
 CONTROLLER_TEST_SOURCES := $(MANUAL_TEST_DIR)ControllerManager_Tests.cpp \
@@ -489,7 +494,7 @@ $(BUILD_DIR)Ball_Tests.o: $(MANUAL_TEST_DIR)Ball_Tests.cpp
 
 ###############################################################################
 # EffectManagerTests
-EFFECTMANAGER_TEST_SOURCES := $(MANUAL_TEST_DIR)EffectManager_Tests.cpp \
+EFFECT_MANAGER_TEST_SOURCES := $(MANUAL_TEST_DIR)EffectManager_Tests.cpp \
                               $(MANUAL_TEST_DIR)TestHelper.cpp \
                               $(SOURCE_DIR)DisplayManager.cpp \
                               $(SOURCE_DIR)EventDispatcher.cpp \
@@ -503,10 +508,10 @@ EFFECTMANAGER_TEST_SOURCES := $(MANUAL_TEST_DIR)EffectManager_Tests.cpp \
                               $(SOURCE_DIR)TextureManager.cpp \
                               $(SOURCE_DIR)TextureUtilities.cpp \
 
-EFFECTMANAGER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECTMANAGER_TEST_SOURCES:.cpp=.o)))
+EFFECT_MANAGER_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EFFECT_MANAGER_TEST_SOURCES:.cpp=.o)))
 
-test-effectManager: $(EFFECTMANAGER_TEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(EFFECTMANAGER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-effectManager
+test-effectManager: $(EFFECT_MANAGER_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(EFFECT_MANAGER_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-effectManager
 
 $(BUILD_DIR)EffectManager_Tests.o: $(MANUAL_TEST_DIR)EffectManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
@@ -646,13 +651,67 @@ $(BUILD_DIR)PlayfieldBorder_Tests.o: $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################
-# CLEANUP
+# Hud Tests
+HUD_TEST_SOURCES := $(MANUAL_TEST_DIR)HudManager_Tests.cpp \
+                    $(MANUAL_TEST_DIR)TestHelper.cpp \
+                    $(SOURCE_DIR)Clock.cpp \
+                    $(SOURCE_DIR)DisplayManager.cpp \
+                    $(SOURCE_DIR)EventDispatcher.cpp \
+                    $(SOURCE_DIR)EventManager.cpp \
+                    $(SOURCE_DIR)KeyboardManager.cpp \
+                    $(SOURCE_DIR)MouseManager.cpp \
+                    $(SOURCE_DIR)Score.cpp \
+                    $(SOURCE_DIR)TextManager.cpp \
+                    $(SOURCE_DIR)TextureManager.cpp \
+                    $(SOURCE_DIR)TextureUtilities.cpp \
 
+HUD_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(HUD_TEST_SOURCES:.cpp=.o)))
+
+test-hud: $(HUD_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(HUD_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-hud
+
+$(BUILD_DIR)HudManager_Tests.o: $(MANUAL_TEST_DIR)HudManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
+# CodeManager
+CODE_TEST_SOURCES := $(MANUAL_TEST_DIR)CodeManager_Tests.cpp \
+                       $(SOURCE_DIR)BackgroundManager.cpp \
+                       $(SOURCE_DIR)CodeManager.cpp \
+                       $(SOURCE_DIR)ConfigFileManager.cpp \
+                       $(SOURCE_DIR)DisplayManager.cpp \
+                       $(SOURCE_DIR)EventDispatcher.cpp \
+                       $(SOURCE_DIR)EventManager.cpp \
+                       $(SOURCE_DIR)KeyboardManager.cpp \
+                       $(SOURCE_DIR)MathHelper.cpp \
+                       $(SOURCE_DIR)MouseManager.cpp \
+                       $(SOURCE_DIR)SettingsManager.cpp \
+                       $(SOURCE_DIR)SoundManager.cpp \
+                       $(SOURCE_DIR)SplashScreen.cpp \
+                       $(SOURCE_DIR)TextManager.cpp \
+                       $(SOURCE_DIR)TextureManager.cpp \
+                       $(SOURCE_DIR)TextureUtilities.cpp \
+                       $(SOURCE_DIR)ThemeManager.cpp \
+
+CODE_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(CODE_TEST_SOURCES:.cpp=.o)))
+
+test-code: $(CODE_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(CODE_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-code
+
+$(BUILD_DIR)CodeManager_Tests.o: $(MANUAL_TEST_DIR)CodeManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+# END
+###############################################################################
+
+###############################################################################
+# CLEANUP
+###############################################################################
 clean:
-	rm -rf $(BUILD_DIR)*.o $(BUILD_DIR)*-test $(BUILD_DIR)$(TARGET)
+	rm -rf $(BUILD_DIR)*.o
 
 clean-tests:
-	rm -rf $(BUILD_DIR)*-test $(BUILD_DIR)*_Tests.o
+	rm -rf $(BUILD_DIR)test-*
 
 clean-all:
 	rm -rf $(BUILD_DIR) 2>/dev/null || true
@@ -663,7 +722,7 @@ clean-all:
 ###############################################################################
 # AUTOMATIC TESTS - GTEST
 ###############################################################################
-# texture-automatic-test
+# automatic-test-texture
 TEXTURE_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)TextureManager_aTests.cpp \
                          $(SOURCE_DIR)TextureUtilities.cpp \
                          $(SOURCE_DIR)TextureManager.cpp \
@@ -678,40 +737,40 @@ $(BUILD_DIR)TextureManager_aTests.o: $(AUTOMATIC_TEST_DIR)TextureManager_aTests.
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
 
 ###############################################################################
-# event-automatic-test
+# automatic-test-event
 EVENT_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)EventManager_aTests.cpp \
                         $(SOURCE_DIR)EventManager.cpp
 
 EVENT_ATEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(EVENT_ATEST_SOURCES:.cpp=.o)))
 
-event-automatic-test: $(EVENT_ATEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(EVENT_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)event-automatic-test
+automatic-test-event: $(EVENT_ATEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(EVENT_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)automatic-test-event
 
 $(BUILD_DIR)EventManager_aTests.o: $(AUTOMATIC_TEST_DIR)EventManager_aTests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
 
 ###############################################################################
-# collision-automatic-test
+# automatic-test-collision
 COLLISION_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)CollisionManager_aTests.cpp \
                           $(SOURCE_DIR)CollisionManager.cpp
 
 COLLISION_ATEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(COLLISION_ATEST_SOURCES:.cpp=.o)))
 
-collision-automatic-test: $(COLLISION_ATEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(COLLISION_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)collision-automatic-test
+automatic-test-collision: $(COLLISION_ATEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(COLLISION_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)automatic-test-collision
 
 $(BUILD_DIR)CollisionManager_aTests.o: $(AUTOMATIC_TEST_DIR)CollisionManager_aTests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
 
 ###############################################################################
-# level-automatic-test
+# automatic-test-level
 LEVEL_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)LevelManager_aTests.cpp \
                        $(SOURCE_DIR)LevelManager.cpp
 
 LEVEL_ATEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(LEVEL_ATEST_SOURCES:.cpp=.o)))
 
-level-automatic-test: $(LEVEL_ATEST_OBJECTS)
-	$(CXX) $(DEBUG_FLAGS) $(LEVEL_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)level-automatic-test
+automatic-test-level: $(LEVEL_ATEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(LEVEL_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)automatic-test-level
 
 $(BUILD_DIR)LevelManager_aTests.o: $(AUTOMATIC_TEST_DIR)LevelManager_aTests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
@@ -741,3 +800,6 @@ automatic-test-settings: $(SETTING_ATEST_OBJECTS)
 
 $(BUILD_DIR)SettingsManager_aTests.o: $(AUTOMATIC_TEST_DIR)SettingsManager_aTests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
+
+# END
+###############################################################################

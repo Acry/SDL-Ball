@@ -43,7 +43,7 @@ public:
     }
 };
 
-class SceneManagerTest final : public TestHelper {
+class SceneManagerTestHelper final : public TestHelper {
     SceneManagerTestContext &ctx;
     std::vector<SceneDefinition> scenes;
     int currentSceneIndex = 0;
@@ -59,7 +59,7 @@ class SceneManagerTest final : public TestHelper {
     };
 
 public:
-    explicit SceneManagerTest(SceneManagerTestContext &context)
+    explicit SceneManagerTestHelper(SceneManagerTestContext &context)
         : TestHelper(context.textManager, &context.eventManager), ctx(context) {
         scenes = {
             {"../tests/textures/Scene_1.png", 3000, 1},
@@ -239,7 +239,7 @@ int main() {
     try {
         SceneManagerTestContext ctx;
         EventDispatcher eventDispatcher(&ctx.eventManager);
-        SceneManagerTest testHelper(ctx);
+        SceneManagerTestHelper testHelper(ctx);
 
         const std::vector<std::string> instructions = {
             "ESC: Quit",

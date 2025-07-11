@@ -15,14 +15,14 @@
 
 #define DEBUG_ATLAS 0
 
-TextManager::TextManager(IEventManager *evtMgr) : eventManager(evtMgr), fontInfo{} {
-    for (auto &i: fontInfo) {
+TextManager::TextManager(IEventManager *evtMgr) : eventManager(evtMgr), fontInfos{} {
+    for (auto &i: fontInfos) {
         i.texture = 0;
         for (Uint32 j = 0; j < CHARS; j++) {
             i.uv[j] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
         }
     }
-    for (auto &i: fontInfo) {
+    for (auto &i: fontInfos) {
         i.texture = 0;
     }
     init();
@@ -78,7 +78,7 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     dst.x = 0;
     dst.y = 0;
 
-    fontInfo[fontIndex].height = 0.0f;
+    fontInfos[fontIndex].height = 0.0f;
     float highestCharacter = 0.0f;
     // ASCII printable characters (character code 32-127) - see man ascii
     for (Uint32 i = 32; i < CHARS; i++) {
@@ -113,12 +113,12 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         }
 
         // Neue Berechnung (OpenGL-konform mit invertierten v-Koordinaten):
-        fontInfo[fontIndex].uv[i].uLeft = static_cast<float>(dst.x) / surfaceDim;
-        fontInfo[fontIndex].uv[i].uRight = static_cast<float>(dst.x + characterWidth) / surfaceDim;
-        fontInfo[fontIndex].uv[i].vTop = 1.0f - static_cast<float>(dst.y) / surfaceDim;
-        fontInfo[fontIndex].uv[i].vBottom = 1.0f - static_cast<float>(dst.y + characterHeight) / surfaceDim;
+        fontInfos[fontIndex].uv[i].uLeft = static_cast<float>(dst.x) / surfaceDim;
+        fontInfos[fontIndex].uv[i].uRight = static_cast<float>(dst.x + characterWidth) / surfaceDim;
+        fontInfos[fontIndex].uv[i].vTop = 1.0f - static_cast<float>(dst.y) / surfaceDim;
+        fontInfos[fontIndex].uv[i].vBottom = 1.0f - static_cast<float>(dst.y + characterHeight) / surfaceDim;
 
-        fontInfo[fontIndex].uv[i].width = characterWidth / (referenceWidth / 2.0f);
+        fontInfos[fontIndex].uv[i].width = characterWidth / (referenceWidth / 2.0f);
 
         dst.w = characterWidth;
         dst.h = characterHeight;
@@ -130,12 +130,12 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
         SDL_FreeSurface(character);
     }
 
-    fontInfo[fontIndex].ascent = static_cast<float>(ascent) / static_cast<float>(surfaceDim);
-    fontInfo[fontIndex].descent = static_cast<float>(descent) / static_cast<float>(surfaceDim);
-    fontInfo[fontIndex].lineSkip = static_cast<float>(lineSkip) / static_cast<float>(surfaceDim);
+    fontInfos[fontIndex].ascent = static_cast<float>(ascent) / static_cast<float>(surfaceDim);
+    fontInfos[fontIndex].descent = static_cast<float>(descent) / static_cast<float>(surfaceDim);
+    fontInfos[fontIndex].lineSkip = static_cast<float>(lineSkip) / static_cast<float>(surfaceDim);
     // Normalisiere die Höhe relativ zur Referenzauflösung (z.B. 768 Pixel Höhe)
     constexpr float referenceHeight = 768.0f;
-    fontInfo[fontIndex].height = highestCharacter / (referenceHeight / 2.0f);
+    fontInfos[fontIndex].height = highestCharacter / (referenceHeight / 2.0f);
 
 #if DEBUG_ATLAS
     // Speichere die Surface
@@ -164,7 +164,7 @@ bool TextManager::genFontTex(const std::string &TTFfontName, const int fontSize,
     SDL_Log("Font atlas inverted surface gespeichert: %s", invertedSurfaceFileName);
 #endif
 
-    if (!TextureUtilities::createGLTextureFromSurface(targetSurface, fontInfo[fontIndex].texture)) {
+    if (!TextureUtilities::createGLTextureFromSurface(targetSurface, fontInfos[fontIndex].texture)) {
         SDL_FreeSurface(targetSurface);
         TTF_CloseFont(ttfFont);
         return false;
@@ -220,7 +220,7 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
     if (center) {
         for (unsigned int i = 0; i < text.length(); i++) {
             characterIndex = static_cast<unsigned char>(text[i]);
-            sX = fontInfo[fontIndex].uv[characterIndex].width * scale;
+            sX = fontInfos[fontIndex].uv[characterIndex].width * scale;
             posX += sX;
         }
         posX *= -0.5f; // Halbiere für echte Zentrierung
@@ -231,11 +231,11 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glPushMatrix();
-    glTranslatef(posX, y - fontInfo[fontIndex].height * scale, 0.0f);
+    glTranslatef(posX, y - fontInfos[fontIndex].height * scale, 0.0f);
     glScalef(scale, scale, 0.0f);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, fontInfo[fontIndex].texture);
+    glBindTexture(GL_TEXTURE_2D, fontInfos[fontIndex].texture);
 
     GLfloat drawPosX = 0;
 
@@ -256,14 +256,14 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
         }
         i++;
 
-        sX = fontInfo[fontIndex].uv[characterIndex].width;
+        sX = fontInfos[fontIndex].uv[characterIndex].width;
 
         // Baseline-Position verwenden statt fester Höhe
-        const GLfloat baseline = fontInfo[fontIndex].ascent;
+        const GLfloat baseline = fontInfos[fontIndex].ascent;
 
         // TODO: Descent berücksichtigen
         // const GLfloat descent = fontInfo[fontIndex].descent;
-        const GLfloat charHeight = fontInfo[fontIndex].height;
+        const GLfloat charHeight = fontInfos[fontIndex].height;
 
         glBegin(GL_QUADS);
 
@@ -284,19 +284,19 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
         // V = vertical texture coordinate
 
         // Texturkoordinate (uLeft, vBottom) -> Vertex-Position unten links
-        glTexCoord2f(fontInfo[fontIndex].uv[characterIndex].uLeft, fontInfo[fontIndex].uv[characterIndex].vBottom);
+        glTexCoord2f(fontInfos[fontIndex].uv[characterIndex].uLeft, fontInfos[fontIndex].uv[characterIndex].vBottom);
         glVertex3f(drawPosX, -baseline, 0.0f); // Unten links relativ zur Baseline
 
         // Texturkoordinate (uRight, vBottom) -> Vertex-Position unten rechts
-        glTexCoord2f(fontInfo[fontIndex].uv[characterIndex].uRight, fontInfo[fontIndex].uv[characterIndex].vBottom);
+        glTexCoord2f(fontInfos[fontIndex].uv[characterIndex].uRight, fontInfos[fontIndex].uv[characterIndex].vBottom);
         glVertex3f(drawPosX + sX, -baseline, 0.0f); // Unten rechts relativ zur Baseline
 
         // Texturkoordinate (uRight, vTop) -> Vertex-Position oben rechts
-        glTexCoord2f(fontInfo[fontIndex].uv[characterIndex].uRight, fontInfo[fontIndex].uv[characterIndex].vTop);
+        glTexCoord2f(fontInfos[fontIndex].uv[characterIndex].uRight, fontInfos[fontIndex].uv[characterIndex].vTop);
         glVertex3f(drawPosX + sX, charHeight - baseline, 0.0f); // Oben rechts relativ zur Baseline
 
         // Texturkoordinate (uLeft, vTop) -> Vertex-Position oben links
-        glTexCoord2f(fontInfo[fontIndex].uv[characterIndex].uLeft, fontInfo[fontIndex].uv[characterIndex].vTop);
+        glTexCoord2f(fontInfos[fontIndex].uv[characterIndex].uLeft, fontInfos[fontIndex].uv[characterIndex].vTop);
         glVertex3f(drawPosX, charHeight - baseline, 0.0f); // Oben links relativ zur Baseline
 
         glEnd();
@@ -314,11 +314,11 @@ void TextManager::write(const std::string &text, const Fonts font, const bool ce
 }
 
 GLfloat TextManager::getHeight(Fonts font) const {
-    return fontInfo[static_cast<int>(font)].height;
+    return fontInfos[static_cast<int>(font)].height;
 }
 
 void TextManager::clearTheme() {
-    for (auto &i: fontInfo) {
+    for (auto &i: fontInfos) {
         if (i.texture) {
             glDeleteTextures(1, &i.texture);
             i.texture = 0;

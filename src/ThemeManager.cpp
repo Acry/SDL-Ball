@@ -21,14 +21,16 @@ void ThemeManager::scanThemes() {
             dirent *pent;
             while ((pent = readdir(pdir))) {
                 if (std::string temp = pent->d_name; temp[0] != '.') {
-                    std::string themePath = rootDir + "/" + temp;
+                    std::string themePath = rootDir;
+                    themePath.append("/");
+                    themePath.append(temp);
                     struct stat st{};
                     if (stat(themePath.c_str(), &st) == 0 && S_ISDIR(st.st_mode)) {
                         themeInfo ti;
                         ti.name = temp;
                         ti.valid = false;
 
-                        // Prüfe auf gfx, snd und lvl
+                        // Check SubThemes
                         ti.gfx = (stat((themePath + "/gfx").c_str(), &st) == 0);
                         ti.snd = (stat((themePath + "/snd").c_str(), &st) == 0);
                         ti.lvl = (stat((themePath + "/levels.txt").c_str(), &st) == 0);
@@ -73,8 +75,8 @@ std::string ThemeManager::getCurrentTheme() const {
 
 // Überprüfen, ob eine Ressource in einem Theme existiert
 bool ThemeManager::themeHasResource(const std::string &path, const std::string &theme) const {
-    std::string themeToUse = theme.empty() ? currentTheme : theme;
-    std::string filePath = getThemeFilePath(path, themeToUse);
+    const std::string themeToUse = theme.empty() ? currentTheme : theme;
+    const std::string filePath = getThemeFilePath(path, themeToUse);
     return !filePath.empty();
 }
 
@@ -143,10 +145,10 @@ void ThemeManager::initThemeRoots() {
     }
 
     // System-weites Verzeichnis
-    themeRoots.push_back("/usr/share/sdl-ball/themes");
+    themeRoots.emplace_back("/usr/share/sdl-ball/themes");
 
     // Build-Verzeichnis (für Entwicklung)
-    themeRoots.push_back(DATADIR);
+    themeRoots.push_back(THEME_DIRECTORY);
 
     // Ungültige Verzeichnisse entfernen
     std::erase_if(themeRoots,
