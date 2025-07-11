@@ -1,6 +1,7 @@
 // DisplayManager.cpp
 #include <iostream>
 #include <SDL2/SDL_image.h>
+// #include <SDL2/SDL_syswm.h>
 
 #include "DisplayManager.hpp"
 #include "TextureUtilities.h"
@@ -21,11 +22,13 @@ DisplayManager::DisplayManager(IEventManager *eventMgr): eventManager(eventMgr),
 }
 
 bool DisplayManager::init(const int display, const int width, const int height, const bool fullscreen) {
+    SDL_SetHint(SDL_HINT_VIDEO_WAYLAND_PREFER_LIBDECOR, "1");
+    SDL_SetHint(SDL_HINT_VIDEO_WAYLAND_ALLOW_LIBDECOR, "1");
+
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_Log("Fehler bei SDL Video Init: %s", SDL_GetError());
         return false;
     }
-    // Versuche das Display aus den Settings.
     numOfDisplays = SDL_GetNumVideoDisplays();
     if (numOfDisplays > 0 && display < numOfDisplays) {
         displayToUse = display;
@@ -35,14 +38,12 @@ bool DisplayManager::init(const int display, const int width, const int height, 
     unsigned int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
     if (fullscreen) {
-        // Im Vollbildmodus native Auflösung verwenden.
         SDL_DisplayMode currentDisplayMode;
         SDL_GetCurrentDisplayMode(displayToUse, &currentDisplayMode);
         currentW = currentDisplayMode.w;
         currentH = currentDisplayMode.h;
         flags |= SDL_WINDOW_FULLSCREEN;
     } else {
-        // Im Fenstermodus konfigurierte Auflösung verwenden.
         currentW = width > 0 ? width : 1280; // Fallback-Wert
         currentH = height > 0 ? height : 720; // Fallback-Wert
     }
@@ -231,6 +232,7 @@ bool DisplayManager::initOpenGL(const unsigned int flags) {
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+
     sdlWindow = SDL_CreateWindow("SDL-Ball",
                                  SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
                                  SDL_WINDOWPOS_CENTERED_DISPLAY(displayToUse),
@@ -268,7 +270,15 @@ bool DisplayManager::initOpenGL(const unsigned int flags) {
     SDL_Log("=== Active OpenGL Context ===");
     SDL_Log("Context Version: %d.%d", maj, min);
 
+    // SDL_SysWMinfo wmInfo;
+    // SDL_VERSION(&wmInfo.version);
+    // if (SDL_GetWindowWMInfo(sdlWindow, &wmInfo)) {
+    //     // Note: This is platform-specific; for X11, you may need to set _NET_WM_WINDOW_TYPE
+    //     // For Windows, use SetLayeredWindowAttributes or UpdateLayeredWindow
+    //     // For macOS, set NSWindow's backgroundColor to clear and isOpaque to NO
+    // }
 
+    SDL_Log("SDL Window ID: %u", SDL_GetWindowID(sdlWindow));
     if (SDL_GL_SetSwapInterval(1) == 0) {
         SDL_Log("VSync aktiviert");
     } else {
@@ -278,7 +288,7 @@ bool DisplayManager::initOpenGL(const unsigned int flags) {
     int doubleBuffered = 0;
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &doubleBuffered);
     SDL_Log("Double buffering %s", doubleBuffered ? "aktiviert" : "deaktiviert");
-
+    SDL_Log("Compositor: %s", SDL_GetCurrentVideoDriver());
     /* Enable smooth shading */
     // glShadeModel(GL_SMOOTH);
 
