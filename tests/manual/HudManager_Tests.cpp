@@ -103,6 +103,7 @@ public:
                 break;
             case SDLK_c:
                 ctx.hudManager.toggleClock();
+                break;
             case SDLK_r:
                 ctx.hudManager.resetScore();
                 break;

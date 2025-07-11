@@ -2,7 +2,7 @@
 #include <ctime>
 
 namespace {
-    constexpr float CLOCK_UPDATE_INTERVAL = 1.0f; // Sekunden
+    constexpr float CLOCK_UPDATE_INTERVAL = 1.0f; // seconds
 }
 
 Clock::Clock(TextManager &textManager)
@@ -22,5 +22,4 @@ void Clock::update(const float deltaTime) {
 
 void Clock::draw() const {
     text.write(clockString, Fonts::IntroDescription, false, 1.5f, -0.94f, -0.92f);
-    //text.write(clockString, Fonts::IntroDescription, false, 1.5f, 0.0f, 0.0f);
 }
