@@ -1,4 +1,13 @@
 // HudManager_Tests.cpp
+
+/* todo:
+ * score via event
+ * toggle clock via event (MenuManager)
+ * add lives component
+ * then gameManager
+ * add shop component, after powerup manager
+ */
+
 #include <cstdlib>
 #include <vector>
 #include <memory>

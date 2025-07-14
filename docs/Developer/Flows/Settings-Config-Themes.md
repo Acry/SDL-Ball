@@ -7,7 +7,6 @@ Manager vor:
 
 1. **ConfigFileManager**:
     - Verwaltet Pfade und Verzeichnisse
-    - Stellt Basispfade für andere Manager bereit
     - Kennt keine anderen Manager
 
 2. **SettingsManager**:
@@ -18,7 +17,6 @@ Manager vor:
 3. **ThemeManager**:
     - Erkennt verfügbare Themes
     - Verwaltet aktuelles Theme basierend auf Einstellungen
-    - Stellt Theme-Ressourcenpfade bereit
     - Nutzt ConfigFileManager für Theme-Verzeichnisse
 
 ## Verdrahtung und Initialization

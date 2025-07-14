@@ -1,5 +1,13 @@
 # Current issues
 
+- [ ] HudManager
+- [ ] MenuManager
+- [ ] [GameManager.md](Manager/GameManager.md)
+- [ ] [CodeManager.md](Manager/CodeManager.md)
+- [ ] [SceneManager.md](Manager/SceneManager.md)
+- [ ] ScoreManager
+-
+
 Top: Fix all manual tests warnings
 
 Tests:
@@ -8,7 +16,6 @@ Tests:
 - [ ] Paddle/PaddleManager real implementations in src
 - [ ] Ball/BallManager real implementations in src
 
-- [ ] GameManager
 
 - [ ] PowerupManager
 - [ ] Powerups
@@ -30,24 +37,11 @@ Brick-> shrink away on life lost or explode
 Solve logic issue kill, collide, render:
 Paddle-Spawn, Paddle Despawn - on level completed, Paddle explode
 
-## Connect the dots:
-
-- [ ] [CodeManager.md](Manager/CodeManager.md) ->
-- [ ] [SceneManager.md](Manager/SceneManager.md) -> TransitionEffects
-- [ ] [GameManager.md](Manager/GameManager.md) -> Game
--
-
-run codeManager (setup game), run sceneManager, (simple menuManager?) run gameManager
-
-ScoreManager
-HudManager
-
-MenuManager, HighScoreManager, SaveGameManager
+[ ] HighScoreManager
+[ ] SaveGameManager
 
 PlayGame: key, or movement brings up Want to play Game? hides after 5 seconds
 
-- [ ] HudManager
-- [ ] MenuManager
 - [ ] Title Scene
 - [ ] Title Scene Test
 - [ ] SplashScene -> music

@@ -1,0 +1,655 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+        width="2000"
+        height="1449.9474"
+        viewBox="0 0 529.16665 383.63191"
+        version="1.1"
+        id="svg1"
+        xml:space="preserve"
+        inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+        sodipodi:docname="Structure.svg"
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="mm"
+   inkscape:zoom="0.7263072"
+   inkscape:cx="1378.8931"
+   inkscape:cy="716.63891"
+   inkscape:window-width="3440"
+   inkscape:window-height="1371"
+   inkscape:window-x="0"
+   inkscape:window-y="32"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="layer1" />
+    <defs
+            id="defs1">
+        <rect
+                x="157.71742"
+                y="687.82318"
+                width="215.6445"
+                height="110.98633"
+                id="rect42"/>
+        <pattern
+                inkscape:collect="always"
+                xlink:href="#pattern5"
+                preserveAspectRatio="xMidYMid"
+                id="pattern10"
+                patternTransform="matrix(0.23163476,0,0,0.19955521,-58.259651,900.24057)"
+                x="0"
+                y="0"/>
+        <pattern
+                patternUnits="userSpaceOnUse"
+                width="85.333334"
+                height="85.333334"
+                patternTransform="translate(-27.666667,516.33332)"
+                preserveAspectRatio="xMidYMid"
+                id="pattern5"
+                style="fill:#000000"
+                inkscape:label="pattern5"><image
+     width="85.333336"
+     height="85.333336"
+     preserveAspectRatio="none"
+     xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAQMAAACQp+OdAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAL&#10;EwAACxMBAJqcGAAAAAd0SU1FB9gMGhMqGkSERmMAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRo&#10;IEdJTVBXgQ4XAAAABlBMVEXIyMj///8y/mb3AAAAAWJLR0QB/wIt3gAAABdJREFUKFNjZIACxvoG&#10;CBhgxqh7hpR7AN+j8AUlp7+RAAAAAElFTkSuQmCC&#10;"
+     id="image1"
+     x="0"
+     y="0" /></pattern>
+        
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            </defs>
+    <g
+            inkscape:label="Ebene 1"
+            inkscape:groupmode="layer"
+            id="layer1"
+            transform="translate(0,0.77276671)"><rect
+   style="fill:url(#pattern10);fill-opacity:1;stroke:none;stroke-width:1.56363"
+   id="Background"
+   width="529.16669"
+   height="383.63193"
+   x="0"
+   y="-0.77276671"
+   sodipodi:insensitive="true" />
+
+
+        <rect
+                style="fill:none;stroke:#008000;stroke-width:0.799999"
+                id="rect1-1-1-0"
+                width="63.420956"
+                height="16.372332"
+                x="125.8697"
+                y="118.80306"/>
+
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="148.03481"
+                y="128.79245"
+                id="text1-7-3"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1"
+     style="stroke-width:0.264583"
+     x="148.03481"
+     y="128.79245">EventManager</tspan></text>
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="247.83533"
+                y="77.977463"
+                id="text1-7-3-9"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62"
+     style="stroke-width:0.264583"
+     x="247.83533"
+     y="77.977463">ConfigFileManager</tspan></text>
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="199.35074"
+                y="77.851814"
+                id="text1-7-3-9-4"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1"
+     style="stroke-width:0.264583"
+     x="199.35074"
+     y="77.851814">ThemeManager</tspan></text>
+        <rect
+                style="fill:none;stroke:#4d4d4d;stroke-width:0.799999"
+                id="rect1-1-1-0-5-7-1"
+                width="271.18579"
+                height="16.460724"
+                x="125.96076"
+                y="67.822037"/>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="151.25369"
+                y="77.396461"
+                id="text1-7-3-9-4-0"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-5"
+     style="stroke-width:0.264583"
+     x="151.25369"
+     y="77.396461">SettingsManager</tspan></text>
+        <rect
+                style="fill:none;stroke:#800080;stroke-width:0.799999"
+                id="rect1-1-1-0-5-7-0"
+                width="63.795498"
+                height="16.296883"
+                x="125.59648"
+                y="169.92902"/>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="148.94431"
+                y="180.20189"
+                id="text1-7-3-9-4-9"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-2"
+     style="stroke-width:0.264583"
+     x="148.94431"
+     y="180.20189">SoundManager</tspan></text>
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="235.44838"
+                y="103.46258"
+                id="text1-7-3-9-4-9-4"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-2-6"
+     style="stroke-width:0.264583"
+     x="235.44838"
+     y="103.46258">TextManager</tspan></text>
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="149.98685"
+                y="103.14569"
+                id="text1-7-3-9-4-3"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8"
+     style="stroke-width:0.264583"
+     x="149.98685"
+     y="103.14569">DisplayManager</tspan></text>
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="230.11682"
+                y="257.53281"
+                id="text1-7-3-9-4-3-6"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4"
+     style="stroke-width:0.264583"
+     x="230.11682"
+     y="257.53281">LevelManager</tspan></text>
+        <rect
+                style="fill:none;stroke:#ffaaaa;stroke-width:0.799999"
+                id="rect1-1-1-0-5-7-5-9-0"
+                width="63.475407"
+                height="16.362072"
+                x="125.77863"
+                y="195.50867"/>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="147.59192"
+                y="205.31044"
+                id="text1-7-3-9-4-3-6-6"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2"
+     style="stroke-width:0.264583"
+     x="147.59192"
+     y="205.31044">MenuManager</tspan></text>
+
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="238.3838"
+                y="265.80685"
+                id="text1-7-3-9-4-3-6-7"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-5"
+     style="stroke-width:0.264583"
+     x="238.3838"
+     y="265.80685">HudManager</tspan></text>
+        <rect
+                style="fill:none;stroke:#000080;stroke-width:0.799999"
+                id="rect1-1-1-0-5-7-5-9-7-8"
+                width="147.75653"
+                height="16.161619"
+                x="125.77863"
+                y="93.479172"/>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="194.91249"
+                y="103.28654"
+                id="text1-7-3-9-4-3-6-7-9"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-5-3"
+     style="stroke-width:0.264583"
+     x="194.91249"
+     y="103.28654">TextureManager</tspan></text>
+        <rect
+                style="fill:none;stroke:#000080;stroke-width:0.799999"
+                id="rect1-1-1-0-5-7-5-9-6"
+                width="63.524967"
+                height="16.229019"
+                x="125.77863"
+                y="144.46857"/>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="148.33719"
+                y="154.1729"
+                id="text1-7-3-9-4-3-6-0"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-4"
+     style="stroke-width:0.264583"
+     x="148.33719"
+     y="154.1729">EffectManager</tspan></text>
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="357.33475"
+                y="78.081673"
+                id="text1-7-3-9-4-3-6-0-7"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-4-6"
+     style="stroke-width:0.264583"
+     x="357.33475"
+     y="78.081673">SaveGameManager</tspan></text>
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="301.89828"
+                y="77.942886"
+                id="text1-7-3-9-4-3-6-0-7-3"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-4-6-1"
+     style="stroke-width:0.264583"
+     x="301.89828"
+     y="77.942886">HighscoreManager</tspan></text>
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="276.51398"
+                y="257.56989"
+                id="text1-7-3-44"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-7"
+     style="stroke-width:0.264583"
+     x="276.51398"
+     y="257.56989">BackgroundManager</tspan></text>
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="190.12437"
+                y="257.24139"
+                id="text1-7-3-4"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-8"
+     style="stroke-width:0.264583"
+     x="190.12437"
+     y="257.24139">CollsionManager</tspan></text>
+        <rect
+                style="fill:none;stroke:#ff0000;stroke-width:0.799999"
+                id="rect1-1-1-0-8-5"
+                width="271.68799"
+                height="33.425915"
+                x="125.7447"
+                y="246.92009"/>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="148.22853"
+                y="256.97037"
+                id="text1-7-3-4-0"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-8-6"
+     style="stroke-width:0.264583"
+     x="148.22853"
+     y="256.97037">GameManager</tspan></text>
+
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="288.32245"
+                y="265.92245"
+                id="text3"><tspan
+     sodipodi:role="line"
+     id="tspan3"
+     style="stroke-width:0.264583"
+     x="288.32245"
+     y="265.92245">Brick</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="268.66885"
+                y="265.72894"
+                id="text4"><tspan
+     sodipodi:role="line"
+     id="tspan4"
+     style="stroke-width:0.264583"
+     x="268.66885"
+     y="265.72894">Powerup</tspan></text>
+
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="193.44662"
+                y="266.10471"
+                id="text3-3"><tspan
+     sodipodi:role="line"
+     id="tspan3-9"
+     style="stroke-width:0.264583"
+     x="193.44662"
+     y="266.10471">Ball</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="210.84221"
+                y="265.84128"
+                id="text4-4"><tspan
+     sodipodi:role="line"
+     id="tspan4-8"
+     style="stroke-width:0.264583"
+     x="210.84221"
+     y="265.84128">Paddle</tspan></text>
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="141.22299"
+                y="266.88922"
+                id="text4-4-3"><tspan
+     sodipodi:role="line"
+     id="tspan4-8-8"
+     style="stroke-width:0.264583"
+     x="141.22299"
+     y="266.88922">Playfield</tspan></text>
+
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="314.29053"
+                y="265.95041"
+                id="text3-8"><tspan
+     sodipodi:role="line"
+     id="tspan3-8"
+     style="stroke-width:0.264583"
+     x="314.29053"
+     y="265.95041">BrickManager</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="355.06796"
+                y="265.91635"
+                id="text4-5"><tspan
+     sodipodi:role="line"
+     id="tspan4-0"
+     style="stroke-width:0.264583"
+     x="355.06796"
+     y="265.91635">PowerupManager</tspan></text>
+
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="170.05397"
+                y="266.33792"
+                id="text3-3-3"><tspan
+     sodipodi:role="line"
+     id="tspan3-9-8"
+     style="stroke-width:0.264583"
+     x="170.05397"
+     y="266.33792">BallManager</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="364.13138"
+                y="257.2366"
+                id="text4-4-5"><tspan
+     sodipodi:role="line"
+     id="tspan4-8-6"
+     style="stroke-width:0.264583"
+     x="364.13138"
+     y="257.2366">PaddleManager</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="324.05069"
+                y="257.59595"
+                id="text4-4-5-7"><tspan
+     sodipodi:role="line"
+     id="tspan4-8-6-9"
+     style="stroke-width:0.264583"
+     x="324.05069"
+     y="257.59595">PlayerManager</tspan></text>
+
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="251.17499"
+                y="52.639286"
+                id="text29"><tspan
+     sodipodi:role="line"
+     id="tspan29"
+     style="stroke-width:0.264583"
+     x="251.17499"
+     y="52.639286" /></text>
+
+
+        <text
+                xml:space="preserve"
+                transform="scale(0.26458333)"
+                id="text42"
+                style="font-size:18.6667px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;white-space:pre;shape-inside:url(#rect42);display:inline"/>
+
+
+        <rect
+                style="fill:none;stroke:#552200;stroke-width:0.799999"
+                id="rect1-1-1-0-5-7-5-8"
+                width="68.130318"
+                height="16.105583"
+                x="125.9322"
+                y="221.15019"/>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="160.44254"
+                y="230.89763"
+                id="text1-7-3-9-4-3-62"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-8"
+     style="stroke-width:0.264583"
+     x="160.44254"
+     y="230.89763">SceneManager &amp; Scenes</tspan></text>
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="48.617249"
+                y="74.260834"
+                id="text1-7-3-9-4-0-3"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-5-9"
+     style="stroke-width:0.264583"
+     x="48.617249"
+     y="74.260834">CodeManager</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="43.276993"
+                y="62.070961"
+                id="text45"><tspan
+     sodipodi:role="line"
+     id="tspan45"
+     style="stroke-width:0.264583"
+     x="43.276993"
+     y="62.070961">main (EntryPoint)</tspan></text>
+
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="76.117516"
+                y="30.395489"
+                id="text52"><tspan
+     sodipodi:role="line"
+     id="tspan52"
+     style="stroke-width:0.264583"
+     x="76.117516"
+     y="30.395489" /></text>
+
+
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="150.60262"
+                y="303.95309"
+                id="text1-7-3-9-4-3-6-6-7"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5"
+     style="stroke-width:0.264583"
+     x="150.60262"
+     y="303.95309">IInputManager</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="155.31616"
+                y="312.8985"
+                id="text1-7-3-9-4-3-6-6-7-8"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2"
+     style="stroke-width:0.264583"
+     x="155.31616"
+     y="312.8985">KeyboardManager</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="203.23723"
+                y="304.2561"
+                id="text1-7-3-9-4-3-6-6-7-8-7"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6"
+     style="stroke-width:0.264583"
+     x="203.23723"
+     y="304.2561">MouseManager</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="302.36966"
+                y="305.32071"
+                id="text1-7-3-9-4-3-6-6-7-8-7-9"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6-9"
+     style="stroke-width:0.264583"
+     x="302.36966"
+     y="305.32071">JoystickManager</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="252.41927"
+                y="314.3223"
+                id="text1-7-3-9-4-3-6-6-7-8-7-9-7"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5"
+     style="stroke-width:0.264583"
+     x="252.41927"
+     y="314.3223">GamepadManager</tspan></text>
+        <rect
+                style="fill:none;stroke:#ffff00;stroke-width:0.799999"
+                id="rect1-1-1-0-5-7-5-9-0-6-2-2-5-0-8"
+                width="211.43082"
+                height="33.197411"
+                x="125.74848"
+                y="289.19125"/>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="306.98929"
+                y="314.08347"
+                id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4"
+     style="stroke-width:0.264583"
+     x="306.98929"
+     y="314.08347">MicrophoneManager</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="200.24828"
+                y="313.16425"
+                id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0-4"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4-2"
+     style="stroke-width:0.264583"
+     x="200.24828"
+     y="313.16425">CamManager</tspan></text>
+        <text
+                xml:space="preserve"
+                style="font-size:4.9389px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="245.61646"
+                y="304.24295"
+                id="text1-7-3-9-4-3-6-6-7-8-7-9-7-0-4-2"><tspan
+     sodipodi:role="line"
+     id="tspan1-3-1-62-1-8-4-2-5-2-6-9-5-4-2-9"
+     style="stroke-width:0.264583"
+     x="245.61646"
+     y="304.24295">PenManager</tspan></text>
+
+
+        <text
+                xml:space="preserve"
+                style="font-size:12.7px;line-height:1.25;font-family:Gotham;-inkscape-font-specification:Gotham;text-align:center;text-anchor:middle;stroke-width:0.264583"
+                x="266.60269"
+                y="32.752239"
+                id="text1"><tspan
+     sodipodi:role="line"
+     id="tspan1"
+     style="font-size:12.7px;stroke-width:0.264583"
+     x="266.60269"
+     y="32.752239">Source-Structure</tspan></text>
+        
+        
+        </g></svg>
