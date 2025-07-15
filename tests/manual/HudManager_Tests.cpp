@@ -17,12 +17,12 @@
 #include "DisplayManager.hpp"
 #include "EventDispatcher.h"
 #include "KeyboardManager.h"
+#include "Lifes.h"
 #include "MouseManager.h"
+#include "Score.h"
 #include "TestHelper.h"
 #include "TextManager.h"
 #include "TextureManager.h"
-#include "Score.h"
-#include "Lifes.h"
 
 class HudManager {
     IEventManager *eventManager;
