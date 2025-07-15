@@ -1,17 +1,17 @@
 // HudManager_Tests.cpp
 
 /* todo:
- * score via event
- * toggle clock via event (MenuManager)
- * add speedometer component
- * then gameManager
- * add shop component, after powerup manager
+ *   gameManager
+ *   score via event
+ *   toggle clock via event (MenuManager)
+ *   add shop component, after powerup manager
+ *   add speedometer component
  */
 
-#include <cstdlib>
-#include <vector>
-#include <memory>
 #include <chrono>
+#include <cstdlib>
+#include <memory>
+#include <vector>
 
 #include "Clock.h"
 #include "DisplayManager.hpp"
