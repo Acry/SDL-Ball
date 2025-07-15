@@ -9,7 +9,7 @@ class Score {
     float timeSinceLastUpdate;
     int tempScore;
     int score;
-    char tempText[255];
+    char tempText[255]{};
 
 public:
     explicit Score(TextManager &textManager);
