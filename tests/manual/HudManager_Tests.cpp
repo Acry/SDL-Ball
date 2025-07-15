@@ -3,7 +3,7 @@
 /* todo:
  * score via event
  * toggle clock via event (MenuManager)
- * add lives component
+ * add speedometer component
  * then gameManager
  * add shop component, after powerup manager
  */
@@ -22,6 +22,7 @@
 #include "TextManager.h"
 #include "TextureManager.h"
 #include "Score.h"
+#include "Lifes.h"
 
 class HudManager {
     IEventManager *eventManager;
@@ -29,6 +30,8 @@ class HudManager {
     TextureManager *textureManager;
     Score score;
     Clock clock;
+    Lifes lifes;
+
     bool clockEnabled = true;
 
 public:
@@ -37,7 +40,8 @@ public:
           textManager(textManager),
           textureManager(textureManager),
           score(*textManager),
-          clock(*textManager) {
+          clock(*textManager),
+          lifes(textureManager, 21) {
     }
 
     void addPoints(const int points) {
@@ -53,6 +57,7 @@ public:
 
     void draw() const {
         score.draw();
+        lifes.draw();
         if (clockEnabled) {
             clock.draw();
         }
@@ -75,20 +80,21 @@ public:
     DisplayManager displayManager;
     TextManager textManager;
     std::unique_ptr<TextureManager> textureManager;
-    HudManager hudManager;
+    std::unique_ptr<HudManager> hudManager;
 
     HudManagerTestContext()
         : mouseManager(&eventManager),
           keyboardManager(&eventManager),
           displayManager(&eventManager),
-          textManager(&eventManager),
-          textureManager(std::make_unique<TextureManager>()),
-          hudManager(&eventManager, &textManager, textureManager.get()) {
+          textManager(&eventManager) {
         if (!displayManager.init(0, 1024, 768, false)) {
             throw std::runtime_error("Could not initialize display");
         }
         SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: HudManager Test");
         textManager.setTheme("../tests/themes/test");
+        textureManager = std::make_unique<TextureManager>();
+        textureManager->setSpriteTheme("../themes/default");
+        hudManager = std::make_unique<HudManager>(&eventManager, &textManager, textureManager.get());
     }
 };
 
@@ -105,16 +111,16 @@ public:
 
         switch (data.key) {
             case SDLK_1:
-                ctx.hudManager.addPoints(500);
+                ctx.hudManager->addPoints(500);
                 break;
             case SDLK_2:
-                ctx.hudManager.addPoints(-500);
+                ctx.hudManager->addPoints(-500);
                 break;
             case SDLK_c:
-                ctx.hudManager.toggleClock();
+                ctx.hudManager->toggleClock();
                 break;
             case SDLK_r:
-                ctx.hudManager.resetScore();
+                ctx.hudManager->resetScore();
                 break;
             default:
                 break;
@@ -122,7 +128,7 @@ public:
     }
 
     void update(const float deltaTime) const {
-        ctx.hudManager.update(deltaTime);
+        ctx.hudManager->update(deltaTime);
     }
 
     void render(const float deltaTime, const std::vector<std::string> &instructions) {
@@ -130,7 +136,7 @@ public:
         drawGrid();
         drawCenterLines();
 
-        ctx.hudManager.draw();
+        ctx.hudManager->draw();
 
         renderInstructions(deltaTime, instructions);
 

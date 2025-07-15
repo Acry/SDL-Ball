@@ -32,6 +32,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     GrowableObject.cpp \
     KeyboardManager.cpp \
     LevelManager.cpp \
+    Lifes.cpp \
     MathHelper.cpp \
     MouseManager.cpp \
     Paddle.cpp \
@@ -659,6 +660,7 @@ HUD_TEST_SOURCES := $(MANUAL_TEST_DIR)HudManager_Tests.cpp \
                     $(SOURCE_DIR)EventDispatcher.cpp \
                     $(SOURCE_DIR)EventManager.cpp \
                     $(SOURCE_DIR)KeyboardManager.cpp \
+                    $(SOURCE_DIR)Lifes.cpp \
                     $(SOURCE_DIR)MouseManager.cpp \
                     $(SOURCE_DIR)Score.cpp \
                     $(SOURCE_DIR)TextManager.cpp \
