@@ -4,7 +4,7 @@
 #include "config.h"
 #include "PlayfieldBorder.h"
 
-PlayfieldBorder::PlayfieldBorder(const Side side, const texture &tex, EventManager *eventManager)
+PlayfieldBorder::PlayfieldBorder(const Side side, const texture &tex, IEventManager *eventManager)
     : GameObject(tex), side(side), eventManager(eventManager) {
     if (side == Side::Top) {
         eventManager->addListener(GameEvent::LevelLoaded,

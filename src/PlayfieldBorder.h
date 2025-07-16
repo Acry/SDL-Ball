@@ -9,7 +9,7 @@ class PlayfieldBorder final : public GameObject, public ICollideable {
 public:
     enum class Side { Left, Right, Top };
 
-    PlayfieldBorder(Side side, const texture &tex, EventManager *eventManager);
+    PlayfieldBorder(Side side, const texture &tex, IEventManager *eventManager);
 
     void setActive(bool) override {
     }
@@ -36,7 +36,7 @@ public:
 private:
     Side side;
     GLuint displayList = 0;
-    EventManager *eventManager;
+    IEventManager *eventManager;
 
     void handleLevelLoaded(const LevelData &data);
 
