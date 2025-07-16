@@ -7,6 +7,6 @@
 ## Fixtures
 
 - [ ] add Theme fixtures to tests
-- [ ] add saveGames fixtures to tests
+- [ ] add SaveGames fixtures to tests
 - [ ] add Level fixtures to tests
 - [ ] add Highscore fixtures to tests

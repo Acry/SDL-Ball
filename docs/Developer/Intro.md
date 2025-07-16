@@ -15,5 +15,7 @@ This document provides an overview of the game development process, focusing on 
 - [Structure_Todo.md](Structure_Todo.md) - Todo items for the source structure
 - [Todo.md](Todo.md) - Overview of tasks to be completed
 
+![Structure Overview](Structure.svg)
+
 ### Directories
 

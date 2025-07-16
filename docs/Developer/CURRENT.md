@@ -6,17 +6,11 @@ Top: Fix all manual tests warnings
 
 Tests:
 
-- [ ] HudManager real implementations in src
 - [ ] EffectManager real implementations in src
 - [ ] Paddle/PaddleManager real implementations in src
 - [ ] Ball/BallManager real implementations in src
 
 ## Later
-
-- [ ] PowerupManager
-- [ ] Powerups
-
-- [ ] Gun
 
 - [X] rethink collision (paddle collision points)
   Mixed approach for now, on collision in GameObjectManagers

@@ -9,39 +9,17 @@ there are a lot of things to do.
 
 ## Overview
 
-GameObjects: Balls, Paddle, Bricks, Powerups, Tracer, etc.
-
-- [ ] Player_Tests, missing lives etc
-
 - [ ] Powerup_Tests
 - [ ] PowerupManager, rework
 
 - [ ] Bullet, rework
 - [ ] Bullet_Tests
 
-- [ ] HUD-Manager
-- HUD (Score, Clock, Lives, Level, Speedometer, Powerups consumed (bottom), Shop (top))
-    - [ ] Score
-    - [ ] Clock
-    - [ ] Lives
-    - [ ] Level
-    - [ ] Powerups consumed (bottom)
-    - [ ] Shop (top)
-    - [ ] Speedometer
-- [ ] HudManager_Tests
-
-___
-
-- [ ] SceneManager
-- [ ] GameManager, create
-- [ ] GameManager_Tests
-- [ ] CodeManager_Tests
-
 - [ ] **Game should be playable again**
 
 - [ ] InputManager_Tests
 - [ ] HighscoreManager_Tests
-- [ ] SaveGame
+- [ ] SaveGame_Tests
 
 ## Misc
 
@@ -55,7 +33,6 @@ ___
 - [ ] Fade in Paddle?
 - [ ] Fade in Ball?
 - [ ] Lift in with a hub?
-- [ ] fix speedometer
 
 ## Auxiliary
 
@@ -77,7 +54,3 @@ ___
 - [ ] use OpenGL debug callbacks - think this is not worth for legacy gl anymore
 
 - [ ] ScreenshotManager with UI?
-
-- [ ] Splash screen
-  ![current-logo.png](../../images/current-logo.png)
-  music: [see](../../tests/themes/test/music/)

@@ -17,8 +17,6 @@ Auflösung und Format sollten keine große Rolle, lediglich das AR von 4:3 ist w
 4:3 kann auch einfach der Mitte genommen werden
 4 colors for the background, will be set randomly
 
-## Future
-
 - [ ] color layer could repsond to collsions or music/sound
 - [ ] tiled backgrounds | [see](../misc/Background.md)
 - [ ] AspectRatioin handling
