@@ -78,7 +78,6 @@ public:
 
 int main() {
     EventManager eventManager;
-
     MouseManager mouseManager(&eventManager);
     DisplayManager displayManager(&eventManager);
     if (!displayManager.init(0, 1024, 768, false)) {
