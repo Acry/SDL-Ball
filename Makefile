@@ -30,6 +30,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     EventDispatcher.cpp \
     EventManager.cpp \
     GrowableObject.cpp \
+    HudManager.cpp \
     KeyboardManager.cpp \
     LevelManager.cpp \
     Lifes.cpp \
@@ -74,6 +75,7 @@ TEST_TARGETS := \
     test-display \
     test-effectManager \
     test-effects \
+    test-game \
     test-hud \
     test-level \
     test-menu \
@@ -659,6 +661,7 @@ HUD_TEST_SOURCES := $(MANUAL_TEST_DIR)HudManager_Tests.cpp \
                     $(SOURCE_DIR)DisplayManager.cpp \
                     $(SOURCE_DIR)EventDispatcher.cpp \
                     $(SOURCE_DIR)EventManager.cpp \
+                    $(SOURCE_DIR)HudManager.cpp \
                     $(SOURCE_DIR)KeyboardManager.cpp \
                     $(SOURCE_DIR)Lifes.cpp \
                     $(SOURCE_DIR)MouseManager.cpp \
@@ -673,6 +676,41 @@ test-hud: $(HUD_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(HUD_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-hud
 
 $(BUILD_DIR)HudManager_Tests.o: $(MANUAL_TEST_DIR)HudManager_Tests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
+
+###############################################################################
+# GameManager
+GAME_TEST_SOURCES := $(MANUAL_TEST_DIR)GameManager_Tests.cpp \
+                     $(MANUAL_TEST_DIR)TestHelper.cpp \
+                     $(SOURCE_DIR)BackgroundManager.cpp \
+                     $(SOURCE_DIR)Brick.cpp \
+                     $(SOURCE_DIR)BrickManager.cpp \
+                     $(SOURCE_DIR)CodeManager.cpp \
+                     $(SOURCE_DIR)ConfigFileManager.cpp \
+                     $(SOURCE_DIR)DisplayManager.cpp \
+                     $(SOURCE_DIR)EventDispatcher.cpp \
+                     $(SOURCE_DIR)EventManager.cpp \
+                     $(SOURCE_DIR)KeyboardManager.cpp \
+                     $(SOURCE_DIR)LevelManager.cpp \
+                     $(SOURCE_DIR)MathHelper.cpp \
+                     $(SOURCE_DIR)MouseManager.cpp \
+                     $(SOURCE_DIR)PlayfieldBorder.cpp \
+                     $(SOURCE_DIR)SettingsManager.cpp \
+                     $(SOURCE_DIR)SoundManager.cpp \
+                     $(SOURCE_DIR)SplashScreen.cpp \
+                     $(SOURCE_DIR)SpriteSheetAnimation.cpp \
+                     $(SOURCE_DIR)SpriteSheetAnimationManager.cpp \
+                     $(SOURCE_DIR)TextManager.cpp \
+                     $(SOURCE_DIR)TextureManager.cpp \
+                     $(SOURCE_DIR)TextureUtilities.cpp \
+                     $(SOURCE_DIR)ThemeManager.cpp \
+
+GAME_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(GAME_TEST_SOURCES:.cpp=.o)))
+
+test-game: $(GAME_TEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(GAME_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-game
+
+$(BUILD_DIR)GameManager_Tests.o: $(MANUAL_TEST_DIR)GameManager_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################

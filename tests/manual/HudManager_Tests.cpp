@@ -6,6 +6,7 @@
  *   toggle clock via event (MenuManager)
  *   add shop component, after powerup manager
  *   add speedometer component
+ *   std::vector<std::unique_ptr<IHudComponent>>
  */
 
 #include <chrono>
@@ -17,60 +18,12 @@
 #include "DisplayManager.hpp"
 #include "EventDispatcher.h"
 #include "KeyboardManager.h"
-#include "Lifes.h"
 #include "MouseManager.h"
 #include "Score.h"
 #include "TestHelper.h"
 #include "TextManager.h"
 #include "TextureManager.h"
-
-class HudManager {
-    IEventManager *eventManager;
-    TextManager *textManager;
-    TextureManager *textureManager;
-    Score score;
-    Clock clock;
-    Lifes lifes;
-
-    bool clockEnabled = true;
-
-public:
-    HudManager(IEventManager *eventManager, TextManager *textManager, TextureManager *textureManager)
-        : eventManager(eventManager),
-          textManager(textManager),
-          textureManager(textureManager),
-          score(*textManager),
-          clock(*textManager),
-          lifes(textureManager, 21) {
-    }
-
-    void addPoints(const int points) {
-        score.addPoints(points);
-    }
-
-    void update(const float deltaTime) {
-        score.update(deltaTime);
-        if (clockEnabled) {
-            clock.update(deltaTime);
-        }
-    }
-
-    void draw() const {
-        score.draw();
-        lifes.draw();
-        if (clockEnabled) {
-            clock.draw();
-        }
-    }
-
-    void resetScore() {
-        score.reset();
-    }
-
-    void toggleClock() {
-        clockEnabled = !clockEnabled;
-    }
-};
+#include "HudManager.h"
 
 class HudManagerTestContext {
 public:
