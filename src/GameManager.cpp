@@ -2,24 +2,18 @@
 #include "GameManager.h"
 #include <SDL2/SDL_log.h>
 
-// GameManager game;
-// Game.startGame();
-// Game.handleEvents(event);
-// Game.update(deltaTime);
-// Game.render(deltaTime);
-// Game.quitGame();
 GameManager::GameManager()
     : gameRunning(false), gamePaused(false), currentLevel(1), score(0) {
     init();
 }
 
 GameManager::~GameManager() {
-    delete ballManager;
+    // delete ballManager;
     delete brickManager;
-    delete powerupManager;
+    // delete powerupManager;
     delete backgroundManager;
     delete effectManager;
-    delete player;
+    // delete player; // paddle
 }
 
 void GameManager::init() {
@@ -307,21 +301,22 @@ void GameManager::checkCollisions() {
     }
 }
 
-void GameManager::render(float deltaTime) {
+void GameManager::draw(float deltaTime) {
     // SceneManager.render?
     // Hintergrund rendern
-    backgroundManager->render();
+    backgroundManager->draw();
 
     // Spielobjekte rendern
-    brickManager->render();
-    powerupManager->render();
-    player->render();
-    ballManager->render();
-    effectManager->render();
+    brickManager->draw();
+    // powerupManager->draw();
+    // player->draw();
+    // ballManager->draw();
+    // effectManager->draw();
 
     // UI-Elemente rendern
-    textManager.renderText("Score: " + std::to_string(score), 10, 10, 24);
-    textManager.renderText("Lives: " + std::to_string(player->getLives()), 10, 40, 24);
+    // HUD-Manager zeichnen
+    // textManager.write("Score: " + std::to_string(score), 10, 10, 24);
+    // textManager.write("Lives: " + std::to_string(player->getLives()), 10, 40, 24);
 }
 
 void GameManager::handleEvents(SDL_Event &event) {

@@ -2,11 +2,11 @@
 #pragma once
 
 #include "BackgroundManager.h"
-#include "BallManager.h"
+// #include "BallManager.h"
 #include "ConfigFileManager.h"
-#include "Display.hpp"
-#include "Paddle.h"
-#include "Player.h"
+#include "Display.h"
+// #include "Paddle.h"
+// #include "Player.h"
 #include "SaveGameManager.h"
 #include "SettingsManager.h"
 #include "SoundManager.h"
@@ -14,7 +14,7 @@
 #include "ThemeManager.h"
 #include "TextManager.h"
 #include "BrickManager.h"
-#include "PowerupManager.h"
+// #include "PowerupManager.h"
 #include "CollisionManager.h"
 #include "EventManager.h"
 #include "PlayfieldBorder.h"
@@ -31,12 +31,12 @@ class GameManager {
     EventManager eventManager;
 
     // Spielspezifische Manager
-    BallManager *ballManager;
+    // BallManager *ballManager;
     BrickManager *brickManager;
-    PowerupManager *powerupManager;
+    // PowerupManager *powerupManager;
     BackgroundManager *backgroundManager;
     EffectManager *effectManager;
-    Player *player;
+    // Player *player;
 
     PlayfieldBorder border;
 
@@ -46,7 +46,7 @@ class GameManager {
     int currentLevel;
     int score;
     int currentScene;
-    currentDifficulty;
+    // currentDifficulty;
 
     // Initialisierungsmethoden
     void initializeManagers();
