@@ -80,7 +80,7 @@ public:
         }
     }
 
-    void update(const float deltaTime) const {
+    void update(const float deltaTime) {
         ctx.hudManager->update(deltaTime);
     }
 

@@ -9,6 +9,7 @@
 #include "BrickManager.h"
 #include "DisplayManager.hpp"
 #include "EventDispatcher.h"
+#include "HudManager.h"
 #include "KeyboardManager.h"
 #include "LevelManager.h"
 #include "MouseManager.h"
@@ -28,6 +29,7 @@ class TestGameManager {
     std::unique_ptr<PlayfieldBorder> rightBorder;
     std::unique_ptr<PlayfieldBorder> topBorder;
     SpriteSheetAnimationManager animationManager;
+    HudManager hudManager;
 
 public:
     TestGameManager(IEventManager *eventManager, TextManager *textManager, TextureManager *textureManager)
@@ -37,7 +39,8 @@ public:
           levelManager(new LevelManager(eventManager)),
           backgroundManager(new BackgroundManager(*textureManager)),
 
-          brickManager(eventManager, textureManager, &animationManager) {
+          brickManager(eventManager, textureManager, &animationManager),
+          hudManager(eventManager, textManager, textureManager) {
         backgroundManager->registerEvents(eventManager);
         levelManager->setTheme("../themes/default");
 
@@ -51,14 +54,16 @@ public:
     void update(const float deltaTime) {
         animationManager.updateAllAnimations(deltaTime);
         topBorder->update(deltaTime);
+        hudManager.update(deltaTime);
     }
 
-    void draw() const {
+    void draw() {
         backgroundManager->draw();
         leftBorder->draw();
         rightBorder->draw();
         topBorder->draw();
         brickManager.draw();
+        hudManager.draw();
     }
 
     void resetGame() {

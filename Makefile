@@ -685,16 +685,20 @@ GAME_TEST_SOURCES := $(MANUAL_TEST_DIR)GameManager_Tests.cpp \
                      $(SOURCE_DIR)BackgroundManager.cpp \
                      $(SOURCE_DIR)Brick.cpp \
                      $(SOURCE_DIR)BrickManager.cpp \
+                     $(SOURCE_DIR)Clock.cpp \
                      $(SOURCE_DIR)CodeManager.cpp \
                      $(SOURCE_DIR)ConfigFileManager.cpp \
                      $(SOURCE_DIR)DisplayManager.cpp \
                      $(SOURCE_DIR)EventDispatcher.cpp \
                      $(SOURCE_DIR)EventManager.cpp \
+                     $(SOURCE_DIR)HudManager.cpp \
                      $(SOURCE_DIR)KeyboardManager.cpp \
                      $(SOURCE_DIR)LevelManager.cpp \
+                     $(SOURCE_DIR)Lifes.cpp \
                      $(SOURCE_DIR)MathHelper.cpp \
                      $(SOURCE_DIR)MouseManager.cpp \
                      $(SOURCE_DIR)PlayfieldBorder.cpp \
+                     $(SOURCE_DIR)Score.cpp \
                      $(SOURCE_DIR)SettingsManager.cpp \
                      $(SOURCE_DIR)SoundManager.cpp \
                      $(SOURCE_DIR)SplashScreen.cpp \

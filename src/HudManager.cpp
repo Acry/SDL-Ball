@@ -7,7 +7,7 @@ HudManager::HudManager(IEventManager *eventManager, TextManager *textManager, Te
       textureManager(textureManager),
       score(*textManager),
       clock(*textManager),
-      lifes(textureManager, 21) {
+      lifes(textureManager, 3) {
 }
 
 void HudManager::addPoints(const int points) {
@@ -21,7 +21,7 @@ void HudManager::update(const float deltaTime) {
     }
 }
 
-void HudManager::draw() const {
+void HudManager::draw() {
     score.draw();
     lifes.draw();
     if (clockEnabled) {

@@ -22,7 +22,7 @@ public:
 
     void update(float deltaTime);
 
-    void draw() const;
+    void draw();
 
     void resetScore();
 
