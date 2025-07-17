@@ -301,6 +301,7 @@ PADDLE_TEST_SOURCES := $(MANUAL_TEST_DIR)Paddle_Tests.cpp \
                        $(SOURCE_DIR)MouseManager.cpp \
                        $(SOURCE_DIR)KeyboardManager.cpp \
                        $(SOURCE_DIR)MovingObject.cpp \
+                       $(SOURCE_DIR)Paddle.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimationManager.cpp \
                        $(SOURCE_DIR)TextManager.cpp \

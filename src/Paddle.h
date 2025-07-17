@@ -1,60 +1,74 @@
 #pragma once
-#include "MovingObject.h"
+
 #include "GrowableObject.h"
 #include "ICollideable.h"
-#include "SpriteSheetAnimation.h"
-#include <epoxy/gl.h>
-#include "EventManager.h"
+#include "TextureManager.h"
+#include "SpriteSheetAnimationManager.h"
+#include <vector>
 
-class Paddle final : public MovingObject, public GrowableObject, public ICollideable {
+
+class Paddle final : public GrowableObject, public ICollideable {
+public:
+    explicit Paddle(const texture &tex);
+
+    float centerX{0.0f};
+    float centerY{0.0f};
+    mutable std::vector<float> collisionPoints;
+
+    TextureResource glueLayerTextureProperties;
+    SpriteSheetAnimationProperties glueLayerAnimProps{};
+
+    TextureResource gunLayerTextureProperties;
+    SpriteSheetAnimationProperties gunLayerAnimProps{};
+
+    void init() override;
+
+    void draw() const override;
+
+    void update(float deltaTime) override;
+
+    // ICollideable Interface
+    void setActive(bool value) override;
+
+    float getPosX() const override;
+
+    float getPosY() const override;
+
+    float getWidth() const override;
+
+    float getHeight() const override;
+
+    bool isActive() const override;
+
+    CollisionType getCollisionType() const override;
+
+    // Paddle-spezifische Methoden
+    void setGlueLayer(bool enabled);
+
+    bool getGlueLayer() const;
+
+    void setGunLayer(bool enabled);
+
+    bool getGunLayer() const;
+
+    std::vector<float> *getCollisionPoints() const;
+
+    void onSizeChanged() override;
+
+    bool isPhysicallyActive() const;
+
+    void setPhysicallyActive(bool value);
+
+private:
     void drawBase() const;
 
     void drawGlueLayer() const;
 
     void drawGunLayer() const;
 
-    mutable std::vector<float> collisionPoints;
-
-protected:
-    void onSizeChanged() override;
-
-public:
-    bool hasGlueLayer{};
-    bool hasGunLayer{};
-    SpriteSheetAnimation *layerTex[2]{nullptr, nullptr};
-    float centerX{0.0f};
-
-    explicit Paddle(EventManager *eventMgr);
-
-    void init() override;
-
-    void update(float deltaTime) override;
-
-    void moveTo(float targetX, float deltaTime);
-
-    void draw() const override;
-
-    // Implementation der virtuellen Getter/Setter aus GrowableObject
-    [[nodiscard]] GLfloat getWidth() const override { return GameObject::width; }
-    [[nodiscard]] GLfloat getHeight() const override { return GameObject::height; }
-    void setWidth(const GLfloat w) override { GameObject::width = w; }
-    void setHeight(const GLfloat h) override { GameObject::height = h; }
-
-    // Powerup-Setter
-    void setGlueLayer(bool enabled);
-
-    void setGunLayer(bool enabled);
-
-    // ICollideable Interface-Implementierung
-    float getPosX() const override { return pos_x; }
-    float getPosY() const override { return pos_y; }
-    bool isActive() const override { return GameObject::isActive(); }
-
-    const std::vector<float> *getCollisionPoints() const override;
-
-    void onCollision(ICollideable *other, float hitX, float hitY) override;
-
-    [[nodiscard]] int getCollisionType() const override;
-
-    ~Paddle();
+    bool collisionActive{true};
+    bool active{false};
+    bool hasGlueLayer{false};
+    bool hasGunLayer{false};
+    float aspectRatio{1.0f};
 };

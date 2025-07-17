@@ -1,43 +1,44 @@
-#include <epoxy/gl.h>
-
 #include "Paddle.h"
+#include <GL/gl.h>
 
-Paddle::Paddle() : MovingObject() {
-    init();
+Paddle::Paddle(const texture &tex) : GrowableObject(tex) {
+    this->width = 0.124f;
+    this->height = 0.032f;
+    this->velocity = 0.0f;
+    pos_y = -0.955f;
+    pos_x = 0.0f - width / 2.0f;
+    aspectRatio = width / height;
+    onSizeChanged();
 }
 
 void Paddle::init() {
-    // GameObject
-    width = 0.124f;
-    height = 0.032f;
-    active = true;
-    pos_y = -0.955f;
-    pos_x = 0.0f - width / 2.0f;
-
-    // GrowableObject
-    aspectRatio = height / width;
-
-    // MovingObject
-
-    // Paddle-specific
-    hasGlueLayer = false;
-    hasGunLayer = false;
-
-    // Collision
-    onSizeChanged();
+    // Implementierung der abstrakten Methode aus GameObject
 }
 
 void Paddle::draw() const {
     drawBase();
-
     if (hasGlueLayer) {
         drawGlueLayer();
     }
-
     if (hasGunLayer) {
         drawGunLayer();
     }
 }
+
+void Paddle::update(float deltaTime) {
+    GrowableObject::update(deltaTime);
+    centerX = pos_x + width / 2.0f;
+    centerY = pos_y + height / 2.0f;
+    collisionPoints = *getCollisionPoints();
+}
+
+void Paddle::setActive(bool value) { collisionActive = value; }
+float Paddle::getPosX() const { return pos_x; }
+float Paddle::getPosY() const { return pos_y; }
+float Paddle::getWidth() const { return width; }
+float Paddle::getHeight() const { return height; }
+bool Paddle::isActive() const { return collisionActive; }
+CollisionType Paddle::getCollisionType() const { return CollisionType::Ball; }
 
 void Paddle::drawBase() const {
     glLoadIdentity();
@@ -48,20 +49,16 @@ void Paddle::drawBase() const {
     glColor4fv(textureProperties.textureColor);
     glBegin(GL_QUADS);
 
-    // Bottom-left corner
-    glTexCoord2f(uvCoordinates[0], uvCoordinates[1]);
+    glTexCoord2f(textureProperties.uvCoordinates[0], textureProperties.uvCoordinates[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
 
-    // Bottom-right corner
-    glTexCoord2f(uvCoordinates[2], uvCoordinates[3]);
+    glTexCoord2f(textureProperties.uvCoordinates[2], textureProperties.uvCoordinates[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
 
-    // Top-right corner
-    glTexCoord2f(uvCoordinates[4], uvCoordinates[5]);
+    glTexCoord2f(textureProperties.uvCoordinates[4], textureProperties.uvCoordinates[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
-    // Top-left corner
-    glTexCoord2f(uvCoordinates[6], uvCoordinates[7]);
+    glTexCoord2f(textureProperties.uvCoordinates[6], textureProperties.uvCoordinates[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
 
     glEnd();
@@ -71,178 +68,82 @@ void Paddle::drawBase() const {
 
 void Paddle::drawGlueLayer() const {
     glLoadIdentity();
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, layerTex[0]->textureProperties.texture);
-    glColor4f(layerTex[0]->textureProperties.glTexColorInfo[0],
-              layerTex[0]->textureProperties.glTexColorInfo[1],
-              layerTex[0]->textureProperties.glTexColorInfo[2],
-              layerTex[0]->textureProperties.glTexColorInfo[3]);
-
+    glBindTexture(GL_TEXTURE_2D, glueLayerTextureProperties.id);
+    glColor4fv(glueLayerTextureProperties.textureColor);
     glBegin(GL_QUADS);
 
-    // Bottom-left corner.
-    glTexCoord2f(layerTex[0]->currentTexturePosition[0], texture->texturePosition[1]);
+    glTexCoord2f(glueLayerTextureProperties.uvCoordinates[0], glueLayerTextureProperties.uvCoordinates[1]);
     glVertex3f(pos_x, pos_y, 0.0f);
 
-    // Bottom-right corner.
-    glTexCoord2f(layerTex[0]->currentTexturePosition[2], texture->texturePosition[3]);
+    glTexCoord2f(glueLayerTextureProperties.uvCoordinates[2], glueLayerTextureProperties.uvCoordinates[3]);
     glVertex3f(pos_x + width, pos_y, 0.0f);
 
-    // Top-right corner.
-    glTexCoord2f(layerTex[0]->currentTexturePosition[4], texture->texturePosition[5]);
+    glTexCoord2f(glueLayerTextureProperties.uvCoordinates[4], glueLayerTextureProperties.uvCoordinates[5]);
     glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
-    // Top-left corner.
-    glTexCoord2f(layerTex[0]->currentTexturePosition[6], texture->texturePosition[7]);
+    glTexCoord2f(glueLayerTextureProperties.uvCoordinates[6], glueLayerTextureProperties.uvCoordinates[7]);
     glVertex3f(pos_x, pos_y + height, 0.0f);
-    glEnd();
 
+    glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
 }
 
 void Paddle::drawGunLayer() const {
     glLoadIdentity();
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, layerTex[1]->textureProperties.texture);
-    glColor4f(layerTex[1]->textureProperties.glTexColorInfo[0],
-              layerTex[1]->textureProperties.glTexColorInfo[1],
-              layerTex[1]->textureProperties.glTexColorInfo[2],
-              layerTex[1]->textureProperties.glTexColorInfo[3]);
-
+    glBindTexture(GL_TEXTURE_2D, gunLayerTextureProperties.id);
+    glColor4fv(gunLayerTextureProperties.textureColor);
     glBegin(GL_QUADS);
 
-    // Renders on top of paddle
-    const float offset = height;
+    glTexCoord2f(gunLayerTextureProperties.uvCoordinates[0], gunLayerTextureProperties.uvCoordinates[1]);
+    glVertex3f(pos_x, pos_y + height, 0.0f);
 
-    // Bottom-left corner.
-    glTexCoord2f(layerTex[1]->currentTexturePosition[0], layerTex[1]->currentTexturePosition[1]);
-    glVertex3f(pos_x, pos_y + offset, 0.0f);
+    glTexCoord2f(gunLayerTextureProperties.uvCoordinates[2], gunLayerTextureProperties.uvCoordinates[3]);
+    glVertex3f(pos_x + width, pos_y + height, 0.0f);
 
-    // Bottom-right corner.
-    glTexCoord2f(layerTex[1]->currentTexturePosition[2], layerTex[1]->currentTexturePosition[3]);
-    glVertex3f(pos_x + width, pos_y + offset, 0.0f);
+    glTexCoord2f(gunLayerTextureProperties.uvCoordinates[4], gunLayerTextureProperties.uvCoordinates[5]);
+    glVertex3f(pos_x + width, pos_y + height + height / 3.0f, 0.0f);
 
-    // Top-right corner.
-    glTexCoord2f(layerTex[1]->currentTexturePosition[4], layerTex[1]->currentTexturePosition[5]);
-    glVertex3f(pos_x + width, pos_y + height + offset, 0.0f);
-
-    // Top-left corner.
-    glTexCoord2f(layerTex[1]->currentTexturePosition[6], layerTex[1]->currentTexturePosition[7]);
-    glVertex3f(pos_x, pos_y + height + offset, 0.0f);
+    glTexCoord2f(gunLayerTextureProperties.uvCoordinates[6], gunLayerTextureProperties.uvCoordinates[7]);
+    glVertex3f(pos_x, pos_y + height + height / 3.0f, 0.0f);
 
     glEnd();
-
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
 }
 
-void Paddle::setGlueLayer(const bool enabled) {
-    hasGlueLayer = enabled;
-}
+void Paddle::setGlueLayer(bool enabled) { hasGlueLayer = enabled; }
+bool Paddle::getGlueLayer() const { return hasGlueLayer; }
+void Paddle::setGunLayer(bool enabled) { hasGunLayer = enabled; }
+bool Paddle::getGunLayer() const { return hasGunLayer; }
 
-void Paddle::setGunLayer(const bool enabled) {
-    hasGunLayer = enabled;
-}
+std::vector<float> *Paddle::getCollisionPoints() const {
+    static std::vector<float> points;
+    points.clear();
+    points.reserve(64);
 
-void Paddle::update(const float deltaTime) {
-    if (!active) return;
-    if (growing || shrinking) {
-        centerX = pos_x + width / 2.0f;
-        updateGrowth(deltaTime);
+    const float centerX = pos_x + width / 2.0f;
+    const float centerY = pos_y + height / 2.0f;
+
+    for (int i = 0; i < 32; ++i) {
+        const float angle = i * (2.0f * M_PI / 32.0f);
+        const float pointX = centerX + std::cos(angle) * (width / 2.0f);
+        const float pointY = centerY + std::sin(angle) * (height / 2.0f);
+        points.push_back(pointX);
+        points.push_back(pointY);
     }
-}
-
-void Paddle::moveTo(const float targetX, const float deltaTime) {
-    if (!active) return;
-    // Unterscheidung zwischen direkter Positionierung und geschwindigkeitsbasierter Bewegung
-    const bool isMouseInput = std::abs(targetX - pos_x) > 0.1f;
-
-    if (isMouseInput) {
-        // Mauseingabe: Direkte Positionierung mit Dämpfung
-        constexpr float mouseSpeed = 8.0f;
-        pos_x += (targetX - pos_x) * mouseSpeed * deltaTime;
-    } else {
-        // Richtung bestimmen (links/rechts)
-        const float direction = (targetX > pos_x) ? 1.0f : -1.0f;
-        // Nur bewegen, wenn Differenz vorhanden
-        if (targetX != pos_x) {
-            constexpr float keyboardSpeed = 20.0f;
-            pos_x += direction * keyboardSpeed * deltaTime;
-
-            // Vermeide Überschießen
-            if ((direction > 0 && pos_x > targetX) ||
-                (direction < 0 && pos_x < targetX)) {
-                pos_x = targetX;
-            }
-        }
-    }
+    return &points;
 }
 
 void Paddle::onSizeChanged() {
-    pos_x = centerX - width / 2.0f;
-
-    collisionPoints.clear();
-    collisionPoints = {
-        pos_x - width, pos_y + height, // oben links
-        pos_x + width, pos_y + height, // oben rechts
-        pos_x + width, pos_y - height, // unten rechts
-        pos_x - width, pos_y - height // unten links
-    };
+    //collisionPoints = *getCollisionPoints();
 }
 
-const std::vector<float> *Paddle::getCollisionPoints() const {
-    // Aktualisiere die Punkte mit aktuellen Positionen
-    if (collisionPoints.empty() || collisionPoints.size() < 8) {
-        collisionPoints.resize(8);
-    }
-
-    collisionPoints[0] = pos_x - width;
-    collisionPoints[1] = pos_y + height;
-    collisionPoints[2] = pos_x + width;
-    collisionPoints[3] = pos_y + height;
-    collisionPoints[4] = pos_x + width;
-    collisionPoints[5] = pos_y - height;
-    collisionPoints[6] = pos_x - width;
-    collisionPoints[7] = pos_y - height;
-
-    return &collisionPoints;
-}
-
-void Paddle::onCollision(ICollideable *other, float hitX, float hitY) {
-    EventData data;
-    data.posX = hitX;
-    data.posY = hitY;
-    data.sender = this;
-    data.target = dynamic_cast<const GameObject *>(other);
-
-    switch (other->getCollisionType()) {
-        case static_cast<int>(CollisionType::Ball):
-            eventManager->emit(GameEvent::BallHitPaddle, data);
-            break;
-        case static_cast<int>(CollisionType::PowerUp):
-            eventManager->emit(GameEvent::PowerUpCollected, data);
-            break;
-        case static_cast<int>(CollisionType::BorderLeft):
-            eventManager->emit(GameEvent::PaddleHitLeftBorder, data);
-            break;
-        case static_cast<int>(CollisionType::BorderRight):
-            eventManager->emit(GameEvent::PaddleHitRightBorder, data);
-            break;
-        default: break;
-    }
-}
-
-int Paddle::getCollisionType() const {
-    return static_cast<int>(CollisionType::Paddle);
-}
-
-Paddle::~Paddle() {
-    EventData data;
-    data.sender = this;
-    eventManager->emit(GameEvent::PaddleDestroyed, data);
-}
+bool Paddle::isPhysicallyActive() const { return active; }
+void Paddle::setPhysicallyActive(bool value) { active = value; }

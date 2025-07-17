@@ -9,6 +9,7 @@
 #include "GrowableObject.h"
 #include "KeyboardManager.h"
 #include "MouseManager.h"
+#include "Paddle.h"
 #include "TestHelper.h"
 #include "TextManager.h"
 #include "TextureManager.h"
@@ -226,9 +227,9 @@ class TestPaddleManager {
     float moveTargetX = 0.0f;
 
 public:
-    TestPaddle *activePaddle = nullptr;
+    Paddle *activePaddle = nullptr;
     float paddleSpeed = 10.0f; // Anpassbare Geschwindigkeit
-    [[nodiscard]] TestPaddle *getActivePaddle() const {
+    [[nodiscard]] Paddle *getActivePaddle() const {
         return activePaddle;
     }
 
@@ -298,7 +299,7 @@ public:
             if (activePaddle->getGunLayer() && activePaddle->gunLayerAnimProps.frames > 1) {
                 animationManager->unregisterFromAnimation(activePaddle, activePaddle->gunLayerAnimProps);
             }
-            const TestPaddle *oldPaddle = activePaddle;
+            const Paddle *oldPaddle = activePaddle;
             activePaddle = nullptr;
             delete oldPaddle;
         }
@@ -306,7 +307,7 @@ public:
 
     void spawn() {
         const texture *paddleBaseTexture = textureManager->getPaddleTexture(PaddleTexture::Base);
-        const auto paddle = new TestPaddle(*paddleBaseTexture);
+        const auto paddle = new Paddle(*paddleBaseTexture);
 
         if (paddle->animProps.frames > 1) {
             animationManager->registerForAnimation(paddle, paddle->animProps,
