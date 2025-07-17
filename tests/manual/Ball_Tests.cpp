@@ -4,7 +4,7 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
-#include "Ball.h"
+#include "BallManager.h"
 #include "DisplayManager.hpp"
 #include "EventDispatcher.h"
 #include "GrowableObject.h"
@@ -21,6 +21,7 @@ class TestBallManager {
     SpriteSheetAnimationManager *animationManager;
     std::vector<size_t> animationIndices; // Indizes der Bälle mit Animation
     static constexpr int MAX_BALLS = 50;
+    // FIXME: Use MathHelper::randomFloat() instead, use M_PI_F
     float launchAngle = M_PI / 2 + (rand() % 40 - 20) * 0.01f; // π/2 ± kleine Zufallsabweichung
 public:
     Ball *selectedBall{nullptr};
@@ -310,7 +311,7 @@ public:
     TextManager textManager;
     std::unique_ptr<TextureManager> textureManager;
     SpriteSheetAnimationManager animationManager;
-    std::unique_ptr<TestBallManager> ballManager;
+    std::unique_ptr<BallManager> ballManager;
 
     BallTestContext()
         : mouseManager(&eventManager),
@@ -325,7 +326,7 @@ public:
         if (!textureManager->setSpriteTheme("../themes/default")) {
             throw std::runtime_error("Error loading texture theme");
         }
-        ballManager = std::make_unique<TestBallManager>(&eventManager, textureManager.get(), &animationManager);
+        ballManager = std::make_unique<BallManager>(&eventManager, textureManager.get(), &animationManager);
     }
 };
 

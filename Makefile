@@ -20,6 +20,7 @@ AUTOMATIC_TEST_DIR := tests/automatic/
 SOURCES := $(addprefix $(SOURCE_DIR), \
     BackgroundManager.cpp \
     Ball.cpp \
+    BallManager.cpp \
     Brick.cpp \
     Clock.cpp \
     CodeManager.cpp \
@@ -464,6 +465,7 @@ $(BUILD_DIR)SplashScene_Tests.o: $(MANUAL_TEST_DIR)SplashScene_Tests.cpp
 BALL_TEST_SOURCES := $(MANUAL_TEST_DIR)Ball_Tests.cpp \
                      $(MANUAL_TEST_DIR)TestHelper.cpp \
                      $(SOURCE_DIR)Ball.cpp \
+                     $(SOURCE_DIR)BallManager.cpp \
                      $(SOURCE_DIR)CollisionManager.cpp \
                      $(SOURCE_DIR)DisplayManager.cpp \
                      $(SOURCE_DIR)EventDispatcher.cpp \

@@ -1,62 +1,44 @@
-// BallManager.h
 #pragma once
 
-#include "Ball.h"
-#include "EventManager.h"
-#include "TextureManager.h"
-#include "Paddle.h"
-#include "ICollideable.h"
 #include <vector>
-#include <memory>
+#include "Ball.h"
+#include "TextureManager.h"
+#include "SpriteSheetAnimationManager.h"
+#include "EventDispatcher.h"
 
 class BallManager {
-private:
-    std::vector<std::unique_ptr<Ball>> balls;
-    SpriteSheetAnimation normalBallTexture;
-    SpriteSheetAnimation fireBallTexture;
-    SpriteSheetAnimation tracerTexture;
-    EventManager* eventManager;
-
-    static constexpr size_t MAX_BALLS = 16;
-
-    float calculateAverageBallSpeed() const;
+    IEventManager *eventManager;
+    TextureManager *textureManager;
+    SpriteSheetAnimationManager *animationManager;
+    std::vector<size_t> animationIndices;
+    static constexpr int MAX_BALLS = 16;
 
 public:
-    explicit BallManager(EventManager* eventMgr);
+    Ball *selectedBall{nullptr};
+    std::vector<Ball *> managedObjects;
+
+    BallManager(IEventManager *evtMgr, TextureManager *texMgr, SpriteSheetAnimationManager *animMgr);
+
     ~BallManager();
 
-    bool loadTextures(const TextureManager& texManager);
+    void setExplosive(Ball *ball, bool explosive);
 
-    // Ball-Erstellung und -Verwaltung
-    void createInitialBall();
-    void spawnBall(float posX, float posY, bool glued = false,
-                   float gluedX = 0.0f, float speed = 0.3f, float angle = 0.0f);
-    void clearAllBalls();
+    void despawnBall(Ball *ball);
 
-    // Ball-Aktionen
-    void multiplyActiveBalls();
-    void releaseGluedBalls();
-    void applyPowerup(int powerupType);
+    void spawn(float x, float y, bool glued = false, float speed = 0.3f, float angle = 0.0f);
 
-    // Update & Draw
-    void update(float deltaTime, const Paddle& paddle);
-    void draw(float deltaTime);
+    void update(float deltaTime);
 
-    // Hilfsmethoden
-    size_t getActiveBallCount() const;
-    float getAverageBallSpeed() const;
+    void draw() const;
 
-    // Zugriff auf Bälle
-    Ball* getBallAt(size_t index);
-    std::vector<Ball*> getBalls();
+    void clear();
 
-    // Kollisions-Integration
-    std::vector<ICollideable*> getCollideables() const {
-        std::vector<ICollideable*> collideables;
-        collideables.reserve(balls.size());
-        for (const auto& ball : balls) {
-            collideables.push_back(const_cast<Ball*>(ball.get()));
-        }
-        return collideables;
-    }
+private:
+    void launchBall() const;
+
+    void checkBorderCollision() const;
+
+    void checkBallToBallCollision() const;
+
+    static float getRandomLaunchAngle();
 };
