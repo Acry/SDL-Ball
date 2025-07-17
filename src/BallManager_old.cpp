@@ -3,40 +3,40 @@
 #include "config.h"
 #include "MathHelper.h"
 
-BallManager::BallManager(EventManager* eventMgr) : eventManager(eventMgr) {
+BallManager::BallManager(EventManager *eventMgr) : eventManager(eventMgr) {
     // Auf Ereignisse reagieren
     eventManager->addListener(GameEvent::BallHitBorder,
-        [this](const EventData& data) {
-            // Reaktion auf Ball-Wand Kollision
-            Ball* ball = static_cast<Ball*>(data.sender);
-            if (ball && ball->isActive()) {
-                // Möglicher visueller Effekt an der Kollisionsposition
-            }
-        },
-        this
+                              [this](const EventData &data) {
+                                  // Reaktion auf Ball-Wand Kollision
+                                  Ball *ball = static_cast<Ball *>(data.sender);
+                                  if (ball && ball->isActive()) {
+                                      // Möglicher visueller Effekt an der Kollisionsposition
+                                  }
+                              },
+                              this
     );
 
     eventManager->addListener(GameEvent::BallHitPaddle,
-        [this](const EventData& data) {
-            // Reaktion auf Ball-Paddle Kollision
-            Ball* ball = static_cast<Ball*>(data.sender);
-            if (ball && ball->isActive()) {
-                // Visueller Effekt oder Sound-Rückmeldung
-            }
-        },
-        this
+                              [this](const EventData &data) {
+                                  // Reaktion auf Ball-Paddle Kollision
+                                  Ball *ball = static_cast<Ball *>(data.sender);
+                                  if (ball && ball->isActive()) {
+                                      // Visueller Effekt oder Sound-Rückmeldung
+                                  }
+                              },
+                              this
     );
 
     eventManager->addListener(GameEvent::BallLost,
-        [this](const EventData& data) {
-            // Reaktion auf Ball verloren
-            // Diese Logik könnte in den GameManager verschoben werden
-            if (getActiveBallCount() == 0) {
-                // Spiel verloren oder Leben abziehen
-                // Hier nur für Visualisierung
-            }
-        },
-        this
+                              [this](const EventData &data) {
+                                  // Reaktion auf Ball verloren
+                                  // Diese Logik könnte in den GameManager verschoben werden
+                                  if (getActiveBallCount() == 0) {
+                                      // Spiel verloren oder Leben abziehen
+                                      // Hier nur für Visualisierung
+                                  }
+                              },
+                              this
     );
 }
 
@@ -48,7 +48,7 @@ BallManager::~BallManager() {
     clearAllBalls();
 }
 
-bool BallManager::loadTextures(const TextureManager& texManager) {
+bool BallManager::loadTextures(const TextureManager &texManager) {
     // Texturen für normale Bälle, Feuer-Bälle und Tracer laden
     normalBallTexture = texManager.getSpriteSheetAnimation("normalBall");
     fireBallTexture = texManager.getSpriteSheetAnimation("fireBall");
@@ -76,11 +76,11 @@ void BallManager::multiplyActiveBalls() {
         return;
 
     // Erstelle eine Kopie der aktuellen Bälle
-    std::vector<std::unique_ptr<Ball>> currentBalls;
+    std::vector<std::unique_ptr<Ball> > currentBalls;
     currentBalls.reserve(balls.size());
 
     // Bewege alle aktuellen Bälle in eine temporäre Liste
-    for (auto& ball : balls) {
+    for (auto &ball: balls) {
         if (ball->isActive()) {
             currentBalls.push_back(std::move(ball));
         }
@@ -91,13 +91,13 @@ void BallManager::multiplyActiveBalls() {
     balls.reserve(std::min(MAX_BALLS, currentBalls.size() * 2));
 
     // Füge die vorhandenen Bälle wieder hinzu
-    for (auto& ball : currentBalls) {
+    for (auto &ball: currentBalls) {
         balls.push_back(std::move(ball));
     }
 
     // Erzeuge Klone der aktiven Bälle
     for (size_t i = 0; i < currentBalls.size() && balls.size() < MAX_BALLS; ++i) {
-        Ball* original = balls[i].get();
+        Ball *original = balls[i].get();
 
         // Erzeuge einen neuen Ball mit ähnlichen Eigenschaften
         spawnBall(
@@ -111,20 +111,22 @@ void BallManager::multiplyActiveBalls() {
         );
 
         // Übernimm die Eigenschaften wie explosive, Größe usw.
-        Ball* clone = balls.back().get();
+        Ball *clone = balls.back().get();
         clone->explosive = original->explosive;
 
         // Setze Größe entsprechend dem Original
-        if (original->width < 0.02f) { // Kleiner Ball
+        if (original->width < 0.02f) {
+            // Kleiner Ball
             clone->setSize(0.015f);
-        } else if (original->width > 0.03f) { // Großer Ball
+        } else if (original->width > 0.03f) {
+            // Großer Ball
             clone->setSize(0.04f);
         }
     }
 }
 
 void BallManager::releaseGluedBalls() {
-    for (auto& ball : balls) {
+    for (auto &ball: balls) {
         if (ball->isActive() && ball->glued) {
             ball->glued = false;
             ball->launchFromPaddle();
@@ -157,10 +159,10 @@ void BallManager::spawnBall(float posX, float posY, bool glued, float gluedX, fl
     balls.push_back(std::move(newBall));
 }
 
-void BallManager::update(float deltaTime, const Paddle& paddle) {
+void BallManager::update(float deltaTime, const Paddle &paddle) {
     // Update alle aktiven Bälle
     for (auto it = balls.begin(); it != balls.end();) {
-        auto& ball = *it;
+        auto &ball = *it;
 
         if (ball->isActive()) {
             // Wenn der Ball am Paddle klebt, Position aktualisieren
@@ -180,7 +182,7 @@ void BallManager::update(float deltaTime, const Paddle& paddle) {
 }
 
 void BallManager::draw(float deltaTime) {
-    for (auto& ball : balls) {
+    for (auto &ball: balls) {
         if (ball->isActive()) {
             ball->draw(deltaTime);
         }
@@ -188,7 +190,7 @@ void BallManager::draw(float deltaTime) {
 }
 
 void BallManager::applyPowerup(int powerupType) {
-    for (auto& ball : balls) {
+    for (auto &ball: balls) {
         if (ball->isActive()) {
             switch (powerupType) {
                 case 1: // Großer Ball (PO_BIGBALL)
@@ -208,7 +210,7 @@ void BallManager::applyPowerup(int powerupType) {
                     ball->explosive = true;
                     ball->tracer.colorRotate(true, nullptr);
                     break;
-                // Weitere Powerup-Typen können hier hinzugefügt werden
+                    // Weitere Powerup-Typen können hier hinzugefügt werden
             }
         }
     }
@@ -216,7 +218,7 @@ void BallManager::applyPowerup(int powerupType) {
 
 size_t BallManager::getActiveBallCount() const {
     size_t count = 0;
-    for (const auto& ball : balls) {
+    for (const auto &ball: balls) {
         if (ball->isActive()) {
             count++;
         }
@@ -228,7 +230,7 @@ float BallManager::calculateAverageBallSpeed() const {
     float totalSpeed = 0.0f;
     size_t activeBalls = 0;
 
-    for (const auto& ball : balls) {
+    for (const auto &ball: balls) {
         if (ball->isActive()) {
             totalSpeed += ball->velocity;
             activeBalls++;
@@ -242,18 +244,18 @@ float BallManager::getAverageBallSpeed() const {
     return calculateAverageBallSpeed();
 }
 
-Ball* BallManager::getBallAt(size_t index) {
+Ball *BallManager::getBallAt(size_t index) {
     if (index < balls.size()) {
         return balls[index].get();
     }
     return nullptr;
 }
 
-std::vector<Ball*> BallManager::getBalls() {
-    std::vector<Ball*> ballPtrs;
+std::vector<Ball *> BallManager::getBalls() {
+    std::vector<Ball *> ballPtrs;
     ballPtrs.reserve(balls.size());
 
-    for (auto& ball : balls) {
+    for (auto &ball: balls) {
         ballPtrs.push_back(ball.get());
     }
 
