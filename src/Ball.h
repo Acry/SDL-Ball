@@ -1,67 +1,68 @@
 #pragma once
-#include <epoxy/gl.h>
-#include <vector>
 
-#include "MovingObject.h"
 #include "GrowableObject.h"
 #include "ICollideable.h"
+#include <vector>
+#include <cmath>
 
 class Ball final : public GrowableObject, public ICollideable {
-protected:
-    void onSizeChanged() override;
-
 public:
+    explicit Ball(const texture &tex);
+
     float centerX{0.0f};
     float centerY{0.0f};
-    bool explosive{false};
-    bool glued{false};
-    GLfloat bsin[32]{}, bcos[32]{};
-    bool aimdir{false};
-
-    void launchFromPaddle();
-
-    explicit Ball(const texture &tex) : GrowableObject(tex) {
-    }
+    mutable std::vector<float> collisionPoints;
 
     void init() override;
 
-    // void hit(GLfloat c[]);
+    void draw() const override;
 
     void update(float deltaTime) override;
 
-    void draw() const override;
+    // ICollideable Interface
+    void setActive(bool value) override;
 
-    GLfloat getAngle();
+    [[nodiscard]] float getPosX() const override;
 
-    void setAngle(GLfloat o);
+    [[nodiscard]] float getPosY() const override;
 
-    void setSpeed(GLfloat v, GLfloat maxSpeed = 1.5f);
+    [[nodiscard]] float getWidth() const override;
 
-    void setSize(GLfloat s);
+    [[nodiscard]] float getHeight() const override;
 
-    // const std::vector<float> *getCollisionPoints() const override;
+    [[nodiscard]] bool isActive() const override;
 
-    // void onCollision(const ICollideable *other, float hitX, float hitY) override;
+    [[nodiscard]] CollisionType getCollisionType() const override;
 
-    ~Ball() override;
+    // Ball-spezifische Methoden
+    [[nodiscard]] float getAngle() const;
 
-    // [[nodiscard]] float getPosX() const override { return pos_x; }
-    // [[nodiscard]] float getPosY() const override { return pos_y; }
-    // [[nodiscard]] float getWidth() const override { return width; }
-    // [[nodiscard]] float getHeight() const override { return height; }
-    // [[nodiscard]] bool isVisible() const { return visible; }
-    // [[nodiscard]] bool isActive() const override { return collisionActive; }
+    void setAngle(float o);
 
-    [[nodiscard]] CollisionType getCollisionType() const override {
-        return CollisionType::Ball;
-    }
+    void setSpeed(float v);
+
+    void setSize(float s);
+
+    std::vector<float> *getCollisionPoints() const;
+
+    void onSizeChanged() override;
+
+    [[nodiscard]] bool isPhysicallyActive() const;
+
+    void setPhysicallyActive(bool value);
+
+    [[nodiscard]] bool isGlued() const;
+
+    void setGlued(bool value);
+
+    [[nodiscard]] bool isExplosive() const;
+
+    void setExplosive(bool value);
 
 private:
-    void drawBase() const;
-
-    void drawExplosiveLayer() const;
-
-    GLfloat rad{};
-
-    mutable std::vector<float> collisionPoints;
+    bool collisionActive{true};
+    bool active{false};
+    bool glued{false};
+    bool explosive{false};
+    float angleRadians{0.0f};
 };

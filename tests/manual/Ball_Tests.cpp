@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include "Ball.h"
 #include "DisplayManager.hpp"
 #include "EventDispatcher.h"
 #include "GrowableObject.h"
@@ -152,14 +153,14 @@ class TestBallManager {
     static constexpr int MAX_BALLS = 50;
     float launchAngle = M_PI / 2 + (rand() % 40 - 20) * 0.01f; // π/2 ± kleine Zufallsabweichung
 public:
-    TestBall *selectedBall{nullptr};
-    std::vector<TestBall *> managedObjects;
+    Ball *selectedBall{nullptr};
+    std::vector<Ball *> managedObjects;
 
     TestBallManager(IEventManager *evtMgr, TextureManager *texMgr, SpriteSheetAnimationManager *animMgr)
         : eventManager(evtMgr), textureManager(texMgr), animationManager(animMgr) {
     }
 
-    void setExplosive(TestBall *ball, bool explosive) {
+    void setExplosive(Ball *ball, bool explosive) {
         if (!ball) return;
 
         // Finde den Ball-Index
@@ -192,7 +193,7 @@ public:
         }
     }
 
-    void despawnBall(TestBall *ball) {
+    void despawnBall(Ball *ball) {
         if (!ball) return;
 
         ball->setPhysicallyActive(false);
@@ -229,7 +230,7 @@ public:
                 return;
             }
 
-            const auto ball = new TestBall(*ballTexture);
+            const auto ball = new Ball(*ballTexture);
             ball->setPhysicallyActive(true);
             ball->setGlued(glued);
             ball->centerX = x;
@@ -495,7 +496,7 @@ public:
                 break;
             case SDLK_DELETE:
                 if (ctx.ballManager && ctx.ballManager->selectedBall) {
-                    TestBall *currentBall = ctx.ballManager->selectedBall;
+                    Ball *currentBall = ctx.ballManager->selectedBall;
                     ctx.ballManager->despawnBall(currentBall);
                     ctx.ballManager->selectedBall = nullptr;
 
@@ -526,7 +527,7 @@ public:
         if (ctx.ballManager->managedObjects.empty()) {
             return;
         }
-        std::vector<TestBall *> activeBalls;
+        std::vector<Ball *> activeBalls;
         for (auto *ball: ctx.ballManager->managedObjects) {
             if (ball->isPhysicallyActive()) {
                 activeBalls.push_back(ball);

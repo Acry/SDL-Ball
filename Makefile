@@ -463,6 +463,7 @@ $(BUILD_DIR)SplashScene_Tests.o: $(MANUAL_TEST_DIR)SplashScene_Tests.cpp
 # BallTests
 BALL_TEST_SOURCES := $(MANUAL_TEST_DIR)Ball_Tests.cpp \
                      $(MANUAL_TEST_DIR)TestHelper.cpp \
+                     $(SOURCE_DIR)Ball.cpp \
                      $(SOURCE_DIR)CollisionManager.cpp \
                      $(SOURCE_DIR)DisplayManager.cpp \
                      $(SOURCE_DIR)EventDispatcher.cpp \
