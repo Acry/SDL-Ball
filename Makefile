@@ -686,6 +686,8 @@ $(BUILD_DIR)HudManager_Tests.o: $(MANUAL_TEST_DIR)HudManager_Tests.cpp
 GAME_TEST_SOURCES := $(MANUAL_TEST_DIR)GameManager_Tests.cpp \
                      $(MANUAL_TEST_DIR)TestHelper.cpp \
                      $(SOURCE_DIR)BackgroundManager.cpp \
+                     $(SOURCE_DIR)Ball.cpp \
+                     $(SOURCE_DIR)BallManager.cpp \
                      $(SOURCE_DIR)Brick.cpp \
                      $(SOURCE_DIR)BrickManager.cpp \
                      $(SOURCE_DIR)Clock.cpp \
@@ -694,12 +696,15 @@ GAME_TEST_SOURCES := $(MANUAL_TEST_DIR)GameManager_Tests.cpp \
                      $(SOURCE_DIR)DisplayManager.cpp \
                      $(SOURCE_DIR)EventDispatcher.cpp \
                      $(SOURCE_DIR)EventManager.cpp \
+                     $(SOURCE_DIR)GameObject.cpp \
+                     $(SOURCE_DIR)GrowableObject.cpp \
                      $(SOURCE_DIR)HudManager.cpp \
                      $(SOURCE_DIR)KeyboardManager.cpp \
                      $(SOURCE_DIR)LevelManager.cpp \
                      $(SOURCE_DIR)Lifes.cpp \
                      $(SOURCE_DIR)MathHelper.cpp \
                      $(SOURCE_DIR)MouseManager.cpp \
+                     $(SOURCE_DIR)MovingObject.cpp \
                      $(SOURCE_DIR)PlayfieldBorder.cpp \
                      $(SOURCE_DIR)Score.cpp \
                      $(SOURCE_DIR)SettingsManager.cpp \

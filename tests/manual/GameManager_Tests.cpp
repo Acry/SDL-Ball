@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "BackgroundManager.h"
+#include "BallManager.h"
 #include "BrickManager.h"
 #include "DisplayManager.hpp"
 #include "EventDispatcher.h"
@@ -30,6 +31,7 @@ class TestGameManager {
     std::unique_ptr<PlayfieldBorder> topBorder;
     SpriteSheetAnimationManager animationManager;
     HudManager hudManager;
+    std::unique_ptr<BallManager> ballManager;
 
 public:
     TestGameManager(IEventManager *eventManager, TextManager *textManager, TextureManager *textureManager)
@@ -49,12 +51,14 @@ public:
         rightBorder = std::make_unique<PlayfieldBorder>(PlayfieldBorder::Side::Right, *borderTex, eventManager);
         topBorder = std::make_unique<PlayfieldBorder>(PlayfieldBorder::Side::Top, *borderTex, eventManager);
         levelManager->loadLevel(1);
+        ballManager = std::make_unique<BallManager>(eventManager, textureManager, &animationManager);
     }
 
     void update(const float deltaTime) {
         animationManager.updateAllAnimations(deltaTime);
         topBorder->update(deltaTime);
         hudManager.update(deltaTime);
+        ballManager->update(deltaTime);
     }
 
     void draw() {
@@ -63,6 +67,7 @@ public:
         rightBorder->draw();
         topBorder->draw();
         brickManager.draw();
+        ballManager->draw();
         hudManager.draw();
     }
 
