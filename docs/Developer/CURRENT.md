@@ -1,16 +1,12 @@
 # Current issues
 
-- [ ] [GameManager.md](Manager/GameManager.md)
-
-Top: Fix all manual tests warnings
-
-Tests:
-
-- [ ] EffectManager real implementations in src
 - [ ] Ball/BallManager real implementations in src
+- [ ] [GameManager.md](Manager/GameManager.md)
+- [ ] EffectManager real implementations in src
 
 ## Later
 
+- [ ] Fix warnings
 - [X] rethink collision (paddle collision points)
   Mixed approach for now, on collision in GameObjectManagers
   no convex paddle for now, just a simple rectangle, set angle
