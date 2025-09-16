@@ -70,5 +70,4 @@ private:
     bool active{false};
     bool hasGlueLayer{false};
     bool hasGunLayer{false};
-    float aspectRatio{1.0f};
 };

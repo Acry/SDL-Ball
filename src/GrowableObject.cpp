@@ -1,3 +1,4 @@
+// GrowableObject.cpp
 #include "GrowableObject.h"
 
 void GrowableObject::setGrowTarget(const GLfloat targetWidth) {
@@ -22,25 +23,24 @@ void GrowableObject::updateGrowth(const float deltaTime) {
         const GLfloat growStep = growSpeed * deltaTime;
         setWidth(width + growStep);
 
-        if (keepAspectRatio) {
-            setHeight(width / aspectRatio);
-        }
-
         if (width >= destWidth) {
+            setWidth(destWidth); // Auf exakten Zielwert begrenzen
             growing = false;
         }
     } else {
         const GLfloat shrinkStep = growSpeed * deltaTime;
         setWidth(width - shrinkStep);
 
-        if (keepAspectRatio) {
-            setHeight(width / aspectRatio);
-        }
-
         if (width <= destWidth) {
+            setWidth(destWidth); // Auf exakten Zielwert begrenzen
             shrinking = false;
         }
     }
+
+    if (keepAspectRatio) {
+        setHeight(width / aspectRatio);
+    }
+
     // Berechne die Positionskorrektur, um das Zentrum beizubehalten
     const GLfloat widthDiff = width - oldWidth;
     const GLfloat heightDiff = height - oldHeight;

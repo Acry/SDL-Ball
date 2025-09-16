@@ -38,7 +38,7 @@ float Paddle::getPosY() const { return pos_y; }
 float Paddle::getWidth() const { return width; }
 float Paddle::getHeight() const { return height; }
 bool Paddle::isActive() const { return collisionActive; }
-CollisionType Paddle::getCollisionType() const { return CollisionType::Ball; }
+CollisionType Paddle::getCollisionType() const { return CollisionType::Paddle; }
 
 void Paddle::drawBase() const {
     glLoadIdentity();
@@ -142,7 +142,8 @@ std::vector<float> *Paddle::getCollisionPoints() const {
 }
 
 void Paddle::onSizeChanged() {
-    //collisionPoints = *getCollisionPoints();
+    centerX = pos_x + width / 2.0f;
+    centerY = pos_y + height / 2.0f;
 }
 
 bool Paddle::isPhysicallyActive() const { return active; }

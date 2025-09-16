@@ -7,7 +7,6 @@ Top: Fix all manual tests warnings
 Tests:
 
 - [ ] EffectManager real implementations in src
-- [ ] Paddle/PaddleManager real implementations in src
 - [ ] Ball/BallManager real implementations in src
 
 ## Later

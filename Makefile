@@ -38,6 +38,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     MathHelper.cpp \
     MouseManager.cpp \
     Paddle.cpp \
+    PaddleManager.cpp \
     Particle.cpp \
     ParticleEffect.cpp \
     PlayfieldBorder.cpp \
@@ -95,6 +96,7 @@ TEST_TARGETS := \
 AUTO_TEST_TARGETS := \
     automatic-test-config \
     automatic-test-settings \
+    automatic-test-growth \
 
 TARGET=sdl-ball-remastered
 
@@ -302,6 +304,7 @@ PADDLE_TEST_SOURCES := $(MANUAL_TEST_DIR)Paddle_Tests.cpp \
                        $(SOURCE_DIR)KeyboardManager.cpp \
                        $(SOURCE_DIR)MovingObject.cpp \
                        $(SOURCE_DIR)Paddle.cpp \
+                       $(SOURCE_DIR)PaddleManager.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimation.cpp \
                        $(SOURCE_DIR)SpriteSheetAnimationManager.cpp \
                        $(SOURCE_DIR)TextManager.cpp \
@@ -852,6 +855,21 @@ automatic-test-settings: $(SETTING_ATEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(SETTING_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)automatic-test-settings
 
 $(BUILD_DIR)SettingsManager_aTests.o: $(AUTOMATIC_TEST_DIR)SettingsManager_aTests.cpp
+	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
+
+###############################################################################
+# automatic-test-growth
+GROWTH_ATEST_SOURCES := $(AUTOMATIC_TEST_DIR)GrowableObject_aTests.cpp \
+                        $(SOURCE_DIR)GameObject.cpp \
+                        $(SOURCE_DIR)MovingObject.cpp \
+                        $(SOURCE_DIR)GrowableObject.cpp \
+
+GROWTH_ATEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(GROWTH_ATEST_SOURCES:.cpp=.o)))
+
+automatic-test-growth: $(GROWTH_ATEST_OBJECTS)
+	$(CXX) $(DEBUG_FLAGS) $(GROWTH_ATEST_OBJECTS) $(LDFLAGS) -lgtest -lgtest_main -pthread -o $(BUILD_DIR)automatic-test-growth
+
+$(BUILD_DIR)GrowableObject_aTests.o: $(AUTOMATIC_TEST_DIR)GrowableObject_aTests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@ -lgtest -lgtest_main -pthread
 
 # END
