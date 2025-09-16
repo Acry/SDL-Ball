@@ -5,7 +5,8 @@
 
 ## Later
 
-- [ ] Fix warnings
+- [ ] Fix clang warnings
+- [ ] fix `cppcheck --enable=unusedFunction ./src` warnings
 - [X] rethink collision (paddle collision points)
   Mixed approach for now, on collision in GameObjectManagers
   no convex paddle for now, just a simple rectangle, set angle
