@@ -1,6 +1,5 @@
 # Current issues
 
-- [ ] Ball/BallManager real implementations in src
 - [ ] [GameManager.md](Manager/GameManager.md)
 - [ ] EffectManager real implementations in src
 
