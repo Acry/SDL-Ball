@@ -1,12 +1,17 @@
 # Current issues
 
-- [ ] [GameManager.md](Manager/GameManager.md)
-- [ ] EffectManager real implementations in src
+Top: test-driven GameManager
 
-## Later
+rethink: BallManager::checkBorderCollision()
+
+- [ ] [GameManager.md](Manager/GameManager.md) real implementations in src
+- [ ] [EffectManager](Manager/EffectManager.md) real implementations in src
+
+## Lateral
 
 - [ ] Fix clang warnings
 - [ ] fix `cppcheck --enable=unusedFunction ./src` warnings
+
 - [X] rethink collision (paddle collision points)
   Mixed approach for now, on collision in GameObjectManagers
   no convex paddle for now, just a simple rectangle, set angle
@@ -15,11 +20,17 @@ Brick-> shrink away on life lost or explode
 
 Solve logic issue kill, collide, render:
 Paddle-Spawn, Paddle Despawn - on level completed, Paddle explode
-
-[ ] HighScoreManager
-[ ] SaveGameManager
+(physically active)
 
 PlayGame: key, or movement brings up Want to play Game? hides after 5 seconds
 
+- [ ] SceneManager
 - [ ] Title Scene
 - [ ] Title Scene Test
+
+CodeManager->SceneManager
+
+Connect: ThemeManager, SettingsManager
+
+[ ] HighScoreManager
+[ ] SaveGameManager

@@ -1,3 +1,4 @@
+// BallManager.h
 #pragma once
 
 #include <vector>
@@ -27,7 +28,7 @@ public:
 
     void spawn(float x, float y, bool glued = false, float speed = 0.3f, float angle = 0.0f);
 
-    void update(float deltaTime);
+    void update(float deltaTime) const;
 
     void draw() const;
 

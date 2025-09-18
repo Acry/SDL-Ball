@@ -1,8 +1,12 @@
-#include "BallManager.h"
+// BallManager.cpp
 #include <algorithm>
 #include <cmath>
 #include <ranges>
+
 #include <SDL2/SDL.h>
+
+#include "BallManager.h"
+#include "MathHelper.h"
 
 BallManager::BallManager(IEventManager *evtMgr, TextureManager *texMgr, SpriteSheetAnimationManager *animMgr)
     : eventManager(evtMgr), textureManager(texMgr), animationManager(animMgr) {
@@ -16,7 +20,7 @@ BallManager::~BallManager() {
     managedObjects.clear();
 }
 
-void BallManager::setExplosive(Ball *ball, bool explosive) {
+void BallManager::setExplosive(Ball *ball, const bool explosive) {
     if (!ball) return;
     const auto it = std::ranges::find(managedObjects, ball);
     if (it == managedObjects.end()) return;
@@ -57,24 +61,11 @@ void BallManager::despawnBall(Ball *ball) {
     delete ball;
 }
 
-void BallManager::spawn(float x, float y, bool glued, float speed, float angle) {
-    for (auto *ball: managedObjects) {
-        if (!ball->isPhysicallyActive()) {
-            ball->setPhysicallyActive(true);
-            ball->setGlued(glued);
-            ball->centerX = x;
-            ball->centerY = y;
-            ball->pos_x = x - ball->width / 2.0f;
-            ball->pos_y = y - ball->height / 2.0f;
-            selectedBall = ball;
-            launchBall();
-            return;
-        }
-    }
+void BallManager::spawn(const float x, const float y, const bool glued, float speed, float angle) {
     if (managedObjects.size() < MAX_BALLS) {
         const texture *ballTexture = textureManager->getBallTexture(BallTexture::Normal);
         if (!ballTexture) {
-            SDL_Log("Error: Konnte Ball-Textur nicht laden");
+            SDL_Log("Error: no ball texture found");
             return;
         }
         auto *ball = new Ball(*ballTexture);
@@ -89,11 +80,13 @@ void BallManager::spawn(float x, float y, bool glued, float speed, float angle) 
         }
         managedObjects.push_back(ball);
         selectedBall = ball;
-        launchBall();
+        if (!glued) {
+            launchBall();
+        }
     }
 }
 
-void BallManager::update(float deltaTime) {
+void BallManager::update(const float deltaTime) const {
     for (auto *ball: managedObjects) {
         if (!ball->isPhysicallyActive() || ball->isGlued()) continue;
         ball->update(deltaTime);
@@ -132,14 +125,13 @@ void BallManager::clear() {
     animationIndices.clear();
 }
 
+
 float BallManager::getRandomLaunchAngle() {
-    // π/2 ± 0.087 rad (ca. ±5 Grad)
-    return M_PI / 2 + ((rand() % 40 - 20) * 0.01f);
+    // π/2 ± 0.1 rad (ca. ±5,7 Grad)
+    return M_PI / 2 + randomFloat(0.2f, 0.1f); // between -0.1 and +0.1
 }
 
 void BallManager::launchBall() const {
-    if (!selectedBall) return;
-    selectedBall->setGlued(false);
     const float randomAngle = getRandomLaunchAngle();
     selectedBall->xvel = selectedBall->velocity * std::cos(randomAngle);
     selectedBall->yvel = selectedBall->velocity * std::sin(randomAngle);
