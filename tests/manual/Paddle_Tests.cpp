@@ -7,7 +7,6 @@
 #include "GrowableObject.h"
 #include "KeyboardManager.h"
 #include "MouseManager.h"
-#include "Paddle.h"
 #include "PaddleManager.h"
 #include "TestHelper.h"
 #include "TextManager.h"
