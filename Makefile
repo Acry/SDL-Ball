@@ -709,6 +709,8 @@ GAME_TEST_SOURCES := $(MANUAL_TEST_DIR)GameManager_Tests.cpp \
                      $(SOURCE_DIR)MathHelper.cpp \
                      $(SOURCE_DIR)MouseManager.cpp \
                      $(SOURCE_DIR)MovingObject.cpp \
+                     $(SOURCE_DIR)Paddle.cpp \
+                     $(SOURCE_DIR)PaddleManager.cpp \
                      $(SOURCE_DIR)PlayfieldBorder.cpp \
                      $(SOURCE_DIR)Score.cpp \
                      $(SOURCE_DIR)SettingsManager.cpp \

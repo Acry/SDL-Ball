@@ -14,6 +14,7 @@
 #include "KeyboardManager.h"
 #include "LevelManager.h"
 #include "MouseManager.h"
+#include "PaddleManager.h"
 #include "PlayfieldBorder.h"
 #include "TestHelper.h"
 #include "TextManager.h"
@@ -32,6 +33,7 @@ class TestGameManager {
     SpriteSheetAnimationManager animationManager;
     HudManager hudManager;
     std::unique_ptr<BallManager> ballManager;
+    std::unique_ptr<PaddleManager> paddleManager;
 
 public:
     TestGameManager(IEventManager *eventManager, TextManager *textManager, TextureManager *textureManager)
@@ -52,6 +54,11 @@ public:
         topBorder = std::make_unique<PlayfieldBorder>(PlayfieldBorder::Side::Top, *borderTex, eventManager);
         levelManager->loadLevel(1);
         ballManager = std::make_unique<BallManager>(eventManager, textureManager, &animationManager);
+        paddleManager = std::make_unique<PaddleManager>(eventManager, textureManager, &animationManager);
+        paddleManager->spawn();
+        const float paddleY = paddleManager->activePaddle->getPosY();
+        const float paddleHeight = paddleManager->activePaddle->getHeight();
+        ballManager->spawn(0.0f, paddleY - paddleHeight, true);
     }
 
     void update(const float deltaTime) {
@@ -59,6 +66,8 @@ public:
         topBorder->update(deltaTime);
         hudManager.update(deltaTime);
         ballManager->update(deltaTime);
+        updateGluedBalls();
+        paddleManager->update(deltaTime);
     }
 
     void draw() {
@@ -68,10 +77,33 @@ public:
         topBorder->draw();
         brickManager.draw();
         ballManager->draw();
+        paddleManager->draw();
         hudManager.draw();
     }
 
     void resetGame() {
+    }
+
+    void updateGluedBalls() {
+        if (!paddleManager->activePaddle) return;
+
+        float paddleX = paddleManager->activePaddle->getPosX();
+        float paddleY = paddleManager->activePaddle->getPosY();
+        float paddleWidth = paddleManager->activePaddle->getWidth();
+        float paddleHeight = paddleManager->activePaddle->getHeight();
+
+        for (auto *ball: ballManager->managedObjects) {
+            if (ball->isGlued()) {
+                // Ball im Zentrum des Paddles positionieren
+                ball->centerX = paddleX + paddleWidth / 2.0f;
+                // Halbe Ballhöhe addieren
+                ball->centerY = paddleY + paddleHeight + ball->height / 2.0f;
+
+                // pos_x und pos_y aktualisieren
+                ball->pos_x = ball->centerX - ball->width / 2.0f;
+                ball->pos_y = ball->centerY - ball->height / 2.0f;
+            }
+        }
     }
 };
 
