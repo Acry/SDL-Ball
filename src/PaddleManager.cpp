@@ -22,7 +22,7 @@ Paddle *PaddleManager::getActivePaddle() const {
     return activePaddle;
 }
 
-void PaddleManager::setGlueLayer(bool enabled) const {
+void PaddleManager::setGlueLayer(const bool enabled) const {
     if (activePaddle) {
         activePaddle->setGlueLayer(enabled);
         if (enabled && activePaddle->glueLayerAnimProps.frames > 1) {
@@ -34,7 +34,7 @@ void PaddleManager::setGlueLayer(bool enabled) const {
     }
 }
 
-void PaddleManager::setGunLayer(bool enabled) const {
+void PaddleManager::setGunLayer(const bool enabled) const {
     if (activePaddle) {
         activePaddle->setGunLayer(enabled);
         if (enabled && activePaddle->gunLayerAnimProps.frames > 1) {
