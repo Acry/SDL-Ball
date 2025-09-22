@@ -1,12 +1,12 @@
 // HudManager_Tests.cpp
 
 /* todo:
- *   gameManager
  *   score via event
  *   toggle clock via event (MenuManager)
  *   add shop component, after powerup manager
  *   add speedometer component
  *   std::vector<std::unique_ptr<IHudComponent>>
+ *   lives
  */
 
 #include <chrono>
@@ -65,6 +65,7 @@ public:
         switch (data.key) {
             case SDLK_1:
                 ctx.hudManager->addPoints(500);
+                ctx.eventManager.emit(GameEvent::BallHitBrick, EventData{});
                 break;
             case SDLK_2:
                 ctx.hudManager->addPoints(-500);

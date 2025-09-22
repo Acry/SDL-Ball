@@ -1,23 +1,23 @@
-// Lifes.cpp
-#include "Lifes.h"
+// Lives.cpp
+#include "Lives.h"
 
-Lifes::Lifes(TextureManager *textureManager, int initialLives)
+Lives::Lives(TextureManager *textureManager, int initialLives)
     : textureManager(textureManager), lives(initialLives) {
 }
 
-void Lifes::addLives(const int delta) {
+void Lives::addLives(const int delta) {
     lives = std::max(0, lives + delta);
 }
 
-int Lifes::getLives() const {
+int Lives::getLives() const {
     return lives;
 }
 
-void Lifes::setLives(const int value) {
+void Lives::setLives(const int value) {
     lives = std::max(0, value);
 }
 
-void Lifes::draw() const {
+void Lives::draw() const {
     if (!textureManager) return;
     const TextureResource textureProperties = textureManager->getBallTexture(BallTexture::Normal)->textureProperties;
 

@@ -1,5 +1,5 @@
+// HudPresenter.cpp
 #include "HudManager.h"
-
 
 HudManager::HudManager(IEventManager *eventManager, TextManager *textManager, TextureManager *textureManager)
     : eventManager(eventManager),
@@ -7,7 +7,7 @@ HudManager::HudManager(IEventManager *eventManager, TextManager *textManager, Te
       textureManager(textureManager),
       score(*textManager),
       clock(*textManager),
-      lifes(textureManager, 3) {
+      lives(textureManager, 3) {
 }
 
 void HudManager::addPoints(const int points) {
@@ -21,9 +21,9 @@ void HudManager::update(const float deltaTime) {
     }
 }
 
-void HudManager::draw() {
+void HudManager::draw() const {
     score.draw();
-    lifes.draw();
+    lives.draw();
     if (clockEnabled) {
         clock.draw();
     }

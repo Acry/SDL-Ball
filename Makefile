@@ -34,7 +34,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     HudManager.cpp \
     KeyboardManager.cpp \
     LevelManager.cpp \
-    Lifes.cpp \
+    Lives.cpp \
     MathHelper.cpp \
     MouseManager.cpp \
     Paddle.cpp \
@@ -670,7 +670,7 @@ HUD_TEST_SOURCES := $(MANUAL_TEST_DIR)HudManager_Tests.cpp \
                     $(SOURCE_DIR)EventManager.cpp \
                     $(SOURCE_DIR)HudManager.cpp \
                     $(SOURCE_DIR)KeyboardManager.cpp \
-                    $(SOURCE_DIR)Lifes.cpp \
+                    $(SOURCE_DIR)Lives.cpp \
                     $(SOURCE_DIR)MouseManager.cpp \
                     $(SOURCE_DIR)Score.cpp \
                     $(SOURCE_DIR)TextManager.cpp \
@@ -705,7 +705,7 @@ GAME_TEST_SOURCES := $(MANUAL_TEST_DIR)GameManager_Tests.cpp \
                      $(SOURCE_DIR)HudManager.cpp \
                      $(SOURCE_DIR)KeyboardManager.cpp \
                      $(SOURCE_DIR)LevelManager.cpp \
-                     $(SOURCE_DIR)Lifes.cpp \
+                     $(SOURCE_DIR)Lives.cpp \
                      $(SOURCE_DIR)MathHelper.cpp \
                      $(SOURCE_DIR)MouseManager.cpp \
                      $(SOURCE_DIR)MovingObject.cpp \

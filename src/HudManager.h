@@ -1,7 +1,8 @@
+// HudPresenter.h
 #pragma once
 
 #include "Clock.h"
-#include "Lifes.h"
+#include "Lives.h"
 #include "Score.h"
 #include "TextManager.h"
 #include "TextureManager.h"
@@ -12,7 +13,7 @@ class HudManager {
     TextureManager *textureManager;
     Score score;
     Clock clock;
-    Lifes lifes;
+    Lives lives;
     bool clockEnabled = true;
 
 public:
@@ -22,11 +23,9 @@ public:
 
     void update(float deltaTime);
 
-    void draw();
+    void draw() const;
 
     void resetScore();
 
     void toggleClock();
 };
-
-

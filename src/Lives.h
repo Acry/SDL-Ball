@@ -1,18 +1,18 @@
-// Lifes.h
+// Lives.h
 #pragma once
 
 #include "TextureManager.h"
 
-class Lifes {
+class Lives {
     TextureManager *textureManager;
     int lives;
 
 public:
-    explicit Lifes(TextureManager *textureManager, int initialLives = 3);
+    explicit Lives(TextureManager *textureManager, int initialLives = 3);
 
     void addLives(int delta);
 
-    int getLives() const;
+    [[nodiscard]] int getLives() const;
 
     void setLives(int value);
 
