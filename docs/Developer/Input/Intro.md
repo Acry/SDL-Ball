@@ -1,12 +1,40 @@
 # Input
 
+## Vermittlungsschicht
+
+Es fehlt eine Vermittlungsschicht zwischen den InputManagern und der Spiellogik.
+
+Das klassische Muster ist ein Input-Controller oder Input-Dispatcher, der die Events der InputManager empfängt und sie
+an die passenden Game-Manager (z.B. PaddleManager, BallManager) weiterleitet.
+
+Schichtenmodell:
+
+1. InputManager (Keyboard, Mouse, Gamepad, etc.)
+   → Erzeugt Events (z.B. Tastendruck, Mausklick)
+2. EventDispatcher / InputController
+   → Verteilt die Events an registrierte Listener (z.B. PaddleManager, BallManager)
+3. GameManager / PaddleManager / BallManager
+   → Reagiert auf die Events und führt die Spiellogik aus
+
+Vorteile:
+
+- Klare Trennung von Eingabe und Spiellogik
+- Flexible Erweiterung um neue Input-Quellen
+- Einfaches Testen und Mocken der Eingaben
+
+  Beispiel:
+- KeyboardManager erkennt „Links“ → EventDispatcher sendet „PaddleMove“ → PaddleManager bewegt das Paddle
+  Diese Vermittlungsschicht ist oft ein zentrales Singleton oder wird im Haupt-Loop verwendet.
+
+## SDL2
+
 Die SDL2-API unterscheidet zwischen Joystick (`SDL_Joystick`-API) und Gamecontroller (`SDL_GameController`-API):
 
 `SDL_Joystick`: Für generische Joysticks, alle Eingabegeräte werden als Achsen, Buttons und Hats behandelt.
 `SDL_GameController`: Für unterstützte Gamepads (z.B. Xbox, PlayStation), mit standardisiertem Button/Axis-Mapping und
 komfortablerer API.
 
-## PS5-Controller
+### PS5-Controller
 
 Um einen PS5-Controller (DualSense) mit SDL2 zu testen, solltest du die SDL_GameController-API verwenden, da der
 Controller von SDL2 als Gamecontroller erkannt wird. Damit kannst du standardisierte Events für Buttons und Achsen

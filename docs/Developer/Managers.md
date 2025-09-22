@@ -1,5 +1,6 @@
 # ManagerClasses
 
+Definition:
 ![Manager Overview](Manager/Managers.svg)
 
 ## Manager-Types

@@ -7,6 +7,10 @@ rethink: BallManager::checkBorderCollision()
 - [ ] [GameManager.md](Manager/GameManager.md) real implementations in src
 - [ ] [EffectManager](Manager/EffectManager.md) real implementations in src
 
+## Classes
+
+The HudManager is no Manager class, because it lacks logic, it combines the hud elements and just reacts on events.
+
 ## Lateral
 
 - [ ] Fix clang warnings
@@ -16,7 +20,7 @@ rethink: BallManager::checkBorderCollision()
   Mixed approach for now, on collision in GameObjectManagers
   no convex paddle for now, just a simple rectangle, set angle
 
-Brick-> shrink away on life lost or explode
+Brick → shrink away on life lost or explode
 
 Solve logic issue kill, collide, render:
 Paddle-Spawn, Paddle Despawn - on level completed, Paddle explode

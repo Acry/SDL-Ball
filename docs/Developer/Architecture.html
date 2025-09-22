@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Architektur-Graph mit D3.js</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        .node {
+            cursor: pointer;
+        }
+
+        .label {
+            pointer-events: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<h2>Architektur-Visualisierung (D3.js)</h2>
+<svg width="900" height="600"></svg>
+<script>
+    const nodes = [
+        {id: "CodeManager"},
+        {id: "SceneManager"},
+        {id: "TitleScene"},
+        {id: "CreditsScene"},
+        {id: "AutoplayScene"},
+        {id: "GameManager"},
+        {id: "BallManager"},
+        {id: "PaddleManager"},
+        {id: "BrickManager"},
+        {id: "HudManager"},
+        {id: "EffectManager"},
+        {id: "Score"},
+        {id: "Clock"},
+        {id: "Lifes"},
+        {id: "EventManager"}
+    ];
+
+    const links = [
+        {source: "CodeManager", target: "SceneManager"},
+        {source: "SceneManager", target: "TitleScene"},
+        {source: "SceneManager", target: "CreditsScene"},
+        {source: "SceneManager", target: "AutoplayScene"},
+        {source: "SceneManager", target: "GameManager"},
+        {source: "GameManager", target: "BallManager"},
+        {source: "GameManager", target: "PaddleManager"},
+        {source: "GameManager", target: "BrickManager"},
+        {source: "GameManager", target: "HudManager"},
+        {source: "GameManager", target: "EffectManager"},
+        {source: "HudManager", target: "Score"},
+        {source: "HudManager", target: "Clock"},
+        {source: "HudManager", target: "Lifes"},
+        {source: "EventManager", target: "CodeManager"},
+        {source: "EventManager", target: "SceneManager"},
+        {source: "EventManager", target: "GameManager"},
+        {source: "EventManager", target: "HudManager"}
+    ];
+
+    const width = 900, height = 600;
+    const svg = d3.select("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    const simulation = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(120))
+        .force("charge", d3.forceManyBody().strength(-600))
+        .force("center", d3.forceCenter(width / 2, height / 2));
+
+    const link = svg.append("g")
+        .selectAll("line")
+        .data(links)
+        .enter().append("line")
+        .attr("stroke", "#999")
+        .attr("stroke-width", 2);
+
+    const node = svg.append("g")
+        .selectAll("circle")
+        .data(nodes)
+        .enter().append("circle")
+        .attr("class", "node")
+        .attr("r", 30)
+        .attr("fill", "#69b3a2")
+        .on("click", (event, d) => alert("Komponente: " + d.id))
+        .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+
+    const label = svg.append("g")
+        .selectAll("text")
+        .data(nodes)
+        .enter().append("text")
+        .attr("class", "label")
+        .text(d => d.id)
+        .attr("text-anchor", "middle")
+        .attr("dy", ".35em");
+
+    simulation.on("tick", () => {
+        link
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+
+        node
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y);
+
+        label
+            .attr("x", d => d.x)
+            .attr("y", d => d.y);
+    });
+
+    function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
+    }
+
+    function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
+</script>
+</body>
+</html>

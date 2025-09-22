@@ -28,25 +28,18 @@ TextManager::TextManager(IEventManager* evtMgr)
 Register
 
 ```c++
-eventManager->addListener(GameEvent::LevelLoaded,
-                          [this](const LevelData &data) { handleLevelLoaded(data); }, this);
+eventManager->addListener(GameEvent::EventType,
+                          [this](const DataType &data) { callBack(data); }, this);
 ```
 
 Unregister
 
 ```c++
-TextManager::~TextManager() {
-    if (eventManager) {
-        eventManager->removeListener(GameEvent::FontThemeRequested, this);
-    }
+eventManager->removeListener(GameEvent::EventType, this);
 ```
 
+Emit
+
 ```c++
-    eventManager.addListener(
-        GameEvent::FontThemeChanged,
-        [&textManager](const ThemeData &data) {
-            textManager.addAnnouncement("New Font Theme", 2000, Fonts::AnnounceGood);
-        },
-        nullptr
-    );
+eventManager->emit(GameEvent::EventType, data);
 ```
