@@ -20,7 +20,7 @@ class TestMenuItem final : public ICollideable {
     std::shared_ptr<std::vector<TestMenuItem> > subMenu; // optionales Submenü
 
 public:
-    TestMenuItem(float x, float y, float w, float h, std::string label, GameEvent event,
+    TestMenuItem(const float x, const float y, const float w, const float h, std::string label, const GameEvent event,
                  std::shared_ptr<std::vector<TestMenuItem> > subMenu = nullptr)
         : x(x), y(y), w(w), h(h), active(true), label(std::move(label)), event(event), subMenu(std::move(subMenu)) {
     }
@@ -82,14 +82,14 @@ public:
         eventManager->addListener(GameEvent::MenuKeyPressed, [this](const KeyboardEventData &) {
             if (this->isVisible()) {
                 this->hide();
-                const EventData data;
+                constexpr EventData data;
                 eventManager->emit(GameEvent::MenuClosed, data);
-                removeListeners();
+                unregisterEvents();
             } else {
                 this->show();
-                const EventData data;
+                constexpr EventData data;
                 eventManager->emit(GameEvent::MenuOpened, data);
-                addListeners();
+                registerEvents();
             }
         }, this);
     }
@@ -112,7 +112,7 @@ public:
         }
     }
 
-    void addListeners() {
+    void registerEvents() {
         eventManager->addListener(GameEvent::MouseCoordinatesNormalized,
                                   [this](const MouseCoordinatesNormalizedEventData &data) {
                                       this->hoveredIndex = this->handleMouse(data.x, data.y);
@@ -125,7 +125,7 @@ public:
         eventManager->addListener(GameEvent::MouseButtonReleasedNormalized, [this](const MouseEventData &data) {
             if (!this->isVisible()) return;
             if (!(data.button != SDL_BUTTON_LEFT || data.button != SDL_BUTTON_X1)) return; // Nur linker Mausklick
-            int idx = this->handleMouse(data.x, data.y);
+            const int idx = this->handleMouse(data.x, data.y);
 
             if (data.button == SDL_BUTTON_X1) {
                 backToPreviousMenu();
@@ -138,22 +138,22 @@ public:
                     openSubMenu(item.getSubMenu());
                 } else if (item.getEvent() != GameEvent::None) {
                     SDL_Log("Menu item selected: %d", hoveredIndex);
-                    EventData eventData;
+                    constexpr EventData eventData;
                     eventManager->emit(item.getEvent(), eventData);
                 }
             }
         }, this);
     }
 
-    void removeListeners() {
+    void unregisterEvents() {
+        eventManager->removeListener(GameEvent::MenuKeyPressed, this);
         eventManager->removeListener(GameEvent::MouseCoordinatesNormalized, this);
         eventManager->removeListener(GameEvent::MenuKeyReleased, this);
         eventManager->removeListener(GameEvent::MouseButtonReleasedNormalized, this);
     }
 
     ~TestMenuManager() {
-        eventManager->removeListener(GameEvent::MenuKeyPressed, this);
-        removeListeners();
+        unregisterEvents();
     }
 
     void show() { visible = true; }
@@ -194,7 +194,7 @@ public:
             return;
         }
         if (data.key == SDLK_RETURN || data.key == SDLK_KP_ENTER) {
-            int idx = (inputMode == InputMode::Mouse) ? hoveredIndex : keyboardIndex;
+            const int idx = (inputMode == InputMode::Mouse) ? hoveredIndex : keyboardIndex;
             SDL_Log("Menu item selected: %d", idx);
             if (idx >= 0 && idx < static_cast<int>(items.size())) {
                 const auto &item = items[idx];
@@ -464,7 +464,7 @@ int main() {
 
         const std::vector<std::string> instructions = {
             "M: Draw Mouse Coordinates",
-            "TAB: Toggle Menu",
+            "TAB/SDL_BUTTON_X1: Toggle Menu",
             "S: Screenshot",
             "ESC: Beenden"
         };
