@@ -209,3 +209,5 @@ HUDManager
 eventManager->addListener(GameEvent::ScoreChanged,
 [this](const ScoreChangedEventData& data) { updateScoreDisplay(data); }, this);
 
+## loose docs
+

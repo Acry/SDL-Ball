@@ -23,7 +23,7 @@ enum class BrickType {
 
 ## Scores
 
-See: [Score.md](../misc/Score.md)
+See: [Score.md](../Concepts/Score.md)
 
 ```c++
 int BrickManager::getBaseScore(BrickType type) {
