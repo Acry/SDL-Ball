@@ -23,7 +23,7 @@ AudioManager: [SoundManager](Manager/SoundManager.md)
 [EffectManager](Manager/EffectManager.md) - handles the effects, loads the effect file and applies it to the game
 [EventManager](Manager/EventManager.md) - handles the events, loads the event file and applies it to the game
 [GameManager](Manager/GameManager.md) - handles the game state, loads the game-scene and manages the game loop
-[HUDManager](Manager/HudManager.md) - handles the HUD, loads the HUD file and applies it to the game
+[HUDManager](Manager/HudCompositor.md) - handles the HUD, loads the HUD file and applies it to the game
 [HighscoreManager](Manager/HighscoreManager.md) - handles the highscores, loads the highscores and saves them to the
 file.
 [LevelManager](Manager/LevelManager.md) - at start loads the LevelOffsets, and gives the new level after the player has

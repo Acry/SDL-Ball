@@ -3,11 +3,12 @@
 ## Listener
 
 HudPresenter
-Callback:
-HudManager::addPoints(const int points)
+Callback: HudManager::addPoints(const int points)
 
 ## Emitter
 
 ## EventData
 
 ## Events
+
+GameEvent::ScoreChanged

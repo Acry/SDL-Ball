@@ -1,6 +1,7 @@
 # EventManager
 
-Der EventManager verwaltet die Callbacks durch seine generischen Event-Handling-Methoden:
+Der EventManager verwaltet die Callbacks durch seine generischen Event-Handling-Methoden.
+
 Der EventManager speichert Callbacks in seinen Maps:
 
 ```c++
@@ -99,16 +100,64 @@ Der EventManager ist ein zentraler Baustein für saubere Spielarchitektur und er
 Komponenten. Die Integration von Tastaturereignissen würde die Konsistenz deines Event-Systems verbessern und
 Eingabebehandlung flexibler gestalten.
 
+```c++
 // In der Initialisierungsfunktion des Spiels
 void initGame() {
-// Event-Listener für Sound-Events registrieren
-eventSystem().addListener(GameEvent::BallHitBorder, [](const EventData& data) {
-soundManager.add(data.soundID, data.posX);
+   // Event-Listener für Sound-Events registrieren
+   eventSystem().addListener(GameEvent::BallHitBorder, [](const EventData& data) {
+   soundManager.add(data.soundID, data.posX);
 });
 
-    eventSystem().addListener(GameEvent::BallLost, [](const EventData& data) {
-        // Aktion bei verlorenem Ball (z.B. Sound abspielen, Leben reduzieren)
-        // soundManager.add(SND_BALL_LOST, data.posX);
-    });
+eventSystem().addListener(GameEvent::BallLost, [](const EventData& data) {
+  // Aktion bei verlorenem Ball (z.B. Sound abspielen, Leben reduzieren)
+  // soundManager.add(SND_BALL_LOST, data.posX);
+});
+```
 
-}
+## Notes
+
+In C++ gibt es bereits etablierte Muster und Bibliotheken für Event-Dispatching:
+Das Observer-Pattern ist das klassische Muster für Event-Dispatcher und Listener.
+
+Die Standardbibliothek bietet mit std::function und std::map/std::unordered_map flexible Möglichkeiten, eigene
+Dispatcher zu bauen.
+
+Für komplexere Anforderungen gibt es Bibliotheken wie Boost.Signals2 (thread-sicher, flexibel) und libsigc++.
+
+Ein typisierter, auf Spiel-Events spezialisierter Dispatcher wie dein EventManager ist aber oft projektspezifisch und
+wird selten als Standardbibliothek angeboten. Die genannten Lösungen sind allgemeiner gehalten und können als Basis
+dienen, aber deine Lösung ist für deine Anforderungen maßgeschneidert.
+
+Du könntest das Observer-Pattern effizienter umsetzen, indem du die Listener-Typen vereinheitlichst (z.B. mit std::
+function<void(const BaseEventData&)>) und die Event-Daten von einer gemeinsamen Basisklasse ableiten lässt. So sparst du
+viele Maps und Methoden und erhöhst die Flexibilität.
+
+Das Observer-Pattern wäre mit einer einzigen Listener-Liste und polymorphen Event-Daten noch klarer und wartbarer.
+
+(z.B. BaseEventData) und die Listener als std::function<void(const BaseEventData&)> speicherst. Dadurch brauchst du nur
+eine Listener-Liste und eine emit-Methode mit dynamischem Cast für die jeweiligen Event-Typen.
+
+```c++
+// EventManager.h
+class BaseEventData {
+   public:
+   virtual ~BaseEventData() = default;
+   };
+   
+using EventCallback = std::function<void(const BaseEventData&)>;
+
+class EventManager final {
+   std::unordered_map<GameEvent, std::vector<std::pair<void*, EventCallback>>> listeners;
+   public:
+   void addListener(GameEvent event, EventCallback callback, void* owner);
+   void emit(GameEvent event, const BaseEventData& data);
+   void removeListener(GameEvent event, void* owner);
+};
+```
+
+Das reduziert Redundanz und macht die Erweiterung um neue Event-Typen einfacher.
+Listener können die Event-Daten bei Bedarf per dynamic_cast auf ihren Typ prüfen.
+
+## See also
+
+[Oberserver Pattern.md](../Software-Engineering/Oberserver%20Pattern.md)
