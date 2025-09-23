@@ -10,7 +10,7 @@
 #include "BrickManager.h"
 #include "DisplayManager.hpp"
 #include "EventDispatcher.h"
-#include "HudManager.h"
+#include "HudCompositor.h"
 #include "KeyboardManager.h"
 #include "LevelManager.h"
 #include "MouseManager.h"
@@ -31,7 +31,7 @@ class TestGameManager {
     std::unique_ptr<PlayfieldBorder> rightBorder;
     std::unique_ptr<PlayfieldBorder> topBorder;
     SpriteSheetAnimationManager animationManager;
-    HudManager hudManager;
+    HudCompositor hudManager;
     std::unique_ptr<BallManager> ballManager;
     std::unique_ptr<PaddleManager> paddleManager;
 

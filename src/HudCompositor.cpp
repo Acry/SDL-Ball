@@ -1,7 +1,7 @@
-// HudPresenter.cpp
-#include "HudManager.h"
+// HudCompositor.cpp
+#include "HudCompositor.h"
 
-HudManager::HudManager(IEventManager *eventManager, TextManager *textManager, TextureManager *textureManager)
+HudCompositor::HudCompositor(IEventManager *eventManager, TextManager *textManager, TextureManager *textureManager)
     : eventManager(eventManager),
       textManager(textManager),
       textureManager(textureManager),
@@ -10,18 +10,18 @@ HudManager::HudManager(IEventManager *eventManager, TextManager *textManager, Te
       lives(textureManager, 3) {
 }
 
-void HudManager::addPoints(const int points) {
+void HudCompositor::addPoints(const int points) {
     score.addPoints(points);
 }
 
-void HudManager::update(const float deltaTime) {
+void HudCompositor::update(const float deltaTime) {
     score.update(deltaTime);
     if (clockEnabled) {
         clock.update(deltaTime);
     }
 }
 
-void HudManager::draw() const {
+void HudCompositor::draw() const {
     score.draw();
     lives.draw();
     if (clockEnabled) {
@@ -29,10 +29,10 @@ void HudManager::draw() const {
     }
 }
 
-void HudManager::resetScore() {
+void HudCompositor::resetScore() {
     score.reset();
 }
 
-void HudManager::toggleClock() {
+void HudCompositor::toggleClock() {
     clockEnabled = !clockEnabled;
 }

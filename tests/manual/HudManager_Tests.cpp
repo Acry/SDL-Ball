@@ -23,7 +23,7 @@
 #include "TestHelper.h"
 #include "TextManager.h"
 #include "TextureManager.h"
-#include "HudManager.h"
+#include "HudCompositor.h"
 
 class HudManagerTestContext {
 public:
@@ -33,7 +33,7 @@ public:
     DisplayManager displayManager;
     TextManager textManager;
     std::unique_ptr<TextureManager> textureManager;
-    std::unique_ptr<HudManager> hudManager;
+    std::unique_ptr<HudCompositor> hudManager;
 
     HudManagerTestContext()
         : mouseManager(&eventManager),
@@ -43,11 +43,11 @@ public:
         if (!displayManager.init(0, 1024, 768, false)) {
             throw std::runtime_error("Could not initialize display");
         }
-        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: HudManager Test");
+        SDL_SetWindowTitle(displayManager.sdlWindow, "SDL-Ball: HudCompositor Test");
         textManager.setTheme("../tests/themes/test");
         textureManager = std::make_unique<TextureManager>();
         textureManager->setSpriteTheme("../themes/default");
-        hudManager = std::make_unique<HudManager>(&eventManager, &textManager, textureManager.get());
+        hudManager = std::make_unique<HudCompositor>(&eventManager, &textManager, textureManager.get());
     }
 };
 

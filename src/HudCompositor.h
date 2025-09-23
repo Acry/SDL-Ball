@@ -1,4 +1,4 @@
-// HudPresenter.h
+// HudCompositor.h
 #pragma once
 
 #include "Clock.h"
@@ -7,7 +7,7 @@
 #include "TextManager.h"
 #include "TextureManager.h"
 
-class HudManager {
+class HudCompositor {
     IEventManager *eventManager;
     TextManager *textManager;
     TextureManager *textureManager;
@@ -17,7 +17,7 @@ class HudManager {
     bool clockEnabled = true;
 
 public:
-    HudManager(IEventManager *eventManager, TextManager *textManager, TextureManager *textureManager);
+    HudCompositor(IEventManager *eventManager, TextManager *textManager, TextureManager *textureManager);
 
     void addPoints(int points);
 

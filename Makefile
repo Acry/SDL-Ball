@@ -31,7 +31,7 @@ SOURCES := $(addprefix $(SOURCE_DIR), \
     EventDispatcher.cpp \
     EventManager.cpp \
     GrowableObject.cpp \
-    HudManager.cpp \
+    HudCompositor.cpp \
     KeyboardManager.cpp \
     LevelManager.cpp \
     Lives.cpp \
@@ -668,7 +668,7 @@ HUD_TEST_SOURCES := $(MANUAL_TEST_DIR)HudManager_Tests.cpp \
                     $(SOURCE_DIR)DisplayManager.cpp \
                     $(SOURCE_DIR)EventDispatcher.cpp \
                     $(SOURCE_DIR)EventManager.cpp \
-                    $(SOURCE_DIR)HudManager.cpp \
+                    $(SOURCE_DIR)HudCompositor.cpp \
                     $(SOURCE_DIR)KeyboardManager.cpp \
                     $(SOURCE_DIR)Lives.cpp \
                     $(SOURCE_DIR)MouseManager.cpp \
@@ -702,7 +702,7 @@ GAME_TEST_SOURCES := $(MANUAL_TEST_DIR)GameManager_Tests.cpp \
                      $(SOURCE_DIR)EventManager.cpp \
                      $(SOURCE_DIR)GameObject.cpp \
                      $(SOURCE_DIR)GrowableObject.cpp \
-                     $(SOURCE_DIR)HudManager.cpp \
+                     $(SOURCE_DIR)HudCompositor.cpp \
                      $(SOURCE_DIR)KeyboardManager.cpp \
                      $(SOURCE_DIR)LevelManager.cpp \
                      $(SOURCE_DIR)Lives.cpp \
