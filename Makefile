@@ -662,7 +662,7 @@ $(BUILD_DIR)PlayfieldBorder_Tests.o: $(MANUAL_TEST_DIR)PlayfieldBorder_Tests.cpp
 
 ###############################################################################
 # Hud Tests
-HUD_TEST_SOURCES := $(MANUAL_TEST_DIR)HudManager_Tests.cpp \
+HUD_TEST_SOURCES := $(MANUAL_TEST_DIR)HudCompositor_Tests.cpp \
                     $(MANUAL_TEST_DIR)TestHelper.cpp \
                     $(SOURCE_DIR)Clock.cpp \
                     $(SOURCE_DIR)DisplayManager.cpp \
@@ -682,7 +682,7 @@ HUD_TEST_OBJECTS := $(addprefix $(BUILD_DIR), $(notdir $(HUD_TEST_SOURCES:.cpp=.
 test-hud: $(HUD_TEST_OBJECTS)
 	$(CXX) $(DEBUG_FLAGS) $(HUD_TEST_OBJECTS) $(LDFLAGS) -o $(BUILD_DIR)test-hud
 
-$(BUILD_DIR)HudManager_Tests.o: $(MANUAL_TEST_DIR)HudManager_Tests.cpp
+$(BUILD_DIR)HudCompositor_Tests.o: $(MANUAL_TEST_DIR)HudCompositor_Tests.cpp
 	$(CXX) -c $(DEBUG_FLAGS) -I$(SOURCE_DIR) $< -o $@
 
 ###############################################################################

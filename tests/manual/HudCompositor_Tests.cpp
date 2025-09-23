@@ -1,4 +1,4 @@
-// HudManager_Tests.cpp
+// HudCompositor_Tests.cpp
 
 /* todo:
  *   score via event
