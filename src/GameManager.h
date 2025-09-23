@@ -51,7 +51,7 @@ class GameManager {
     // Initialisierungsmethoden
     void initializeManagers();
 
-    void setupEventHandlers();
+    void registerEvents();
 
     // Kollisionsprüfung
     void checkCollisions();

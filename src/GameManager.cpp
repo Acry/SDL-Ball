@@ -28,7 +28,7 @@ void GameManager::init() {
     // Spielgrenzen einrichten
     setupBorders();
 
-    setupEventHandlers();
+    registerEvents();
 
     SDL_Log("GameManager: Initialisierung abgeschlossen");
 }
@@ -109,7 +109,7 @@ bool GameManager::initializeGameObjects() {
     return true;
 }
 
-void GameManager::setupEventHandlers() {
+void GameManager::registerEvents() {
     // Event-Handler für Kollisionen
     eventManager.addListener(GameEvent::BallHitPaddle,
                              [this](const EventData &data) {
