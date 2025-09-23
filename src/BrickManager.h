@@ -20,6 +20,8 @@ class BrickManager {
     static BrickTexture getTextureForType(BrickType type);
 
 public:
+    void registerEvents();
+
     BrickManager(IEventManager *evtMgr, TextureManager *texMgr, SpriteSheetAnimationManager *animMgr);
 
     ~BrickManager();
@@ -37,6 +39,8 @@ public:
     void clear();
 
     [[nodiscard]] size_t getActiveBrickCount() const;
+
+    void unregisterEvents();
 
     [[nodiscard]] const std::vector<Brick> &getBricks() const { return bricks; }
 };

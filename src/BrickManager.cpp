@@ -3,8 +3,7 @@
 
 #include "config.h"
 
-BrickManager::BrickManager(IEventManager *evtMgr, TextureManager *texMgr, SpriteSheetAnimationManager *animMgr)
-    : eventManager(evtMgr), textureManager(texMgr), spriteSheetAnimationManager(animMgr) {
+void BrickManager::registerEvents() {
     eventManager->addListener(GameEvent::BallHitBrick,
                               [this](const CollisionData &data) { onBallHitBrick(data); },
                               this);
@@ -12,6 +11,11 @@ BrickManager::BrickManager(IEventManager *evtMgr, TextureManager *texMgr, Sprite
     eventManager->addListener(GameEvent::LevelLoaded,
                               [this](const LevelData &data) { onLevelLoaded(data); },
                               this);
+}
+
+BrickManager::BrickManager(IEventManager *evtMgr, TextureManager *texMgr, SpriteSheetAnimationManager *animMgr)
+    : eventManager(evtMgr), textureManager(texMgr), spriteSheetAnimationManager(animMgr) {
+    registerEvents();
 }
 
 BrickTexture BrickManager::getTextureForType(const BrickType type) {
@@ -163,9 +167,13 @@ size_t BrickManager::getActiveBrickCount() const {
                          [](const Brick &brick) { return brick.isActive(); });
 }
 
+void BrickManager::unregisterEvents() {
+    eventManager->removeListener(GameEvent::BallHitBrick, this);
+    eventManager->removeListener(GameEvent::LevelLoaded, this);
+}
+
 BrickManager::~BrickManager() {
     if (eventManager) {
-        eventManager->removeListener(GameEvent::BallHitBrick, this);
-        eventManager->removeListener(GameEvent::LevelLoaded, this);
+        unregisterEvents();
     }
 }
