@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include "IEventManager.h"
 
-class EventManager : public IEventManager {
+class EventManager final : public IEventManager {
     template<typename CallbackType>
     struct ListenerEntryBase {
         void *owner{nullptr};
