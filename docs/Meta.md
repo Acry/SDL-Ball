@@ -83,3 +83,16 @@ https://js.cytoscape.org/
 ## GoJS
 
 https://gojs.net
+
+## notes
+
+D3.js ist für interaktive Diagramme und Visualisierungen sehr gut geeignet, besonders wenn du individuelle,
+programmatische Darstellungen deiner Codebase oder Architektur möchtest. Damit kannst du flexibel eigene Sichten und
+Interaktionen gestalten, was mit statischen Tools oft nicht möglich ist.
+Programme zur Visualisierung und Analyse von Codebasen (z.B. Architekturdiagramme, Abhängigkeitsgraphen,
+Klassendiagramme) gehören thematisch eher zum Bereich architecture. Sie unterstützen das Verständnis, die Planung und
+die Dokumentation der Systemstruktur.
+Fazit:
+D3.js ist eine sinnvolle Wahl für interaktive, maßgeschneiderte Diagramme.
+Solche Visualisierungstools und -skripte sind Teil der Architektur-Dokumentation und gehören in den Bereich
+architecture.

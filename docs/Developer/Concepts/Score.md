@@ -211,3 +211,9 @@ eventManager->addListener(GameEvent::ScoreChanged,
 
 ## loose docs
 
+## process
+
+CollisionManager erkennt die Kollision und meldet das Ereignis.
+BrickManager prüft die Lebenspunkte des Bricks und berechnet die Punkte.
+PlayerManager empfängt die Punkte, akkumuliert sie und feuert ein PointsUpdated-Event.
+HudCompositor reagiert auf das Event und aktualisiert die Anzeige.
